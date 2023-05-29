@@ -141,13 +141,3 @@ func saveToken(file string, token *oauth2.Token) {
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
 }
-
-func HandleError(err error, message string) {
-	if message == "" {
-		message = "Error making API call"
-	}
-
-	if err != nil {
-		log.Fatalf(message+": %v", err.Error())
-	}
-}

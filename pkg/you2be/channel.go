@@ -5,16 +5,16 @@ import (
 
 	"google.golang.org/api/youtube/v3"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	. "github.com/eat-pray-ai/yutu/pkg/util"
 )
 
 var part = []string{"snippet", "statistics"}
 
-func ChannelsListById(service *youtube.Service, channelId string) *youtube.Channel {
+func ChannelsList(service *youtube.Service, channelId string) *youtube.Channel {
 	call := service.Channels.List(part)
 	call = call.Id(channelId)
 	response, err := call.Do()
-	auth.HandleError(err, "")
+	HandleError(err, "")
 
 	channel := response.Items[0]
 	fmt.Printf("Channel ID: %s\nTitle: %s\nDescription: %s\nPublished At: %s\nCountry: %s\nSubscriber count: %d\nVideo count: %d\nViews: %d\n",
@@ -31,11 +31,11 @@ func ChannelsListById(service *youtube.Service, channelId string) *youtube.Chann
 }
 
 func ChannelsUpdate(service *youtube.Service, channelId string) {
-	channel := ChannelsListById(service, channelId)
+	channel := ChannelsList(service, channelId)
 	channel.Snippet.Title = "看剧啦饭酱"
 	call := service.Channels.Update(part, channel)
 	channel, err := call.Do()
-	auth.HandleError(err, "")
+	HandleError(err, "")
 
 	fmt.Printf("Channel ID: %s\nTitle: %s\nDescription: %s\nPublished At: %s\nCountry: %s\nSubscriber count: %d\nVideo count: %d\nViews: %d\n",
 		channel.Id,
