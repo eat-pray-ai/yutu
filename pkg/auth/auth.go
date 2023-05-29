@@ -18,8 +18,7 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-func GetClient(scope string) *http.Client {
-	ctx := context.Background()
+func GetClient(ctx context.Context, scope string) *http.Client {
 	b, err := os.ReadFile("client_secret.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret: %v", err)

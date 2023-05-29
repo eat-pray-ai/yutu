@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
-	client := auth.GetClient(youtube.YoutubeReadonlyScope)
-	service, err := youtube.NewService(context.Background(), option.WithHTTPClient(client))
+	ctx := context.Background()
+	client := auth.GetClient(ctx, youtube.YoutubeReadonlyScope)
+	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	auth.HandleError(err, "Error creating YouTube client")
 
-	you2be.ChannelsListById(service, []string{"snippet", "contentDetails", "statistics"}, "***REMOVED***")
+	you2be.ChannelsListById(service, "***REMOVED***")
 }
