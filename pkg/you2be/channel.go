@@ -8,14 +8,42 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 )
 
-func ChannelsListById(service *youtube.Service, part []string, channelId string) {
+var part = []string{"snippet", "statistics"}
+
+func ChannelsListById(service *youtube.Service, channelId string) *youtube.Channel {
 	call := service.Channels.List(part)
 	call = call.Id(channelId)
 	response, err := call.Do()
 	auth.HandleError(err, "")
 
-	fmt.Printf("This channel's ID is %s.\nIts title is '%s', and it has %d views.",
-		response.Items[0].Id,
-		response.Items[0].Snippet.Title,
-		response.Items[0].Statistics.ViewCount)
+	channel := response.Items[0]
+	fmt.Printf("Channel ID: %s\nTitle: %s\nDescription: %s\nPublished At: %s\nCountry: %s\nSubscriber count: %d\nVideo count: %d\nViews: %d\n",
+		channel.Id,
+		channel.Snippet.Title,
+		channel.Snippet.Description,
+		channel.Snippet.PublishedAt,
+		channel.Snippet.Country,
+		channel.Statistics.SubscriberCount,
+		channel.Statistics.VideoCount,
+		channel.Statistics.ViewCount)
+
+	return response.Items[0]
+}
+
+func ChannelsUpdate(service *youtube.Service, channelId string) {
+	channel := ChannelsListById(service, channelId)
+	channel.Snippet.Title = "看剧啦饭酱"
+	call := service.Channels.Update(part, channel)
+	channel, err := call.Do()
+	auth.HandleError(err, "")
+
+	fmt.Printf("Channel ID: %s\nTitle: %s\nDescription: %s\nPublished At: %s\nCountry: %s\nSubscriber count: %d\nVideo count: %d\nViews: %d\n",
+		channel.Id,
+		channel.Snippet.Title,
+		channel.Snippet.Description,
+		channel.Snippet.PublishedAt,
+		channel.Snippet.Country,
+		channel.Statistics.SubscriberCount,
+		channel.Statistics.VideoCount,
+		channel.Statistics.ViewCount)
 }
