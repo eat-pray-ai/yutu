@@ -116,7 +116,7 @@ func tokenCacheFile() (string, error) {
 
 	tokenCacheDir := filepath.Join(user.HomeDir, ".credentials")
 	os.MkdirAll(tokenCacheDir, 0700)
-	return filepath.Join(tokenCacheDir, url.QueryEscape("yutu.json")), err
+	return filepath.Join(tokenCacheDir, url.QueryEscape("yutu.json")), nil
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {

@@ -17,5 +17,6 @@ func main() {
 	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	util.HandleError(err, "Error creating YouTube client")
 
-	you2be.ChannelsList(service, "***REMOVED***")
+	channel := you2be.ChannelsGet(service, "***REMOVED***")
+	you2be.ChannelsList(channel)
 }
