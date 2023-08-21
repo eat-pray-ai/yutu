@@ -38,9 +38,9 @@ Views: %d`,
 		channel.Statistics.ViewCount)
 }
 
-func ChannelsUpdate(service *youtube.Service, channelId string) {
+func ChannelsUpdate(service *youtube.Service, channelId string, title string) {
 	channel := ChannelsGet(service, channelId)
-	channel.Snippet.Title = "看剧啦饭酱"
+	channel.Snippet.Title = title
 	call := service.Channels.Update(part, channel)
 	channel, err := call.Do()
 	util.HandleError(err, "")

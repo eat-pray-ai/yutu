@@ -18,29 +18,40 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-func GetClient(ctx context.Context, scope string) *http.Client {
-	b, err := os.ReadFile("client_secret.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret: %v", err)
-	}
-
-	config, err := google.ConfigFromJSON(b, scope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret to config: %v", err)
-	}
-
+func GetClient(ctx context.Context, credential string, scope string) *http.Client {
+	config := getConfig(credential, scope)
 	cacheFile, err := tokenCacheFile()
 	if err != nil {
 		log.Fatalf("Unable to get path to cached credential. %v", err)
 	}
 
 	token, err := tokenFromFile(cacheFile)
-	if err != nil {
-		authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-		fmt.Println("Getting token from web...")
-		token = getTokenFromWeb(config, authURL)
-		saveToken(cacheFile, token)
+	if err != nil || !token.Valid() {
+		return NewClient(ctx, config, cacheFile)
 	}
+
+	return config.Client(ctx, token)
+}
+
+func getConfig(credential string, scope string) *oauth2.Config {
+	cred, err := os.ReadFile(credential)
+	if err != nil {
+		log.Fatalf("Unable to read client secret: %v", err)
+	}
+
+	config, err := google.ConfigFromJSON(cred, scope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret to config: %v", err)
+	}
+
+	return config
+}
+
+func NewClient(ctx context.Context, config *oauth2.Config, cacheFile string) *http.Client {
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	fmt.Println("Getting token from web...")
+	token := getTokenFromWeb(config, authURL)
+	saveToken(cacheFile, token)
 
 	return config.Client(ctx, token)
 }
