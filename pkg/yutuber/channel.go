@@ -1,4 +1,4 @@
-package you2be
+package yutuber
 
 import (
 	"fmt"

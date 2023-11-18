@@ -1,4 +1,4 @@
-package you2be
+package yutuber
 
 import (
 	"fmt"
@@ -10,18 +10,14 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func VideoInsert(service *youtube.Service, filename string, title string, description string, category string, keywords string, privacy string) {
+func VideoInsert(service *youtube.Service, filename string, snippet *youtube.VideoSnippet, keywords string, privacy string) {
 	if filename == "" {
 		log.Fatal("You must provide a filename of a video file to upload")
 	}
 
 	upload := &youtube.Video{
-		Snippet: &youtube.VideoSnippet{
-			Title:       title,
-			Description: description,
-			CategoryId:  category,
-		},
-		Status: &youtube.VideoStatus{PrivacyStatus: privacy},
+		Snippet: snippet,
+		Status:  &youtube.VideoStatus{PrivacyStatus: privacy},
 	}
 
 	if strings.Trim(keywords, "") != "" {
