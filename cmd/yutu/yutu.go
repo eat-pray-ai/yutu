@@ -6,18 +6,18 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
-
-	"github.com/eat-pray-ai/yutu/pkg/util"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
+
+	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/util"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber"
 )
 
 var (
 	authCmd    = flag.NewFlagSet("auth", flag.ExitOnError)
 	credential = authCmd.String("file", "client_secret.json", "credential filename")
-	scope      = authCmd.String("scope", "youtube.readonly", "scope to authenticate")
+	scope      = authCmd.String("scope", youtube.YoutubeReadonlyScope, "scope to authenticate")
 
 	channelCmd = flag.NewFlagSet("channel", flag.ExitOnError)
 	cId        = channelCmd.String("id", "", "channel ID")
@@ -69,7 +69,7 @@ Commands:
 		auth.GetClient(ctx, *credential, *scope)
 	case "channel":
 		channelCmd.Parse(os.Args[2:])
-		client := auth.GetClient(ctx, "", youtube.YoutubeReadonlyScope)
+		client := auth.GetClient(ctx, "client_secret.json", youtube.YoutubeReadonlyScope)
 		service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 		util.HandleError(err, "Error creating YouTube client")
 
@@ -79,7 +79,7 @@ Commands:
 		}
 	case "video":
 		videoCmd.Parse(os.Args[2:])
-		client := auth.GetClient(ctx, "", youtube.YoutubeUploadScope)
+		client := auth.GetClient(ctx, "client_secret.json", youtube.YoutubeUploadScope)
 		service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 		util.HandleError(err, "Error creating YouTube client")
 

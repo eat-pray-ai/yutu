@@ -6,8 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eat-pray-ai/yutu/pkg/util"
 	"google.golang.org/api/youtube/v3"
+
+	"github.com/eat-pray-ai/yutu/pkg/util"
 )
 
 func VideoInsert(service *youtube.Service, filename string, snippet *youtube.VideoSnippet, keywords string, privacy string) {

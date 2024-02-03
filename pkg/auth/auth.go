@@ -36,7 +36,7 @@ func GetClient(ctx context.Context, credential string, scope string) *http.Clien
 func getConfig(credential string, scope string) *oauth2.Config {
 	cred, err := os.ReadFile(credential)
 	if err != nil {
-		log.Fatalf("Unable to read client secret: %v", err)
+		log.Fatalf("Unable to read client secret %s: %v", credential, err)
 	}
 
 	config, err := google.ConfigFromJSON(cred, scope)
@@ -81,7 +81,7 @@ func startWebServer(redirectURL string) (codeCh chan string, err error) {
 
 func openURL(url string) error {
 	var err error
-	switch os := runtime.GOOS; os {
+	switch runtime.GOOS {
 	case "windows":
 		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 	case "linux":
