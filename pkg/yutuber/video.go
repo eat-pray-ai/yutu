@@ -11,29 +11,42 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/util"
 )
 
-func VideoInsert(service *youtube.Service, filename string, snippet *youtube.VideoSnippet, keywords string, privacy string) {
-	if filename == "" {
-		log.Fatal("You must provide a filename of a video file to upload")
+type Video struct {
+	Path     string
+	Title    string
+	Desc     string
+	Category string
+	Keywords string
+	Privacy  string
+}
+
+type VideoService interface {
+	Insert(*youtube.Service)
+}
+
+func (v *Video) Insert(service *youtube.Service) {
+	video, err := os.Open(v.Path)
+	if err != nil {
+		log.Fatalf("Error opening %v: %v", v.Path, err)
 	}
+	defer video.Close()
 
 	upload := &youtube.Video{
-		Snippet: snippet,
-		Status:  &youtube.VideoStatus{PrivacyStatus: privacy},
+		Snippet: &youtube.VideoSnippet{
+			Title:       v.Title,
+			Description: v.Desc,
+			CategoryId:  v.Category,
+		},
+		Status: &youtube.VideoStatus{PrivacyStatus: v.Privacy},
 	}
 
-	if strings.Trim(keywords, "") != "" {
-		upload.Snippet.Tags = strings.Split(keywords, ",")
+	if strings.Trim(v.Keywords, "") != "" {
+		upload.Snippet.Tags = strings.Split(v.Keywords, ",")
 	}
 
 	call := service.Videos.Insert([]string{"snippet,status"}, upload)
 
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("Error opening %v: %v", filename, err)
-	}
-	defer file.Close()
-
-	response, err := call.Media(file).Do()
+	response, err := call.Media(video).Do()
 	util.HandleError(err, "")
 	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
 }

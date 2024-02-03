@@ -2,6 +2,7 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 client_secret**.json
+*.mp4
 # Binaries for programs and plugins
 *.exe
 *.exe~

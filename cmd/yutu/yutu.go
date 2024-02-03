@@ -24,7 +24,7 @@ var (
 	cList      = channelCmd.Bool("list", false, "list channel")
 
 	videoCmd = flag.NewFlagSet("video", flag.ExitOnError)
-	filename = videoCmd.String("file", "", "video file to upload")
+	path     = videoCmd.String("path", "", "path to video file for uploading")
 	title    = videoCmd.String("title", "", "video title")
 	desc     = videoCmd.String("desc", "", "video description")
 	category = videoCmd.String("category", "", "video category")
@@ -44,7 +44,7 @@ Commands:
     -id <channel id>
     -list
   video:
-    -file <video file to upload>
+    -path <path to video file for uploading>
     -title <video title>
     -desc <video description>
     -category <video category>
@@ -61,7 +61,6 @@ Commands:
 	}
 
 	ctx := context.Background()
-	fmt.Printf("Args: %v\n", os.Args[1:])
 
 	switch os.Args[1] {
 	case "auth":
@@ -83,12 +82,18 @@ Commands:
 		service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 		util.HandleError(err, "Error creating YouTube client")
 
-		snippet := &youtube.VideoSnippet{
-			Title:       *title,
-			Description: *desc,
-			CategoryId:  *category,
+		newVideo := &yutuber.Video{
+			Path:     *path,
+			Title:    *title,
+			Desc:     *desc,
+			Category: *category,
+			Keywords: *keywords,
+			Privacy:  *privacy,
 		}
 
-		yutuber.VideoInsert(service, *filename, snippet, *keywords, *privacy)
+		newVideo.Insert(service)
+	default:
+		flag.Usage()
+		os.Exit(1)
 	}
 }
