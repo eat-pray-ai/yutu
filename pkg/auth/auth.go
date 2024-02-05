@@ -13,23 +13,36 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/option"
+	"google.golang.org/api/youtube/v3"
 )
 
 var credential string = "client_secret.json"
 
-func GetClient(ctx context.Context, scope string) *http.Client {
+func NewAuthService(scope string, ctx context.Context) *youtube.Service {
+	client := getClient(ctx, scope)
+	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		log.Fatalf("Unable to create YouTube service: %v", err)
+	}
+
+	return service
+}
+
+func getClient(ctx context.Context, scope string) *http.Client {
 	config := getConfig(scope)
-	cacheFile, err := tokenCacheFile()
+	cacheFile, err := tokenCacheFile(scope)
 	if err != nil {
 		log.Fatalf("Unable to get path to cached credential. %v", err)
 	}
 
 	token, err := tokenFromFile(cacheFile)
 	if err != nil || !token.Valid() {
-		return NewClient(ctx, config, cacheFile)
+		return newClient(ctx, config, cacheFile)
 	}
 
 	return config.Client(ctx, token)
@@ -49,7 +62,7 @@ func getConfig(scope string) *oauth2.Config {
 	return config
 }
 
-func NewClient(ctx context.Context, config *oauth2.Config, cacheFile string) *http.Client {
+func newClient(ctx context.Context, config *oauth2.Config, cacheFile string) *http.Client {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	fmt.Println("Getting token from web...")
 	token := getTokenFromWeb(config, authURL)
@@ -121,15 +134,17 @@ If nothing happens, open the following URL in your browser manually:
 	return token
 }
 
-func tokenCacheFile() (string, error) {
+func tokenCacheFile(scope string) (string, error) {
 	user, err := user.Current()
 	if err != nil {
 		return "", err
 	}
 
-	tokenCacheDir := filepath.Join(user.HomeDir, ".yutu")
-	os.MkdirAll(tokenCacheDir, 0700)
-	return filepath.Join(tokenCacheDir, url.QueryEscape("token.json")), nil
+	cacheDir := filepath.Join(user.HomeDir, ".yutu")
+	os.MkdirAll(cacheDir, 0700)
+	scopeName := strings.Split(scope, "/")[len(strings.Split(scope, "/"))-1]
+	cacheFile := filepath.Join(cacheDir, url.QueryEscape(scopeName+".json"))
+	return cacheFile, nil
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {
