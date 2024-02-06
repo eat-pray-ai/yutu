@@ -23,7 +23,8 @@ import (
 
 var credential string = "client_secret.json"
 
-func NewAuthService(scope string, ctx context.Context) *youtube.Service {
+func NewY2BService(scope string) *youtube.Service {
+	ctx := context.Background()
 	client := getClient(ctx, scope)
 	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
