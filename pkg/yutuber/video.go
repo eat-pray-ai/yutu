@@ -1,6 +1,7 @@
 package yutuber
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -18,13 +19,31 @@ type Video struct {
 	Category string
 	Keywords string
 	Privacy  string
+	service  *youtube.Service
 }
 
 type VideoService interface {
-	Insert(*youtube.Service)
+	Insert()
 }
 
-func (v *Video) Insert(service *youtube.Service) {
+type VideoOption func(*Video)
+
+func NewVideo(ctx context.Context, opts ...VideoOption) *Video {
+	authSvc := &authService{Scope: youtube.YoutubeUploadScope}
+	service := authSvc.auth(ctx)
+
+	video := &Video{
+		service:  service,
+	}
+
+	for _, opt := range opts {
+		opt(video)
+	}
+
+	return video
+}
+
+func (v *Video) Insert() {
 	video, err := os.Open(v.Path)
 	if err != nil {
 		log.Fatalf("Error opening %v: %v", v.Path, err)
@@ -44,7 +63,7 @@ func (v *Video) Insert(service *youtube.Service) {
 		upload.Snippet.Tags = strings.Split(v.Keywords, ",")
 	}
 
-	call := service.Videos.Insert([]string{"snippet,status"}, upload)
+	call := v.service.Videos.Insert([]string{"snippet,status"}, upload)
 
 	response, err := call.Media(video).Do()
 	util.HandleError(err, "")

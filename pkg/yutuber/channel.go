@@ -8,6 +8,16 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/util"
 )
 
+type Channel struct {
+	Id string
+}
+
+type ChannelService interface {
+	Get(*youtube.Service, string) *youtube.Channel
+	List(*youtube.Channel)
+	Update(*youtube.Service, string, string)
+}
+
 var part = []string{"snippet", "statistics"}
 
 func ChannelsGet(service *youtube.Service, channelId string) *youtube.Channel {
