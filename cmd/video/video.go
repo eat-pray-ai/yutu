@@ -1,9 +1,20 @@
-package cmd
+package video
 
 import (
 	"fmt"
 
+	"github.com/eat-pray-ai/yutu/cmd"
+
 	"github.com/spf13/cobra"
+)
+
+var (
+	path     string
+	title    string
+	desc     string
+	category string
+	keywords string
+	privacy  string
 )
 
 // videoCmd represents the video command
@@ -17,7 +28,7 @@ var videoCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(videoCmd)
+	cmd.RootCmd.AddCommand(videoCmd)
 
 	// Here you will define your flags and configuration settings.
 

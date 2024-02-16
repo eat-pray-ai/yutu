@@ -16,7 +16,7 @@ var channelCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(channelCmd)
+	RootCmd.AddCommand(channelCmd)
 
 	// Here you will define your flags and configuration settings.
 

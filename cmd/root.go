@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "yutu",
 	Short: "A fully functional CLI for YouTube",
 	Long:  `yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.`,
@@ -18,7 +18,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}

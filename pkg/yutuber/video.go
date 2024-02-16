@@ -27,7 +27,7 @@ type VideoService interface {
 
 type VideoOption func(*Video)
 
-func NewVideo(path string, opts ...VideoOption) *Video {
+func NewVideo(opts ...VideoOption) *Video {
 	v := &Video{
 		service: auth.NewY2BService(youtube.YoutubeUploadScope),
 	}
@@ -64,4 +64,40 @@ func (v *Video) Insert() {
 	response, err := call.Media(video).Do()
 	cobra.CheckErr(err)
 	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
+}
+
+func WithPath(path string) VideoOption {
+	return func(v *Video) {
+		v.path = path
+	}
+}
+
+func WithTitle(title string) VideoOption {
+	return func(v *Video) {
+		v.title = title
+	}
+}
+
+func WithDesc(desc string) VideoOption {
+	return func(v *Video) {
+		v.desc = desc
+	}
+}
+
+func WithCategory(category string) VideoOption {
+	return func(v *Video) {
+		v.category = category
+	}
+}
+
+func WithKeywords(keywords string) VideoOption {
+	return func(v *Video) {
+		v.keywords = keywords
+	}
+}
+
+func WithPrivacy(privacy string) VideoOption {
+	return func(v *Video) {
+		v.privacy = privacy
+	}
 }
