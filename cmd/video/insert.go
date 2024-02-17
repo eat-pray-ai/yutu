@@ -12,12 +12,12 @@ var insertCmd = &cobra.Command{
 	Long:  `subcommand for inserting a video, which can be used to upload a video to YouTube.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := yutuber.NewVideo(
-			yutuber.WithPath(path),
-			yutuber.WithTitle(title),
-			yutuber.WithDesc(desc),
-			yutuber.WithCategory(category),
-			yutuber.WithKeywords(keywords),
-			yutuber.WithPrivacy(privacy),
+			yutuber.WithVideoPath(path),
+			yutuber.WithVideoTitle(title),
+			yutuber.WithVideoDesc(desc),
+			yutuber.WithVideoCategory(category),
+			yutuber.WithVideoKeywords(keywords),
+			yutuber.WithVideoPrivacy(privacy),
 		)
 		v.Insert()
 	},

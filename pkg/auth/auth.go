@@ -133,8 +133,9 @@ func openURL(url string) error {
 
 func getCodeFromPrompt(authURL string) string {
 	var code string
-	fmt.Printf("Go to the following link in your browser:\n%v\n", authURL)
-	fmt.Printf("After completing the authorization flow, enter the authorization " +
+	fmt.Printf("It seems that your browser is not open. Go to the following "+
+		"link in your browser:\n%v\n", authURL)
+	fmt.Print("After completing the authorization flow, enter the authorization " +
 		"code on command line. \nIf you end up in an error page after completing " +
 		"the authorization flow, and the url in the address bar is in the form of " +
 		"\n'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'\n" +

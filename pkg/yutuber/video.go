@@ -1,14 +1,19 @@
 package yutuber
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"github.com/spf13/cobra"
 	"google.golang.org/api/youtube/v3"
+)
+
+var (
+	errInsertVideo error = errors.New("failed to insert video")
+	errOpenVideo   error = errors.New("failed to open video")
 )
 
 type Video struct {
@@ -42,7 +47,7 @@ func NewVideo(opts ...VideoOption) *Video {
 func (v *Video) Insert() {
 	video, err := os.Open(v.path)
 	if err != nil {
-		log.Fatalf("Error opening %v: %v", v.path, err)
+		log.Fatalln(errors.Join(errOpenVideo, err), v.path)
 	}
 	defer video.Close()
 
@@ -62,41 +67,43 @@ func (v *Video) Insert() {
 	call := v.service.Videos.Insert([]string{"snippet,status"}, upload)
 
 	response, err := call.Media(video).Do()
-	cobra.CheckErr(err)
+	if err != nil {
+		log.Fatalln(errors.Join(errInsertVideo, err))
+	}
 	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
 }
 
-func WithPath(path string) VideoOption {
+func WithVideoPath(path string) VideoOption {
 	return func(v *Video) {
 		v.path = path
 	}
 }
 
-func WithTitle(title string) VideoOption {
+func WithVideoTitle(title string) VideoOption {
 	return func(v *Video) {
 		v.title = title
 	}
 }
 
-func WithDesc(desc string) VideoOption {
+func WithVideoDesc(desc string) VideoOption {
 	return func(v *Video) {
 		v.desc = desc
 	}
 }
 
-func WithCategory(category string) VideoOption {
+func WithVideoCategory(category string) VideoOption {
 	return func(v *Video) {
 		v.category = category
 	}
 }
 
-func WithKeywords(keywords string) VideoOption {
+func WithVideoKeywords(keywords string) VideoOption {
 	return func(v *Video) {
 		v.keywords = keywords
 	}
 }
 
-func WithPrivacy(privacy string) VideoOption {
+func WithVideoPrivacy(privacy string) VideoOption {
 	return func(v *Video) {
 		v.privacy = privacy
 	}
