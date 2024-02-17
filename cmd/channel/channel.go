@@ -1,9 +1,15 @@
-package cmd
+package channel
 
 import (
 	"fmt"
 
+	"github.com/eat-pray-ai/yutu/cmd"
+
 	"github.com/spf13/cobra"
+)
+
+var (
+	id string
 )
 
 var channelCmd = &cobra.Command{
@@ -16,7 +22,7 @@ var channelCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(channelCmd)
+	cmd.RootCmd.AddCommand(channelCmd)
 
 	// Here you will define your flags and configuration settings.
 
