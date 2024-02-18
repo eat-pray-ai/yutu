@@ -165,6 +165,7 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 		code = getCodeFromPrompt(authURL)
 	}
 
+	fmt.Printf("Authorization code generated: %v\n", code)
 	token, err := config.Exchange(context.TODO(), code)
 	if err != nil {
 		log.Fatalln(errors.Join(errExchange, err))

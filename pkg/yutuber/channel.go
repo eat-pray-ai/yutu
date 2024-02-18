@@ -39,7 +39,14 @@ func NewChannel(opts ...ChannelOption) *Channel {
 
 func (c *Channel) List() {
 	channel := c.get()
-	fmt.Println(channel.MarshalJSON())
+	fmt.Printf("          ID: %s\n", channel.Id)
+	fmt.Printf("       Title: %s\n", channel.Snippet.Title)
+	fmt.Printf(" Description: %s\n", channel.Snippet.Description)
+	fmt.Printf("Published At: %s\n", channel.Snippet.PublishedAt)
+	fmt.Printf("     Country: %s\n\n", channel.Snippet.Country)
+	fmt.Printf("      View Count: %d\n", channel.Statistics.ViewCount)
+	fmt.Printf("Subscriber Count: %d\n", channel.Statistics.SubscriberCount)
+	fmt.Printf("     Video Count: %d\n", channel.Statistics.VideoCount)
 }
 
 func (c *Channel) Update() {

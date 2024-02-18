@@ -9,7 +9,9 @@ import (
 )
 
 var (
-	id string
+	id    string
+	title string
+	desc  string
 )
 
 var channelCmd = &cobra.Command{
