@@ -17,17 +17,24 @@ var (
 )
 
 type Video struct {
-	path     string
-	title    string
-	desc     string
-	category string
-	keywords string
-	privacy  string
-	service  *youtube.Service
+	id         string
+	path       string
+	title      string
+	desc       string
+	tags       []string
+	language   string
+	forKids    bool
+	restricted bool
+	embeddable bool
+	category   string
+	privacy    string
+	channelId  string
+	service    *youtube.Service
 }
 
 type VideoService interface {
 	Insert()
+	validate()
 }
 
 type VideoOption func(*Video)
@@ -41,36 +48,56 @@ func NewVideo(opts ...VideoOption) *Video {
 		opt(v)
 	}
 
+	v.validate()
 	return v
 }
 
 func (v *Video) Insert() {
-	video, err := os.Open(v.path)
+	file, err := os.Open(v.path)
 	if err != nil {
 		log.Fatalln(errors.Join(errOpenVideo, err), v.path)
 	}
-	defer video.Close()
+	defer file.Close()
 
 	upload := &youtube.Video{
-		Snippet: &youtube.VideoSnippet{
-			Title:       v.title,
-			Description: v.desc,
-			CategoryId:  v.category,
+		AgeGating: &youtube.VideoAgeGating{
+			Restricted: v.restricted,
 		},
-		Status: &youtube.VideoStatus{PrivacyStatus: v.privacy},
+		Snippet: &youtube.VideoSnippet{
+			Title:                v.title,
+			Description:          v.desc,
+			Tags:                 v.tags,
+			CategoryId:           v.category,
+			ChannelId:            v.channelId,
+			DefaultLanguage:      v.language,
+			DefaultAudioLanguage: v.language,
+		},
+		Status: &youtube.VideoStatus{
+			Embeddable:    v.embeddable,
+			MadeForKids:   v.forKids,
+			PrivacyStatus: v.privacy,
+		},
 	}
 
-	if strings.Trim(v.keywords, "") != "" {
-		upload.Snippet.Tags = strings.Split(v.keywords, ",")
-	}
+	call := v.service.Videos.Insert([]string{"agegating,snippet,status"}, upload)
 
-	call := v.service.Videos.Insert([]string{"snippet,status"}, upload)
-
-	response, err := call.Media(video).Do()
+	response, err := call.Media(file).Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
 	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
+}
+
+func (v *Video) validate() {
+	if v.forKids && v.restricted {
+		log.Fatalln("Video cannot be both for kids and restricted")
+	}
+}
+
+func WithVideoId(id string) VideoOption {
+	return func(v *Video) {
+		v.id = id
+	}
 }
 
 func WithVideoPath(path string) VideoOption {
@@ -91,20 +118,50 @@ func WithVideoDesc(desc string) VideoOption {
 	}
 }
 
+func WithVideoTags(tags string) VideoOption {
+	return func(v *Video) {
+		v.tags = strings.Split(tags, ",")
+	}
+}
+
+func WithVideoLanguage(language string) VideoOption {
+	return func(v *Video) {
+		v.language = language
+	}
+}
+
+func WithVideoForKids(forKids bool) VideoOption {
+	return func(v *Video) {
+		v.forKids = forKids
+	}
+}
+
+func WithVideoRestricted(restricted bool) VideoOption {
+	return func(v *Video) {
+		v.restricted = restricted
+	}
+}
+
+func WithVideoEmbeddable(embeddable bool) VideoOption {
+	return func(v *Video) {
+		v.embeddable = embeddable
+	}
+}
+
 func WithVideoCategory(category string) VideoOption {
 	return func(v *Video) {
 		v.category = category
 	}
 }
 
-func WithVideoKeywords(keywords string) VideoOption {
-	return func(v *Video) {
-		v.keywords = keywords
-	}
-}
-
 func WithVideoPrivacy(privacy string) VideoOption {
 	return func(v *Video) {
 		v.privacy = privacy
+	}
+}
+
+func WithVideoChannelId(channelId string) VideoOption {
+	return func(v *Video) {
+		v.channelId = channelId
 	}
 }

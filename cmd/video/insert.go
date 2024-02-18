@@ -15,9 +15,14 @@ var insertCmd = &cobra.Command{
 			yutuber.WithVideoPath(path),
 			yutuber.WithVideoTitle(title),
 			yutuber.WithVideoDesc(desc),
+			yutuber.WithVideoTags(tags),
+			yutuber.WithVideoLanguage(language),
+			yutuber.WithVideoForKids(forKids),
+			yutuber.WithVideoRestricted(restricted),
+			yutuber.WithVideoEmbeddable(embeddable),
 			yutuber.WithVideoCategory(category),
-			yutuber.WithVideoKeywords(keywords),
 			yutuber.WithVideoPrivacy(privacy),
+			yutuber.WithVideoChannelId(channelId),
 		)
 		v.Insert()
 	},
@@ -29,7 +34,12 @@ func init() {
 	insertCmd.Flags().StringVarP(&path, "path", "p", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
+	insertCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
+	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the video")
+	insertCmd.Flags().BoolVarP(&forKids, "forKids", "f", false, "Whether the video is for kids")
+	insertCmd.Flags().BoolVarP(&restricted, "restricted", "e", false, "Whether the video is restricted")
+	insertCmd.Flags().BoolVarP(&embeddable, "embeddable", "b", true, "Whether the video is embeddable")
 	insertCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
-	insertCmd.Flags().StringVarP(&keywords, "keywords", "k", "", "Comma separated keywords")
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "r", "", "Privacy status of the video")
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "i", "", "Channel ID of the video")
 }

@@ -9,12 +9,19 @@ import (
 )
 
 var (
+	id       string
 	path     string
 	title    string
 	desc     string
-	category string
-	keywords string
-	privacy  string
+	tags     string
+	language string
+	// thumbnails string //TODO
+	forKids    bool
+	restricted bool
+	embeddable bool
+	category   string
+	privacy    string
+	channelId  string
 )
 
 // videoCmd represents the video command
