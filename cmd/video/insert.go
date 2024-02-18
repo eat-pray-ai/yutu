@@ -8,8 +8,8 @@ import (
 
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "subcommand for inserting a video",
-	Long:  `subcommand for inserting a video, which can be used to upload a video to YouTube.`,
+	Short: "upload a video to YouTube",
+	Long:  `upload a video to YouTube, with the specified title, description, tags, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := yutuber.NewVideo(
 			yutuber.WithVideoPath(path),

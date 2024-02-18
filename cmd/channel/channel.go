@@ -16,8 +16,8 @@ var (
 
 var channelCmd = &cobra.Command{
 	Use:   "channel",
-	Short: "subcommand for channel manipulation",
-	Long:  `subcommand for channel manipulation, which can be used to manipulate YouTube channels, such as showing channel details, updating channel details, etc.`,
+	Short: "manipulate YouTube channels",
+	Long:  `manipulate YouTube channels, such as list, update, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("channel called")
 	},

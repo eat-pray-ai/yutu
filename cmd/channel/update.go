@@ -7,8 +7,8 @@ import (
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "subcommand for updating channels",
-	Long:  `subcommand for updating channels, which can be used to update channel's info.`,
+	Short: "update channel's info",
+	Long:  `update channel's info, such as title, description, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := yutuber.NewChannel(
 			yutuber.WithChannelID(id),

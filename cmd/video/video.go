@@ -27,8 +27,8 @@ var (
 // videoCmd represents the video command
 var videoCmd = &cobra.Command{
 	Use:   "video",
-	Short: "subcommand for video manipulation",
-	Long:  `subcommand for video manipulation, which can be used to manipulate YouTube videos, such as uploading, updating, deleting, etc.`,
+	Short: "manipulate YouTube videos",
+	Long:  `manipulate YouTube videos, such as insert, update, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("video called")
 	},

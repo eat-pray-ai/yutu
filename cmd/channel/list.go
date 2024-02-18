@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "subcommand for listing channels",
-	Long:  `subcommand for listing channels, which can be used to show channel's info.`,
+	Short: "list channel's info",
+	Long:  `list channel's info, such as title, description, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := yutuber.NewChannel(
 			yutuber.WithChannelID(id),
