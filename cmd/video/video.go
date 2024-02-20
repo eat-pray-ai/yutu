@@ -16,12 +16,12 @@ var (
 	tags     string
 	language string
 	// thumbnails string //TODO
+	channelId  string
+	category   string
+	privacy    string
 	forKids    bool
 	restricted bool
 	embeddable bool
-	category   string
-	privacy    string
-	channelId  string
 )
 
 // videoCmd represents the video command

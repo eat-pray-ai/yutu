@@ -21,6 +21,7 @@ var part = []string{"snippet", "statistics"}
 type ChannelService interface {
 	List()
 	Update()
+	get() *youtube.Channel
 }
 
 type ChannelOption func(*Channel)
