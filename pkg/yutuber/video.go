@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	errListVideo   error = errors.New("failed to list video")
+	errGetVideo    error = errors.New("failed to get video")
 	errInsertVideo error = errors.New("failed to insert video")
 	errUpdateVideo error = errors.New("failed to update video")
 	errOpenVideo   error = errors.New("failed to open video")
@@ -31,7 +31,6 @@ type Video struct {
 	category   string
 	privacy    string
 	channelId  string
-	service    *youtube.Service
 }
 
 type VideoService interface {
@@ -44,10 +43,7 @@ type VideoService interface {
 type VideoOption func(*Video)
 
 func NewVideo(opts ...VideoOption) *Video {
-	v := &Video{
-		service: auth.NewY2BService(youtube.YoutubeUploadScope),
-	}
-
+	v := &Video{}
 	for _, opt := range opts {
 		opt(v)
 	}
@@ -57,11 +53,12 @@ func NewVideo(opts ...VideoOption) *Video {
 }
 
 func (v *Video) get() *youtube.Video {
-	call := v.service.Videos.List([]string{"id", "agegating", "snippet", "status"})
+	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
+	call := service.Videos.List([]string{"id", "snippet", "status", "statistics"})
 	call = call.Id(v.id)
 	response, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errListVideo, err))
+		log.Fatalln(errors.Join(errGetVideo, err), v.id)
 	}
 
 	return response.Items[0]
@@ -69,23 +66,21 @@ func (v *Video) get() *youtube.Video {
 
 func (v *Video) List() {
 	video := v.get()
-	fmt.Printf("         ID: %s\n", video.Id)
-	fmt.Printf("      Title: %s\n", video.Snippet.Title)
-	fmt.Printf("Description: %s\n", video.Snippet.Description)
-	fmt.Printf("       Tags: %s\n", strings.Join(video.Snippet.Tags, ","))
-	fmt.Printf("   language: %s\n", video.Snippet.DefaultLanguage)
-	fmt.Printf(" Channel ID: %s\n", video.Snippet.ChannelId)
-	fmt.Printf("   Category: %s\n", video.Snippet.CategoryId)
+	fmt.Printf("          ID: %s\n", video.Id)
+	fmt.Printf("       Title: %s\n", video.Snippet.Title)
+	fmt.Printf(" Description: %s\n", video.Snippet.Description)
+	fmt.Printf("        Tags: %s\n", strings.Join(video.Snippet.Tags, ","))
+	fmt.Printf("    language: %s\n", video.Snippet.DefaultLanguage)
+	fmt.Printf("  Channel ID: %s\n", video.Snippet.ChannelId)
+	fmt.Printf("    Category: %s\n", video.Snippet.CategoryId)
+	fmt.Printf("Published At: %s\n", video.Snippet.PublishedAt)
 	fmt.Printf("    Privacy: %s\n", video.Status.PrivacyStatus)
 	fmt.Printf("   For Kids: %t\n", video.Status.MadeForKids)
-	fmt.Printf(" Restricted: %t\n", video.AgeGating.Restricted)
 	fmt.Printf(" Embeddable: %t\n\n", video.Status.Embeddable)
-
 	fmt.Printf(" Comment Count: %d\n", video.Statistics.CommentCount)
 	fmt.Printf(" Dislike Count: %d\n", video.Statistics.DislikeCount)
 	fmt.Printf("    Like Count: %d\n", video.Statistics.LikeCount)
 	fmt.Printf("Favorite Count: %d\n", video.Statistics.FavoriteCount)
-	fmt.Printf("Published At: %s\n", video.Snippet.PublishedAt)
 }
 
 func (v *Video) Insert() {
@@ -115,7 +110,8 @@ func (v *Video) Insert() {
 		},
 	}
 
-	call := v.service.Videos.Insert([]string{"agegating,snippet,status"}, upload)
+	service := auth.NewY2BService(youtube.YoutubeUploadScope)
+	call := service.Videos.Insert([]string{"agegating,snippet,status"}, upload)
 
 	video, err := call.Media(file).Do()
 	if err != nil {

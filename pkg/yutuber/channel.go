@@ -1,6 +1,7 @@
 package yutuber
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -9,11 +10,15 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+var (
+	errGetChannel    error = errors.New("failed to get channel")
+	errUpdateChannel error = errors.New("failed to update channel")
+)
+
 type Channel struct {
-	id      string
-	title   string
-	desc    string
-	service *youtube.Service
+	id    string
+	title string
+	desc  string
 }
 
 var part = []string{"snippet", "statistics"}
@@ -27,9 +32,7 @@ type ChannelService interface {
 type ChannelOption func(*Channel)
 
 func NewChannel(opts ...ChannelOption) *Channel {
-	c := &Channel{
-		service: auth.NewY2BService(youtube.YoutubeScope),
-	}
+	c := &Channel{}
 
 	for _, opt := range opts {
 		opt(c)
@@ -60,10 +63,11 @@ func (c *Channel) Update() {
 		channel.Snippet.Description = c.desc
 	}
 
-	call := c.service.Channels.Update(part, channel)
+	service := auth.NewY2BService(youtube.YoutubeScope)
+	call := service.Channels.Update(part, channel)
 	_, err := call.Do()
 	if err != nil {
-		log.Fatalf("Failed to update channel: %v", err)
+		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
 	}
 
 	fmt.Println("Channel updated:")
@@ -71,11 +75,12 @@ func (c *Channel) Update() {
 }
 
 func (c *Channel) get() *youtube.Channel {
-	call := c.service.Channels.List(part)
+	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
+	call := service.Channels.List(part)
 	call = call.Id(c.id)
 	resp, err := call.Do()
 	if err != nil {
-		log.Fatalf("Failed to get channel: %v", err)
+		log.Fatalln(errors.Join(errGetChannel, err), c.id)
 	}
 
 	return resp.Items[0]
