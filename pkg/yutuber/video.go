@@ -36,6 +36,7 @@ type Video struct {
 type VideoService interface {
 	List()
 	Insert()
+	Update()
 	get() *youtube.Video
 	validate()
 }
@@ -55,7 +56,9 @@ func NewVideo(opts ...VideoOption) *Video {
 func (v *Video) get() *youtube.Video {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Videos.List([]string{"id", "snippet", "status", "statistics"})
-	call = call.Id(v.id)
+	if v.id == "" {
+		call = call.Id(v.id)
+	}
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideo, err), v.id)
@@ -118,6 +121,39 @@ func (v *Video) Insert() {
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
 	fmt.Printf("Upload successful! Video ID: %v\n", video.Id)
+}
+
+func (v *Video) Update() {
+	video := v.get()
+	if v.title != "" {
+		video.Snippet.Title = v.title
+	}
+	if v.desc != "" {
+		video.Snippet.Description = v.desc
+	}
+	if v.tags != nil {
+		video.Snippet.Tags = v.tags
+	}
+	if v.language != "" {
+		video.Snippet.DefaultLanguage = v.language
+		video.Snippet.DefaultAudioLanguage = v.language
+	}
+	if v.category != "" {
+		video.Snippet.CategoryId = v.category
+	}
+	if v.privacy != "" {
+		video.Status.PrivacyStatus = v.privacy
+	}
+	video.Status.Embeddable = v.embeddable
+
+	service := auth.NewY2BService(youtube.YoutubeScope)
+	call := service.Videos.Update([]string{"snippet,status"}, video)
+	_, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errUpdateVideo, err), v.id)
+	}
+	fmt.Println("Video updated:")
+	v.List()
 }
 
 func (v *Video) validate() {

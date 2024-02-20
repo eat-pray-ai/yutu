@@ -42,19 +42,21 @@ func NewChannel(opts ...ChannelOption) *Channel {
 }
 
 func (c *Channel) List() {
-	channel := c.get()
-	fmt.Printf("          ID: %s\n", channel.Id)
-	fmt.Printf("       Title: %s\n", channel.Snippet.Title)
-	fmt.Printf(" Description: %s\n", channel.Snippet.Description)
-	fmt.Printf("Published At: %s\n", channel.Snippet.PublishedAt)
-	fmt.Printf("     Country: %s\n\n", channel.Snippet.Country)
-	fmt.Printf("      View Count: %d\n", channel.Statistics.ViewCount)
-	fmt.Printf("Subscriber Count: %d\n", channel.Statistics.SubscriberCount)
-	fmt.Printf("     Video Count: %d\n", channel.Statistics.VideoCount)
+	channels := c.get()
+	for _, channel := range channels {
+		fmt.Printf("          ID: %s\n", channel.Id)
+		fmt.Printf("       Title: %s\n", channel.Snippet.Title)
+		fmt.Printf(" Description: %s\n", channel.Snippet.Description)
+		fmt.Printf("Published At: %s\n", channel.Snippet.PublishedAt)
+		fmt.Printf("     Country: %s\n\n", channel.Snippet.Country)
+		fmt.Printf("      View Count: %d\n", channel.Statistics.ViewCount)
+		fmt.Printf("Subscriber Count: %d\n", channel.Statistics.SubscriberCount)
+		fmt.Printf("     Video Count: %d\n\n", channel.Statistics.VideoCount)
+	}
 }
 
 func (c *Channel) Update() {
-	channel := c.get()
+	channel := c.get()[0]
 	// TODO: is there a better way to check and update?
 	if c.title != "" {
 		channel.Snippet.Title = c.title
@@ -69,21 +71,24 @@ func (c *Channel) Update() {
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
 	}
-
 	fmt.Println("Channel updated:")
 	c.List()
 }
 
-func (c *Channel) get() *youtube.Channel {
+func (c *Channel) get() []*youtube.Channel {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Channels.List(part)
-	call = call.Id(c.id)
+	if c.id != "" {
+		call = call.Id(c.id)
+	} else {
+		call = call.Mine(true)
+	}
 	resp, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetChannel, err), c.id)
 	}
 
-	return resp.Items[0]
+	return resp.Items
 }
 
 func WithChannelID(id string) ChannelOption {

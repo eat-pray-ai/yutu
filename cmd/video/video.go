@@ -10,13 +10,13 @@ import (
 
 var (
 	id       string
-	path     string
+	file     string
 	title    string
 	desc     string
 	tags     string
 	language string
 	// thumbnails string //TODO
-	channelId  string
+	channel    string
 	category   string
 	privacy    string
 	forKids    bool
