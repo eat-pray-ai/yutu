@@ -12,12 +12,12 @@ var insertCmd = &cobra.Command{
 	Long:  `upload a video to YouTube, with the specified title, description, tags, etc.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := yutuber.NewVideo(
-			yutuber.WithVideoPath(path),
+			yutuber.WithVideoPath(file),
 			yutuber.WithVideoTitle(title),
 			yutuber.WithVideoDesc(desc),
 			yutuber.WithVideoTags(tags),
 			yutuber.WithVideoLanguage(language),
-			yutuber.WithVideoChannelId(channelId),
+			yutuber.WithVideoChannelId(channel),
 			yutuber.WithVideoCategory(category),
 			yutuber.WithVideoPrivacy(privacy),
 			yutuber.WithVideoForKids(forKids),
@@ -31,15 +31,20 @@ var insertCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&path, "path", "p", "", "Path to the video file")
+	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
 	insertCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
-	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the video")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "i", "", "Channel ID of the video")
+	insertCmd.Flags().StringVar(&language, "language", "", "Language of the video")
+	insertCmd.Flags().StringVar(&channel, "channel", "", "Channel ID of the video")
 	insertCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "r", "", "Privacy status of the video")
-	insertCmd.Flags().BoolVarP(&forKids, "forKids", "f", false, "Whether the video is for kids")
-	insertCmd.Flags().BoolVarP(&restricted, "restricted", "e", false, "Whether the video is restricted")
-	insertCmd.Flags().BoolVarP(&embeddable, "embeddable", "b", true, "Whether the video is embeddable")
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
+	insertCmd.Flags().BoolVar(&forKids, "forKids", false, "Whether the video is for kids")
+	insertCmd.Flags().BoolVar(&restricted, "restricted", false, "Whether the video is restricted")
+	insertCmd.Flags().BoolVar(&embeddable, "embeddable", true, "Whether the video is embeddable")
+
+	insertCmd.MarkFlagRequired("file")
+	insertCmd.MarkFlagRequired("title")
+	insertCmd.MarkFlagRequired("category")
+	insertCmd.MarkFlagRequired("privacy")
 }

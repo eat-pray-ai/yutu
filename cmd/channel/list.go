@@ -21,4 +21,5 @@ func init() {
 	channelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the channel")
+	listCmd.MarkFlagRequired("id")
 }

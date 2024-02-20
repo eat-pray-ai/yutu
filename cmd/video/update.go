@@ -31,8 +31,10 @@ func init() {
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	updateCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
 	updateCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
-	updateCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the video")
+	updateCmd.Flags().StringVar(&language, "language", "", "Language of the video")
 	updateCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
-	updateCmd.Flags().StringVarP(&privacy, "privacy", "v", "", "Privacy status of the video")
-	updateCmd.Flags().BoolVarP(&embeddable, "embeddable", "b", true, "Whether the video is embeddable")
+	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
+	updateCmd.Flags().BoolVar(&embeddable, "embeddable", true, "Whether the video is embeddable")
+
+	updateCmd.MarkFlagRequired("id")
 }

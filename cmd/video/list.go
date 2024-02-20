@@ -22,4 +22,5 @@ func init() {
 	videoCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
+	listCmd.MarkFlagRequired("id")
 }
