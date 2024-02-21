@@ -56,7 +56,7 @@ func NewVideo(opts ...VideoOption) *Video {
 	return v
 }
 
-func (v *Video) get(parts []string) *youtube.Video {
+func (v *Video) get(parts []string) []*youtube.Video {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Videos.List(parts)
 	if v.id != "" {
@@ -67,26 +67,28 @@ func (v *Video) get(parts []string) *youtube.Video {
 		log.Fatalln(errors.Join(errGetVideo, err), v.id)
 	}
 
-	return response.Items[0]
+	return response.Items
 }
 
 func (v *Video) List() {
-	video := v.get([]string{"id", "snippet", "status", "statistics"})
-	fmt.Printf("          ID: %s\n", video.Id)
-	fmt.Printf("       Title: %s\n", video.Snippet.Title)
-	fmt.Printf(" Description: %s\n", video.Snippet.Description)
-	fmt.Printf("        Tags: %s\n", strings.Join(video.Snippet.Tags, ","))
-	fmt.Printf("    language: %s\n", video.Snippet.DefaultLanguage)
-	fmt.Printf("  Channel ID: %s\n", video.Snippet.ChannelId)
-	fmt.Printf("    Category: %s\n", video.Snippet.CategoryId)
-	fmt.Printf("Published At: %s\n", video.Snippet.PublishedAt)
-	fmt.Printf("    Privacy: %s\n", video.Status.PrivacyStatus)
-	fmt.Printf("   For Kids: %t\n", video.Status.MadeForKids)
-	fmt.Printf(" Embeddable: %t\n\n", video.Status.Embeddable)
-	fmt.Printf(" Comment Count: %d\n", video.Statistics.CommentCount)
-	fmt.Printf(" Dislike Count: %d\n", video.Statistics.DislikeCount)
-	fmt.Printf("    Like Count: %d\n", video.Statistics.LikeCount)
-	fmt.Printf("Favorite Count: %d\n", video.Statistics.FavoriteCount)
+	videos := v.get([]string{"id", "snippet", "status", "statistics"})
+	for _, video := range videos {
+		fmt.Printf("          ID: %s\n", video.Id)
+		fmt.Printf("       Title: %s\n", video.Snippet.Title)
+		fmt.Printf(" Description: %s\n", video.Snippet.Description)
+		fmt.Printf("        Tags: %s\n", strings.Join(video.Snippet.Tags, ","))
+		fmt.Printf("    language: %s\n", video.Snippet.DefaultLanguage)
+		fmt.Printf("  Channel ID: %s\n", video.Snippet.ChannelId)
+		fmt.Printf("    Category: %s\n", video.Snippet.CategoryId)
+		fmt.Printf("Published At: %s\n", video.Snippet.PublishedAt)
+		fmt.Printf("    Privacy: %s\n", video.Status.PrivacyStatus)
+		fmt.Printf("   For Kids: %t\n", video.Status.MadeForKids)
+		fmt.Printf(" Embeddable: %t\n\n", video.Status.Embeddable)
+		fmt.Printf(" Comment Count: %d\n", video.Statistics.CommentCount)
+		fmt.Printf(" Dislike Count: %d\n", video.Statistics.DislikeCount)
+		fmt.Printf("    Like Count: %d\n", video.Statistics.LikeCount)
+		fmt.Printf("Favorite Count: %d\n", video.Statistics.FavoriteCount)
+	}
 }
 
 func (v *Video) Insert() {
@@ -132,7 +134,7 @@ func (v *Video) Insert() {
 }
 
 func (v *Video) Update() {
-	video := v.get([]string{"id", "snippet", "status"})
+	video := v.get([]string{"id", "snippet", "status"})[0]
 	if v.title != "" {
 		video.Snippet.Title = v.title
 	}
