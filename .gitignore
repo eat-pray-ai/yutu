@@ -3,6 +3,7 @@
 #
 client_secret**.json
 *.mp4
+*.jpg
 # Binaries for programs and plugins
 *.exe
 *.exe~

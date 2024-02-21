@@ -39,7 +39,7 @@ type VideoService interface {
 	List()
 	Insert()
 	Update()
-	get() *youtube.Video
+	get([]string) *youtube.Video
 	setThumbnail()
 	validate()
 }
@@ -56,10 +56,10 @@ func NewVideo(opts ...VideoOption) *Video {
 	return v
 }
 
-func (v *Video) get() *youtube.Video {
+func (v *Video) get(parts []string) *youtube.Video {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
-	call := service.Videos.List([]string{"id", "snippet", "status", "statistics"})
-	if v.id == "" {
+	call := service.Videos.List(parts)
+	if v.id != "" {
 		call = call.Id(v.id)
 	}
 	response, err := call.Do()
@@ -71,7 +71,7 @@ func (v *Video) get() *youtube.Video {
 }
 
 func (v *Video) List() {
-	video := v.get()
+	video := v.get([]string{"id", "snippet", "status", "statistics"})
 	fmt.Printf("          ID: %s\n", video.Id)
 	fmt.Printf("       Title: %s\n", video.Snippet.Title)
 	fmt.Printf(" Description: %s\n", video.Snippet.Description)
@@ -132,7 +132,7 @@ func (v *Video) Insert() {
 }
 
 func (v *Video) Update() {
-	video := v.get()
+	video := v.get([]string{"id", "snippet", "status"})
 	if v.title != "" {
 		video.Snippet.Title = v.title
 	}
