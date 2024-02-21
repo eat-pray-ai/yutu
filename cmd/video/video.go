@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	id       string
-	file     string
-	title    string
-	desc     string
-	tags     string
-	language string
-	// thumbnails string //TODO
+	id         string
+	file       string
+	title      string
+	desc       string
+	tags       string
+	language   string
+	thumbnail  string
 	channel    string
 	category   string
 	privacy    string

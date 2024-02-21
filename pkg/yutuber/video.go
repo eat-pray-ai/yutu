@@ -12,10 +12,11 @@ import (
 )
 
 var (
-	errGetVideo    error = errors.New("failed to get video")
-	errInsertVideo error = errors.New("failed to insert video")
-	errUpdateVideo error = errors.New("failed to update video")
-	errOpenVideo   error = errors.New("failed to open video")
+	errGetVideo     error = errors.New("failed to get video")
+	errInsertVideo  error = errors.New("failed to insert video")
+	errUpdateVideo  error = errors.New("failed to update video")
+	errOpenFile     error = errors.New("failed to open file")
+	errSetThumbnail error = errors.New("failed to set thumbnail")
 )
 
 type Video struct {
@@ -25,6 +26,7 @@ type Video struct {
 	desc       string
 	tags       []string
 	language   string
+	thumbnail  string
 	forKids    bool
 	restricted bool
 	embeddable bool
@@ -38,6 +40,7 @@ type VideoService interface {
 	Insert()
 	Update()
 	get() *youtube.Video
+	setThumbnail()
 	validate()
 }
 
@@ -89,7 +92,7 @@ func (v *Video) List() {
 func (v *Video) Insert() {
 	file, err := os.Open(v.path)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenVideo, err), v.path)
+		log.Fatalln(errors.Join(errOpenFile, err), v.path)
 	}
 	defer file.Close()
 
@@ -120,6 +123,11 @@ func (v *Video) Insert() {
 	if err != nil {
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
+
+	if v.thumbnail != "" {
+		v.setThumbnail(v.thumbnail, service)
+	}
+
 	fmt.Printf("Upload successful! Video ID: %v\n", video.Id)
 }
 
@@ -152,8 +160,24 @@ func (v *Video) Update() {
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdateVideo, err), v.id)
 	}
+
+	if v.thumbnail != "" {
+		v.setThumbnail(v.thumbnail, service)
+	}
 	fmt.Println("Video updated:")
 	v.List()
+}
+
+func (v *Video) setThumbnail(thumbnail string, service *youtube.Service) {
+	file, err := os.Open(thumbnail)
+	if err != nil {
+		log.Fatalln(errors.Join(errOpenFile, err), thumbnail)
+	}
+	call := service.Thumbnails.Set(v.id).Media(file)
+	_, err = call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errSetThumbnail, err))
+	}
 }
 
 func (v *Video) validate() {
@@ -195,6 +219,12 @@ func WithVideoTags(tags string) VideoOption {
 func WithVideoLanguage(language string) VideoOption {
 	return func(v *Video) {
 		v.language = language
+	}
+}
+
+func WithVideoThumbnail(thumbnail string) VideoOption {
+	return func(v *Video) {
+		v.thumbnail = thumbnail
 	}
 }
 

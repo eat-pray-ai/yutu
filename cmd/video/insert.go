@@ -17,6 +17,7 @@ var insertCmd = &cobra.Command{
 			yutuber.WithVideoDesc(desc),
 			yutuber.WithVideoTags(tags),
 			yutuber.WithVideoLanguage(language),
+			yutuber.WithVideoThumbnail(thumbnail),
 			yutuber.WithVideoChannelId(channel),
 			yutuber.WithVideoCategory(category),
 			yutuber.WithVideoPrivacy(privacy),
@@ -36,6 +37,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
 	insertCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
 	insertCmd.Flags().StringVar(&language, "language", "", "Language of the video")
+	insertCmd.Flags().StringVar(&thumbnail, "thumbnail", "", "Path to the thumbnail")
 	insertCmd.Flags().StringVar(&channel, "channel", "", "Channel ID of the video")
 	insertCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
