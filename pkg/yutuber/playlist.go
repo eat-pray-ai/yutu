@@ -1,6 +1,7 @@
 package yutuber
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -39,17 +40,26 @@ func NewPlaylist(opts ...PlaylistOption) *Playlist {
 func (p *Playlist) List() {
 	playlists := p.get([]string{"snippet"})
 	for _, playlist := range playlists {
-		log.Printf("          ID: %s\n", playlist.Id)
-		log.Printf("       Title: %s\n", playlist.Snippet.Title)
-		log.Printf(" Description: %s\n", playlist.Snippet.Description)
-		log.Printf("Published At: %s\n", playlist.Snippet.PublishedAt)
-		log.Printf("     Channel: %s\n\n", playlist.Snippet.ChannelId)
+		fmt.Printf("          ID: %s\n", playlist.Id)
+		fmt.Printf("       Title: %s\n", playlist.Snippet.Title)
+		fmt.Printf(" Description: %s\n", playlist.Snippet.Description)
+		fmt.Printf("Published At: %s\n", playlist.Snippet.PublishedAt)
+		fmt.Printf("     Channel: %s\n\n", playlist.Snippet.ChannelId)
 	}
 }
 
 func (p *Playlist) get(parts []string) []*youtube.Playlist {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
-	call := service.Playlists.List(parts).Id(p.id)
+	call := service.Playlists.List(parts)
+	switch {
+	case p.id != "":
+		call = call.Id(p.id)
+	case p.channelId != "":
+		call = call.ChannelId(p.channelId)
+	default:
+		call = call.Mine(true)
+	}
+
 	res, err := call.Do()
 	if err != nil {
 		log.Fatalf("Error making API call to get playlist: %v", err)
