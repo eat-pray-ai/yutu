@@ -9,7 +9,7 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list video's info",
-	Long:  `list video's info, such as title, description, etc.`,
+	Long:  "list video's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := yutuber.NewVideo(
 			yutuber.WithVideoId(id),
