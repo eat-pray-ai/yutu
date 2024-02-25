@@ -12,6 +12,7 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		c := yutuber.NewChannel(
 			yutuber.WithChannelID(id),
+			yutuber.WithChannelUser(user),
 		)
 		c.List()
 	},
@@ -21,5 +22,7 @@ func init() {
 	channelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the channel")
-	listCmd.MarkFlagRequired("id")
+	listCmd.Flags().StringVarP(
+		&user, "user", "u", "", "User that owns the channel",
+	)
 }
