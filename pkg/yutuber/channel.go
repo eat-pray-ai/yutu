@@ -79,11 +79,12 @@ func (c *Channel) Update() {
 func (c *Channel) get() []*youtube.Channel {
 	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Channels.List(part)
-	if c.id != "" {
+	switch {
+	case c.id != "":
 		call = call.Id(c.id)
-	} else if c.user != "" {
+	case c.user != "":
 		call = call.ForUsername(c.user)
-	} else {
+	default:
 		call = call.Mine(true)
 	}
 	resp, err := call.Do()
