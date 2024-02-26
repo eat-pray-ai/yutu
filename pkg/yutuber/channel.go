@@ -11,8 +11,10 @@ import (
 )
 
 var (
-	errGetChannel    error = errors.New("failed to get channel")
-	errUpdateChannel error = errors.New("failed to update channel")
+	service          *youtube.Service = auth.NewY2BService()
+	part             []string         = []string{"snippet", "statistics"}
+	errGetChannel    error            = errors.New("failed to get channel")
+	errUpdateChannel error            = errors.New("failed to update channel")
 )
 
 type Channel struct {
@@ -21,8 +23,6 @@ type Channel struct {
 	desc  string
 	user  string
 }
-
-var part = []string{"snippet", "statistics"}
 
 type ChannelService interface {
 	List()
@@ -66,7 +66,6 @@ func (c *Channel) Update() {
 		channel.Snippet.Description = c.desc
 	}
 
-	service := auth.NewY2BService(youtube.YoutubeScope)
 	call := service.Channels.Update(part, channel)
 	_, err := call.Do()
 	if err != nil {
@@ -77,7 +76,6 @@ func (c *Channel) Update() {
 }
 
 func (c *Channel) get() []*youtube.Channel {
-	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Channels.List(part)
 	switch {
 	case c.id != "":

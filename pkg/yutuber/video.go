@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -57,7 +56,6 @@ func NewVideo(opts ...VideoOption) *Video {
 }
 
 func (v *Video) get(parts []string) []*youtube.Video {
-	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Videos.List(parts)
 	if v.id != "" {
 		call = call.Id(v.id)
@@ -118,7 +116,6 @@ func (v *Video) Insert() {
 		},
 	}
 
-	service := auth.NewY2BService(youtube.YoutubeUploadScope)
 	call := service.Videos.Insert([]string{"agegating,snippet,status"}, upload)
 
 	video, err := call.Media(file).Do()
@@ -156,7 +153,6 @@ func (v *Video) Update() {
 	}
 	video.Status.Embeddable = v.embeddable
 
-	service := auth.NewY2BService(youtube.YoutubeScope)
 	call := service.Videos.Update([]string{"snippet,status"}, video)
 	_, err := call.Do()
 	if err != nil {

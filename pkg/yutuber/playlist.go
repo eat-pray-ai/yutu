@@ -6,7 +6,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -68,7 +67,6 @@ func (p *Playlist) Insert() {
 		},
 	}
 
-	service := auth.NewY2BService(youtube.YoutubeScope)
 	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
 	playlist, err := call.Do()
 	if err != nil {
@@ -79,7 +77,6 @@ func (p *Playlist) Insert() {
 }
 
 func (p *Playlist) get(parts []string) []*youtube.Playlist {
-	service := auth.NewY2BService(youtube.YoutubeReadonlyScope)
 	call := service.Playlists.List(parts)
 	switch {
 	case p.id != "":
