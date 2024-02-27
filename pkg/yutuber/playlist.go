@@ -12,6 +12,7 @@ import (
 var (
 	errGetPlaylist    error = errors.New("failed to get playlist")
 	errInsertPlaylist error = errors.New("failed to insert playlist")
+	errUpdatePlaylist error = errors.New("failed to update playlist")
 )
 
 type Playlist struct {
@@ -27,6 +28,7 @@ type Playlist struct {
 type PlaylistService interface {
 	List()
 	Insert()
+	Update()
 	get(parts []string) []*youtube.Playlist
 }
 
@@ -47,6 +49,7 @@ func (p *Playlist) List() {
 	for _, playlist := range playlists {
 		fmt.Printf("          ID: %s\n", playlist.Id)
 		fmt.Printf("       Title: %s\n", playlist.Snippet.Title)
+		fmt.Printf("        Tags: %s\n", strings.Join(playlist.Snippet.Tags, ", "))
 		fmt.Printf(" Description: %s\n", playlist.Snippet.Description)
 		fmt.Printf("Published At: %s\n", playlist.Snippet.PublishedAt)
 		fmt.Printf("     Channel: %s\n\n", playlist.Snippet.ChannelId)
@@ -74,6 +77,34 @@ func (p *Playlist) Insert() {
 	}
 
 	fmt.Printf("Playlist %s inserted\n", playlist.Id)
+}
+
+func (p *Playlist) Update() {
+	playlist := p.get([]string{"id", "snippet", "status"})[0]
+	if p.title != "" {
+		playlist.Snippet.Title = p.title
+	}
+	if p.desc != "" {
+		playlist.Snippet.Description = p.desc
+	}
+	if p.tags != nil {
+		playlist.Snippet.Tags = p.tags
+	}
+	if p.language != "" {
+		playlist.Snippet.DefaultLanguage = p.language
+	}
+	if p.privacy != "" {
+		playlist.Status.PrivacyStatus = p.privacy
+	}
+
+	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
+	_, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.id)
+	}
+
+	fmt.Println("Playlist updated:")
+	p.List()
 }
 
 func (p *Playlist) get(parts []string) []*youtube.Playlist {
