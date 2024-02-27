@@ -9,10 +9,12 @@ import (
 )
 
 var (
-	id    string
-	title string
-	desc  string
-	user  string
+	id     string
+	title  string
+	desc   string
+	user   string
+	output string
+	parts  []string
 )
 
 var channelCmd = &cobra.Command{

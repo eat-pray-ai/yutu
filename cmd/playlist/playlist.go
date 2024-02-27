@@ -9,15 +9,15 @@ import (
 )
 
 var (
-	id           string
-	title        string
-	desc         string
-	tags         string
-	language     string
-	thumbnail    string
-	thumbnailVid string
-	channelId    string
-	privacy      string
+	id       string
+	title    string
+	desc     string
+	tags     string
+	language string
+	channel  string
+	privacy  string
+	output   string
+	parts    []string
 )
 
 var playlistCmd = &cobra.Command{

@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -25,7 +26,7 @@ type Channel struct {
 }
 
 type ChannelService interface {
-	List()
+	List([]string, string)
 	Update()
 	get() *youtube.Channel
 }
@@ -42,17 +43,18 @@ func NewChannel(opts ...ChannelOption) *Channel {
 	return c
 }
 
-func (c *Channel) List() {
+func (c *Channel) List(parts []string, output string) {
 	channels := c.get()
-	for _, channel := range channels {
-		fmt.Printf("          ID: %s\n", channel.Id)
-		fmt.Printf("       Title: %s\n", channel.Snippet.Title)
-		fmt.Printf(" Description: %s\n", channel.Snippet.Description)
-		fmt.Printf("Published At: %s\n", channel.Snippet.PublishedAt)
-		fmt.Printf("     Country: %s\n\n", channel.Snippet.Country)
-		fmt.Printf("      View Count: %d\n", channel.Statistics.ViewCount)
-		fmt.Printf("Subscriber Count: %d\n", channel.Statistics.SubscriberCount)
-		fmt.Printf("     Video Count: %d\n\n", channel.Statistics.VideoCount)
+	switch output {
+	case "json":
+		utils.PrintJSON(channels)
+	case "yaml":
+		utils.PrintYAML(channels)
+	default:
+		fmt.Println("ID\tTitle")
+		for _, channel := range channels {
+			fmt.Printf("%s\t%s\n", channel.Id, channel.Snippet.Title)
+		}
 	}
 }
 
@@ -67,12 +69,12 @@ func (c *Channel) Update() {
 	}
 
 	call := service.Channels.Update(part, channel)
-	_, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
 	}
 	fmt.Println("Channel updated:")
-	c.List()
+	utils.PrintJSON(res)
 }
 
 func (c *Channel) get() []*youtube.Channel {

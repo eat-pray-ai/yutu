@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -35,7 +36,7 @@ type Video struct {
 }
 
 type VideoService interface {
-	List()
+	List([]string, string)
 	Insert()
 	Update()
 	get([]string) *youtube.Video
@@ -68,24 +69,18 @@ func (v *Video) get(parts []string) []*youtube.Video {
 	return response.Items
 }
 
-func (v *Video) List() {
+func (v *Video) List(parts []string, output string) {
 	videos := v.get([]string{"id", "snippet", "status", "statistics"})
-	for _, video := range videos {
-		fmt.Printf("          ID: %s\n", video.Id)
-		fmt.Printf("       Title: %s\n", video.Snippet.Title)
-		fmt.Printf(" Description: %s\n", video.Snippet.Description)
-		fmt.Printf("        Tags: %s\n", strings.Join(video.Snippet.Tags, ","))
-		fmt.Printf("    language: %s\n", video.Snippet.DefaultLanguage)
-		fmt.Printf("  Channel ID: %s\n", video.Snippet.ChannelId)
-		fmt.Printf("    Category: %s\n", video.Snippet.CategoryId)
-		fmt.Printf("Published At: %s\n", video.Snippet.PublishedAt)
-		fmt.Printf("    Privacy: %s\n", video.Status.PrivacyStatus)
-		fmt.Printf("   For Kids: %t\n", video.Status.MadeForKids)
-		fmt.Printf(" Embeddable: %t\n\n", video.Status.Embeddable)
-		fmt.Printf(" Comment Count: %d\n", video.Statistics.CommentCount)
-		fmt.Printf(" Dislike Count: %d\n", video.Statistics.DislikeCount)
-		fmt.Printf("    Like Count: %d\n", video.Statistics.LikeCount)
-		fmt.Printf("Favorite Count: %d\n", video.Statistics.FavoriteCount)
+	switch output {
+	case "json":
+		utils.PrintJSON(videos)
+	case "yaml":
+		utils.PrintYAML(videos)
+	default:
+		fmt.Println("ID\tTitle")
+		for _, video := range videos {
+			fmt.Printf("%s\t%s\n", video.Id, video.Snippet.Title)
+		}
 	}
 }
 
@@ -154,7 +149,7 @@ func (v *Video) Update() {
 	video.Status.Embeddable = v.embeddable
 
 	call := service.Videos.Update([]string{"snippet,status"}, video)
-	_, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdateVideo, err), v.id)
 	}
@@ -163,7 +158,7 @@ func (v *Video) Update() {
 		v.setThumbnail(v.thumbnail, service)
 	}
 	fmt.Println("Video updated:")
-	v.List()
+	utils.PrintJSON(res)
 }
 
 func (v *Video) setThumbnail(thumbnail string, service *youtube.Service) {

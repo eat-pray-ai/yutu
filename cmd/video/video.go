@@ -22,6 +22,8 @@ var (
 	forKids    bool
 	restricted bool
 	embeddable bool
+	output     string
+	parts      []string
 )
 
 // videoCmd represents the video command
