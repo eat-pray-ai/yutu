@@ -13,6 +13,7 @@ var (
 	desc       string
 	playlistId string
 	channelId  string
+	privacy    string
 	output     string
 	parts      []string
 )
