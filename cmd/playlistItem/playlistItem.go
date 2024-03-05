@@ -11,6 +11,7 @@ var (
 	id         string
 	title      string
 	desc       string
+	videoId    string
 	playlistId string
 	channelId  string
 	privacy    string
