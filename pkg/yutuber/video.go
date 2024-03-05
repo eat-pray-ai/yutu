@@ -90,7 +90,7 @@ func (v *Video) Insert() {
 	}
 	defer file.Close()
 
-	upload := &youtube.Video{
+	video := &youtube.Video{
 		AgeGating: &youtube.VideoAgeGating{
 			Restricted: v.restricted,
 		},
@@ -110,9 +110,9 @@ func (v *Video) Insert() {
 		},
 	}
 
-	call := service.Videos.Insert([]string{"agegating,snippet,status"}, upload)
+	call := service.Videos.Insert([]string{"agegating,snippet,status"}, video)
 
-	video, err := call.Media(file).Do()
+	res, err := call.Media(file).Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
@@ -121,7 +121,8 @@ func (v *Video) Insert() {
 		v.setThumbnail(v.thumbnail, service)
 	}
 
-	fmt.Printf("Upload successful! Video ID: %v\n", video.Id)
+	fmt.Println("Video inserted:")
+	utils.PrintJSON(res)
 }
 
 func (v *Video) Update() {
