@@ -33,3 +33,5 @@ ldflags:
   - "-X {{ .Env.MODULE_PATH }}/cmd.Version={{ .Env.VERSION }}"
   - "-X {{ .Env.MODULE_PATH }}/cmd.Commit={{ .Env.COMMIT }}"
   - "-X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .Env.COMMIT_DATE }}"
+  - "-X {{ .Env.MODULE_PATH }}/cmd.Os={{ .Os }}"
+  - "-X {{ .Env.MODULE_PATH }}/cmd.Arch={{ .Arch }}"
