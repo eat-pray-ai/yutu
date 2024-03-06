@@ -26,11 +26,10 @@ main: ./main.go
 # Binary output name.
 # {{ .Os }} will be replaced by goos field in the config file.
 # {{ .Arch }} will be replaced by goarch field in the config file.
-binary: binary-{{ .Os }}-{{ .Arch }}
+binary: yutu-{{ .Os }}-{{ .Arch }}
 
 # (Optional) ldflags generated dynamically in the workflow, and set as the `evaluated-envs` input variables in the workflow.
 ldflags:
-  - "-X main.Version={{ .Env.VERSION }}"
-  - "-X main.Commit={{ .Env.COMMIT }}"
-  - "-X main.CommitDate={{ .Env.COMMIT_DATE }}"
-  - "-X main.TreeState={{ .Env.TREE_STATE }}"
+  - "-X {{ .Env.MODULE_PATH }}/cmd.Version={{ .Env.VERSION }}"
+  - "-X {{ .Env.MODULE_PATH }}/cmd.Commit={{ .Env.COMMIT }}"
+  - "-X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .Env.COMMIT_DATE }}"
