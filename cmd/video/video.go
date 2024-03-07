@@ -1,8 +1,6 @@
 package video
 
 import (
-	"fmt"
-
 	"github.com/eat-pray-ai/yutu/cmd"
 
 	"github.com/spf13/cobra"
@@ -33,7 +31,7 @@ var videoCmd = &cobra.Command{
 	Short: "manipulate YouTube videos",
 	Long:  "manipulate YouTube videos, such as insert, update, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("video called")
+		cmd.Help()
 	},
 }
 

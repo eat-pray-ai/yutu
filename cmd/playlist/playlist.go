@@ -1,8 +1,6 @@
 package playlist
 
 import (
-	"fmt"
-
 	"github.com/eat-pray-ai/yutu/cmd"
 
 	"github.com/spf13/cobra"
@@ -25,7 +23,7 @@ var playlistCmd = &cobra.Command{
 	Short: "manipulate YouTube playlists",
 	Long:  "manipulate YouTube playlists, such as insert, update, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("playlist called")
+		cmd.Help()
 	},
 }
 
