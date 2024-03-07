@@ -32,6 +32,7 @@ type Video struct {
 	category   string
 	privacy    string
 	channelId  string
+	playlistId string
 }
 
 type VideoService interface {
@@ -121,6 +122,18 @@ func (v *Video) Insert() {
 		v.setThumbnail(v.thumbnail, service)
 	}
 
+	if v.playlistId != "" {
+		pi := NewPlaylistItem(
+			WithPlaylistItemTitle(v.title),
+			WithPlaylistItemDesc(v.desc),
+			WithPlaylistItemVideoId(res.Id),
+			WithPlaylistItemPlaylistId(v.playlistId),
+			WithPlaylistItemChannelId(v.channelId),
+			WithPlaylistItemPrivacy(v.privacy),
+		)
+		pi.Insert()
+	}
+
 	fmt.Println("Video inserted:")
 	utils.PrintJSON(res)
 }
@@ -157,6 +170,19 @@ func (v *Video) Update() {
 	if v.thumbnail != "" {
 		v.setThumbnail(v.thumbnail, service)
 	}
+
+	if v.playlistId != "" {
+		pi := NewPlaylistItem(
+			WithPlaylistItemTitle(v.title),
+			WithPlaylistItemDesc(v.desc),
+			WithPlaylistItemVideoId(res.Id),
+			WithPlaylistItemPlaylistId(v.playlistId),
+			WithPlaylistItemChannelId(v.channelId),
+			WithPlaylistItemPrivacy(v.privacy),
+		)
+		pi.Insert()
+	}
+
 	fmt.Println("Video updated:")
 	utils.PrintJSON(res)
 }
@@ -254,5 +280,11 @@ func WithVideoPrivacy(privacy string) VideoOption {
 func WithVideoChannelId(channelId string) VideoOption {
 	return func(v *Video) {
 		v.channelId = channelId
+	}
+}
+
+func WithVideoPlaylistId(playlistId string) VideoOption {
+	return func(v *Video) {
+		v.playlistId = playlistId
 	}
 }
