@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	service          *youtube.Service = auth.NewY2BService()
-	part             []string         = []string{"snippet", "statistics"}
-	errGetChannel    error            = errors.New("failed to get channel")
-	errUpdateChannel error            = errors.New("failed to update channel")
+	service          *youtube.Service
+	part             []string = []string{"snippet", "statistics"}
+	errGetChannel    error    = errors.New("failed to get channel")
+	errUpdateChannel error    = errors.New("failed to update channel")
 )
 
 type Channel struct {
@@ -35,6 +35,7 @@ type ChannelOption func(*Channel)
 
 func NewChannel(opts ...ChannelOption) *Channel {
 	c := &Channel{}
+	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(c)

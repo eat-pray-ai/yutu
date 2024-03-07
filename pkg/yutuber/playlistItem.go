@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
@@ -36,6 +37,7 @@ type PlaylistItemOption func(*PlaylistItem)
 
 func NewPlaylistItem(opts ...PlaylistItemOption) *PlaylistItem {
 	p := &PlaylistItem{}
+	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(p)
