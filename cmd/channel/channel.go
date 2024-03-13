@@ -12,6 +12,7 @@ var (
 	id    string
 	title string
 	desc  string
+	user  string
 )
 
 var channelCmd = &cobra.Command{

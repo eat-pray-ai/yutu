@@ -19,6 +19,7 @@ type Channel struct {
 	id    string
 	title string
 	desc  string
+	user  string
 }
 
 var part = []string{"snippet", "statistics"}
@@ -80,6 +81,8 @@ func (c *Channel) get() []*youtube.Channel {
 	call := service.Channels.List(part)
 	if c.id != "" {
 		call = call.Id(c.id)
+	} else if c.user != "" {
+		call = call.ForUsername(c.user)
 	} else {
 		call = call.Mine(true)
 	}
@@ -106,5 +109,11 @@ func WithChannelTitle(title string) ChannelOption {
 func WithChannelDesc(desc string) ChannelOption {
 	return func(c *Channel) {
 		c.desc = desc
+	}
+}
+
+func WithChannelUser(user string) ChannelOption {
+	return func(c *Channel) {
+		c.user = user
 	}
 }
