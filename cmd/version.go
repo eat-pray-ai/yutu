@@ -15,7 +15,7 @@ var versionCmd = &cobra.Command{
 	Short: "Show the version of yutu",
 	Long:  "Show the version of yutu",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Printf("yutu version %s %s/%s\nbuild %s-%s\n", Version, Commit, CommitDate, Os, Arch)
+		cmd.Printf("yutu version %s %s/%s\nbuild %s-%s\n", Version, Os, Arch, Commit, CommitDate)
 	},
 }
 
