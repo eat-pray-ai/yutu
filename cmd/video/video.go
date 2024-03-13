@@ -13,7 +13,7 @@ var (
 	file       string
 	title      string
 	desc       string
-	tags       string
+	tags       []string
 	language   string
 	thumbnail  string
 	channel    string

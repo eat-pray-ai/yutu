@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -203,9 +202,9 @@ func WithVideoDesc(desc string) VideoOption {
 	}
 }
 
-func WithVideoTags(tags string) VideoOption {
+func WithVideoTags(tags []string) VideoOption {
 	return func(v *Video) {
-		v.tags = strings.Split(tags, ",")
+		v.tags = tags
 	}
 }
 

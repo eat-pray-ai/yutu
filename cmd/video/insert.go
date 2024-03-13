@@ -35,7 +35,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
-	insertCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
+	insertCmd.Flags().StringArrayVarP(&tags, "tags", "g", []string{}, "Comma separated tags")
 	insertCmd.Flags().StringVar(&language, "language", "", "Language of the video")
 	insertCmd.Flags().StringVar(&thumbnail, "thumbnail", "", "Path to the thumbnail")
 	insertCmd.Flags().StringVar(&channel, "channel", "", "Channel ID of the video")

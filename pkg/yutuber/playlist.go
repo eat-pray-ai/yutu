@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 
@@ -150,9 +149,9 @@ func WithPlaylistDesc(desc string) PlaylistOption {
 	}
 }
 
-func WithPlaylistTags(tags string) PlaylistOption {
+func WithPlaylistTags(tags []string) PlaylistOption {
 	return func(p *Playlist) {
-		p.tags = strings.Split(tags, ",")
+		p.tags = tags
 	}
 }
 

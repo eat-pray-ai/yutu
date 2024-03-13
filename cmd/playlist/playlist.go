@@ -12,7 +12,7 @@ var (
 	id       string
 	title    string
 	desc     string
-	tags     string
+	tags     []string
 	language string
 	channel  string
 	privacy  string

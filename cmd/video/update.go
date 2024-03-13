@@ -31,7 +31,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	updateCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
-	updateCmd.Flags().StringVarP(&tags, "tags", "g", "", "Comma separated tags")
+	updateCmd.Flags().StringArrayVarP(&tags, "tags", "g", []string{}, "Comma separated tags")
 	updateCmd.Flags().StringVar(&language, "language", "", "Language of the video")
 	updateCmd.Flags().StringVar(&thumbnail, "thumbnail", "", "Path to the thumbnail")
 	updateCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
