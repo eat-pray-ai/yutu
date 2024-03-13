@@ -31,12 +31,12 @@ func init() {
 	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
 	updateCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the video")
-	updateCmd.Flags().StringArrayVarP(&tags, "tags", "g", []string{}, "Comma separated tags")
-	updateCmd.Flags().StringVar(&language, "language", "", "Language of the video")
-	updateCmd.Flags().StringVar(&thumbnail, "thumbnail", "", "Path to the thumbnail")
-	updateCmd.Flags().StringVarP(&category, "category", "c", "", "Category of the video")
+	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
+	updateCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the video")
+	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "h", "", "Path to the thumbnail")
+	updateCmd.Flags().StringVarP(&category, "category", "g", "", "Category of the video")
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
-	updateCmd.Flags().BoolVar(&embeddable, "embeddable", true, "Whether the video is embeddable")
+	updateCmd.Flags().BoolVarP(&embeddable, "embeddable", "e", true, "Whether the video is embeddable")
 
 	updateCmd.MarkFlagRequired("id")
 }
