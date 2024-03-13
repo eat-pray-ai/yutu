@@ -6,6 +6,8 @@ import (
 	"log"
 	"strings"
 
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -26,10 +28,10 @@ type Playlist struct {
 }
 
 type PlaylistService interface {
-	List()
+	List([]string, string)
 	Insert()
 	Update()
-	get(parts []string) []*youtube.Playlist
+	get([]string) []*youtube.Playlist
 }
 
 type PlaylistOption func(*Playlist)
@@ -44,15 +46,18 @@ func NewPlaylist(opts ...PlaylistOption) *Playlist {
 	return p
 }
 
-func (p *Playlist) List() {
-	playlists := p.get([]string{"snippet"})
-	for _, playlist := range playlists {
-		fmt.Printf("          ID: %s\n", playlist.Id)
-		fmt.Printf("       Title: %s\n", playlist.Snippet.Title)
-		fmt.Printf("        Tags: %s\n", strings.Join(playlist.Snippet.Tags, ", "))
-		fmt.Printf(" Description: %s\n", playlist.Snippet.Description)
-		fmt.Printf("Published At: %s\n", playlist.Snippet.PublishedAt)
-		fmt.Printf("     Channel: %s\n\n", playlist.Snippet.ChannelId)
+func (p *Playlist) List(parts []string, output string) {
+	playlists := p.get(parts)
+	switch output {
+	case "json":
+		utils.PrintJSON(playlists)
+	case "yaml":
+		utils.PrintYAML(playlists)
+	default:
+		fmt.Println("ID\tTitle")
+		for _, playlist := range playlists {
+			fmt.Printf("%s\t%s\n", playlist.Id, playlist.Snippet.Title)
+		}
 	}
 }
 
@@ -98,13 +103,14 @@ func (p *Playlist) Update() {
 	}
 
 	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
-	_, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.id)
 	}
 
+	data, _ := res.MarshalJSON()
 	fmt.Println("Playlist updated:")
-	p.List()
+	utils.PrintJSON(data)
 }
 
 func (p *Playlist) get(parts []string) []*youtube.Playlist {
