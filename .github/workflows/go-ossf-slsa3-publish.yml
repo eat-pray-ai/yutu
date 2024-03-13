@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0
       - id: ldflags
         run: |
-          echo "commit-date=$(git log --date=iso8601-strict -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
+          echo "commit-date=$(git log --date=iso8601-strict -1 --pretty=%cd)" >> "$GITHUB_OUTPUT"
           echo "commit=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
           echo "version=$(git describe --tags --always --dirty | cut -c2-)" >> "$GITHUB_OUTPUT"
           echo "tree-state=$(if git diff --quiet; then echo "clean"; else echo "dirty"; fi)" >> "$GITHUB_OUTPUT"
@@ -62,7 +62,7 @@ jobs:
       go-version: 1.21.5
       private-repository: true
       config-file: .slsa-goreleaser/${{ matrix.os }}-${{ matrix.arch }}.yml
-      evaluated-envs: "MODULE_PATH:${{ github.repository }}, COMMIT_DATE:${{needs.args.outputs.commit-date}}, COMMIT:${{needs.args.outputs.commit}}, VERSION:${{needs.args.outputs.version}}, TREE_STATE:${{needs.args.outputs.tree-state}}"
+      evaluated-envs: "MODULE_PATH:github.com/${{ github.repository }}, COMMIT_DATE:${{needs.args.outputs.commit-date}}, COMMIT:${{needs.args.outputs.commit}}, VERSION:${{needs.args.outputs.version}}, TREE_STATE:${{needs.args.outputs.tree-state}}"
       # =======================================================================================================
       # Optional: For more options, see https://github.com/slsa-framework/slsa-github-generator#golang-projects
       # =======================================================================================================
