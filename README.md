@@ -8,6 +8,115 @@
 
 yutu is a fully functional CLI for YouTube.
 
+## Usage
+
+```sh
+❯ yutu help
+yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.
+
+Usage:
+  yutu [flags]
+  yutu [command]
+
+Available Commands:
+  channel      manipulate YouTube channels
+  completion   Generate the autocompletion script for the specified shell
+  help         Help about any command
+  playlist     manipulate YouTube playlists
+  playlistItem manipulate YouTube playlist items
+  version      Show the version of yutu
+  video        manipulate YouTube videos
+
+Flags:
+  -h, --help   help for yutu
+
+Use "yutu [command] --help" for more information about a command.
+```
+
+## Features
+
+Here are the features that are currently supported by yutu, and the ones that are planned to be supported in the future. The quota costs for each feature is also mentioned since there is a quota limits of 10,000 units/day.
+
+- videos
+  - [x] list, 1
+  - [x] insert, 1600
+  - [x] update, 50
+  - [ ] rate, 50
+  - [ ] getRating, 1
+  - [ ] reportAbuse, 50
+  - [ ] delete, 50
+- channels
+  - [x] list, 1
+  - [x] update, 50
+- playlists
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [ ] delete, 50
+- playlistItems
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [ ] delete, 50
+- activities
+  - [ ] list, 1
+- captions
+  - [ ] list, 50
+  - [ ] insert, 400
+  - [ ] update, 450
+  - [ ] delete, 50
+- channelBanners
+  - [ ] insert, 50
+- channelSections
+  - [ ] list, 1
+  - [ ] insert, 50
+  - [ ] update, 50
+  - [ ] delete, 50
+- comments
+  - [ ] list, 1
+  - [ ] insert, 50
+  - [ ] update, 50
+  - [ ] setModerationStatus, 50
+  - [ ] delete, 50
+- commentThreads
+  - [ ] list, 1
+  - [ ] insert, 50
+  - [ ] update, 50
+- guideCategories
+  - [ ] list, 1
+- i18nLanguages
+  - [ ] list, 1
+- i18nRegions
+  - [ ] list, 1
+- members
+  - [ ] list, 1
+- membershipsLevels
+  - [ ] list, 1
+- search
+  - [ ] list, 100
+- subscriptions
+  - [ ] list, 1
+  - [ ] insert, 50
+  - [ ] delete, 50
+- thumbnails
+  - [x] set, 50
+- videoAbuseReportReasons
+  - [ ] list, 1
+- videoCategories
+  - [ ] list, 1
+- watermarks
+  - [ ] set, 50
+  - [ ] unset, 50
+
+## Contributing
+
+yutu is a cli tool built using the [cobra](https://github.com/spf13/cobra). Feel free to contribute to the project under these conventions:
+
+- Commit messages should follow the [gitmoji](https://gitmoji.dev) convention.
+- Follow the existing naming and project structure.
+
+Tests are especially welcomed, as they are currently missing from the project.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=eat-pray-ai/yutu&type=Date)](https://star-history.com/#eat-pray-ai/yutu&Date)
