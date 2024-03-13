@@ -12,12 +12,14 @@ import (
 var (
 	errGetPlaylistItem    error = fmt.Errorf("failed to get playlist item")
 	errUpdatePlaylistItem error = fmt.Errorf("failed to update playlist item")
+	errInsertPlaylistItem error = fmt.Errorf("failed to insert playlist item")
 )
 
 type PlaylistItem struct {
 	id         string
 	title      string
 	desc       string
+	videoId    string
 	playlistId string
 	channelId  string
 	privacy    string
@@ -25,6 +27,7 @@ type PlaylistItem struct {
 
 type PlaylistItemService interface {
 	List([]string, string)
+	Insert()
 	Update()
 	get([]string) []*youtube.PlaylistItem
 }
@@ -54,6 +57,32 @@ func (pi *PlaylistItem) List(parts []string, output string) {
 			fmt.Printf("%s\t%s\n", playlistItem.Id, playlistItem.Snippet.Title)
 		}
 	}
+}
+
+func (pi *PlaylistItem) Insert() {
+	playlistItem := &youtube.PlaylistItem{
+		Snippet: &youtube.PlaylistItemSnippet{
+			Title:       pi.title,
+			Description: pi.desc,
+			ResourceId: &youtube.ResourceId{
+				Kind:    "youtube#video",
+				VideoId: pi.videoId,
+			},
+			PlaylistId: pi.playlistId,
+			ChannelId:  pi.channelId,
+		},
+		Status: &youtube.PlaylistItemStatus{
+			PrivacyStatus: pi.privacy,
+		},
+	}
+
+	call := service.PlaylistItems.Insert([]string{"snippet", "status"}, playlistItem)
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.videoId)
+	}
+	fmt.Println("PlaylistItem inserted:")
+	utils.PrintJSON(res)
 }
 
 func (pi *PlaylistItem) Update() {
@@ -107,6 +136,12 @@ func WithPlaylistItemTitle(title string) PlaylistItemOption {
 func WithPlaylistItemDesc(desc string) PlaylistItemOption {
 	return func(p *PlaylistItem) {
 		p.desc = desc
+	}
+}
+
+func WithPlaylistItemVideoId(videoId string) PlaylistItemOption {
+	return func(p *PlaylistItem) {
+		p.videoId = videoId
 	}
 }
 
