@@ -17,6 +17,7 @@ var (
 	language   string
 	thumbnail  string
 	channelId  string
+	playListId string
 	category   string
 	privacy    string
 	forKids    bool
