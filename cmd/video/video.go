@@ -16,7 +16,7 @@ var (
 	tags       []string
 	language   string
 	thumbnail  string
-	channel    string
+	channelId  string
 	category   string
 	privacy    string
 	forKids    bool
