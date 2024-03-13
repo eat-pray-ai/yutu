@@ -1,11 +1,17 @@
 package yutuber
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
+)
+
+var (
+	errGetPlaylistItem    error = fmt.Errorf("failed to get playlist item")
+	errUpdatePlaylistItem error = fmt.Errorf("failed to update playlist item")
 )
 
 type PlaylistItem struct {
@@ -19,6 +25,7 @@ type PlaylistItem struct {
 
 type PlaylistItemService interface {
 	List([]string, string)
+	Update()
 	get([]string) []*youtube.PlaylistItem
 }
 
@@ -49,6 +56,27 @@ func (pi *PlaylistItem) List(parts []string, output string) {
 	}
 }
 
+func (pi *PlaylistItem) Update() {
+	playlistItem := pi.get([]string{"id", "snippet", "status"})[0]
+	if pi.title != "" {
+		playlistItem.Snippet.Title = pi.title
+	}
+	if pi.desc != "" {
+		playlistItem.Snippet.Description = pi.desc
+	}
+	if pi.privacy != "" {
+		playlistItem.Status.PrivacyStatus = pi.privacy
+	}
+
+	call := service.PlaylistItems.Update([]string{"snippet", "status"}, playlistItem)
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.id)
+	}
+	fmt.Println("PlaylistItem updated:")
+	utils.PrintJSON(res)
+}
+
 func (pi *PlaylistItem) get(parts []string) []*youtube.PlaylistItem {
 	call := service.PlaylistItems.List(parts)
 	if pi.id != "" {
@@ -58,7 +86,7 @@ func (pi *PlaylistItem) get(parts []string) []*youtube.PlaylistItem {
 	}
 	response, err := call.Do()
 	if err != nil {
-		log.Fatalf("Error fetching playlist items: %v", err)
+		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
 	}
 
 	return response.Items
