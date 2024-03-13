@@ -1,8 +1,6 @@
 package channel
 
 import (
-	"fmt"
-
 	"github.com/eat-pray-ai/yutu/cmd"
 
 	"github.com/spf13/cobra"
@@ -22,7 +20,7 @@ var channelCmd = &cobra.Command{
 	Short: "manipulate YouTube channels",
 	Long:  "manipulate YouTube channels, such as list, update, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("channel called")
+		cmd.Help()
 	},
 }
 
