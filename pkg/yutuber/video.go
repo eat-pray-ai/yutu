@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
@@ -48,6 +49,8 @@ type VideoOption func(*Video)
 
 func NewVideo(opts ...VideoOption) *Video {
 	v := &Video{}
+	service = auth.NewY2BService()
+
 	for _, opt := range opts {
 		opt(v)
 	}
