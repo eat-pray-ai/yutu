@@ -45,8 +45,9 @@ For more information about the client_secrets.json file format, please visit:
 https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 `
 
-func NewY2BService(scope string) *youtube.Service {
+func NewY2BService() *youtube.Service {
 	ctx := context.Background()
+	scope := youtube.YoutubeScope
 	client := getClient(ctx, scope)
 	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
