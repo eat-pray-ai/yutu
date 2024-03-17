@@ -28,7 +28,6 @@ type Video struct {
 	language   string
 	thumbnail  string
 	forKids    bool
-	restricted bool
 	embeddable bool
 	category   string
 	privacy    string
@@ -55,7 +54,6 @@ func NewVideo(opts ...VideoOption) *Video {
 		opt(v)
 	}
 
-	v.validate()
 	return v
 }
 
@@ -95,9 +93,6 @@ func (v *Video) Insert() {
 	defer file.Close()
 
 	video := &youtube.Video{
-		AgeGating: &youtube.VideoAgeGating{
-			Restricted: v.restricted,
-		},
 		Snippet: &youtube.VideoSnippet{
 			Title:                v.title,
 			Description:          v.desc,
@@ -114,7 +109,7 @@ func (v *Video) Insert() {
 		},
 	}
 
-	call := service.Videos.Insert([]string{"agegating,snippet,status"}, video)
+	call := service.Videos.Insert([]string{"snippet,status"}, video)
 
 	res, err := call.Media(file).Do()
 	if err != nil {
@@ -202,12 +197,6 @@ func (v *Video) setThumbnail(thumbnail string, service *youtube.Service) {
 	}
 }
 
-func (v *Video) validate() {
-	if v.forKids && v.restricted {
-		log.Fatalln("Video cannot be both for kids and restricted")
-	}
-}
-
 func WithVideoId(id string) VideoOption {
 	return func(v *Video) {
 		v.id = id
@@ -253,12 +242,6 @@ func WithVideoThumbnail(thumbnail string) VideoOption {
 func WithVideoForKids(forKids bool) VideoOption {
 	return func(v *Video) {
 		v.forKids = forKids
-	}
-}
-
-func WithVideoRestricted(restricted bool) VideoOption {
-	return func(v *Video) {
-		v.restricted = restricted
 	}
 }
 

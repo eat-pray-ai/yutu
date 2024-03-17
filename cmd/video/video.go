@@ -19,7 +19,6 @@ var (
 	category   string
 	privacy    string
 	forKids    bool
-	restricted bool
 	embeddable bool
 	output     string
 	parts      []string
