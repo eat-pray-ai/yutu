@@ -1,0 +1,30 @@
+package video
+
+import (
+	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+
+	"github.com/spf13/cobra"
+)
+
+var rateCmd = &cobra.Command{
+	Use:   "rate",
+	Short: "rate a video on YouTube",
+	Long:  "rate a video on YouTube, with the specified rating",
+	Run: func(cmd *cobra.Command, args []string) {
+		v := yutuber.NewVideo(
+			yutuber.WithVideoId(id),
+			yutuber.WithVideoRating(rating),
+		)
+		v.Rate()
+	},
+}
+
+func init() {
+	videoCmd.AddCommand(rateCmd)
+
+	rateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
+	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", "Rating of the video")
+
+	rateCmd.MarkFlagRequired("id")
+	rateCmd.MarkFlagRequired("rating")
+}

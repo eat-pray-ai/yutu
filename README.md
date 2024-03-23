@@ -41,8 +41,8 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] list, 1
   - [x] insert, 1600
   - [x] update, 50
-  - [ ] rate, 50
-  - [ ] getRating, 1
+  - [x] rate, 50
+  - [x] getRating, 1
   - [ ] reportAbuse, 50
   - [ ] delete, 50
 - channels

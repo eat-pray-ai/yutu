@@ -17,6 +17,7 @@ var (
 	errUpdateVideo  error = errors.New("failed to update video")
 	errOpenFile     error = errors.New("failed to open file")
 	errSetThumbnail error = errors.New("failed to set thumbnail")
+	errRating       error = errors.New("failed to rate video")
 	errGetRating    error = errors.New("failed to get rating")
 )
 
@@ -28,7 +29,7 @@ type Video struct {
 	tags       []string
 	language   string
 	thumbnail  string
-	myRating   string
+	rating     string
 	chart      string
 	channelId  string
 	playlistId string
@@ -42,6 +43,7 @@ type VideoService interface {
 	List([]string, string)
 	Insert()
 	Update()
+	Rate()
 	GetRating()
 	get([]string) *youtube.Video
 	setThumbnail()
@@ -65,8 +67,8 @@ func (v *Video) get(parts []string) []*youtube.Video {
 	call := service.Videos.List(parts)
 	if v.id != "" {
 		call = call.Id(v.id)
-	} else if v.myRating != "" {
-		call = call.MyRating(v.myRating)
+	} else if v.rating != "" {
+		call = call.MyRating(v.rating)
 	}
 	response, err := call.Do()
 	if err != nil {
@@ -191,6 +193,15 @@ func (v *Video) Update() {
 	utils.PrintJSON(res)
 }
 
+func (v *Video) Rate() {
+	call := service.Videos.Rate(v.id, v.rating)
+	err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errRating, err), v.id)
+	}
+	fmt.Printf("Video %s rated %s\n", v.id, v.rating)
+}
+
 func (v *Video) GetRating() {
 	call := service.Videos.GetRating([]string{v.id})
 	res, err := call.Do()
@@ -255,9 +266,9 @@ func WithVideoThumbnail(thumbnail string) VideoOption {
 	}
 }
 
-func WithVideoMyRating(myRating string) VideoOption {
+func WithVideoRating(rating string) VideoOption {
 	return func(v *Video) {
-		v.myRating = myRating
+		v.rating = rating
 	}
 }
 

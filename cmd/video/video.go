@@ -14,7 +14,7 @@ var (
 	tags       []string
 	language   string
 	thumbnail  string
-	myRating   string
+	rating     string
 	chart      string
 	channelId  string
 	playListId string
