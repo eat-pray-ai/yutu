@@ -17,28 +17,32 @@ var (
 	errUpdateVideo  error = errors.New("failed to update video")
 	errOpenFile     error = errors.New("failed to open file")
 	errSetThumbnail error = errors.New("failed to set thumbnail")
+	errGetRating    error = errors.New("failed to get rating")
 )
 
 type Video struct {
 	id         string
-	path       string
+	file       string
 	title      string
 	desc       string
 	tags       []string
 	language   string
 	thumbnail  string
-	forKids    bool
-	embeddable bool
-	category   string
-	privacy    string
+	myRating   string
+	chart      string
 	channelId  string
 	playlistId string
+	category   string
+	privacy    string
+	forKids    bool
+	embeddable bool
 }
 
 type VideoService interface {
 	List([]string, string)
 	Insert()
 	Update()
+	GetRating()
 	get([]string) *youtube.Video
 	setThumbnail()
 	validate()
@@ -61,6 +65,8 @@ func (v *Video) get(parts []string) []*youtube.Video {
 	call := service.Videos.List(parts)
 	if v.id != "" {
 		call = call.Id(v.id)
+	} else if v.myRating != "" {
+		call = call.MyRating(v.myRating)
 	}
 	response, err := call.Do()
 	if err != nil {
@@ -86,9 +92,9 @@ func (v *Video) List(parts []string, output string) {
 }
 
 func (v *Video) Insert() {
-	file, err := os.Open(v.path)
+	file, err := os.Open(v.file)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err), v.path)
+		log.Fatalln(errors.Join(errOpenFile, err), v.file)
 	}
 	defer file.Close()
 
@@ -185,6 +191,16 @@ func (v *Video) Update() {
 	utils.PrintJSON(res)
 }
 
+func (v *Video) GetRating() {
+	call := service.Videos.GetRating([]string{v.id})
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errGetRating, err), v.id)
+	}
+
+	utils.PrintJSON(res)
+}
+
 func (v *Video) setThumbnail(thumbnail string, service *youtube.Service) {
 	file, err := os.Open(thumbnail)
 	if err != nil {
@@ -203,9 +219,9 @@ func WithVideoId(id string) VideoOption {
 	}
 }
 
-func WithVideoPath(path string) VideoOption {
+func WithVideoFile(file string) VideoOption {
 	return func(v *Video) {
-		v.path = path
+		v.file = file
 	}
 }
 
@@ -236,6 +252,18 @@ func WithVideoLanguage(language string) VideoOption {
 func WithVideoThumbnail(thumbnail string) VideoOption {
 	return func(v *Video) {
 		v.thumbnail = thumbnail
+	}
+}
+
+func WithVideoMyRating(myRating string) VideoOption {
+	return func(v *Video) {
+		v.myRating = myRating
+	}
+}
+
+func WithVideoChart(chart string) VideoOption {
+	return func(v *Video) {
+		v.chart = chart
 	}
 }
 
