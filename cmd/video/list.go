@@ -24,7 +24,7 @@ func init() {
 	parts := []string{"id", "snippet", "status"}
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
-	listCmd.Flags().StringVarP(&rating, "rating", "r", "", "My rating of the video")
+	listCmd.Flags().StringVarP(&rating, "rating", "r", "", "My rating of the video: like or dislike")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
 	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", parts, "Comma separated parts")
 }

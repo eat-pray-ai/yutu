@@ -37,7 +37,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "h", "", "Path to the thumbnail")
 	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", "Playlist ID of the video")
 	updateCmd.Flags().StringVarP(&category, "category", "g", "", "Category of the video")
-	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
+	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video: public, private or unlisted")
 	updateCmd.Flags().BoolVarP(&embeddable, "embeddable", "e", true, "Whether the video is embeddable")
 
 	updateCmd.MarkFlagRequired("id")

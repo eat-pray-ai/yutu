@@ -41,8 +41,8 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the video")
 	insertCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", "Playlist ID of the video")
 	insertCmd.Flags().StringVarP(&category, "category", "g", "", "Category of the video")
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video")
-	insertCmd.Flags().BoolVarP(&forKids, "forKids", "o", false, "Whether the video is for kids")
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the video: public, private, or unlisted")
+	insertCmd.Flags().BoolVarP(&forKids, "forKids", "k", false, "Whether the video is for kids")
 	insertCmd.Flags().BoolVarP(&embeddable, "embeddable", "e", true, "Whether the video is embeddable")
 
 	insertCmd.MarkFlagRequired("file")
