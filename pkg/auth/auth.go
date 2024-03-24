@@ -62,8 +62,14 @@ func getClient(ctx context.Context, scope string) *http.Client {
 	cacheFile := tokenCacheFile(scope)
 
 	token, err := tokenFromFile(cacheFile)
-	if err != nil || !token.Valid() {
+	if err != nil {
 		return newClient(ctx, config, cacheFile)
+	} else if !token.Valid() {
+		tokenSource := config.TokenSource(ctx, token)
+		token, err = tokenSource.Token()
+		if err != nil {
+			return newClient(ctx, config, cacheFile)
+		}
 	}
 
 	return config.Client(ctx, token)
