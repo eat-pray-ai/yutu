@@ -13,7 +13,7 @@ import (
 
 var (
 	service          *youtube.Service
-	part             []string = []string{"snippet", "statistics"}
+	part             []string = []string{"snippet"}
 	errGetChannel    error    = errors.New("failed to get channel")
 	errUpdateChannel error    = errors.New("failed to update channel")
 )
