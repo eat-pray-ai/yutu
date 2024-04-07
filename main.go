@@ -7,6 +7,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/playlist"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlistItem"
 	_ "github.com/eat-pray-ai/yutu/cmd/video"
+	_ "github.com/eat-pray-ai/yutu/cmd/videoCategory"
 )
 
 func main() {

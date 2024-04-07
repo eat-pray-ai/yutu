@@ -25,9 +25,13 @@ type VideoCategoryService interface {
 
 type VideoCategoryOption func(*VideoCategory)
 
-func NewVideoCategory() *VideoCategory {
+func NewVideoCategory(opt ...VideoCategoryOption) *VideoCategory {
 	service = auth.NewY2BService()
-	return &VideoCategory{}
+	vc := &VideoCategory{}
+	for _, o := range opt {
+		o(vc)
+	}
+	return vc
 }
 
 func (vc *VideoCategory) get(part []string) []*youtube.VideoCategory {
