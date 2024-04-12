@@ -8,7 +8,7 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list video categories",
-	Long:  "list video categories's info, such as ID, title, assignable, etc.",
+	Long:  "list video categories' info, such as ID, title, assignable, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		vc := yutuber.NewVideoCategory(
 			yutuber.WithRegionCode(regionCode),
@@ -21,6 +21,6 @@ func init() {
 	videoCategoryCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", "region code")
-	listCmd.Flags().StringSliceVarP(&parts, "part", "p", []string{"id", "snippet"}, "part")
+	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
 }
