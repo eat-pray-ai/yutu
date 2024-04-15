@@ -12,20 +12,25 @@ yutu is a fully functional CLI for YouTube.
 
 ```sh
 ❯ yutu help
-yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.
+yutu is a fully functional CLI for YouTube, which can be used to 
+manupulate YouTube videos, playlists, channels, etc.
 
 Usage:
   yutu [flags]
   yutu [command]
 
 Available Commands:
-  channel      manipulate YouTube channels
-  completion   Generate the autocompletion script for the specified shell
-  help         Help about any command
-  playlist     manipulate YouTube playlists
-  playlistItem manipulate YouTube playlist items
-  version      Show the version of yutu
-  video        manipulate YouTube videos
+  activity         manipulate YouTube activities
+  channel          manipulate YouTube channels
+  completion       Generate the autocompletion script for the specified shell
+  help             Help about any command
+  member           manipulate YouTube members
+  membershipsLevel manipulate YouTube memberships levels
+  playlist         manipulate YouTube playlists
+  playlistItem     manipulate YouTube playlist items
+  version          Show the version of yutu
+  video            manipulate YouTube videos
+  videoCategory    manipulate YouTube video categories
 
 Flags:
   -h, --help   help for yutu
@@ -89,9 +94,9 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - i18nRegions
   - [ ] list, 1
 - members
-  - [ ] list, 1
+  - [x] list, 1 🚫
 - membershipsLevels
-  - [ ] list, 1
+  - [x] list, 1 🚫
 - search
   - [ ] list, 100
 - subscriptions
@@ -103,7 +108,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - videoAbuseReportReasons
   - [ ] list, 1
 - videoCategories
-  - [ ] list, 1
+  - [x] list, 1
 - watermarks
   - [ ] set, 50
   - [ ] unset, 50
