@@ -3,6 +3,7 @@ package yutuber
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -23,6 +24,7 @@ type MembershipsLevelOption func(*MembershipsLevel)
 
 func NewMembershipsLevel(opts ...MembershipsLevelOption) *MembershipsLevel {
 	m := &MembershipsLevel{}
+	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(m)

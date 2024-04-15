@@ -8,7 +8,7 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list channel's members",
-	Long:  "list channel's members, such as channelId, displayName, etc.",
+	Long:  "list channel's members' info, such as channelId, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		m := yutuber.NewMember(
 			yutuber.WithMemberChannelId(memberChannelId),
@@ -20,7 +20,13 @@ var listCmd = &cobra.Command{
 func init() {
 	memberCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&memberChannelId, "memberChannelId", "c", "", "Comma separated channelIDs")
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"snippet"}, "Comma separated parts")
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
+	listCmd.Flags().StringVarP(
+		&memberChannelId, "memberChannelId", "c", "", "Comma separated channelIDs",
+	)
+	listCmd.Flags().StringSliceVarP(
+		&parts, "parts", "p", []string{"snippet"}, "Comma separated parts",
+	)
+	listCmd.Flags().StringVarP(
+		&output, "output", "o", "", "Output format: json or yaml",
+	)
 }
