@@ -11,10 +11,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"os/user"
-	"path/filepath"
 	"runtime"
-	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -24,6 +21,7 @@ import (
 
 var (
 	credential     string = "client_secret.json"
+	cacheFile      string = "youtube.cache.json"
 	errGetUser     error  = errors.New("unable to get current user")
 	errCreateSvc   error  = errors.New("unable to create YouTube service")
 	errReadPrompt  error  = errors.New("unable to read prompt")
@@ -47,8 +45,12 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
 func NewY2BService() *youtube.Service {
 	ctx := context.Background()
-	scope := youtube.YoutubeScope
-	client := getClient(ctx, scope)
+	scope := []string{
+		youtube.YoutubeScope,
+		youtube.YoutubeForceSslScope,
+		youtube.YoutubeChannelMembershipsCreatorScope,
+	}
+	client := getClient(ctx, scope...)
 	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalln(errors.Join(errCreateSvc, err))
@@ -57,9 +59,8 @@ func NewY2BService() *youtube.Service {
 	return service
 }
 
-func getClient(ctx context.Context, scope string) *http.Client {
-	config := getConfig(scope)
-	cacheFile := tokenCacheFile(scope)
+func getClient(ctx context.Context, scope ...string) *http.Client {
+	config := getConfig(scope...)
 
 	token, err := tokenFromFile(cacheFile)
 	if err != nil {
@@ -75,14 +76,14 @@ func getClient(ctx context.Context, scope string) *http.Client {
 	return config.Client(ctx, token)
 }
 
-func getConfig(scope string) *oauth2.Config {
+func getConfig(scope ...string) *oauth2.Config {
 	cred, err := os.ReadFile(credential)
 	if err != nil {
 		fmt.Printf(missingClientSecretsMessage, credential)
 		log.Fatalln(errors.Join(errReadSecret, err))
 	}
 
-	config, err := google.ConfigFromJSON(cred, scope)
+	config, err := google.ConfigFromJSON(cred, scope...)
 	if err != nil {
 		log.Fatalln(errors.Join(errParseSecret, err))
 	}
@@ -111,13 +112,19 @@ func startWebServer(redirectURL string) (codeCh chan string, err error) {
 	}
 
 	codeCh = make(chan string)
-	go http.Serve(listener, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		code := r.FormValue("code")
-		codeCh <- code
-		listener.Close()
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "Received code: %v\r\nYou can now safely close this window.", code)
-	}))
+	go http.Serve(
+		listener, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				code := r.FormValue("code")
+				codeCh <- code
+				listener.Close()
+				w.Header().Set("Content-Type", "text/plain")
+				fmt.Fprintf(
+					w, "Received code: %v\r\nYou can now safely close this window.", code,
+				)
+			},
+		),
+	)
 
 	return codeCh, err
 }
@@ -140,13 +147,17 @@ func openURL(url string) error {
 
 func getCodeFromPrompt(authURL string) string {
 	var code string
-	fmt.Printf("It seems that your browser is not open. Go to the following "+
-		"link in your browser:\n%v\n", authURL)
-	fmt.Print("After completing the authorization flow, enter the authorization " +
-		"code on command line. \nIf you end up in an error page after completing " +
-		"the authorization flow, and the url in the address bar is in the form of " +
-		"\n'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'\n" +
-		"ONLY 'COPY-THIS' is the code you need to enter on command line.\n")
+	fmt.Printf(
+		"It seems that your browser is not open. Go to the following "+
+			"link in your browser:\n%v\n", authURL,
+	)
+	fmt.Print(
+		"After completing the authorization flow, enter the authorization " +
+			"code on command line. \nIf you end up in an error page after completing " +
+			"the authorization flow, and the url in the address bar is in the form of " +
+			"\n'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'\n" +
+			"ONLY 'COPY-THIS' is the code you need to enter on command line.\n",
+	)
 	_, err := fmt.Scan(&code)
 	if err != nil {
 		log.Fatalln(errors.Join(errReadPrompt, err))
@@ -163,8 +174,11 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 
 	var code string
 	if err := openURL(authURL); err == nil {
-		fmt.Printf("Your browser has been opened to an authorization URL. This "+
-			"program will resume once authorization has been provided.\n%v\n", authURL)
+		fmt.Printf(
+			"Your browser has been opened to an authorization URL. This "+
+				"program will resume once authorization has been provided.\n%v\n",
+			authURL,
+		)
 		code = <-codeCh
 	}
 
@@ -179,19 +193,6 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 	}
 
 	return token
-}
-
-func tokenCacheFile(scope string) string {
-	user, err := user.Current()
-	if err != nil {
-		log.Fatalln(errors.Join(errGetUser, err))
-	}
-
-	cacheDir := filepath.Join(user.HomeDir, ".yutu")
-	os.MkdirAll(cacheDir, 0700)
-	scopeName := strings.Split(scope, "/")[len(strings.Split(scope, "/"))-1]
-	cacheFile := filepath.Join(cacheDir, url.QueryEscape(scopeName+".json"))
-	return cacheFile
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {
