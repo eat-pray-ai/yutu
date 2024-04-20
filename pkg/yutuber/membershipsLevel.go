@@ -13,17 +13,17 @@ var (
 	errGetMembershipsLevel error = errors.New("failed to get memberships level")
 )
 
-type MembershipsLevel struct{}
+type membershipsLevel struct{}
 
-type MembershipsLevelService interface {
+type MembershipsLevel interface {
 	List([]string, string)
 	get([]string) []*youtube.MembershipsLevel
 }
 
-type MembershipsLevelOption func(*MembershipsLevel)
+type MembershipsLevelOption func(*membershipsLevel)
 
-func NewMembershipsLevel(opts ...MembershipsLevelOption) *MembershipsLevel {
-	m := &MembershipsLevel{}
+func NewMembershipsLevel(opts ...MembershipsLevelOption) MembershipsLevel {
+	m := &membershipsLevel{}
 	service = auth.NewY2BService()
 
 	for _, opt := range opts {
@@ -33,7 +33,7 @@ func NewMembershipsLevel(opts ...MembershipsLevelOption) *MembershipsLevel {
 	return m
 }
 
-func (m *MembershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
+func (m *membershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
 	call := service.MembershipsLevels.List(parts)
 	response, err := call.Do()
 	if err != nil {
@@ -43,7 +43,7 @@ func (m *MembershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
 	return response.Items
 }
 
-func (m *MembershipsLevel) List(parts []string, output string) {
+func (m *membershipsLevel) List(parts []string, output string) {
 	membershipsLevels := m.get(parts)
 	switch output {
 	case "json":

@@ -16,7 +16,7 @@ var (
 	errInsertPlaylistItem error = fmt.Errorf("failed to insert playlist item")
 )
 
-type PlaylistItem struct {
+type playlistItem struct {
 	id         string
 	title      string
 	desc       string
@@ -26,17 +26,17 @@ type PlaylistItem struct {
 	privacy    string
 }
 
-type PlaylistItemService interface {
+type PlaylistItem interface {
 	List([]string, string)
 	Insert()
 	Update()
 	get([]string) []*youtube.PlaylistItem
 }
 
-type PlaylistItemOption func(*PlaylistItem)
+type PlaylistItemOption func(*playlistItem)
 
-func NewPlaylistItem(opts ...PlaylistItemOption) *PlaylistItem {
-	p := &PlaylistItem{}
+func NewPlaylistItem(opts ...PlaylistItemOption) PlaylistItem {
+	p := &playlistItem{}
 	service = auth.NewY2BService()
 
 	for _, opt := range opts {
@@ -46,7 +46,7 @@ func NewPlaylistItem(opts ...PlaylistItemOption) *PlaylistItem {
 	return p
 }
 
-func (pi *PlaylistItem) List(parts []string, output string) {
+func (pi *playlistItem) List(parts []string, output string) {
 	playlistItems := pi.get(parts)
 	switch output {
 	case "json":
@@ -61,7 +61,7 @@ func (pi *PlaylistItem) List(parts []string, output string) {
 	}
 }
 
-func (pi *PlaylistItem) Insert() {
+func (pi *playlistItem) Insert() {
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
 			Title:       pi.title,
@@ -87,7 +87,7 @@ func (pi *PlaylistItem) Insert() {
 	utils.PrintJSON(res)
 }
 
-func (pi *PlaylistItem) Update() {
+func (pi *playlistItem) Update() {
 	playlistItem := pi.get([]string{"id", "snippet", "status"})[0]
 	if pi.title != "" {
 		playlistItem.Snippet.Title = pi.title
@@ -108,7 +108,7 @@ func (pi *PlaylistItem) Update() {
 	utils.PrintJSON(res)
 }
 
-func (pi *PlaylistItem) get(parts []string) []*youtube.PlaylistItem {
+func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call := service.PlaylistItems.List(parts)
 	if pi.id != "" {
 		call = call.Id(pi.id)
@@ -124,43 +124,43 @@ func (pi *PlaylistItem) get(parts []string) []*youtube.PlaylistItem {
 }
 
 func WithPlaylistItemId(id string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.id = id
 	}
 }
 
 func WithPlaylistItemTitle(title string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.title = title
 	}
 }
 
 func WithPlaylistItemDesc(desc string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.desc = desc
 	}
 }
 
 func WithPlaylistItemVideoId(videoId string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.videoId = videoId
 	}
 }
 
 func WithPlaylistItemPlaylistId(playlistId string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.playlistId = playlistId
 	}
 }
 
 func WithPlaylistItemChannelId(channelId string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.channelId = channelId
 	}
 }
 
 func WithPlaylistItemPrivacy(privacy string) PlaylistItemOption {
-	return func(p *PlaylistItem) {
+	return func(p *playlistItem) {
 		p.privacy = privacy
 	}
 }

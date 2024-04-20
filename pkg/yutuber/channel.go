@@ -13,28 +13,27 @@ import (
 
 var (
 	service          *youtube.Service
-	part             []string = []string{"snippet"}
-	errGetChannel    error    = errors.New("failed to get channel")
-	errUpdateChannel error    = errors.New("failed to update channel")
+	errGetChannel    error = errors.New("failed to get channel")
+	errUpdateChannel error = errors.New("failed to update channel")
 )
 
-type Channel struct {
+type channel struct {
 	id    string
 	title string
 	desc  string
 	user  string
 }
 
-type ChannelService interface {
+type Channel interface {
 	List([]string, string)
 	Update()
-	get() *youtube.Channel
+	get([]string) []*youtube.Channel
 }
 
-type ChannelOption func(*Channel)
+type ChannelOption func(*channel)
 
-func NewChannel(opts ...ChannelOption) *Channel {
-	c := &Channel{}
+func NewChannel(opts ...ChannelOption) Channel {
+	c := &channel{}
 	service = auth.NewY2BService()
 
 	for _, opt := range opts {
@@ -44,42 +43,8 @@ func NewChannel(opts ...ChannelOption) *Channel {
 	return c
 }
 
-func (c *Channel) List(parts []string, output string) {
-	channels := c.get()
-	switch output {
-	case "json":
-		utils.PrintJSON(channels)
-	case "yaml":
-		utils.PrintYAML(channels)
-	default:
-		fmt.Println("ID\tTitle")
-		for _, channel := range channels {
-			fmt.Printf("%s\t%s\n", channel.Id, channel.Snippet.Title)
-		}
-	}
-}
-
-func (c *Channel) Update() {
-	channel := c.get()[0]
-	// TODO: is there a better way to check and update?
-	if c.title != "" {
-		channel.Snippet.Title = c.title
-	}
-	if c.desc != "" {
-		channel.Snippet.Description = c.desc
-	}
-
-	call := service.Channels.Update(part, channel)
-	res, err := call.Do()
-	if err != nil {
-		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
-	}
-	fmt.Println("Channel updated:")
-	utils.PrintJSON(res)
-}
-
-func (c *Channel) get() []*youtube.Channel {
-	call := service.Channels.List(part)
+func (c *channel) get(parts []string) []*youtube.Channel {
+	call := service.Channels.List(parts)
 	switch {
 	case c.id != "":
 		call = call.Id(c.id)
@@ -96,26 +61,61 @@ func (c *Channel) get() []*youtube.Channel {
 	return resp.Items
 }
 
+func (c *channel) List(parts []string, output string) {
+	channels := c.get(parts)
+	switch output {
+	case "json":
+		utils.PrintJSON(channels)
+	case "yaml":
+		utils.PrintYAML(channels)
+	default:
+		fmt.Println("ID\tTitle")
+		for _, channel := range channels {
+			fmt.Printf("%s\t%s\n", channel.Id, channel.Snippet.Title)
+		}
+	}
+}
+
+func (c *channel) Update() {
+	parts := []string{"snippet"}
+	channel := c.get(parts)[0]
+	// TODO: is there a better way to check and update?
+	if c.title != "" {
+		channel.Snippet.Title = c.title
+	}
+	if c.desc != "" {
+		channel.Snippet.Description = c.desc
+	}
+
+	call := service.Channels.Update(parts, channel)
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
+	}
+	fmt.Println("Channel updated:")
+	utils.PrintJSON(res)
+}
+
 func WithChannelID(id string) ChannelOption {
-	return func(c *Channel) {
+	return func(c *channel) {
 		c.id = id
 	}
 }
 
 func WithChannelTitle(title string) ChannelOption {
-	return func(c *Channel) {
+	return func(c *channel) {
 		c.title = title
 	}
 }
 
 func WithChannelDesc(desc string) ChannelOption {
-	return func(c *Channel) {
+	return func(c *channel) {
 		c.desc = desc
 	}
 }
 
 func WithChannelUser(user string) ChannelOption {
-	return func(c *Channel) {
+	return func(c *channel) {
 		c.user = user
 	}
 }

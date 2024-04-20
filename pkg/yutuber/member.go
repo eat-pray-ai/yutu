@@ -13,19 +13,19 @@ var (
 	errGetMember error = errors.New("failed to get member")
 )
 
-type Member struct {
+type member struct {
 	memberChannelId string
 }
 
-type MemberService interface {
+type Member interface {
 	List([]string, string)
 	get([]string) []*youtube.Member
 }
 
-type MemberOption func(*Member)
+type MemberOption func(*member)
 
-func NewMember(opts ...MemberOption) *Member {
-	m := &Member{}
+func NewMember(opts ...MemberOption) Member {
+	m := &member{}
 	service = auth.NewY2BService()
 
 	for _, opt := range opts {
@@ -35,7 +35,7 @@ func NewMember(opts ...MemberOption) *Member {
 	return m
 }
 
-func (m *Member) get(parts []string) []*youtube.Member {
+func (m *member) get(parts []string) []*youtube.Member {
 	call := service.Members.List(parts)
 	if m.memberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.memberChannelId)
@@ -48,7 +48,7 @@ func (m *Member) get(parts []string) []*youtube.Member {
 	return response.Items
 }
 
-func (m *Member) List(parts []string, output string) {
+func (m *member) List(parts []string, output string) {
 	members := m.get(parts)
 	switch output {
 	case "json":
@@ -68,7 +68,7 @@ func (m *Member) List(parts []string, output string) {
 }
 
 func WithMemberChannelId(channelId string) MemberOption {
-	return func(m *Member) {
+	return func(m *member) {
 		m.memberChannelId = channelId
 	}
 }

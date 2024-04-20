@@ -14,19 +14,19 @@ var (
 	errGetActivity error = errors.New("failed to get activity")
 )
 
-type Activity struct {
+type activity struct {
 	channelId string
 }
 
-type ActivityService interface {
+type Activity interface {
 	List([]string, string)
-	get() *youtube.Activity
+	get([]string) []*youtube.Activity
 }
 
-type ActivityOption func(*Activity)
+type ActivityOption func(*activity)
 
-func NewActivity(opts ...ActivityOption) *Activity {
-	a := &Activity{}
+func NewActivity(opts ...ActivityOption) Activity {
+	a := &activity{}
 
 	for _, opt := range opts {
 		opt(a)
@@ -35,9 +35,9 @@ func NewActivity(opts ...ActivityOption) *Activity {
 	return a
 }
 
-func (a *Activity) get() []*youtube.Activity {
+func (a *activity) get(parts []string) []*youtube.Activity {
 	service := auth.NewY2BService()
-	call := service.Activities.List(part)
+	call := service.Activities.List(parts)
 	if a.channelId != "" {
 		call = call.ChannelId(a.channelId)
 	} else {
@@ -52,8 +52,8 @@ func (a *Activity) get() []*youtube.Activity {
 	return response.Items
 }
 
-func (a *Activity) List(parts []string, output string) {
-	activities := a.get()
+func (a *activity) List(parts []string, output string) {
+	activities := a.get(parts)
 	switch output {
 	case "json":
 		utils.PrintJSON(activities)
@@ -68,7 +68,7 @@ func (a *Activity) List(parts []string, output string) {
 }
 
 func WithActivityChannelId(channelId string) ActivityOption {
-	return func(a *Activity) {
+	return func(a *activity) {
 		a.channelId = channelId
 	}
 }

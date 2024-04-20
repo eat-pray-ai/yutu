@@ -17,7 +17,7 @@ var (
 	errUpdatePlaylist error = errors.New("failed to update playlist")
 )
 
-type Playlist struct {
+type playlist struct {
 	id        string
 	title     string
 	desc      string
@@ -27,17 +27,17 @@ type Playlist struct {
 	privacy   string
 }
 
-type PlaylistService interface {
+type Playlist interface {
 	List([]string, string)
 	Insert()
 	Update()
 	get([]string) []*youtube.Playlist
 }
 
-type PlaylistOption func(*Playlist)
+type PlaylistOption func(*playlist)
 
-func NewPlaylist(opts ...PlaylistOption) *Playlist {
-	p := &Playlist{}
+func NewPlaylist(opts ...PlaylistOption) Playlist {
+	p := &playlist{}
 	service = auth.NewY2BService()
 
 	for _, opt := range opts {
@@ -47,7 +47,7 @@ func NewPlaylist(opts ...PlaylistOption) *Playlist {
 	return p
 }
 
-func (p *Playlist) List(parts []string, output string) {
+func (p *playlist) List(parts []string, output string) {
 	playlists := p.get(parts)
 	switch output {
 	case "json":
@@ -62,7 +62,7 @@ func (p *Playlist) List(parts []string, output string) {
 	}
 }
 
-func (p *Playlist) Insert() {
+func (p *playlist) Insert() {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.title,
@@ -85,7 +85,7 @@ func (p *Playlist) Insert() {
 	fmt.Printf("Playlist %s inserted\n", playlist.Id)
 }
 
-func (p *Playlist) Update() {
+func (p *playlist) Update() {
 	playlist := p.get([]string{"id", "snippet", "status"})[0]
 	if p.title != "" {
 		playlist.Snippet.Title = p.title
@@ -114,7 +114,7 @@ func (p *Playlist) Update() {
 	utils.PrintJSON(data)
 }
 
-func (p *Playlist) get(parts []string) []*youtube.Playlist {
+func (p *playlist) get(parts []string) []*youtube.Playlist {
 	call := service.Playlists.List(parts)
 	switch {
 	case p.id != "":
@@ -134,43 +134,43 @@ func (p *Playlist) get(parts []string) []*youtube.Playlist {
 }
 
 func WithPlaylistId(id string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.id = id
 	}
 }
 
 func WithPlaylistTitle(title string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.title = title
 	}
 }
 
 func WithPlaylistDesc(desc string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.desc = desc
 	}
 }
 
 func WithPlaylistTags(tags []string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.tags = tags
 	}
 }
 
 func WithPlaylistLanguage(language string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.language = language
 	}
 }
 
 func WithPlaylistChannelId(channelId string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.channelId = channelId
 	}
 }
 
 func WithPlaylistPrivacy(privacy string) PlaylistOption {
-	return func(p *Playlist) {
+	return func(p *playlist) {
 		p.privacy = privacy
 	}
 }
