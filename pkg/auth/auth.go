@@ -21,7 +21,7 @@ import (
 
 var (
 	credential     string = "client_secret.json"
-	cacheFile      string = "youtube.cache.json"
+	cacheFile      string = "youtube.token.json"
 	errGetUser     error  = errors.New("unable to get current user")
 	errCreateSvc   error  = errors.New("unable to create YouTube service")
 	errReadPrompt  error  = errors.New("unable to read prompt")
@@ -68,6 +68,9 @@ func getClient(ctx context.Context, scope ...string) *http.Client {
 	} else if !token.Valid() {
 		tokenSource := config.TokenSource(ctx, token)
 		token, err = tokenSource.Token()
+		if token != nil {
+			saveToken(cacheFile, token)
+		}
 		if err != nil {
 			return newClient(ctx, config, cacheFile)
 		}
@@ -208,7 +211,6 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func saveToken(file string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to %s\n", file)
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Fatalln(errors.Join(errCacheToken, err))

@@ -64,7 +64,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] update, 50
   - [ ] delete, 50
 - activities
-  - [ ] list, 1
+  - [x] list, 1
 - captions
   - [ ] list, 50
   - [ ] insert, 400
@@ -87,8 +87,8 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [ ] list, 1
   - [ ] insert, 50
   - [ ] update, 50
-- guideCategories
-  - [ ] list, 1
+- <s>guideCategories</s>
+  - [x] <s>list, 1 deprecated API</s>
 - i18nLanguages
   - [ ] list, 1
 - i18nRegions
