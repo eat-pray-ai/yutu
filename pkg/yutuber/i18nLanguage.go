@@ -3,6 +3,7 @@ package yutuber
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -22,6 +23,7 @@ type I18nLanguage interface {
 type I18nLanguageOption func(*i18nLanguage)
 
 func NewI18nLanguage(opts ...I18nLanguageOption) I18nLanguage {
+	service = auth.NewY2BService()
 	i := &i18nLanguage{}
 
 	for _, opt := range opts {
