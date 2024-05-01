@@ -1,0 +1,15 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: 🏕 Features
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - dependencies
+          - duplicate
+          - invalid
+    - title: 👒 Dependencies
+      labels:
+        - dependencies
