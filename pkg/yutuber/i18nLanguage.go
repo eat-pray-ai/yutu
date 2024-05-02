@@ -20,9 +20,9 @@ type I18nLanguage interface {
 	List(parts []string, output string)
 }
 
-type I18nLanguageOption func(*i18nLanguage)
+type i18nLanguageOption func(*i18nLanguage)
 
-func NewI18nLanguage(opts ...I18nLanguageOption) I18nLanguage {
+func NewI18nLanguage(opts ...i18nLanguageOption) I18nLanguage {
 	service = auth.NewY2BService()
 	i := &i18nLanguage{}
 

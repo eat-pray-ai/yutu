@@ -20,9 +20,9 @@ type VideoAbuseReportReason interface {
 	List([]string, string)
 }
 
-type VideoAbuseReportReasonOption func(*videoAbuseReportReason)
+type videoAbuseReportReasonOption func(*videoAbuseReportReason)
 
-func NewVideoAbuseReportReason(opt ...VideoAbuseReportReasonOption) VideoAbuseReportReason {
+func NewVideoAbuseReportReason(opt ...videoAbuseReportReasonOption) VideoAbuseReportReason {
 	service = auth.NewY2BService()
 	va := &videoAbuseReportReason{}
 	for _, o := range opt {

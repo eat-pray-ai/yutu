@@ -23,9 +23,9 @@ type Activity interface {
 	get([]string) []*youtube.Activity
 }
 
-type ActivityOption func(*activity)
+type activityOption func(*activity)
 
-func NewActivity(opts ...ActivityOption) Activity {
+func NewActivity(opts ...activityOption) Activity {
 	a := &activity{}
 
 	for _, opt := range opts {
@@ -67,7 +67,7 @@ func (a *activity) List(parts []string, output string) {
 	}
 }
 
-func WithActivityChannelId(channelId string) ActivityOption {
+func WithActivityChannelId(channelId string) activityOption {
 	return func(a *activity) {
 		a.channelId = channelId
 	}

@@ -20,9 +20,9 @@ type I18nRegion interface {
 	List(parts []string, output string)
 }
 
-type I18nRegionOption func(*i18nRegion)
+type i18nRegionOption func(*i18nRegion)
 
-func NewI18nRegion(opts ...I18nRegionOption) I18nRegion {
+func NewI18nRegion(opts ...i18nRegionOption) I18nRegion {
 	service = auth.NewY2BService()
 	i := &i18nRegion{}
 

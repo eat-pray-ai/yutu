@@ -30,9 +30,9 @@ type Channel interface {
 	get([]string) []*youtube.Channel
 }
 
-type ChannelOption func(*channel)
+type channelOption func(*channel)
 
-func NewChannel(opts ...ChannelOption) Channel {
+func NewChannel(opts ...channelOption) Channel {
 	c := &channel{}
 	service = auth.NewY2BService()
 
@@ -96,25 +96,25 @@ func (c *channel) Update() {
 	utils.PrintJSON(res)
 }
 
-func WithChannelID(id string) ChannelOption {
+func WithChannelID(id string) channelOption {
 	return func(c *channel) {
 		c.id = id
 	}
 }
 
-func WithChannelTitle(title string) ChannelOption {
+func WithChannelTitle(title string) channelOption {
 	return func(c *channel) {
 		c.title = title
 	}
 }
 
-func WithChannelDesc(desc string) ChannelOption {
+func WithChannelDesc(desc string) channelOption {
 	return func(c *channel) {
 		c.desc = desc
 	}
 }
 
-func WithChannelUser(user string) ChannelOption {
+func WithChannelUser(user string) channelOption {
 	return func(c *channel) {
 		c.user = user
 	}

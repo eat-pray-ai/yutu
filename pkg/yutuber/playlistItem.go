@@ -33,9 +33,9 @@ type PlaylistItem interface {
 	get([]string) []*youtube.PlaylistItem
 }
 
-type PlaylistItemOption func(*playlistItem)
+type playlistItemOption func(*playlistItem)
 
-func NewPlaylistItem(opts ...PlaylistItemOption) PlaylistItem {
+func NewPlaylistItem(opts ...playlistItemOption) PlaylistItem {
 	p := &playlistItem{}
 	service = auth.NewY2BService()
 
@@ -123,43 +123,43 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	return response.Items
 }
 
-func WithPlaylistItemId(id string) PlaylistItemOption {
+func WithPlaylistItemId(id string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.id = id
 	}
 }
 
-func WithPlaylistItemTitle(title string) PlaylistItemOption {
+func WithPlaylistItemTitle(title string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.title = title
 	}
 }
 
-func WithPlaylistItemDesc(desc string) PlaylistItemOption {
+func WithPlaylistItemDesc(desc string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.desc = desc
 	}
 }
 
-func WithPlaylistItemVideoId(videoId string) PlaylistItemOption {
+func WithPlaylistItemVideoId(videoId string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.videoId = videoId
 	}
 }
 
-func WithPlaylistItemPlaylistId(playlistId string) PlaylistItemOption {
+func WithPlaylistItemPlaylistId(playlistId string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.playlistId = playlistId
 	}
 }
 
-func WithPlaylistItemChannelId(channelId string) PlaylistItemOption {
+func WithPlaylistItemChannelId(channelId string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.channelId = channelId
 	}
 }
 
-func WithPlaylistItemPrivacy(privacy string) PlaylistItemOption {
+func WithPlaylistItemPrivacy(privacy string) playlistItemOption {
 	return func(p *playlistItem) {
 		p.privacy = privacy
 	}

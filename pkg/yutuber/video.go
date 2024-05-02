@@ -49,9 +49,9 @@ type Video interface {
 	setThumbnail(string, *youtube.Service)
 }
 
-type VideoOption func(*video)
+type videoOption func(*video)
 
-func NewVideo(opts ...VideoOption) Video {
+func NewVideo(opts ...videoOption) Video {
 	v := &video{}
 	service = auth.NewY2BService()
 
@@ -223,91 +223,91 @@ func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {
 	}
 }
 
-func WithVideoId(id string) VideoOption {
+func WithVideoId(id string) videoOption {
 	return func(v *video) {
 		v.id = id
 	}
 }
 
-func WithVideoFile(file string) VideoOption {
+func WithVideoFile(file string) videoOption {
 	return func(v *video) {
 		v.file = file
 	}
 }
 
-func WithVideoTitle(title string) VideoOption {
+func WithVideoTitle(title string) videoOption {
 	return func(v *video) {
 		v.title = title
 	}
 }
 
-func WithVideoDesc(desc string) VideoOption {
+func WithVideoDesc(desc string) videoOption {
 	return func(v *video) {
 		v.desc = desc
 	}
 }
 
-func WithVideoTags(tags []string) VideoOption {
+func WithVideoTags(tags []string) videoOption {
 	return func(v *video) {
 		v.tags = tags
 	}
 }
 
-func WithVideoLanguage(language string) VideoOption {
+func WithVideoLanguage(language string) videoOption {
 	return func(v *video) {
 		v.language = language
 	}
 }
 
-func WithVideoThumbnail(thumbnail string) VideoOption {
+func WithVideoThumbnail(thumbnail string) videoOption {
 	return func(v *video) {
 		v.thumbnail = thumbnail
 	}
 }
 
-func WithVideoRating(rating string) VideoOption {
+func WithVideoRating(rating string) videoOption {
 	return func(v *video) {
 		v.rating = rating
 	}
 }
 
-func WithVideoChart(chart string) VideoOption {
+func WithVideoChart(chart string) videoOption {
 	return func(v *video) {
 		v.chart = chart
 	}
 }
 
-func WithVideoForKids(forKids bool) VideoOption {
+func WithVideoForKids(forKids bool) videoOption {
 	return func(v *video) {
 		v.forKids = forKids
 	}
 }
 
-func WithVideoEmbeddable(embeddable bool) VideoOption {
+func WithVideoEmbeddable(embeddable bool) videoOption {
 	return func(v *video) {
 		v.embeddable = embeddable
 	}
 }
 
-func WithVideoCategory(category string) VideoOption {
+func WithVideoCategory(category string) videoOption {
 	return func(v *video) {
 		v.category = category
 	}
 }
 
-func WithVideoPrivacy(privacy string) VideoOption {
+func WithVideoPrivacy(privacy string) videoOption {
 	return func(v *video) {
 		v.privacy = privacy
 	}
 }
 
-func WithVideoChannelId(channelId string) VideoOption {
+func WithVideoChannelId(channelId string) videoOption {
 	return func(v *video) {
 		v.channelId = channelId
 	}
 }
 
-func WithVideoPlaylistId(playlistId string) VideoOption {
+func WithVideoPlaylistId(playlistId string) videoOption {
 	return func(v *video) {
 		v.playlistId = playlistId
 	}

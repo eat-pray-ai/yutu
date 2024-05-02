@@ -20,9 +20,9 @@ type MembershipsLevel interface {
 	get([]string) []*youtube.MembershipsLevel
 }
 
-type MembershipsLevelOption func(*membershipsLevel)
+type membershipsLevelOption func(*membershipsLevel)
 
-func NewMembershipsLevel(opts ...MembershipsLevelOption) MembershipsLevel {
+func NewMembershipsLevel(opts ...membershipsLevelOption) MembershipsLevel {
 	m := &membershipsLevel{}
 	service = auth.NewY2BService()
 

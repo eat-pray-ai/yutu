@@ -22,9 +22,9 @@ type Member interface {
 	get([]string) []*youtube.Member
 }
 
-type MemberOption func(*member)
+type memberOption func(*member)
 
-func NewMember(opts ...MemberOption) Member {
+func NewMember(opts ...memberOption) Member {
 	m := &member{}
 	service = auth.NewY2BService()
 
@@ -67,7 +67,7 @@ func (m *member) List(parts []string, output string) {
 	}
 }
 
-func WithMemberChannelId(channelId string) MemberOption {
+func WithMemberChannelId(channelId string) memberOption {
 	return func(m *member) {
 		m.memberChannelId = channelId
 	}
