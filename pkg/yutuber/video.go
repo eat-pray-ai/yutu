@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	errGetVideo     error = errors.New("failed to get video")
-	errInsertVideo  error = errors.New("failed to insert video")
-	errUpdateVideo  error = errors.New("failed to update video")
-	errOpenFile     error = errors.New("failed to open file")
-	errSetThumbnail error = errors.New("failed to set thumbnail")
-	errRating       error = errors.New("failed to rate video")
-	errGetRating    error = errors.New("failed to get rating")
+	errGetVideo     = errors.New("failed to get video")
+	errInsertVideo  = errors.New("failed to insert video")
+	errUpdateVideo  = errors.New("failed to update video")
+	errOpenFile     = errors.New("failed to open file")
+	errSetThumbnail = errors.New("failed to set thumbnail")
+	errRating       = errors.New("failed to rate video")
+	errGetRating    = errors.New("failed to get rating")
 )
 
 type video struct {
@@ -49,9 +49,9 @@ type Video interface {
 	setThumbnail(string, *youtube.Service)
 }
 
-type videoOption func(*video)
+type VideoOption func(*video)
 
-func NewVideo(opts ...videoOption) Video {
+func NewVideo(opts ...VideoOption) Video {
 	v := &video{}
 	service = auth.NewY2BService()
 
@@ -223,91 +223,91 @@ func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {
 	}
 }
 
-func WithVideoId(id string) videoOption {
+func WithVideoId(id string) VideoOption {
 	return func(v *video) {
 		v.id = id
 	}
 }
 
-func WithVideoFile(file string) videoOption {
+func WithVideoFile(file string) VideoOption {
 	return func(v *video) {
 		v.file = file
 	}
 }
 
-func WithVideoTitle(title string) videoOption {
+func WithVideoTitle(title string) VideoOption {
 	return func(v *video) {
 		v.title = title
 	}
 }
 
-func WithVideoDesc(desc string) videoOption {
+func WithVideoDesc(desc string) VideoOption {
 	return func(v *video) {
 		v.desc = desc
 	}
 }
 
-func WithVideoTags(tags []string) videoOption {
+func WithVideoTags(tags []string) VideoOption {
 	return func(v *video) {
 		v.tags = tags
 	}
 }
 
-func WithVideoLanguage(language string) videoOption {
+func WithVideoLanguage(language string) VideoOption {
 	return func(v *video) {
 		v.language = language
 	}
 }
 
-func WithVideoThumbnail(thumbnail string) videoOption {
+func WithVideoThumbnail(thumbnail string) VideoOption {
 	return func(v *video) {
 		v.thumbnail = thumbnail
 	}
 }
 
-func WithVideoRating(rating string) videoOption {
+func WithVideoRating(rating string) VideoOption {
 	return func(v *video) {
 		v.rating = rating
 	}
 }
 
-func WithVideoChart(chart string) videoOption {
+func WithVideoChart(chart string) VideoOption {
 	return func(v *video) {
 		v.chart = chart
 	}
 }
 
-func WithVideoForKids(forKids bool) videoOption {
+func WithVideoForKids(forKids bool) VideoOption {
 	return func(v *video) {
 		v.forKids = forKids
 	}
 }
 
-func WithVideoEmbeddable(embeddable bool) videoOption {
+func WithVideoEmbeddable(embeddable bool) VideoOption {
 	return func(v *video) {
 		v.embeddable = embeddable
 	}
 }
 
-func WithVideoCategory(category string) videoOption {
+func WithVideoCategory(category string) VideoOption {
 	return func(v *video) {
 		v.category = category
 	}
 }
 
-func WithVideoPrivacy(privacy string) videoOption {
+func WithVideoPrivacy(privacy string) VideoOption {
 	return func(v *video) {
 		v.privacy = privacy
 	}
 }
 
-func WithVideoChannelId(channelId string) videoOption {
+func WithVideoChannelId(channelId string) VideoOption {
 	return func(v *video) {
 		v.channelId = channelId
 	}
 }
 
-func WithVideoPlaylistId(playlistId string) videoOption {
+func WithVideoPlaylistId(playlistId string) VideoOption {
 	return func(v *video) {
 		v.playlistId = playlistId
 	}

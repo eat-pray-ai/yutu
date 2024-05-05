@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	errGetVideoAbuseReportReason error = errors.New("failed to get video abuse report reason")
+	errGetVideoAbuseReportReason = errors.New("failed to get video abuse report reason")
 )
 
 type videoAbuseReportReason struct{}
@@ -20,9 +20,9 @@ type VideoAbuseReportReason interface {
 	List([]string, string)
 }
 
-type videoAbuseReportReasonOption func(*videoAbuseReportReason)
+type VideoAbuseReportReasonOption func(*videoAbuseReportReason)
 
-func NewVideoAbuseReportReason(opt ...videoAbuseReportReasonOption) VideoAbuseReportReason {
+func NewVideoAbuseReportReason(opt ...VideoAbuseReportReasonOption) VideoAbuseReportReason {
 	service = auth.NewY2BService()
 	va := &videoAbuseReportReason{}
 	for _, o := range opt {

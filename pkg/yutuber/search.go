@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	errGetSearch error = errors.New("failed to get search")
+	errGetSearch = errors.New("failed to get search")
 )
 
 type search struct {

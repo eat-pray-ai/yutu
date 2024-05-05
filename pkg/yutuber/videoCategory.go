@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	errGetVideoCategory error = errors.New("failed to get video category")
+	errGetVideoCategory = errors.New("failed to get video category")
 )
 
 type videoCategory struct {
@@ -23,9 +23,9 @@ type VideoCategory interface {
 	List([]string, string)
 }
 
-type videoCategoryOption func(*videoCategory)
+type VideoCategoryOption func(*videoCategory)
 
-func NewVideoCategory(opt ...videoCategoryOption) VideoCategory {
+func NewVideoCategory(opt ...VideoCategoryOption) VideoCategory {
 	service = auth.NewY2BService()
 	vc := &videoCategory{}
 	for _, o := range opt {
@@ -62,7 +62,7 @@ func (vc *videoCategory) List(parts []string, output string) {
 	}
 }
 
-func WithRegionCode(regionCode string) videoCategoryOption {
+func WithRegionCode(regionCode string) VideoCategoryOption {
 	return func(vc *videoCategory) {
 		vc.regionCode = regionCode
 	}

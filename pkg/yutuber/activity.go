@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	errGetActivity error = errors.New("failed to get activity")
+	errGetActivity = errors.New("failed to get activity")
 )
 
 type activity struct {
@@ -23,9 +23,9 @@ type Activity interface {
 	get([]string) []*youtube.Activity
 }
 
-type activityOption func(*activity)
+type ActivityOption func(*activity)
 
-func NewActivity(opts ...activityOption) Activity {
+func NewActivity(opts ...ActivityOption) Activity {
 	a := &activity{}
 
 	for _, opt := range opts {
@@ -67,7 +67,7 @@ func (a *activity) List(parts []string, output string) {
 	}
 }
 
-func WithActivityChannelId(channelId string) activityOption {
+func WithActivityChannelId(channelId string) ActivityOption {
 	return func(a *activity) {
 		a.channelId = channelId
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	errGetMembershipsLevel error = errors.New("failed to get memberships level")
+	errGetMembershipsLevel = errors.New("failed to get memberships level")
 )
 
 type membershipsLevel struct{}
@@ -20,9 +20,9 @@ type MembershipsLevel interface {
 	get([]string) []*youtube.MembershipsLevel
 }
 
-type membershipsLevelOption func(*membershipsLevel)
+type MembershipsLevelOption func(*membershipsLevel)
 
-func NewMembershipsLevel(opts ...membershipsLevelOption) MembershipsLevel {
+func NewMembershipsLevel(opts ...MembershipsLevelOption) MembershipsLevel {
 	m := &membershipsLevel{}
 	service = auth.NewY2BService()
 

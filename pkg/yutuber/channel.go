@@ -13,8 +13,8 @@ import (
 
 var (
 	service          *youtube.Service
-	errGetChannel    error = errors.New("failed to get channel")
-	errUpdateChannel error = errors.New("failed to update channel")
+	errGetChannel    = errors.New("failed to get channel")
+	errUpdateChannel = errors.New("failed to update channel")
 )
 
 type channel struct {
@@ -30,9 +30,9 @@ type Channel interface {
 	get([]string) []*youtube.Channel
 }
 
-type channelOption func(*channel)
+type ChannelOption func(*channel)
 
-func NewChannel(opts ...channelOption) Channel {
+func NewChannel(opts ...ChannelOption) Channel {
 	c := &channel{}
 	service = auth.NewY2BService()
 
@@ -96,25 +96,25 @@ func (c *channel) Update() {
 	utils.PrintJSON(res)
 }
 
-func WithChannelID(id string) channelOption {
+func WithChannelID(id string) ChannelOption {
 	return func(c *channel) {
 		c.id = id
 	}
 }
 
-func WithChannelTitle(title string) channelOption {
+func WithChannelTitle(title string) ChannelOption {
 	return func(c *channel) {
 		c.title = title
 	}
 }
 
-func WithChannelDesc(desc string) channelOption {
+func WithChannelDesc(desc string) ChannelOption {
 	return func(c *channel) {
 		c.desc = desc
 	}
 }
 
-func WithChannelUser(user string) channelOption {
+func WithChannelUser(user string) ChannelOption {
 	return func(c *channel) {
 		c.user = user
 	}

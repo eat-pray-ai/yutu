@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	errGetPlaylist    error = errors.New("failed to get playlist")
-	errInsertPlaylist error = errors.New("failed to insert playlist")
-	errUpdatePlaylist error = errors.New("failed to update playlist")
+	errGetPlaylist    = errors.New("failed to get playlist")
+	errInsertPlaylist = errors.New("failed to insert playlist")
+	errUpdatePlaylist = errors.New("failed to update playlist")
 )
 
 type playlist struct {
@@ -34,9 +34,9 @@ type Playlist interface {
 	get([]string) []*youtube.Playlist
 }
 
-type playlistOption func(*playlist)
+type PlaylistOption func(*playlist)
 
-func NewPlaylist(opts ...playlistOption) Playlist {
+func NewPlaylist(opts ...PlaylistOption) Playlist {
 	p := &playlist{}
 	service = auth.NewY2BService()
 
@@ -133,43 +133,43 @@ func (p *playlist) get(parts []string) []*youtube.Playlist {
 	return res.Items
 }
 
-func WithPlaylistId(id string) playlistOption {
+func WithPlaylistId(id string) PlaylistOption {
 	return func(p *playlist) {
 		p.id = id
 	}
 }
 
-func WithPlaylistTitle(title string) playlistOption {
+func WithPlaylistTitle(title string) PlaylistOption {
 	return func(p *playlist) {
 		p.title = title
 	}
 }
 
-func WithPlaylistDesc(desc string) playlistOption {
+func WithPlaylistDesc(desc string) PlaylistOption {
 	return func(p *playlist) {
 		p.desc = desc
 	}
 }
 
-func WithPlaylistTags(tags []string) playlistOption {
+func WithPlaylistTags(tags []string) PlaylistOption {
 	return func(p *playlist) {
 		p.tags = tags
 	}
 }
 
-func WithPlaylistLanguage(language string) playlistOption {
+func WithPlaylistLanguage(language string) PlaylistOption {
 	return func(p *playlist) {
 		p.language = language
 	}
 }
 
-func WithPlaylistChannelId(channelId string) playlistOption {
+func WithPlaylistChannelId(channelId string) PlaylistOption {
 	return func(p *playlist) {
 		p.channelId = channelId
 	}
 }
 
-func WithPlaylistPrivacy(privacy string) playlistOption {
+func WithPlaylistPrivacy(privacy string) PlaylistOption {
 	return func(p *playlist) {
 		p.privacy = privacy
 	}

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	errGetMember error = errors.New("failed to get member")
+	errGetMember = errors.New("failed to get member")
 )
 
 type member struct {
@@ -22,9 +22,9 @@ type Member interface {
 	get([]string) []*youtube.Member
 }
 
-type memberOption func(*member)
+type MemberOption func(*member)
 
-func NewMember(opts ...memberOption) Member {
+func NewMember(opts ...MemberOption) Member {
 	m := &member{}
 	service = auth.NewY2BService()
 
@@ -67,7 +67,7 @@ func (m *member) List(parts []string, output string) {
 	}
 }
 
-func WithMemberChannelId(channelId string) memberOption {
+func WithMemberChannelId(channelId string) MemberOption {
 	return func(m *member) {
 		m.memberChannelId = channelId
 	}
