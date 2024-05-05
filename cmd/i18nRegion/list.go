@@ -18,9 +18,9 @@ var listCmd = &cobra.Command{
 func init() {
 	i18nRegionCmd.AddCommand(listCmd)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, "comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "output format: json or yaml",
+		&output, "output", "o", "", "Output format: json or yaml",
 	)
 }

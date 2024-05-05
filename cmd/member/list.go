@@ -21,7 +21,8 @@ func init() {
 	memberCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
-		&memberChannelId, "memberChannelId", "c", "", "Comma separated channelIDs",
+		&memberChannelId, "memberChannelId", "c", "",
+		"Comma separated list of channel IDs. Only data about members that are part of this list will be included",
 	)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"snippet"}, "Comma separated parts",

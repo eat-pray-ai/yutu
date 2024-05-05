@@ -21,8 +21,8 @@ var listCmd = &cobra.Command{
 func init() {
 	channelCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the channel")
-	listCmd.Flags().StringVarP(&user, "user", "u", "", "User that owns the channel")
+	listCmd.Flags().StringVarP(&id, "id", "i", "", "Return the channels with the specified IDs")
+	listCmd.Flags().StringVarP(&user, "user", "u", "", "Return the channel associated with a YouTube username")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
 	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", []string{"id", "snippet", "status"}, "Comma separated parts")
 }

@@ -46,6 +46,21 @@ func NewPlaylistItem(opts ...PlaylistItemOption) PlaylistItem {
 	return p
 }
 
+func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
+	call := service.PlaylistItems.List(parts)
+	if pi.id != "" {
+		call = call.Id(pi.id)
+	} else if pi.playlistId != "" {
+		call = call.PlaylistId(pi.playlistId)
+	}
+	response, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
+	}
+
+	return response.Items
+}
+
 func (pi *playlistItem) List(parts []string, output string) {
 	playlistItems := pi.get(parts)
 	switch output {
@@ -106,21 +121,6 @@ func (pi *playlistItem) Update() {
 	}
 	fmt.Println("PlaylistItem updated:")
 	utils.PrintJSON(res)
-}
-
-func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
-	call := service.PlaylistItems.List(parts)
-	if pi.id != "" {
-		call = call.Id(pi.id)
-	} else if pi.playlistId != "" {
-		call = call.PlaylistId(pi.playlistId)
-	}
-	response, err := call.Do()
-	if err != nil {
-		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
-	}
-
-	return response.Items
 }
 
 func WithPlaylistItemId(id string) PlaylistItemOption {

@@ -22,7 +22,7 @@ func init() {
 	playlistItemCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist item")
-	listCmd.Flags().StringVarP(&playlistId, "playlistId", "l", "", "ID of the playlist")
+	listCmd.Flags().StringVarP(&playlistId, "playlistId", "l", "", "Return the playlist items within the given playlist")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
 	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", []string{"id", "snippet", "status"}, "Comma separated parts")
 }
