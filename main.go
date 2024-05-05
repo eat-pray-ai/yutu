@@ -10,6 +10,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/membershipsLevel"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlist"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlistItem"
+	_ "github.com/eat-pray-ai/yutu/cmd/search"
 	_ "github.com/eat-pray-ai/yutu/cmd/video"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoAbuseReportReason"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoCategory"

@@ -118,176 +118,226 @@ func (s *search) List(parts []string, output string) {
 	}
 }
 
-func withSearchChannelId(channelId string) searchOption {
+func WithSearchChannelId(channelId string) searchOption {
 	return func(s *search) {
-		s.channelId = channelId
+		if channelId != "" {
+			s.channelId = channelId
+		}
 	}
 }
 
-func withSearchChannelType(channelType string) searchOption {
+func WithSearchChannelType(channelType string) searchOption {
 	return func(s *search) {
-		s.channelType = channelType
+		if channelType != "" {
+			s.channelType = channelType
+		}
 	}
 }
 
-func withSearchEventType(eventType string) searchOption {
+func WithSearchEventType(eventType string) searchOption {
 	return func(s *search) {
-		s.eventType = eventType
+		if eventType != "" {
+			s.eventType = eventType
+		}
 	}
 }
 
-func withSearchForContentOwner(forContentOwner bool) searchOption {
+func WithSearchForContentOwner(forContentOwner bool) searchOption {
 	return func(s *search) {
 		s.forContentOwner = forContentOwner
 	}
 }
 
-func withSearchForDeveloper(forDeveloper bool) searchOption {
+func WithSearchForDeveloper(forDeveloper bool) searchOption {
 	return func(s *search) {
 		s.forDeveloper = forDeveloper
 	}
 }
 
-func withSearchForMine(forMine bool) searchOption {
+func WithSearchForMine(forMine bool) searchOption {
 	return func(s *search) {
 		s.forMine = forMine
 	}
 }
 
-func withSearchLocation(location string) searchOption {
+func WithSearchLocation(location string) searchOption {
 	return func(s *search) {
-		s.location = location
+		if location != "" {
+			s.location = location
+		}
 	}
 }
 
-func withSearchLocationRadius(locationRadius string) searchOption {
+func WithSearchLocationRadius(locationRadius string) searchOption {
 	return func(s *search) {
-		s.locationRadius = locationRadius
+		if locationRadius != "" {
+			s.locationRadius = locationRadius
+		}
 	}
 }
 
-func withSearchMaxResults(maxResults int64) searchOption {
+func WithSearchMaxResults(maxResults int64) searchOption {
 	return func(s *search) {
 		s.maxResults = maxResults
 	}
 }
 
-func withSearchOnBehalfOfContentOwner(onBehalfOfContentOwner string) searchOption {
+func WithSearchOnBehalfOfContentOwner(onBehalfOfContentOwner string) searchOption {
 	return func(s *search) {
-		s.onBehalfOfContentOwner = onBehalfOfContentOwner
+		if onBehalfOfContentOwner != "" {
+			s.onBehalfOfContentOwner = onBehalfOfContentOwner
+		}
 	}
 }
 
-func withSearchOrder(order string) searchOption {
+func WithSearchOrder(order string) searchOption {
 	return func(s *search) {
-		s.order = order
+		if order != "" {
+			s.order = order
+		}
 	}
 }
 
-func withSearchPublishedAfter(publishedAfter string) searchOption {
+func WithSearchPublishedAfter(publishedAfter string) searchOption {
 	return func(s *search) {
-		s.publishedAfter = publishedAfter
+		if publishedAfter != "" {
+			s.publishedAfter = publishedAfter
+		}
 	}
 }
 
-func withSearchPublishedBefore(publishedBefore string) searchOption {
+func WithSearchPublishedBefore(publishedBefore string) searchOption {
 	return func(s *search) {
-		s.publishedBefore = publishedBefore
+		if publishedBefore != "" {
+			s.publishedBefore = publishedBefore
+		}
 	}
 }
 
-func withSearchQ(q string) searchOption {
+func WithSearchQ(q string) searchOption {
 	return func(s *search) {
-		s.q = q
+		if q != "" {
+			s.q = q
+		}
 	}
 }
 
-func withSearchRegionCode(regionCode string) searchOption {
+func WithSearchRegionCode(regionCode string) searchOption {
 	return func(s *search) {
-		s.regionCode = regionCode
+		if regionCode != "" {
+			s.regionCode = regionCode
+		}
 	}
 }
 
-func withSearchRelevanceLanguage(relevanceLanguage string) searchOption {
+func WithSearchRelevanceLanguage(relevanceLanguage string) searchOption {
 	return func(s *search) {
-		s.relevanceLanguage = relevanceLanguage
+		if relevanceLanguage != "" {
+			s.relevanceLanguage = relevanceLanguage
+		}
 	}
 }
 
-func withSearchSafeSearch(safeSearch string) searchOption {
+func WithSearchSafeSearch(safeSearch string) searchOption {
 	return func(s *search) {
-		s.safeSearch = safeSearch
+		if safeSearch != "" {
+			s.safeSearch = safeSearch
+		}
 	}
 }
 
-func withSearchTopicId(topicId string) searchOption {
+func WithSearchTopicId(topicId string) searchOption {
 	return func(s *search) {
-		s.topicId = topicId
+		if topicId != "" {
+			s.topicId = topicId
+		}
 	}
 }
 
-func withSearchTypes(types string) searchOption {
+func WithSearchTypes(types string) searchOption {
 	return func(s *search) {
-		s.types = types
+		if types != "" {
+			s.types = types
+		}
 	}
 }
 
-func withSearchVideoCaption(videoCaption string) searchOption {
+func WithSearchVideoCaption(videoCaption string) searchOption {
 	return func(s *search) {
-		s.videoCaption = videoCaption
+		if videoCaption != "" {
+			s.videoCaption = videoCaption
+		}
 	}
 }
 
-func withSearchVideoCategoryId(videoCategoryId string) searchOption {
+func WithSearchVideoCategoryId(videoCategoryId string) searchOption {
 	return func(s *search) {
-		s.videoCategoryId = videoCategoryId
+		if videoCategoryId != "" {
+			s.videoCategoryId = videoCategoryId
+		}
 	}
 }
 
-func withSearchVideoDefinition(videoDefinition string) searchOption {
+func WithSearchVideoDefinition(videoDefinition string) searchOption {
 	return func(s *search) {
-		s.videoDefinition = videoDefinition
+		if videoDefinition != "" {
+			s.videoDefinition = videoDefinition
+		}
 	}
 }
 
-func withSearchVideoDimension(videoDimension string) searchOption {
+func WithSearchVideoDimension(videoDimension string) searchOption {
 	return func(s *search) {
-		s.videoDimension = videoDimension
+		if videoDimension != "" {
+			s.videoDimension = videoDimension
+		}
 	}
 }
 
-func withSearchVideoDuration(videoDuration string) searchOption {
+func WithSearchVideoDuration(videoDuration string) searchOption {
 	return func(s *search) {
-		s.videoDuration = videoDuration
+		if videoDuration != "" {
+			s.videoDuration = videoDuration
+		}
 	}
 }
 
-func withSearchVideoEmbeddable(videoEmbeddable string) searchOption {
+func WithSearchVideoEmbeddable(videoEmbeddable string) searchOption {
 	return func(s *search) {
-		s.videoEmbeddable = videoEmbeddable
+		if videoEmbeddable != "" {
+			s.videoEmbeddable = videoEmbeddable
+		}
 	}
 }
 
-func withSearchVideoLicense(videoLicense string) searchOption {
+func WithSearchVideoLicense(videoLicense string) searchOption {
 	return func(s *search) {
-		s.videoLicense = videoLicense
+		if videoLicense != "" {
+			s.videoLicense = videoLicense
+		}
 	}
 }
 
-func withSearchVideoPaidProductPlacement(videoPaidProductPlacement string) searchOption {
+func WithSearchVideoPaidProductPlacement(videoPaidProductPlacement string) searchOption {
 	return func(s *search) {
-		s.videoPaidProductPlacement = videoPaidProductPlacement
+		if videoPaidProductPlacement != "" {
+			s.videoPaidProductPlacement = videoPaidProductPlacement
+		}
 	}
 }
 
-func withSearchVideoSyndicated(videoSyndicated string) searchOption {
+func WithSearchVideoSyndicated(videoSyndicated string) searchOption {
 	return func(s *search) {
-		s.videoSyndicated = videoSyndicated
+		if videoSyndicated != "" {
+			s.videoSyndicated = videoSyndicated
+		}
 	}
 }
 
-func withSearchVideoType(videoType string) searchOption {
+func WithSearchVideoType(videoType string) searchOption {
 	return func(s *search) {
-		s.videoType = videoType
+		if videoType != "" {
+			s.videoType = videoType
+		}
 	}
 }
