@@ -2,9 +2,15 @@
 
 # yutu
 
-[![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%90%B0%F0%9F%98%8D-blue?style=for-the-badge)](https://gitmoji.dev)
-![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=for-the-badge&logo=go)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/go-ossf-slsa3-publish.yml?style=for-the-badge&logo=githubactions)
+[![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%90%B0%F0%9F%98%8D-blue?style=flat-square)](https://gitmoji.dev)
+![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)
+![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)
+
+![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)
+![GitHub Actions build Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/go-ossf-slsa3-publish.yml?style=flat-square&logo=githubactions)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
+
+
 
 yutu is a fully functional CLI for YouTube.
 
@@ -12,25 +18,28 @@ yutu is a fully functional CLI for YouTube.
 
 ```sh
 ❯ yutu help
-yutu is a fully functional CLI for YouTube, which can be used to 
-manupulate YouTube videos, playlists, channels, etc.
+yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.
 
 Usage:
   yutu [flags]
   yutu [command]
 
 Available Commands:
-  activity         manipulate YouTube activities
-  channel          manipulate YouTube channels
-  completion       Generate the autocompletion script for the specified shell
-  help             Help about any command
-  member           manipulate YouTube members
-  membershipsLevel manipulate YouTube memberships levels
-  playlist         manipulate YouTube playlists
-  playlistItem     manipulate YouTube playlist items
-  version          Show the version of yutu
-  video            manipulate YouTube videos
-  videoCategory    manipulate YouTube video categories
+  activity               manipulate YouTube activities
+  channel                manipulate YouTube channels
+  completion             Generate the autocompletion script for the specified shell
+  help                   Help about any command
+  i18nLanguage           manipulate YouTube i18nLanguages
+  i18nRegion             manipulate YouTube i18nRegions
+  member                 manipulate YouTube members
+  membershipsLevel       manipulate YouTube memberships levels
+  playlist               manipulate YouTube playlists
+  playlistItem           manipulate YouTube playlist items
+  search                 Search for youtube resources
+  version                Show the version of yutu
+  video                  manipulate YouTube videos
+  videoAbuseReportReason manipulate YouTube video abuse report reasons
+  videoCategory          manipulate YouTube video categories
 
 Flags:
   -h, --help   help for yutu
@@ -90,15 +99,15 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - <s>guideCategories</s>
   - [x] <s>list, 1 deprecated API</s>
 - i18nLanguages
-  - [ ] list, 1
+  - [x] list, 1
 - i18nRegions
-  - [ ] list, 1
+  - [x] list, 1
 - members
   - [x] list, 1 🚫
 - membershipsLevels
   - [x] list, 1 🚫
 - search
-  - [ ] list, 100
+  - [x] list, 100
 - subscriptions
   - [ ] list, 1
   - [ ] insert, 50
@@ -106,7 +115,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - thumbnails
   - [x] set, 50
 - videoAbuseReportReasons
-  - [ ] list, 1
+  - [x] list, 1
 - videoCategories
   - [x] list, 1
 - watermarks
