@@ -6,9 +6,15 @@ import (
 )
 
 var (
-	channelId string
-	parts     []string
-	output    string
+	channelId       string
+	home            string
+	maxResults      int64
+	mine            string
+	publishedAfter  string
+	publishedBefore string
+	regionCode      string
+	parts           []string
+	output          string
 )
 
 var activityCmd = &cobra.Command{

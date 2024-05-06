@@ -15,7 +15,13 @@ var (
 )
 
 type activity struct {
-	channelId string
+	channelId       string
+	home            string
+	maxResults      int64
+	mine            string
+	publishedAfter  string
+	publishedBefore string
+	regionCode      string
 }
 
 type Activity interface {
@@ -40,8 +46,26 @@ func (a *activity) get(parts []string) []*youtube.Activity {
 	call := service.Activities.List(parts)
 	if a.channelId != "" {
 		call = call.ChannelId(a.channelId)
-	} else {
-		call = call.Mine(true)
+	}
+
+	if a.home == "true" {
+		call = call.Home(true)
+	} else if a.home == "false" {
+		call = call.Home(false)
+	}
+
+	call.MaxResults(a.maxResults)
+
+	if a.publishedAfter != "" {
+		call.PublishedAfter(a.publishedAfter)
+	}
+
+	if a.publishedBefore != "" {
+		call.PublishedBefore(a.publishedBefore)
+	}
+
+	if a.regionCode != "" {
+		call.RegionCode(a.regionCode)
 	}
 
 	response, err := call.Do()
@@ -70,5 +94,41 @@ func (a *activity) List(parts []string, output string) {
 func WithActivityChannelId(channelId string) ActivityOption {
 	return func(a *activity) {
 		a.channelId = channelId
+	}
+}
+
+func WithActivityHome(home string) ActivityOption {
+	return func(a *activity) {
+		a.home = home
+	}
+}
+
+func WithActivityMaxResults(maxResults int64) ActivityOption {
+	return func(a *activity) {
+		a.maxResults = maxResults
+	}
+}
+
+func WithActivityMine(mine string) ActivityOption {
+	return func(a *activity) {
+		a.mine = mine
+	}
+}
+
+func WithActivityPublishedAfter(publishedAfter string) ActivityOption {
+	return func(a *activity) {
+		a.publishedAfter = publishedAfter
+	}
+}
+
+func WithActivityPublishedBefore(publishedBefore string) ActivityOption {
+	return func(a *activity) {
+		a.publishedBefore = publishedBefore
+	}
+}
+
+func WithActivityRegionCode(regionCode string) ActivityOption {
+	return func(a *activity) {
+		a.regionCode = regionCode
 	}
 }
