@@ -51,7 +51,7 @@ func (i *i18nRegion) List(parts []string, output string) {
 	case "yaml":
 		utils.PrintYAML(i18nRegions)
 	default:
-		fmt.Println("Id\tgl\tname")
+		fmt.Println("ID\tgl\tname")
 		for _, i18nRegion := range i18nRegions {
 			fmt.Printf(
 				"%v\t%v\t%v\n",

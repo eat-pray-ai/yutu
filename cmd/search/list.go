@@ -48,47 +48,47 @@ var listCmd = &cobra.Command{
 func init() {
 	searchCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVar(&channelId, "channelId", "", "filter on resources belonging to this channelId")
+	listCmd.Flags().StringVar(&channelId, "channelId", "", "Filter on resources belonging to this channelId")
 	listCmd.Flags().StringVar(
 		&channelType, "channelType", "", "channelTypeUnspecified(default), any or show",
 	)
 	listCmd.Flags().StringVar(&eventType, "eventType", "", "none(default), upcoming, live or completed")
-	listCmd.Flags().StringVar(&forContentOwner, "forContentOwner", "", "search owned by content owner")
+	listCmd.Flags().StringVar(&forContentOwner, "forContentOwner", "", "Search owned by content owner")
 	listCmd.Flags().StringVar(
 		&forDeveloper, "forDeveloper", "",
-		"only retrieve videos uploaded using the project id of the authenticated user",
+		"Only retrieve videos uploaded using the project id of the authenticated user",
 	)
-	listCmd.Flags().StringVar(&forMine, "forMine", "", "search for the private videos of the authenticated user")
-	listCmd.Flags().StringVar(&location, "location", "", "filter on location of the video")
-	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", "filter on distance from the location")
+	listCmd.Flags().StringVar(&forMine, "forMine", "", "Search for the private videos of the authenticated user")
+	listCmd.Flags().StringVar(&location, "location", "", "Filter on location of the video")
+	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", "Filter on distance from the location")
 	listCmd.Flags().Int64Var(
 		&maxResults, "maxResults", 5,
-		"specifies the maximum number of items that should be returned in the result set",
+		"Specifies the maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVar(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", "")
 	listCmd.Flags().StringVar(
 		&order, "order", "",
 		"searchSortUnspecified, date, rating, viewCount, relevance(default), title, videoCount",
 	)
-	listCmd.Flags().StringVar(&publishedAfter, "publishedAfter", "", "filter on resources published after this date")
-	listCmd.Flags().StringVar(&publishedBefore, "publishedBefore", "", "filter on resources published before this date")
-	listCmd.Flags().StringVar(&q, "q", "", "textual search terms to match")
-	listCmd.Flags().StringVar(&regionCode, "regionCode", "", "display the content as seen by viewers in this country")
-	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", "return results relevant to this language")
+	listCmd.Flags().StringVar(&publishedAfter, "publishedAfter", "", "Filter on resources published after this date")
+	listCmd.Flags().StringVar(&publishedBefore, "publishedBefore", "", "Filter on resources published before this date")
+	listCmd.Flags().StringVar(&q, "q", "", "Textual search terms to match")
+	listCmd.Flags().StringVar(&regionCode, "regionCode", "", "Display the content as seen by viewers in this country")
+	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", "Return results relevant to this language")
 	listCmd.Flags().StringVar(
 		&safeSearch, "safeSearch", "",
 		"safeSearchSettingUnspecified, none, moderate(default), strict",
 	)
-	listCmd.Flags().StringVar(&topicId, "topicId", "", "restrict results to a particular topic")
+	listCmd.Flags().StringVar(&topicId, "topicId", "", "Restrict results to a particular topic")
 	listCmd.Flags().StringVar(
-		&types, "types", "", "restrict results to a particular set of resource types from One Platform",
+		&types, "types", "", "Restrict results to a particular set of resource types from One Platform",
 	)
 	listCmd.Flags().StringVar(
 		&videoCaption, "videoCaption", "",
 		"videoCaptionUnspecified, any(default), closedCaption, none",
 	)
-	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", "filter on videos in a specific category")
-	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", "filter on the definition of the videos")
+	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", "Filter on videos in a specific category")
+	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", "Filter on the definition of the videos")
 	listCmd.Flags().StringVar(&videoDimension, "videoDimension", "", "any(default), 2d or 3d")
 	listCmd.Flags().StringVar(
 		&videoDuration, "videoDuration", "",
