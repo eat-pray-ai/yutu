@@ -18,10 +18,13 @@ var (
 	mySubscribers          string
 	onBehalfOfContentOwner string
 
-	title  string
-	desc   string
-	output string
-	parts  []string
+	country         string
+	customUrl       string
+	defaultLanguage string
+	description     string
+	title           string
+	output          string
+	parts           []string
 )
 
 var channelCmd = &cobra.Command{

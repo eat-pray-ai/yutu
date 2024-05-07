@@ -29,8 +29,11 @@ type channel struct {
 	mySubscribers          string
 	onBehalfOfContentOwner string
 
-	title string
-	desc  string
+	country         string
+	customUrl       string
+	defaultLanguage string
+	description     string
+	title           string
 }
 
 type Channel interface {
@@ -124,12 +127,11 @@ func (c *channel) List(parts []string, output string) {
 func (c *channel) Update() {
 	parts := []string{"snippet"}
 	channel := c.get(parts)[0]
-	// TODO: is there a better way to check and update?
 	if c.title != "" {
 		channel.Snippet.Title = c.title
 	}
-	if c.desc != "" {
-		channel.Snippet.Description = c.desc
+	if c.description != "" {
+		channel.Snippet.Description = c.description
 	}
 
 	call := service.Channels.Update(parts, channel)
@@ -201,14 +203,32 @@ func WithChannelOnBehalfOfContentOwner(contentOwner string) ChannelOption {
 	}
 }
 
-func WithChannelTitle(title string) ChannelOption {
+func WithChannelCountry(country string) ChannelOption {
 	return func(c *channel) {
-		c.title = title
+		c.country = country
 	}
 }
 
-func WithChannelDesc(desc string) ChannelOption {
+func WithChannelCustomUrl(url string) ChannelOption {
 	return func(c *channel) {
-		c.desc = desc
+		c.customUrl = url
+	}
+}
+
+func WithChannelDefaultLanguage(language string) ChannelOption {
+	return func(c *channel) {
+		c.defaultLanguage = language
+	}
+}
+
+func WithChannelDescription(desc string) ChannelOption {
+	return func(c *channel) {
+		c.description = desc
+	}
+}
+
+func WithChannelTitle(title string) ChannelOption {
+	return func(c *channel) {
+		c.title = title
 	}
 }

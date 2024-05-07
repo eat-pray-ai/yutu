@@ -41,10 +41,10 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "Return the channels with the specified IDs")
 	listCmd.Flags().StringVarP(
-		&managedByMe, "managedByMe", "m", "", "Specify the maximum number of items that should be returned",
+		&managedByMe, "managedByMe", "M", "", "Specify the maximum number of items that should be returned",
 	)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "N", 5, "The maximum number of items that should be returned")
-	listCmd.Flags().StringVarP(&mine, "mine", "n", "", "Return the ids of channels owned by the authenticated user")
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned")
+	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "Return the ids of channels owned by the authenticated user")
 	listCmd.Flags().StringVarP(
 		&mySubscribers, "mySubscribers", "s", "", "Return the channels subscribed to the authenticated user",
 	)
