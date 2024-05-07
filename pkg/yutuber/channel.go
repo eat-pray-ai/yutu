@@ -18,10 +18,19 @@ var (
 )
 
 type channel struct {
-	id    string
+	categoryId             string
+	forHandle              string
+	forUsername            string
+	hl                     string
+	id                     string
+	managedByMe            string
+	maxResults             int64
+	mine                   string
+	mySubscribers          string
+	onBehalfOfContentOwner string
+
 	title string
 	desc  string
-	user  string
 }
 
 type Channel interface {
@@ -45,14 +54,50 @@ func NewChannel(opts ...ChannelOption) Channel {
 
 func (c *channel) get(parts []string) []*youtube.Channel {
 	call := service.Channels.List(parts)
-	switch {
-	case c.id != "":
-		call = call.Id(c.id)
-	case c.user != "":
-		call = call.ForUsername(c.user)
-	default:
-		call = call.Mine(true)
+	if c.categoryId != "" {
+		call = call.CategoryId(c.categoryId)
 	}
+
+	if c.forHandle != "" {
+		call = call.ForUsername(c.forHandle)
+	}
+
+	if c.forUsername != "" {
+		call = call.ForUsername(c.forUsername)
+	}
+
+	if c.hl != "" {
+		call = call.Hl(c.hl)
+	}
+
+	if c.id != "" {
+		call = call.Id(c.id)
+	}
+
+	if c.managedByMe == "true" {
+		call = call.ManagedByMe(true)
+	} else if c.managedByMe == "false" {
+		call = call.ManagedByMe(false)
+	}
+
+	call = call.MaxResults(c.maxResults)
+
+	if c.mine == "true" {
+		call = call.Mine(true)
+	} else if c.mine == "false" {
+		call = call.Mine(false)
+	}
+
+	if c.mySubscribers == "true" {
+		call = call.MySubscribers(true)
+	} else if c.mySubscribers == "false" {
+		call = call.MySubscribers(false)
+	}
+
+	if c.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	}
+
 	resp, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetChannel, err), c.id)
@@ -96,9 +141,63 @@ func (c *channel) Update() {
 	utils.PrintJSON(res)
 }
 
-func WithChannelID(id string) ChannelOption {
+func WithChannelCategoryId(categoryId string) ChannelOption {
+	return func(c *channel) {
+		c.categoryId = categoryId
+	}
+}
+
+func WithChannelForHandle(handle string) ChannelOption {
+	return func(c *channel) {
+		c.forHandle = handle
+	}
+}
+
+func WithChannelForUsername(username string) ChannelOption {
+	return func(c *channel) {
+		c.forUsername = username
+	}
+}
+
+func WithChannelHl(hl string) ChannelOption {
+	return func(c *channel) {
+		c.hl = hl
+	}
+}
+
+func WithChannelId(id string) ChannelOption {
 	return func(c *channel) {
 		c.id = id
+	}
+}
+
+func WithChannelManagedByMe(managedByMe string) ChannelOption {
+	return func(c *channel) {
+		c.managedByMe = managedByMe
+	}
+}
+
+func WithChannelMaxResults(maxResults int64) ChannelOption {
+	return func(c *channel) {
+		c.maxResults = maxResults
+	}
+}
+
+func WithChannelMine(mine string) ChannelOption {
+	return func(c *channel) {
+		c.mine = mine
+	}
+}
+
+func WithChannelMySubscribers(mySubscribers string) ChannelOption {
+	return func(c *channel) {
+		c.mySubscribers = mySubscribers
+	}
+}
+
+func WithChannelOnBehalfOfContentOwner(contentOwner string) ChannelOption {
+	return func(c *channel) {
+		c.onBehalfOfContentOwner = contentOwner
 	}
 }
 
@@ -111,11 +210,5 @@ func WithChannelTitle(title string) ChannelOption {
 func WithChannelDesc(desc string) ChannelOption {
 	return func(c *channel) {
 		c.desc = desc
-	}
-}
-
-func WithChannelUser(user string) ChannelOption {
-	return func(c *channel) {
-		c.user = user
 	}
 }

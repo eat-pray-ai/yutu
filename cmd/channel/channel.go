@@ -7,10 +7,19 @@ import (
 )
 
 var (
-	id     string
+	categoryId             string
+	forHandle              string
+	forUsername            string
+	hl                     string
+	id                     string
+	managedByMe            string
+	maxResults             int64
+	mine                   string
+	mySubscribers          string
+	onBehalfOfContentOwner string
+
 	title  string
 	desc   string
-	user   string
 	output string
 	parts  []string
 )
