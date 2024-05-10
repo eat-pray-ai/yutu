@@ -10,13 +10,14 @@ var listCmd = &cobra.Command{
 	Short: "list i18nLanguages",
 	Long:  "list i18nLanguages' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
-		i := yutuber.NewI18nLanguage()
+		i := yutuber.NewI18nLanguage(yutuber.WithI18nLanguageHl(hl))
 		i.List(parts, output)
 	},
 }
 
 func init() {
 	i18nLanguageCmd.AddCommand(listCmd)
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", "host language")
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
 	)

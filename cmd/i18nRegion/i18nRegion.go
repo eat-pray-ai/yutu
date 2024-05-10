@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	hl     string
 	parts  []string
 	output string
 )

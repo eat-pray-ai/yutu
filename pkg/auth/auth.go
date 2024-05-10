@@ -20,16 +20,16 @@ import (
 )
 
 var (
-	credential     string = "client_secret.json"
-	cacheFile      string = "youtube.token.json"
-	errGetUser     error  = errors.New("unable to get current user")
-	errCreateSvc   error  = errors.New("unable to create YouTube service")
-	errReadPrompt  error  = errors.New("unable to read prompt")
-	errExchange    error  = errors.New("unable retrieve token from web or prompt")
-	errStartWeb    error  = errors.New("unable to start web server")
-	errCacheToken  error  = errors.New("unable to cache token")
-	errReadSecret  error  = errors.New("unable to read client secret file")
-	errParseSecret error  = errors.New("unable to parse client secret to config")
+	credential     = "client_secret.json"
+	cacheFile      = "youtube.token.json"
+	errGetUser     = errors.New("unable to get current user")
+	errCreateSvc   = errors.New("unable to create YouTube service")
+	errReadPrompt  = errors.New("unable to read prompt")
+	errExchange    = errors.New("unable retrieve token from web or prompt")
+	errStartWeb    = errors.New("unable to start web server")
+	errCacheToken  = errors.New("unable to cache token")
+	errReadSecret  = errors.New("unable to read client secret file")
+	errParseSecret = errors.New("unable to parse client secret to config")
 )
 
 const missingClientSecretsMessage string = `

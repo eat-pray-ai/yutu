@@ -13,7 +13,9 @@ var (
 	errGetI18nRegion = errors.New("failed to get i18n region")
 )
 
-type i18nRegion struct{}
+type i18nRegion struct {
+	hl string
+}
 
 type I18nRegion interface {
 	get(parts []string) []*youtube.I18nRegion
@@ -35,6 +37,10 @@ func NewI18nRegion(opts ...I18nRegionOption) I18nRegion {
 
 func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
 	call := service.I18nRegions.List(parts)
+	if i.hl != "" {
+		call = call.Hl(i.hl)
+	}
+
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetI18nRegion, err))
@@ -58,5 +64,11 @@ func (i *i18nRegion) List(parts []string, output string) {
 				i18nRegion.Id, i18nRegion.Snippet.Gl, i18nRegion.Snippet.Name,
 			)
 		}
+	}
+}
+
+func WithI18nRegionHl(hl string) I18nRegionOption {
+	return func(i *i18nRegion) {
+		i.hl = hl
 	}
 }

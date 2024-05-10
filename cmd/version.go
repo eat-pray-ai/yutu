@@ -3,11 +3,11 @@ package cmd
 import "github.com/spf13/cobra"
 
 var (
-	Version    string = ""
-	Commit     string = ""
-	CommitDate string = ""
-	Os         string = ""
-	Arch       string = ""
+	Version    = ""
+	Commit     = ""
+	CommitDate = ""
+	Os         = ""
+	Arch       = ""
 )
 
 var versionCmd = &cobra.Command{
