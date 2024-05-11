@@ -5,8 +5,10 @@
 [![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%90%B0%F0%9F%98%8D-blue?style=flat-square)](https://gitmoji.dev)
 ![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)
 ![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)
+[![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu/pkg/yutuber?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu/pkg/yutuber)
 
 ![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)
+![GitHub Downloads](https://img.shields.io/github/downloads/eat-pray-ai/yutu/total?style=flat-square)
 ![GitHub Actions build Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/go-ossf-slsa3-publish.yml?style=flat-square&logo=githubactions)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
 
@@ -103,9 +105,9 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - i18nRegions
   - [x] list, 1
 - members
-  - [x] list, 1 🚫
+  - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
 - membershipsLevels
-  - [x] list, 1 🚫
+  - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
 - search
   - [x] list, 100
 - subscriptions
