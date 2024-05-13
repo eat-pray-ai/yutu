@@ -14,7 +14,10 @@ var (
 )
 
 type member struct {
-	memberChannelId string
+	memberChannelId  string
+	hasAccessToLevel string
+	maxResults       int64
+	mode             string
 }
 
 type Member interface {
@@ -40,6 +43,14 @@ func (m *member) get(parts []string) []*youtube.Member {
 	if m.memberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.memberChannelId)
 	}
+	if m.hasAccessToLevel != "" {
+		call = call.HasAccessToLevel(m.hasAccessToLevel)
+	}
+	call = call.MaxResults(m.maxResults)
+	if m.mode != "" {
+		call = call.Mode(m.mode)
+	}
+
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetMember, err))
@@ -70,5 +81,23 @@ func (m *member) List(parts []string, output string) {
 func WithMemberChannelId(channelId string) MemberOption {
 	return func(m *member) {
 		m.memberChannelId = channelId
+	}
+}
+
+func WithMemberHasAccessToLevel(level string) MemberOption {
+	return func(m *member) {
+		m.hasAccessToLevel = level
+	}
+}
+
+func WithMemberMaxResults(results int64) MemberOption {
+	return func(m *member) {
+		m.maxResults = results
+	}
+}
+
+func WithMemberMode(mode string) MemberOption {
+	return func(m *member) {
+		m.mode = mode
 	}
 }

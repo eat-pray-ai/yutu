@@ -6,9 +6,12 @@ import (
 )
 
 var (
-	memberChannelId string
-	parts           []string
-	output          string
+	memberChannelId  string
+	hasAccessToLevel string
+	maxResults       int64
+	mode             string
+	parts            []string
+	output           string
 )
 
 var memberCmd = &cobra.Command{
