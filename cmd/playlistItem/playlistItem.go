@@ -12,9 +12,12 @@ var (
 	videoId    string
 	playlistId string
 	channelId  string
+	maxResults int64
 	privacy    string
 	output     string
 	parts      []string
+
+	onBehalfOfContentOwner string
 )
 
 var playlistItemCmd = &cobra.Command{

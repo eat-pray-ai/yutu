@@ -7,15 +7,21 @@ import (
 )
 
 var (
-	id        string
-	title     string
-	desc      string
-	tags      []string
-	language  string
-	channelId string
-	privacy   string
-	output    string
-	parts     []string
+	id         string
+	title      string
+	desc       string
+	hl         string
+	maxResults int64
+	mine       string
+	tags       []string
+	language   string
+	channelId  string
+	privacy    string
+	output     string
+	parts      []string
+
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
 )
 
 var playlistCmd = &cobra.Command{

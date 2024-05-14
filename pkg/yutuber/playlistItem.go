@@ -24,6 +24,9 @@ type playlistItem struct {
 	playlistId string
 	channelId  string
 	privacy    string
+	maxResults int64
+
+	onBehalfOfContentOwner string
 }
 
 type PlaylistItem interface {
@@ -50,9 +53,18 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call := service.PlaylistItems.List(parts)
 	if pi.id != "" {
 		call = call.Id(pi.id)
-	} else if pi.playlistId != "" {
+	}
+	if pi.playlistId != "" {
 		call = call.PlaylistId(pi.playlistId)
 	}
+	if pi.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.onBehalfOfContentOwner)
+	}
+	if pi.videoId != "" {
+		call = call.VideoId(pi.videoId)
+	}
+
+	call = call.MaxResults(pi.maxResults)
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
@@ -77,6 +89,7 @@ func (pi *playlistItem) List(parts []string, output string) {
 }
 
 func (pi *playlistItem) Insert() {
+	// TODO: support Kind of `youtube#channel` and `youtube#playlist`
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
 			Title:       pi.title,
@@ -93,7 +106,9 @@ func (pi *playlistItem) Insert() {
 		},
 	}
 
-	call := service.PlaylistItems.Insert([]string{"snippet", "status"}, playlistItem)
+	call := service.PlaylistItems.Insert(
+		[]string{"snippet", "status"}, playlistItem,
+	)
 	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.videoId)
@@ -114,7 +129,9 @@ func (pi *playlistItem) Update() {
 		playlistItem.Status.PrivacyStatus = pi.privacy
 	}
 
-	call := service.PlaylistItems.Update([]string{"snippet", "status"}, playlistItem)
+	call := service.PlaylistItems.Update(
+		[]string{"snippet", "status"}, playlistItem,
+	)
 	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.id)
@@ -162,5 +179,17 @@ func WithPlaylistItemChannelId(channelId string) PlaylistItemOption {
 func WithPlaylistItemPrivacy(privacy string) PlaylistItemOption {
 	return func(p *playlistItem) {
 		p.privacy = privacy
+	}
+}
+
+func WithPlaylistItemMaxResults(maxResults int64) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.maxResults = maxResults
+	}
+}
+
+func WithPlaylistItemOnBehalfOfContentOwner(onBehalfOfContentOwner string) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }

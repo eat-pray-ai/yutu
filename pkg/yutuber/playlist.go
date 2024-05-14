@@ -3,10 +3,9 @@ package yutuber
 import (
 	"errors"
 	"fmt"
-	"log"
-
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"log"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -18,13 +17,19 @@ var (
 )
 
 type playlist struct {
-	id        string
-	title     string
-	desc      string
-	tags      []string
-	language  string
-	channelId string
-	privacy   string
+	id         string
+	title      string
+	desc       string
+	hl         string
+	maxResults int64
+	mine       string
+	tags       []string
+	language   string
+	channelId  string
+	privacy    string
+
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
 }
 
 type Playlist interface {
@@ -45,6 +50,37 @@ func NewPlaylist(opts ...PlaylistOption) Playlist {
 	}
 
 	return p
+}
+
+func (p *playlist) get(parts []string) []*youtube.Playlist {
+	call := service.Playlists.List(parts)
+
+	if p.id != "" {
+		call = call.Id(p.id)
+	}
+	if p.hl != "" {
+		call = call.Hl(p.hl)
+	}
+	if p.mine == "true" {
+		call = call.Mine(true)
+	} else if p.mine == "false" {
+		call = call.Mine(false)
+	}
+
+	call = call.MaxResults(p.maxResults)
+	if p.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.onBehalfOfContentOwner)
+	}
+	if p.onBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(p.onBehalfOfContentOwnerChannel)
+	}
+
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errGetPlaylist, err), p.id)
+	}
+
+	return res.Items
 }
 
 func (p *playlist) List(parts []string, output string) {
@@ -114,25 +150,6 @@ func (p *playlist) Update() {
 	utils.PrintJSON(data)
 }
 
-func (p *playlist) get(parts []string) []*youtube.Playlist {
-	call := service.Playlists.List(parts)
-	switch {
-	case p.id != "":
-		call = call.Id(p.id)
-	case p.channelId != "":
-		call = call.ChannelId(p.channelId)
-	default:
-		call = call.Mine(true)
-	}
-
-	res, err := call.Do()
-	if err != nil {
-		log.Fatalln(errors.Join(errGetPlaylist, err), p.id)
-	}
-
-	return res.Items
-}
-
 func WithPlaylistId(id string) PlaylistOption {
 	return func(p *playlist) {
 		p.id = id
@@ -172,5 +189,35 @@ func WithPlaylistChannelId(channelId string) PlaylistOption {
 func WithPlaylistPrivacy(privacy string) PlaylistOption {
 	return func(p *playlist) {
 		p.privacy = privacy
+	}
+}
+
+func WithPlaylistHl(hl string) PlaylistOption {
+	return func(p *playlist) {
+		p.hl = hl
+	}
+}
+
+func WithPlaylistMaxResults(maxResults int64) PlaylistOption {
+	return func(p *playlist) {
+		p.maxResults = maxResults
+	}
+}
+
+func WithPlaylistMine(mine string) PlaylistOption {
+	return func(p *playlist) {
+		p.mine = mine
+	}
+}
+
+func WithPlaylistOnBehalfOfContentOwner(contentOwner string) PlaylistOption {
+	return func(p *playlist) {
+		p.onBehalfOfContentOwner = contentOwner
+	}
+}
+
+func WithPlaylistOnBehalfOfContentOwnerChannel(channel string) PlaylistOption {
+	return func(p *playlist) {
+		p.onBehalfOfContentOwnerChannel = channel
 	}
 }
