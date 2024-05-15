@@ -13,7 +13,10 @@ var insertCmd = &cobra.Command{
 		pi := yutuber.NewPlaylistItem(
 			yutuber.WithPlaylistItemTitle(title),
 			yutuber.WithPlaylistItemDesc(desc),
-			yutuber.WithPlaylistItemVideoId(videoId),
+			yutuber.WithPlaylistItemKind(kind),
+			yutuber.WithPlaylistItemKVideoId(kVideoId),
+			yutuber.WithPlaylistItemKChannelId(kChannelId),
+			yutuber.WithPlaylistItemKPlaylistId(kPlaylistId),
 			yutuber.WithPlaylistItemPlaylistId(playlistId),
 			yutuber.WithPlaylistItemPrivacy(privacy),
 		)
@@ -24,10 +27,34 @@ var insertCmd = &cobra.Command{
 func init() {
 	playlistItemCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist item")
-	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the playlist item")
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
-	insertCmd.Flags().StringVarP(&playlistId, "playlistId", "p", "", "ID of the playlist")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of the channel")
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "r", "", "Privacy status of the playlist item")
+	insertCmd.Flags().StringVarP(
+		&title, "title", "t", "", "Title of the playlist item",
+	)
+	insertCmd.Flags().StringVarP(
+		&desc, "desc", "d", "", "Description of the playlist item",
+	)
+	insertCmd.Flags().StringVarP(
+		&kind, "kind", "k", "", "video, channel, or playlist",
+	)
+	insertCmd.Flags().StringVarP(
+		&kVideoId, "kVideoId", "V", "", "ID of the video if kind is video",
+	)
+	insertCmd.Flags().StringVarP(
+		&kChannelId, "kChannelId", "C", "", "ID of the channel if kind is channel",
+	)
+	insertCmd.Flags().StringVarP(
+		&kPlaylistId, "kPlaylistId", "P", "",
+		"ID of the playlist if kind is playlist",
+	)
+	insertCmd.Flags().StringVarP(
+		&playlistId, "playlistId", "p", "",
+		"The ID that YouTube uses to uniquely identify the playlist that the playlist item is in",
+	)
+	insertCmd.Flags().StringVarP(
+		&channelId, "channelId", "c", "",
+		"The ID that YouTube uses to uniquely identify the user that added the item to the playlist",
+	)
+	insertCmd.Flags().StringVarP(
+		&privacy, "privacy", "r", "", "public, private, or unlisted",
+	)
 }

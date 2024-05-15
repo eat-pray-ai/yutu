@@ -17,14 +17,18 @@ var (
 )
 
 type playlistItem struct {
-	id         string
-	title      string
-	desc       string
-	videoId    string
-	playlistId string
-	channelId  string
-	privacy    string
-	maxResults int64
+	id          string
+	title       string
+	desc        string
+	kind        string
+	kVideoId    string
+	kChannelId  string
+	kPlaylistId string
+	videoId     string
+	playlistId  string
+	channelId   string
+	privacy     string
+	maxResults  int64
 
 	onBehalfOfContentOwner string
 }
@@ -89,17 +93,32 @@ func (pi *playlistItem) List(parts []string, output string) {
 }
 
 func (pi *playlistItem) Insert() {
-	// TODO: support Kind of `youtube#channel` and `youtube#playlist`
+	var resourceId *youtube.ResourceId
+	switch pi.kind {
+	case "video":
+		resourceId = &youtube.ResourceId{
+			Kind:    "youtube#video",
+			VideoId: pi.kVideoId,
+		}
+	case "channel":
+		resourceId = &youtube.ResourceId{
+			Kind:      "youtube#channel",
+			ChannelId: pi.kChannelId,
+		}
+	case "playlist":
+		resourceId = &youtube.ResourceId{
+			Kind:       "youtube#playlist",
+			PlaylistId: pi.kPlaylistId,
+		}
+	}
+
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
 			Title:       pi.title,
 			Description: pi.desc,
-			ResourceId: &youtube.ResourceId{
-				Kind:    "youtube#video",
-				VideoId: pi.videoId,
-			},
-			PlaylistId: pi.playlistId,
-			ChannelId:  pi.channelId,
+			ResourceId:  resourceId,
+			PlaylistId:  pi.playlistId,
+			ChannelId:   pi.channelId,
 		},
 		Status: &youtube.PlaylistItemStatus{
 			PrivacyStatus: pi.privacy,
@@ -155,6 +174,30 @@ func WithPlaylistItemTitle(title string) PlaylistItemOption {
 func WithPlaylistItemDesc(desc string) PlaylistItemOption {
 	return func(p *playlistItem) {
 		p.desc = desc
+	}
+}
+
+func WithPlaylistItemKind(kind string) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.kind = kind
+	}
+}
+
+func WithPlaylistItemKVideoId(kVideoId string) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.kVideoId = kVideoId
+	}
+}
+
+func WithPlaylistItemKChannelId(kChannelId string) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.kChannelId = kChannelId
+	}
+}
+
+func WithPlaylistItemKPlaylistId(kPlaylistId string) PlaylistItemOption {
+	return func(p *playlistItem) {
+		p.kPlaylistId = kPlaylistId
 	}
 }
 

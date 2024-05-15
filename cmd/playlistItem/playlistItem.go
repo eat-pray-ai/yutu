@@ -6,16 +6,20 @@ import (
 )
 
 var (
-	id         string
-	title      string
-	desc       string
-	videoId    string
-	playlistId string
-	channelId  string
-	maxResults int64
-	privacy    string
-	output     string
-	parts      []string
+	id          string
+	title       string
+	desc        string
+	kind        string
+	kVideoId    string
+	kChannelId  string
+	kPlaylistId string
+	videoId     string
+	playlistId  string
+	channelId   string
+	maxResults  int64
+	privacy     string
+	output      string
+	parts       []string
 
 	onBehalfOfContentOwner string
 )
