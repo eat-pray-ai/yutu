@@ -6,6 +6,8 @@ import (
 )
 
 var (
+	id         string
+	hl         string
 	regionCode string
 	parts      []string
 	output     string

@@ -13,7 +13,9 @@ var (
 	errGetVideoAbuseReportReason = errors.New("failed to get video abuse report reason")
 )
 
-type videoAbuseReportReason struct{}
+type videoAbuseReportReason struct {
+	hl string
+}
 
 type VideoAbuseReportReason interface {
 	get([]string) []*youtube.VideoAbuseReportReason
@@ -33,6 +35,10 @@ func NewVideoAbuseReportReason(opt ...VideoAbuseReportReasonOption) VideoAbuseRe
 
 func (vc *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseReportReason {
 	call := service.VideoAbuseReportReasons.List(parts)
+	if vc.hl != "" {
+		call = call.Hl(vc.hl)
+	}
+
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideoAbuseReportReason, err))
@@ -56,5 +62,11 @@ func (vc *videoAbuseReportReason) List(parts []string, output string) {
 				videoAbuseReportReason.Snippet.Label,
 			)
 		}
+	}
+}
+
+func WithVideoAbuseReportReasonHL(hl string) VideoAbuseReportReasonOption {
+	return func(vc *videoAbuseReportReason) {
+		vc.hl = hl
 	}
 }

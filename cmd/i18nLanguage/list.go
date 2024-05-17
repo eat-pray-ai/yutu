@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 
 func init() {
 	i18nLanguageCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", "host language")
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", "Host language")
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
 	)
