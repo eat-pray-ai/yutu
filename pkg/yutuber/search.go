@@ -185,12 +185,12 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 		call.VideoType(s.videoType)
 	}
 
-	resp, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetSearch, err), s.q)
 	}
 
-	return resp.Items
+	return res.Items
 }
 
 func (s *search) List(parts []string, output string) {

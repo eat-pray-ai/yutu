@@ -101,12 +101,12 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
 	}
 
-	resp, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetChannel, err), c.id)
 	}
 
-	return resp.Items
+	return res.Items
 }
 
 func (c *channel) List(parts []string, output string) {
