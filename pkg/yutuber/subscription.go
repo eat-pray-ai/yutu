@@ -3,6 +3,7 @@ package yutuber
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -35,6 +36,7 @@ type Subscription interface {
 type SubscriptionOption func(*subscription)
 
 func NewSubscription(opts ...SubscriptionOption) Subscription {
+	service = auth.NewY2BService()
 	s := &subscription{}
 
 	for _, opt := range opts {
@@ -157,5 +159,11 @@ func WithSubscriptionOnBehalfOfContentOwner(onBehalfOfContentOwner string) Subsc
 func WithSubscriptionOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) SubscriptionOption {
 	return func(s *subscription) {
 		s.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+	}
+}
+
+func WithSubscriptionOrder(order string) SubscriptionOption {
+	return func(s *subscription) {
+		s.order = order
 	}
 }
