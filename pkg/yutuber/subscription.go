@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	errGetSubscription = errors.New("failed to get subscription")
+	errGetSubscription    = errors.New("failed to get subscription")
+	errDeleteSubscription = errors.New("failed to delete subscription")
 )
 
 type subscription struct {
@@ -30,7 +31,7 @@ type Subscription interface {
 	get([]string) []*youtube.Subscription
 	List([]string, string)
 	// Insert()
-	// Delete()
+	Delete()
 }
 
 type SubscriptionOption func(*subscription)
@@ -101,11 +102,21 @@ func (s *subscription) List(parts []string, output string) {
 	case "yaml":
 		utils.PrintYAML(subscriptions)
 	default:
-		fmt.Println("Channel ID\tChannel Title")
+		fmt.Println("ID\tChannel ID\tChannel Title")
 		for _, subscription := range subscriptions {
-			fmt.Printf("%s\t%s\n", subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title)
+			fmt.Printf("%s\t%s\t%s\n", subscription.Id, subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title)
 		}
 	}
+}
+
+func (s *subscription) Delete() {
+	call := service.Subscriptions.Delete(s.id)
+	err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errDeleteSubscription, err), s.id)
+	}
+
+	fmt.Printf("Subscription %s deleted", s.id)
 }
 
 func WithSubscriptionId(id string) SubscriptionOption {
