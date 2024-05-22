@@ -14,7 +14,7 @@ var listCmd = &cobra.Command{
 			yutuber.WithSubscriptionId(id),
 			yutuber.WithSubscriptionChannelId(channelId),
 			yutuber.WithSubscriptionForChannelId(forChannelId),
-			yutuber.WithSubscriptionMaxResult(maxResult),
+			yutuber.WithSubscriptionMaxResults(maxResults),
 			yutuber.WithSubscriptionMine(mine),
 			yutuber.WithSubscriptionMyRecentSubscribers(myRecentSubscribers),
 			yutuber.WithSubscriptionMySubscribers(mySubscribers),
@@ -42,7 +42,7 @@ func init() {
 		"Return the subscriptions to the subset of these channels that the authenticated user is subscribed to",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResult, "maxResult", "n", 5,
+		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")

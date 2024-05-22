@@ -7,15 +7,18 @@ import (
 
 var (
 	id                            string
+	subscriberChannelId           string
+	desc                          string
 	channelId                     string
 	forChannelId                  string
-	maxResult                     int64
+	maxResults                    int64
 	mine                          string
 	myRecentSubscribers           string
 	mySubscribers                 string
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string
+	title                         string
 	parts                         []string
 	output                        string
 )

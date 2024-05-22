@@ -12,25 +12,29 @@ import (
 var (
 	errGetSubscription    = errors.New("failed to get subscription")
 	errDeleteSubscription = errors.New("failed to delete subscription")
+	errInsertSubscription = errors.New("failed to insert subscription")
 )
 
 type subscription struct {
 	id                            string
+	subscriberChannelId           string
+	desc                          string
 	channelId                     string
 	forChannelId                  string
-	maxResult                     int64
+	maxResults                    int64
 	mine                          string
 	myRecentSubscribers           string
 	mySubscribers                 string
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string
+	title                         string
 }
 
 type Subscription interface {
 	get([]string) []*youtube.Subscription
 	List([]string, string)
-	// Insert()
+	Insert()
 	Delete()
 }
 
@@ -58,7 +62,7 @@ func (s *subscription) get(parts []string) []*youtube.Subscription {
 	if s.forChannelId != "" {
 		call = call.ForChannelId(s.forChannelId)
 	}
-	call = call.MaxResults(s.maxResult)
+	call = call.MaxResults(s.maxResults)
 
 	if s.mine == "true" {
 		call = call.Mine(true)
@@ -109,6 +113,27 @@ func (s *subscription) List(parts []string, output string) {
 	}
 }
 
+func (s *subscription) Insert() {
+	subscription := &youtube.Subscription{
+		Snippet: &youtube.SubscriptionSnippet{
+			ChannelId:   s.subscriberChannelId,
+			Description: s.desc,
+			ResourceId: &youtube.ResourceId{
+				ChannelId: s.channelId,
+			},
+			Title: s.title,
+		},
+	}
+
+	call := service.Subscriptions.Insert([]string{"snippet"}, subscription)
+	res, err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errInsertSubscription, err))
+	}
+	fmt.Println("Subscription inserted")
+	utils.PrintJSON(res)
+}
+
 func (s *subscription) Delete() {
 	call := service.Subscriptions.Delete(s.id)
 	err := call.Do()
@@ -125,6 +150,18 @@ func WithSubscriptionId(id string) SubscriptionOption {
 	}
 }
 
+func WithSubscriptionSubscriberChannelId(id string) SubscriptionOption {
+	return func(s *subscription) {
+		s.subscriberChannelId = id
+	}
+}
+
+func WithSubscriptionDescription(desc string) SubscriptionOption {
+	return func(s *subscription) {
+		s.desc = desc
+	}
+}
+
 func WithSubscriptionChannelId(channelId string) SubscriptionOption {
 	return func(s *subscription) {
 		s.channelId = channelId
@@ -137,9 +174,9 @@ func WithSubscriptionForChannelId(forChannelId string) SubscriptionOption {
 	}
 }
 
-func WithSubscriptionMaxResult(maxResult int64) SubscriptionOption {
+func WithSubscriptionMaxResults(maxResults int64) SubscriptionOption {
 	return func(s *subscription) {
-		s.maxResult = maxResult
+		s.maxResults = maxResults
 	}
 }
 
@@ -176,5 +213,11 @@ func WithSubscriptionOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel
 func WithSubscriptionOrder(order string) SubscriptionOption {
 	return func(s *subscription) {
 		s.order = order
+	}
+}
+
+func WithSubscriptionTitle(title string) SubscriptionOption {
+	return func(s *subscription) {
+		s.title = title
 	}
 }
