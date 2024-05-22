@@ -22,21 +22,21 @@ var (
 )
 
 type video struct {
-	id         string
-	file       string
-	title      string
-	desc       string
-	tags       []string
-	language   string
-	thumbnail  string
-	rating     string
-	chart      string
-	channelId  string
-	playlistId string
-	category   string
-	privacy    string
-	forKids    bool
-	embeddable bool
+	id          string
+	file        string
+	title       string
+	description string
+	tags        []string
+	language    string
+	thumbnail   string
+	rating      string
+	chart       string
+	channelId   string
+	playlistId  string
+	category    string
+	privacy     string
+	forKids     bool
+	embeddable  bool
 }
 
 type Video interface {
@@ -102,7 +102,7 @@ func (v *video) Insert() {
 	video := &youtube.Video{
 		Snippet: &youtube.VideoSnippet{
 			Title:                v.title,
-			Description:          v.desc,
+			Description:          v.description,
 			Tags:                 v.tags,
 			CategoryId:           v.category,
 			ChannelId:            v.channelId,
@@ -130,7 +130,7 @@ func (v *video) Insert() {
 	if v.playlistId != "" {
 		pi := NewPlaylistItem(
 			WithPlaylistItemTitle(v.title),
-			WithPlaylistItemDesc(v.desc),
+			WithPlaylistItemDescription(v.description),
 			WithPlaylistItemVideoId(res.Id),
 			WithPlaylistItemPlaylistId(v.playlistId),
 			WithPlaylistItemChannelId(v.channelId),
@@ -148,8 +148,8 @@ func (v *video) Update() {
 	if v.title != "" {
 		video.Snippet.Title = v.title
 	}
-	if v.desc != "" {
-		video.Snippet.Description = v.desc
+	if v.description != "" {
+		video.Snippet.Description = v.description
 	}
 	if v.tags != nil {
 		video.Snippet.Tags = v.tags
@@ -179,7 +179,7 @@ func (v *video) Update() {
 	if v.playlistId != "" {
 		pi := NewPlaylistItem(
 			WithPlaylistItemTitle(v.title),
-			WithPlaylistItemDesc(v.desc),
+			WithPlaylistItemDescription(v.description),
 			WithPlaylistItemVideoId(res.Id),
 			WithPlaylistItemPlaylistId(v.playlistId),
 			WithPlaylistItemChannelId(v.channelId),
@@ -241,9 +241,9 @@ func WithVideoTitle(title string) VideoOption {
 	}
 }
 
-func WithVideoDesc(desc string) VideoOption {
+func WithVideoDescription(description string) VideoOption {
 	return func(v *video) {
-		v.desc = desc
+		v.description = description
 	}
 }
 

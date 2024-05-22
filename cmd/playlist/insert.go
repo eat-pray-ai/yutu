@@ -12,7 +12,7 @@ var insertCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		p := yutuber.NewPlaylist(
 			yutuber.WithPlaylistTitle(title),
-			yutuber.WithPlaylistDesc(desc),
+			yutuber.WithPlaylistDescription(description),
 			yutuber.WithPlaylistTags(tags),
 			yutuber.WithPlaylistLanguage(language),
 			yutuber.WithPlaylistChannelId(channelId),
@@ -26,7 +26,7 @@ func init() {
 	playlistCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist")
-	insertCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the playlist")
+	insertCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the playlist")
 	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the playlist")
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the playlist")

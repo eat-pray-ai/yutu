@@ -8,7 +8,7 @@ import (
 var (
 	id          string
 	title       string
-	desc        string
+	description string
 	kind        string
 	kVideoId    string
 	kChannelId  string

@@ -18,7 +18,7 @@ var (
 type subscription struct {
 	id                            string
 	subscriberChannelId           string
-	desc                          string
+	description                   string
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
@@ -117,7 +117,7 @@ func (s *subscription) Insert() {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.subscriberChannelId,
-			Description: s.desc,
+			Description: s.description,
 			ResourceId: &youtube.ResourceId{
 				ChannelId: s.channelId,
 			},
@@ -156,9 +156,9 @@ func WithSubscriptionSubscriberChannelId(id string) SubscriptionOption {
 	}
 }
 
-func WithSubscriptionDescription(desc string) SubscriptionOption {
+func WithSubscriptionDescription(description string) SubscriptionOption {
 	return func(s *subscription) {
-		s.desc = desc
+		s.description = description
 	}
 }
 

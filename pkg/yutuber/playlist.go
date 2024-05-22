@@ -17,16 +17,16 @@ var (
 )
 
 type playlist struct {
-	id         string
-	title      string
-	desc       string
-	hl         string
-	maxResults int64
-	mine       string
-	tags       []string
-	language   string
-	channelId  string
-	privacy    string
+	id          string
+	title       string
+	description string
+	hl          string
+	maxResults  int64
+	mine        string
+	tags        []string
+	language    string
+	channelId   string
+	privacy     string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
@@ -102,7 +102,7 @@ func (p *playlist) Insert() {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.title,
-			Description:     p.desc,
+			Description:     p.description,
 			Tags:            p.tags,
 			DefaultLanguage: p.language,
 			ChannelId:       p.channelId,
@@ -126,8 +126,8 @@ func (p *playlist) Update() {
 	if p.title != "" {
 		playlist.Snippet.Title = p.title
 	}
-	if p.desc != "" {
-		playlist.Snippet.Description = p.desc
+	if p.description != "" {
+		playlist.Snippet.Description = p.description
 	}
 	if p.tags != nil {
 		playlist.Snippet.Tags = p.tags
@@ -162,9 +162,9 @@ func WithPlaylistTitle(title string) PlaylistOption {
 	}
 }
 
-func WithPlaylistDesc(desc string) PlaylistOption {
+func WithPlaylistDescription(description string) PlaylistOption {
 	return func(p *playlist) {
-		p.desc = desc
+		p.description = description
 	}
 }
 

@@ -7,23 +7,23 @@ import (
 )
 
 var (
-	id         string
-	file       string
-	title      string
-	desc       string
-	tags       []string
-	language   string
-	thumbnail  string
-	rating     string
-	chart      string
-	channelId  string
-	playListId string
-	category   string
-	privacy    string
-	forKids    bool
-	embeddable bool
-	output     string
-	parts      []string
+	id          string
+	file        string
+	title       string
+	description string
+	tags        []string
+	language    string
+	thumbnail   string
+	rating      string
+	chart       string
+	channelId   string
+	playListId  string
+	category    string
+	privacy     string
+	forKids     bool
+	embeddable  bool
+	output      string
+	parts       []string
 )
 
 // videoCmd represents the video command

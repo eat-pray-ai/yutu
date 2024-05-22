@@ -8,7 +8,7 @@ import (
 var (
 	id                            string
 	subscriberChannelId           string
-	desc                          string
+	description                   string
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64

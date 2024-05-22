@@ -19,7 +19,7 @@ var (
 type playlistItem struct {
 	id          string
 	title       string
-	desc        string
+	description string
 	kind        string
 	kVideoId    string
 	kChannelId  string
@@ -115,7 +115,7 @@ func (pi *playlistItem) Insert() {
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
 			Title:       pi.title,
-			Description: pi.desc,
+			Description: pi.description,
 			ResourceId:  resourceId,
 			PlaylistId:  pi.playlistId,
 			ChannelId:   pi.channelId,
@@ -141,8 +141,8 @@ func (pi *playlistItem) Update() {
 	if pi.title != "" {
 		playlistItem.Snippet.Title = pi.title
 	}
-	if pi.desc != "" {
-		playlistItem.Snippet.Description = pi.desc
+	if pi.description != "" {
+		playlistItem.Snippet.Description = pi.description
 	}
 	if pi.privacy != "" {
 		playlistItem.Status.PrivacyStatus = pi.privacy
@@ -171,9 +171,9 @@ func WithPlaylistItemTitle(title string) PlaylistItemOption {
 	}
 }
 
-func WithPlaylistItemDesc(desc string) PlaylistItemOption {
+func WithPlaylistItemDescription(description string) PlaylistItemOption {
 	return func(p *playlistItem) {
-		p.desc = desc
+		p.description = description
 	}
 }
 

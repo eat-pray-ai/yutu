@@ -13,7 +13,7 @@ var updateCmd = &cobra.Command{
 		p := yutuber.NewPlaylist(
 			yutuber.WithPlaylistId(id),
 			yutuber.WithPlaylistTitle(title),
-			yutuber.WithPlaylistDesc(desc),
+			yutuber.WithPlaylistDescription(description),
 			yutuber.WithPlaylistTags(tags),
 			yutuber.WithPlaylistLanguage(language),
 			yutuber.WithPlaylistPrivacy(privacy),
@@ -27,7 +27,7 @@ func init() {
 
 	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist")
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist")
-	updateCmd.Flags().StringVarP(&desc, "desc", "d", "", "Description of the playlist")
+	updateCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the playlist")
 	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the playlist")
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the playlist")
