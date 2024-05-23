@@ -16,6 +16,7 @@ var updateCmd = &cobra.Command{
 			yutuber.WithVideoDescription(description),
 			yutuber.WithVideoTags(tags),
 			yutuber.WithVideoLanguage(language),
+			yutuber.WithVideoLicense(license),
 			yutuber.WithVideoPlaylistId(playListId),
 			yutuber.WithVideoThumbnail(thumbnail),
 			yutuber.WithVideoCategory(category),
@@ -34,6 +35,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the video")
 	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the video")
+	updateCmd.Flags().StringVarP(&license, "license", "L", "youtube", "youtube(default) or creativeCommon")
 	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "h", "", "Path to the thumbnail")
 	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", "Playlist ID of the video")
 	updateCmd.Flags().StringVarP(&category, "category", "g", "", "Category of the video")

@@ -8,11 +8,13 @@ import (
 
 var (
 	id          string
+	autoLevels  string
 	file        string
 	title       string
 	description string
 	tags        []string
 	language    string
+	license     string
 	thumbnail   string
 	rating      string
 	chart       string
@@ -24,6 +26,13 @@ var (
 	embeddable  bool
 	output      string
 	parts       []string
+	publishAt   string
+	stabilize   string
+
+	notifySubscribers             bool
+	publicStatsViewable           bool
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
 )
 
 // videoCmd represents the video command

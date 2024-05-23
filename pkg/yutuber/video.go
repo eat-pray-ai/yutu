@@ -23,11 +23,13 @@ var (
 
 type video struct {
 	id          string
+	autoLevels  string
 	file        string
 	title       string
 	description string
 	tags        []string
 	language    string
+	license     string
 	thumbnail   string
 	rating      string
 	chart       string
@@ -37,6 +39,13 @@ type video struct {
 	privacy     string
 	forKids     bool
 	embeddable  bool
+	publishAt   string
+	stabilize   string
+
+	notifySubscribers             bool
+	publicStatsViewable           bool
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
 }
 
 type Video interface {
@@ -110,13 +119,35 @@ func (v *video) Insert() {
 			DefaultAudioLanguage: v.language,
 		},
 		Status: &youtube.VideoStatus{
-			Embeddable:    v.embeddable,
-			MadeForKids:   v.forKids,
-			PrivacyStatus: v.privacy,
+			Embeddable:              v.embeddable,
+			License:                 v.license,
+			SelfDeclaredMadeForKids: v.forKids,
+			PublishAt:               v.publishAt,
+			PrivacyStatus:           v.privacy,
+			PublicStatsViewable:     v.publicStatsViewable,
+			ForceSendFields:         []string{"SelfDeclaredMadeForKids"},
 		},
 	}
 
 	call := service.Videos.Insert([]string{"snippet,status"}, video)
+
+	if v.autoLevels == "true" {
+		call = call.AutoLevels(true)
+	} else if v.autoLevels == "false" {
+		call = call.AutoLevels(false)
+	}
+	call = call.NotifySubscribers(v.notifySubscribers)
+	if v.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.onBehalfOfContentOwner)
+	}
+	if v.onBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(v.onBehalfOfContentOwnerChannel)
+	}
+	if v.stabilize == "true" {
+		call = call.Stabilize(true)
+	} else if v.stabilize == "false" {
+		call = call.Stabilize(false)
+	}
 
 	res, err := call.Media(file).Do()
 	if err != nil {
@@ -158,6 +189,9 @@ func (v *video) Update() {
 		video.Snippet.DefaultLanguage = v.language
 		video.Snippet.DefaultAudioLanguage = v.language
 	}
+	if v.license != "" {
+		video.Status.License = v.license
+	}
 	if v.category != "" {
 		video.Snippet.CategoryId = v.category
 	}
@@ -167,6 +201,10 @@ func (v *video) Update() {
 	video.Status.Embeddable = v.embeddable
 
 	call := service.Videos.Update([]string{"snippet,status"}, video)
+	if v.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.onBehalfOfContentOwner)
+	}
+
 	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errUpdateVideo, err), v.id)
@@ -229,6 +267,12 @@ func WithVideoId(id string) VideoOption {
 	}
 }
 
+func WithVideoAutoLevels(autoLevels string) VideoOption {
+	return func(v *video) {
+		v.autoLevels = autoLevels
+	}
+}
+
 func WithVideoFile(file string) VideoOption {
 	return func(v *video) {
 		v.file = file
@@ -256,6 +300,12 @@ func WithVideoTags(tags []string) VideoOption {
 func WithVideoLanguage(language string) VideoOption {
 	return func(v *video) {
 		v.language = language
+	}
+}
+
+func WithVideoLicense(license string) VideoOption {
+	return func(v *video) {
+		v.license = license
 	}
 }
 
@@ -310,5 +360,41 @@ func WithVideoChannelId(channelId string) VideoOption {
 func WithVideoPlaylistId(playlistId string) VideoOption {
 	return func(v *video) {
 		v.playlistId = playlistId
+	}
+}
+
+func WithVideoPublicStatsViewable(publicStatsViewable bool) VideoOption {
+	return func(v *video) {
+		v.publicStatsViewable = publicStatsViewable
+	}
+}
+
+func WithVideoPublishAt(publishAt string) VideoOption {
+	return func(v *video) {
+		v.publishAt = publishAt
+	}
+}
+
+func WithVideoStabilize(stabilize string) VideoOption {
+	return func(v *video) {
+		v.stabilize = stabilize
+	}
+}
+
+func WithVideoNotifySubscribers(notifySubscribers bool) VideoOption {
+	return func(v *video) {
+		v.notifySubscribers = notifySubscribers
+	}
+}
+
+func WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner string) VideoOption {
+	return func(v *video) {
+		v.onBehalfOfContentOwner = onBehalfOfContentOwner
+	}
+}
+
+func WithVideoOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) VideoOption {
+	return func(v *video) {
+		v.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}
 }
