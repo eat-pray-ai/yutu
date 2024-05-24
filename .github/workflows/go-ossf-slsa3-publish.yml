@@ -54,10 +54,11 @@ jobs:
       contents: write # To upload release assets.
       actions: read # To read workflow path.
     strategy:
+      fail-fast: false
       matrix:
         os: [linux, windows, darwin]
         arch: [amd64, arm64]
-    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v1.10.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v2.0.0
     with:
       go-version-file: go.mod
       config-file: .slsa-goreleaser/${{ matrix.os }}-${{ matrix.arch }}.yml
@@ -65,3 +66,30 @@ jobs:
       # =======================================================================================================
       # Optional: For more options, see https://github.com/slsa-framework/slsa-github-generator#golang-projects
       # =======================================================================================================
+
+  attestation:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        artifact:
+          - linux-amd64
+          - linux-arm64
+          - darwin-amd64
+          - darwin-arm64
+          - windows-amd64.exe
+          - windows-arm64.exe
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: yutu-${{ matrix.artifact }}
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '${{ github.workspace }}/yutu-${{ matrix.artifact }}'
