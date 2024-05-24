@@ -22,7 +22,7 @@ var insertCmd = &cobra.Command{
 			yutuber.WithVideoThumbnail(thumbnail),
 			yutuber.WithVideoChannelId(channelId),
 			yutuber.WithVideoPlaylistId(playListId),
-			yutuber.WithVideoCategory(category),
+			yutuber.WithVideoCategory(categoryId),
 			yutuber.WithVideoPrivacy(privacy),
 			yutuber.WithVideoForKids(forKids),
 			yutuber.WithVideoEmbeddable(embeddable),
@@ -50,7 +50,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", "Path to the thumbnail")
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the video")
 	insertCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", "Playlist ID of the video")
-	insertCmd.Flags().StringVarP(&category, "category", "g", "", "Category of the video")
+	insertCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", "Category of the video")
 	insertCmd.Flags().StringVarP(
 		&privacy, "privacy", "p", "", "Privacy status of the video: public, private, or unlisted",
 	)
@@ -70,6 +70,6 @@ func init() {
 
 	insertCmd.MarkFlagRequired("file")
 	insertCmd.MarkFlagRequired("title")
-	insertCmd.MarkFlagRequired("category")
+	insertCmd.MarkFlagRequired("categoryId")
 	insertCmd.MarkFlagRequired("privacy")
 }

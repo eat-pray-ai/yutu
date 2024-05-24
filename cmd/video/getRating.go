@@ -13,6 +13,7 @@ var getRatingCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		v := yutuber.NewVideo(
 			yutuber.WithVideoId(id),
+			yutuber.WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		v.GetRating()
 	},
@@ -22,5 +23,6 @@ func init() {
 	videoCmd.AddCommand(getRatingCmd)
 
 	getRatingCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
+	getRatingCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 	getRatingCmd.MarkFlagRequired("id")
 }

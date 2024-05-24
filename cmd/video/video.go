@@ -12,22 +12,28 @@ var (
 	file        string
 	title       string
 	description string
+	hl          string
 	tags        []string
 	language    string
+	locale      string
 	license     string
 	thumbnail   string
 	rating      string
 	chart       string
 	channelId   string
 	playListId  string
-	category    string
+	categoryId  string
 	privacy     string
 	forKids     bool
 	embeddable  bool
 	output      string
 	parts       []string
 	publishAt   string
+	regionCode  string
 	stabilize   string
+	maxHeight   int64
+	maxWidth    int64
+	maxResults  int64
 
 	notifySubscribers             bool
 	publicStatsViewable           bool

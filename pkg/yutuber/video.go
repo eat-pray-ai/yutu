@@ -27,20 +27,26 @@ type video struct {
 	file        string
 	title       string
 	description string
+	hl          string
 	tags        []string
 	language    string
+	locale      string
 	license     string
 	thumbnail   string
 	rating      string
 	chart       string
 	channelId   string
 	playlistId  string
-	category    string
+	categoryId  string
 	privacy     string
 	forKids     bool
 	embeddable  bool
 	publishAt   string
+	regionCode  string
 	stabilize   string
+	maxHeight   int64
+	maxWidth    int64
+	maxResults  int64
 
 	notifySubscribers             bool
 	publicStatsViewable           bool
@@ -75,9 +81,36 @@ func (v *video) get(parts []string) []*youtube.Video {
 	call := service.Videos.List(parts)
 	if v.id != "" {
 		call = call.Id(v.id)
-	} else if v.rating != "" {
+	}
+	if v.chart != "" {
+		call = call.Chart(v.chart)
+	}
+	if v.hl != "" {
+		call = call.Hl(v.hl)
+	}
+	if v.locale != "" {
+		call = call.Locale(v.locale)
+	}
+	if v.categoryId != "" {
+		call = call.VideoCategoryId(v.categoryId)
+	}
+	if v.rating != "" {
 		call = call.MyRating(v.rating)
 	}
+	if v.regionCode != "" {
+		call = call.RegionCode(v.regionCode)
+	}
+	if v.maxHeight != 0 {
+		call = call.MaxHeight(v.maxHeight)
+	}
+	if v.maxWidth != 0 {
+		call = call.MaxWidth(v.maxWidth)
+	}
+	if v.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.onBehalfOfContentOwner)
+	}
+	call = call.MaxResults(v.maxResults)
+
 	response, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideo, err), v.id)
@@ -113,7 +146,7 @@ func (v *video) Insert() {
 			Title:                v.title,
 			Description:          v.description,
 			Tags:                 v.tags,
-			CategoryId:           v.category,
+			CategoryId:           v.categoryId,
 			ChannelId:            v.channelId,
 			DefaultLanguage:      v.language,
 			DefaultAudioLanguage: v.language,
@@ -192,8 +225,8 @@ func (v *video) Update() {
 	if v.license != "" {
 		video.Status.License = v.license
 	}
-	if v.category != "" {
-		video.Snippet.CategoryId = v.category
+	if v.categoryId != "" {
+		video.Snippet.CategoryId = v.categoryId
 	}
 	if v.privacy != "" {
 		video.Status.PrivacyStatus = v.privacy
@@ -241,6 +274,9 @@ func (v *video) Rate() {
 
 func (v *video) GetRating() {
 	call := service.Videos.GetRating([]string{v.id})
+	if v.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.onBehalfOfContentOwnerChannel)
+	}
 	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetRating, err), v.id)
@@ -291,6 +327,12 @@ func WithVideoDescription(description string) VideoOption {
 	}
 }
 
+func WithVideoHl(hl string) VideoOption {
+	return func(v *video) {
+		v.hl = hl
+	}
+}
+
 func WithVideoTags(tags []string) VideoOption {
 	return func(v *video) {
 		v.tags = tags
@@ -300,6 +342,12 @@ func WithVideoTags(tags []string) VideoOption {
 func WithVideoLanguage(language string) VideoOption {
 	return func(v *video) {
 		v.language = language
+	}
+}
+
+func WithVideoLocale(locale string) VideoOption {
+	return func(v *video) {
+		v.locale = locale
 	}
 }
 
@@ -339,9 +387,9 @@ func WithVideoEmbeddable(embeddable bool) VideoOption {
 	}
 }
 
-func WithVideoCategory(category string) VideoOption {
+func WithVideoCategory(categoryId string) VideoOption {
 	return func(v *video) {
-		v.category = category
+		v.categoryId = categoryId
 	}
 }
 
@@ -375,9 +423,33 @@ func WithVideoPublishAt(publishAt string) VideoOption {
 	}
 }
 
+func WithVideoRegionCode(regionCode string) VideoOption {
+	return func(v *video) {
+		v.regionCode = regionCode
+	}
+}
+
 func WithVideoStabilize(stabilize string) VideoOption {
 	return func(v *video) {
 		v.stabilize = stabilize
+	}
+}
+
+func WithVideoMaxHeight(maxHeight int64) VideoOption {
+	return func(v *video) {
+		v.maxHeight = maxHeight
+	}
+}
+
+func WithVideoMaxWidth(maxWidth int64) VideoOption {
+	return func(v *video) {
+		v.maxWidth = maxWidth
+	}
+}
+
+func WithVideoMaxResults(maxResults int64) VideoOption {
+	return func(v *video) {
+		v.maxResults = maxResults
 	}
 }
 

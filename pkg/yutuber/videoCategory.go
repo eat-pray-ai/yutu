@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	errGetVideoCategory = errors.New("failed to get video category")
+	errGetVideoCategory = errors.New("failed to get video categoryId")
 )
 
 type videoCategory struct {
