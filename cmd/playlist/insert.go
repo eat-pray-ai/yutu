@@ -30,7 +30,7 @@ func init() {
 	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the playlist")
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the playlist")
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the playlist")
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "public, private or unlisted")
 
 	insertCmd.MarkFlagRequired("title")
 	insertCmd.MarkFlagRequired("channel")

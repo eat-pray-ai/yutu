@@ -42,10 +42,7 @@ func init() {
 		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().StringVarP(
-		&mine, "mine", "m", "",
-		"Return the playlists owned by the authenticated user",
-	)
+	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

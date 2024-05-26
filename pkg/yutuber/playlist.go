@@ -14,6 +14,7 @@ var (
 	errGetPlaylist    = errors.New("failed to get playlist")
 	errInsertPlaylist = errors.New("failed to insert playlist")
 	errUpdatePlaylist = errors.New("failed to update playlist")
+	errDeletePlaylist = errors.New("failed to delete playlist")
 )
 
 type playlist struct {
@@ -36,6 +37,7 @@ type Playlist interface {
 	List([]string, string)
 	Insert()
 	Update()
+	Delete()
 	get([]string) []*youtube.Playlist
 }
 
@@ -148,6 +150,19 @@ func (p *playlist) Update() {
 	data, _ := res.MarshalJSON()
 	fmt.Println("Playlist updated:")
 	utils.PrintJSON(data)
+}
+
+func (p *playlist) Delete() {
+	call := service.Playlists.Delete(p.id)
+	if p.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.onBehalfOfContentOwner)
+	}
+
+	err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errDeletePlaylist, err), p.id)
+	}
+	fmt.Printf("Playlist %s deleted", p.id)
 }
 
 func WithPlaylistId(id string) PlaylistOption {
