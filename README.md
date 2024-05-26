@@ -2,7 +2,7 @@
 
 # yutu
 
-[![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%90%B0%F0%9F%98%8D-blue?style=flat-square)](https://gitmoji.dev)
+[![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%98%BF%F0%9F%90%B0%F0%9F%90%A7%E2%9D%A4%EF%B8%8F%E2%80%8D%F0%9F%A9%B9-love?style=flat-square&labelColor=%23EDD1CC&color=%23FF919F)](https://gitmoji.dev)
 ![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)
 ![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)
 [![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu/pkg/yutuber?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu/pkg/yutuber)
@@ -13,12 +13,11 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
 
 
-
 yutu is a fully functional CLI for YouTube.
 
 ## Usage
 
-```sh
+```shell
 ❯ yutu help
 yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.
 
@@ -29,6 +28,7 @@ Usage:
 Available Commands:
   activity               manipulate YouTube activities
   channel                manipulate YouTube channels
+  channelBanner          manipulate Youtube channelBanner
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
   i18nLanguage           manipulate YouTube i18nLanguages
@@ -38,6 +38,7 @@ Available Commands:
   playlist               manipulate YouTube playlists
   playlistItem           manipulate YouTube playlist items
   search                 Search for youtube resources
+  subscription           manipulate YouTube subscriptions
   version                Show the version of yutu
   video                  manipulate YouTube videos
   videoAbuseReportReason manipulate YouTube video abuse report reasons
@@ -68,12 +69,12 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] list, 1
   - [x] insert, 50
   - [x] update, 50
-  - [ ] delete, 50
+  - [x] delete, 50
 - playlistItems
   - [x] list, 1
   - [x] insert, 50
   - [x] update, 50
-  - [ ] delete, 50
+  - [x] delete, 50
 - activities
   - [x] list, 1
 - captions
@@ -82,7 +83,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [ ] update, 450
   - [ ] delete, 50
 - channelBanners
-  - [ ] insert, 50
+  - [x] insert, 50
 - channelSections
   - [ ] list, 1
   - [ ] insert, 50
@@ -111,9 +112,9 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - search
   - [x] list, 100
 - subscriptions
-  - [ ] list, 1
-  - [ ] insert, 50
-  - [ ] delete, 50
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] delete, 50
 - thumbnails
   - [x] set, 50
 - videoAbuseReportReasons
@@ -123,15 +124,6 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - watermarks
   - [ ] set, 50
   - [ ] unset, 50
-
-## Contributing
-
-yutu is a cli tool built using the [cobra](https://github.com/spf13/cobra). Feel free to contribute to the project under these conventions:
-
-- Commit messages should follow the [gitmoji](https://gitmoji.dev) convention.
-- Follow the existing naming and project structure.
-
-Tests are especially welcomed, as they are currently missing from the project.
 
 ## Star History
 

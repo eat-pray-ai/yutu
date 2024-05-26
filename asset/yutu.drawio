@@ -1,5 +1,5 @@
-<mxfile host="app.diagrams.net" modified="2024-03-24T11:51:44.586Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" etag="7Bip6odgxBems7eqUGTC" version="24.0.7" type="device" pages="2">
-  <diagram name="Page-1" id="HgsUI8XXkYwbFTP1tohv">
+<mxfile host="app.diagrams.net" modified="2024-05-26T05:52:13.647Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="tpQSsSM0Hx2bVOHuX0jQ" version="24.4.8" type="device" pages="4">
+  <diagram name="yutu" id="HgsUI8XXkYwbFTP1tohv">
     <mxGraphModel dx="1562" dy="891" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -67,13 +67,47 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="ME_lvCD3kbWKB2l7JuuW" name="Page-2">
+  <diagram id="ME_lvCD3kbWKB2l7JuuW" name="abandon">
     <mxGraphModel dx="1562" dy="891" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="exTvPNQExlWehOXp9kvl-1" value="&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;ABAN&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;DON&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#ffe6cc;fontFamily=Comic Sans MS;" vertex="1" parent="1">
+        <mxCell id="exTvPNQExlWehOXp9kvl-1" value="&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;ABAN&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;DON&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#ffe6cc;fontFamily=Comic Sans MS;" parent="1" vertex="1">
           <mxGeometry x="240" y="320" width="130" height="190" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="u64daZwIxqt9b9xgIhQl" name="chimoji">
+    <mxGraphModel dx="1562" dy="891" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f2lCZcE7F5WgQHFR5r4P-1" value="&lt;span style=&quot;font-size: 69px; text-wrap: nowrap;&quot;&gt;😿🐰🐧❤️‍🩹&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#FF919F;strokeWidth=1;fillColor=#FF919F;spacing=0;labelBorderColor=none;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="160" y="235" width="440" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="f2lCZcE7F5WgQHFR5r4P-8" value="&lt;span style=&quot;font-size: 69px; text-wrap: nowrap;&quot;&gt;😿🐰🐧❤️‍🩹&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#FF919F;strokeWidth=1;fillColor=#FF919F;spacing=0;labelBorderColor=none;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="160" y="317" width="440" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="f2lCZcE7F5WgQHFR5r4P-9" value="&lt;span style=&quot;font-size: 69px; text-wrap: nowrap;&quot;&gt;😿🐰🐧❤️‍🩹&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#FF919F;strokeWidth=1;fillColor=#FF919F;spacing=0;labelBorderColor=none;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="160" y="400" width="440" height="85" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="PxDE1w6VXgvHYtiDOyJ6" name="eat-pray-ai">
+    <mxGraphModel dx="1562" dy="891" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="BdCJykdkTkFccGUDSuFe-2" value="&lt;font style=&quot;font-size: 192px;&quot;&gt;🍚&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;spacing=0;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="160" y="200" width="240" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="BdCJykdkTkFccGUDSuFe-4" value="&lt;font style=&quot;font-size: 144px;&quot;&gt;💘&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="180" y="170" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="BdCJykdkTkFccGUDSuFe-3" value="&lt;font style=&quot;font-size: 96px;&quot;&gt;🙏&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="200" y="280" width="160" height="160" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
