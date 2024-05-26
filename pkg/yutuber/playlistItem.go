@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	errGetPlaylistItem    = fmt.Errorf("failed to get playlist item")
-	errUpdatePlaylistItem = fmt.Errorf("failed to update playlist item")
-	errInsertPlaylistItem = fmt.Errorf("failed to insert playlist item")
+	errGetPlaylistItem    = errors.New("failed to get playlist item")
+	errUpdatePlaylistItem = errors.New("failed to update playlist item")
+	errInsertPlaylistItem = errors.New("failed to insert playlist item")
+	errDeletePlaylistItem = errors.New("failed to delete playlist item")
 )
 
 type playlistItem struct {
@@ -37,6 +38,7 @@ type PlaylistItem interface {
 	List([]string, string)
 	Insert()
 	Update()
+	Delete()
 	get([]string) []*youtube.PlaylistItem
 }
 
@@ -157,6 +159,20 @@ func (pi *playlistItem) Update() {
 	}
 	fmt.Println("PlaylistItem updated:")
 	utils.PrintJSON(res)
+}
+
+func (pi *playlistItem) Delete() {
+	call := service.PlaylistItems.Delete(pi.id)
+	if pi.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.onBehalfOfContentOwner)
+	}
+
+	err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errDeletePlaylistItem, err), pi.id)
+	}
+
+	fmt.Printf("Playlsit Item %s deleted", pi.id)
 }
 
 func WithPlaylistItemId(id string) PlaylistItemOption {

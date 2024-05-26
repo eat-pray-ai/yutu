@@ -7,8 +7,8 @@ import (
 
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "insert playlist item",
-	Long:  "insert playlist item into a playlist",
+	Short: "insert a playlist item into a playlist",
+	Long:  "insert a playlist item into a playlist",
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := yutuber.NewPlaylistItem(
 			yutuber.WithPlaylistItemTitle(title),
@@ -43,8 +43,7 @@ func init() {
 		&kChannelId, "kChannelId", "C", "", "ID of the channel if kind is channel",
 	)
 	insertCmd.Flags().StringVarP(
-		&kPlaylistId, "kPlaylistId", "P", "",
-		"ID of the playlist if kind is playlist",
+		&kPlaylistId, "kPlaylistId", "P", "", "ID of the playlist if kind is playlist",
 	)
 	insertCmd.Flags().StringVarP(
 		&playlistId, "playlistId", "p", "",

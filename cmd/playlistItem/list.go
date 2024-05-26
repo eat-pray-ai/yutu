@@ -26,7 +26,7 @@ func init() {
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist item")
 	listCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "l", "",
+		&playlistId, "playlistId", "I", "",
 		"Return the playlist items within the given playlist",
 	)
 	listCmd.Flags().Int64VarP(
