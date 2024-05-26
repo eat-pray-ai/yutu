@@ -60,7 +60,7 @@ func (cb *channelBanner) Insert() {
 	}
 
 	fmt.Println("ChannelBanner inserted:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func WithChannelBannerFile(file string) ChannelBannerOption {

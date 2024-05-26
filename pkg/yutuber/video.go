@@ -204,7 +204,7 @@ func (v *video) Insert() {
 	}
 
 	fmt.Println("Video inserted:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func (v *video) Update() {
@@ -260,7 +260,7 @@ func (v *video) Update() {
 	}
 
 	fmt.Println("Video updated:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func (v *video) Rate() {
@@ -282,7 +282,7 @@ func (v *video) GetRating() {
 		log.Fatalln(errors.Join(errGetRating, err), v.id)
 	}
 
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {

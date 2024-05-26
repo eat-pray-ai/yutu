@@ -140,7 +140,7 @@ func (c *channel) Update() {
 		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
 	}
 	fmt.Println("Channel updated:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func WithChannelCategoryId(categoryId string) ChannelOption {

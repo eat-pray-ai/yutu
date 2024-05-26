@@ -135,7 +135,7 @@ func (pi *playlistItem) Insert() {
 		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.videoId)
 	}
 	fmt.Println("PlaylistItem inserted:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func (pi *playlistItem) Update() {
@@ -158,7 +158,7 @@ func (pi *playlistItem) Update() {
 		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.id)
 	}
 	fmt.Println("PlaylistItem updated:")
-	utils.PrintJSON(res)
+	utils.PrintYAML(res)
 }
 
 func (pi *playlistItem) Delete() {

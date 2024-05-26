@@ -147,9 +147,8 @@ func (p *playlist) Update() {
 		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.id)
 	}
 
-	data, _ := res.MarshalJSON()
 	fmt.Println("Playlist updated:")
-	utils.PrintJSON(data)
+	utils.PrintYAML(res)
 }
 
 func (p *playlist) Delete() {
