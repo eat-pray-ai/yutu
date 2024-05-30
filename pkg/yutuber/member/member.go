@@ -1,4 +1,4 @@
-package yutuber
+package member
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service      *youtube.Service
 	errGetMember = errors.New("failed to get member")
 )
 
@@ -25,9 +26,9 @@ type Member interface {
 	get([]string) []*youtube.Member
 }
 
-type MemberOption func(*member)
+type Option func(*member)
 
-func NewMember(opts ...MemberOption) Member {
+func NewMember(opts ...Option) Member {
 	m := &member{}
 	service = auth.NewY2BService()
 
@@ -78,25 +79,25 @@ func (m *member) List(parts []string, output string) {
 	}
 }
 
-func WithMemberChannelId(channelId string) MemberOption {
+func WithChannelId(channelId string) Option {
 	return func(m *member) {
 		m.memberChannelId = channelId
 	}
 }
 
-func WithMemberHasAccessToLevel(level string) MemberOption {
+func WithHasAccessToLevel(level string) Option {
 	return func(m *member) {
 		m.hasAccessToLevel = level
 	}
 }
 
-func WithMemberMaxResults(results int64) MemberOption {
+func WithMaxResults(results int64) Option {
 	return func(m *member) {
 		m.maxResults = results
 	}
 }
 
-func WithMemberMode(mode string) MemberOption {
+func WithMode(mode string) Option {
 	return func(m *member) {
 		m.mode = mode
 	}

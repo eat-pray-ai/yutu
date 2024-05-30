@@ -1,7 +1,7 @@
 package playlist
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlist"
 	"github.com/spf13/cobra"
 )
 
@@ -10,9 +10,9 @@ var deleteCmd = &cobra.Command{
 	Short: "delete a playlist",
 	Long:  "delete a playlist",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := yutuber.NewPlaylist(
-			yutuber.WithPlaylistId(id),
-			yutuber.WithPlaylistOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		p := playlist.NewPlaylist(
+			playlist.WithId(id),
+			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		p.Delete()
 	},

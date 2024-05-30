@@ -1,4 +1,4 @@
-package yutuber
+package i18nRegion
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service          *youtube.Service
 	errGetI18nRegion = errors.New("failed to get i18n region")
 )
 
@@ -22,9 +23,9 @@ type I18nRegion interface {
 	List(parts []string, output string)
 }
 
-type I18nRegionOption func(*i18nRegion)
+type Option func(*i18nRegion)
 
-func NewI18nRegion(opts ...I18nRegionOption) I18nRegion {
+func NewI18nRegion(opts ...Option) I18nRegion {
 	service = auth.NewY2BService()
 	i := &i18nRegion{}
 
@@ -67,7 +68,7 @@ func (i *i18nRegion) List(parts []string, output string) {
 	}
 }
 
-func WithI18nRegionHl(hl string) I18nRegionOption {
+func WithHl(hl string) Option {
 	return func(i *i18nRegion) {
 		i.hl = hl
 	}

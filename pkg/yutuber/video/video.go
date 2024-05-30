@@ -1,8 +1,9 @@
-package yutuber
+package video
 
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
 	"log"
 	"os"
 
@@ -12,6 +13,7 @@ import (
 )
 
 var (
+	service         *youtube.Service
 	errGetVideo     = errors.New("failed to get video")
 	errInsertVideo  = errors.New("failed to insert video")
 	errUpdateVideo  = errors.New("failed to update video")
@@ -64,9 +66,9 @@ type Video interface {
 	setThumbnail(string, *youtube.Service)
 }
 
-type VideoOption func(*video)
+type Option func(*video)
 
-func NewVideo(opts ...VideoOption) Video {
+func NewVideo(opts ...Option) Video {
 	v := &video{}
 	service = auth.NewY2BService()
 
@@ -192,13 +194,13 @@ func (v *video) Insert() {
 	}
 
 	if v.playlistId != "" {
-		pi := NewPlaylistItem(
-			WithPlaylistItemTitle(v.title),
-			WithPlaylistItemDescription(v.description),
-			WithPlaylistItemVideoId(res.Id),
-			WithPlaylistItemPlaylistId(v.playlistId),
-			WithPlaylistItemChannelId(v.channelId),
-			WithPlaylistItemPrivacy(v.privacy),
+		pi := playlistItem.NewPlaylistItem(
+			playlistItem.WithTitle(v.title),
+			playlistItem.WithDescription(v.description),
+			playlistItem.WithVideoId(res.Id),
+			playlistItem.WithPlaylistId(v.playlistId),
+			playlistItem.WithChannelId(v.channelId),
+			playlistItem.WithPrivacy(v.privacy),
 		)
 		pi.Insert()
 	}
@@ -248,13 +250,13 @@ func (v *video) Update() {
 	}
 
 	if v.playlistId != "" {
-		pi := NewPlaylistItem(
-			WithPlaylistItemTitle(v.title),
-			WithPlaylistItemDescription(v.description),
-			WithPlaylistItemVideoId(res.Id),
-			WithPlaylistItemPlaylistId(v.playlistId),
-			WithPlaylistItemChannelId(v.channelId),
-			WithPlaylistItemPrivacy(v.privacy),
+		pi := playlistItem.NewPlaylistItem(
+			playlistItem.WithTitle(v.title),
+			playlistItem.WithDescription(v.description),
+			playlistItem.WithVideoId(res.Id),
+			playlistItem.WithPlaylistId(v.playlistId),
+			playlistItem.WithChannelId(v.channelId),
+			playlistItem.WithPrivacy(v.privacy),
 		)
 		pi.Insert()
 	}
@@ -297,175 +299,175 @@ func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {
 	}
 }
 
-func WithVideoId(id string) VideoOption {
+func WithId(id string) Option {
 	return func(v *video) {
 		v.id = id
 	}
 }
 
-func WithVideoAutoLevels(autoLevels string) VideoOption {
+func WithAutoLevels(autoLevels string) Option {
 	return func(v *video) {
 		v.autoLevels = autoLevels
 	}
 }
 
-func WithVideoFile(file string) VideoOption {
+func WithFile(file string) Option {
 	return func(v *video) {
 		v.file = file
 	}
 }
 
-func WithVideoTitle(title string) VideoOption {
+func WithTitle(title string) Option {
 	return func(v *video) {
 		v.title = title
 	}
 }
 
-func WithVideoDescription(description string) VideoOption {
+func WithDescription(description string) Option {
 	return func(v *video) {
 		v.description = description
 	}
 }
 
-func WithVideoHl(hl string) VideoOption {
+func WithHl(hl string) Option {
 	return func(v *video) {
 		v.hl = hl
 	}
 }
 
-func WithVideoTags(tags []string) VideoOption {
+func WithTags(tags []string) Option {
 	return func(v *video) {
 		v.tags = tags
 	}
 }
 
-func WithVideoLanguage(language string) VideoOption {
+func WithLanguage(language string) Option {
 	return func(v *video) {
 		v.language = language
 	}
 }
 
-func WithVideoLocale(locale string) VideoOption {
+func WithLocale(locale string) Option {
 	return func(v *video) {
 		v.locale = locale
 	}
 }
 
-func WithVideoLicense(license string) VideoOption {
+func WithLicense(license string) Option {
 	return func(v *video) {
 		v.license = license
 	}
 }
 
-func WithVideoThumbnail(thumbnail string) VideoOption {
+func WithThumbnail(thumbnail string) Option {
 	return func(v *video) {
 		v.thumbnail = thumbnail
 	}
 }
 
-func WithVideoRating(rating string) VideoOption {
+func WithRating(rating string) Option {
 	return func(v *video) {
 		v.rating = rating
 	}
 }
 
-func WithVideoChart(chart string) VideoOption {
+func WithChart(chart string) Option {
 	return func(v *video) {
 		v.chart = chart
 	}
 }
 
-func WithVideoForKids(forKids bool) VideoOption {
+func WithForKids(forKids bool) Option {
 	return func(v *video) {
 		v.forKids = forKids
 	}
 }
 
-func WithVideoEmbeddable(embeddable bool) VideoOption {
+func WithEmbeddable(embeddable bool) Option {
 	return func(v *video) {
 		v.embeddable = embeddable
 	}
 }
 
-func WithVideoCategory(categoryId string) VideoOption {
+func WithCategory(categoryId string) Option {
 	return func(v *video) {
 		v.categoryId = categoryId
 	}
 }
 
-func WithVideoPrivacy(privacy string) VideoOption {
+func WithPrivacy(privacy string) Option {
 	return func(v *video) {
 		v.privacy = privacy
 	}
 }
 
-func WithVideoChannelId(channelId string) VideoOption {
+func WithChannelId(channelId string) Option {
 	return func(v *video) {
 		v.channelId = channelId
 	}
 }
 
-func WithVideoPlaylistId(playlistId string) VideoOption {
+func WithPlaylistId(playlistId string) Option {
 	return func(v *video) {
 		v.playlistId = playlistId
 	}
 }
 
-func WithVideoPublicStatsViewable(publicStatsViewable bool) VideoOption {
+func WithPublicStatsViewable(publicStatsViewable bool) Option {
 	return func(v *video) {
 		v.publicStatsViewable = publicStatsViewable
 	}
 }
 
-func WithVideoPublishAt(publishAt string) VideoOption {
+func WithPublishAt(publishAt string) Option {
 	return func(v *video) {
 		v.publishAt = publishAt
 	}
 }
 
-func WithVideoRegionCode(regionCode string) VideoOption {
+func WithRegionCode(regionCode string) Option {
 	return func(v *video) {
 		v.regionCode = regionCode
 	}
 }
 
-func WithVideoStabilize(stabilize string) VideoOption {
+func WithStabilize(stabilize string) Option {
 	return func(v *video) {
 		v.stabilize = stabilize
 	}
 }
 
-func WithVideoMaxHeight(maxHeight int64) VideoOption {
+func WithMaxHeight(maxHeight int64) Option {
 	return func(v *video) {
 		v.maxHeight = maxHeight
 	}
 }
 
-func WithVideoMaxWidth(maxWidth int64) VideoOption {
+func WithMaxWidth(maxWidth int64) Option {
 	return func(v *video) {
 		v.maxWidth = maxWidth
 	}
 }
 
-func WithVideoMaxResults(maxResults int64) VideoOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(v *video) {
 		v.maxResults = maxResults
 	}
 }
 
-func WithVideoNotifySubscribers(notifySubscribers bool) VideoOption {
+func WithNotifySubscribers(notifySubscribers bool) Option {
 	return func(v *video) {
 		v.notifySubscribers = notifySubscribers
 	}
 }
 
-func WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner string) VideoOption {
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(v *video) {
 		v.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
-func WithVideoOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) VideoOption {
+func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(v *video) {
 		v.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}

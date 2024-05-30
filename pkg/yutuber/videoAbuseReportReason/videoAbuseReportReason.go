@@ -1,4 +1,4 @@
-package yutuber
+package videoAbuseReportReason
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service                      *youtube.Service
 	errGetVideoAbuseReportReason = errors.New("failed to get video abuse report reason")
 )
 
@@ -22,9 +23,9 @@ type VideoAbuseReportReason interface {
 	List([]string, string)
 }
 
-type VideoAbuseReportReasonOption func(*videoAbuseReportReason)
+type Option func(*videoAbuseReportReason)
 
-func NewVideoAbuseReportReason(opt ...VideoAbuseReportReasonOption) VideoAbuseReportReason {
+func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason {
 	service = auth.NewY2BService()
 	va := &videoAbuseReportReason{}
 	for _, o := range opt {
@@ -65,7 +66,7 @@ func (vc *videoAbuseReportReason) List(parts []string, output string) {
 	}
 }
 
-func WithVideoAbuseReportReasonHL(hl string) VideoAbuseReportReasonOption {
+func WithHL(hl string) Option {
 	return func(vc *videoAbuseReportReason) {
 		vc.hl = hl
 	}

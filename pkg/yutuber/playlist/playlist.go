@@ -1,4 +1,4 @@
-package yutuber
+package playlist
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	service           *youtube.Service
 	errGetPlaylist    = errors.New("failed to get playlist")
 	errInsertPlaylist = errors.New("failed to insert playlist")
 	errUpdatePlaylist = errors.New("failed to update playlist")
@@ -41,9 +42,9 @@ type Playlist interface {
 	get([]string) []*youtube.Playlist
 }
 
-type PlaylistOption func(*playlist)
+type Option func(*playlist)
 
-func NewPlaylist(opts ...PlaylistOption) Playlist {
+func NewPlaylist(opts ...Option) Playlist {
 	p := &playlist{}
 	service = auth.NewY2BService()
 
@@ -164,73 +165,73 @@ func (p *playlist) Delete() {
 	fmt.Printf("Playlist %s deleted", p.id)
 }
 
-func WithPlaylistId(id string) PlaylistOption {
+func WithId(id string) Option {
 	return func(p *playlist) {
 		p.id = id
 	}
 }
 
-func WithPlaylistTitle(title string) PlaylistOption {
+func WithTitle(title string) Option {
 	return func(p *playlist) {
 		p.title = title
 	}
 }
 
-func WithPlaylistDescription(description string) PlaylistOption {
+func WithDescription(description string) Option {
 	return func(p *playlist) {
 		p.description = description
 	}
 }
 
-func WithPlaylistTags(tags []string) PlaylistOption {
+func WithTags(tags []string) Option {
 	return func(p *playlist) {
 		p.tags = tags
 	}
 }
 
-func WithPlaylistLanguage(language string) PlaylistOption {
+func WithLanguage(language string) Option {
 	return func(p *playlist) {
 		p.language = language
 	}
 }
 
-func WithPlaylistChannelId(channelId string) PlaylistOption {
+func WithChannelId(channelId string) Option {
 	return func(p *playlist) {
 		p.channelId = channelId
 	}
 }
 
-func WithPlaylistPrivacy(privacy string) PlaylistOption {
+func WithPrivacy(privacy string) Option {
 	return func(p *playlist) {
 		p.privacy = privacy
 	}
 }
 
-func WithPlaylistHl(hl string) PlaylistOption {
+func WithHl(hl string) Option {
 	return func(p *playlist) {
 		p.hl = hl
 	}
 }
 
-func WithPlaylistMaxResults(maxResults int64) PlaylistOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(p *playlist) {
 		p.maxResults = maxResults
 	}
 }
 
-func WithPlaylistMine(mine string) PlaylistOption {
+func WithMine(mine string) Option {
 	return func(p *playlist) {
 		p.mine = mine
 	}
 }
 
-func WithPlaylistOnBehalfOfContentOwner(contentOwner string) PlaylistOption {
+func WithOnBehalfOfContentOwner(contentOwner string) Option {
 	return func(p *playlist) {
 		p.onBehalfOfContentOwner = contentOwner
 	}
 }
 
-func WithPlaylistOnBehalfOfContentOwnerChannel(channel string) PlaylistOption {
+func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 	return func(p *playlist) {
 		p.onBehalfOfContentOwnerChannel = channel
 	}

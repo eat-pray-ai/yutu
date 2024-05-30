@@ -1,7 +1,7 @@
 package channel
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/channel"
 	"github.com/spf13/cobra"
 )
 
@@ -10,13 +10,13 @@ var updateCmd = &cobra.Command{
 	Short: "update channel's info",
 	Long:  "update channel's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		c := yutuber.NewChannel(
-			yutuber.WithChannelId(id),
-			yutuber.WithChannelCountry(country),
-			yutuber.WithChannelCustomUrl(customUrl),
-			yutuber.WithChannelDefaultLanguage(defaultLanguage),
-			yutuber.WithChannelDescription(description),
-			yutuber.WithChannelTitle(title),
+		c := channel.NewChannel(
+			channel.WithId(id),
+			channel.WithCountry(country),
+			channel.WithCustomUrl(customUrl),
+			channel.WithDefaultLanguage(defaultLanguage),
+			channel.WithDescription(description),
+			channel.WithTitle(title),
 		)
 		c.Update()
 	},

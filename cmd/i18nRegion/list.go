@@ -1,7 +1,7 @@
 package i18nRegion
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/i18nRegion"
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +10,7 @@ var listCmd = &cobra.Command{
 	Short: "list i18nRegions",
 	Long:  "list i18nRegions' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
-		i := yutuber.NewI18nRegion(yutuber.WithI18nRegionHl(hl))
+		i := i18nRegion.NewI18nRegion(i18nRegion.WithHl(hl))
 		i.List(parts, output)
 	},
 }

@@ -1,4 +1,4 @@
-package yutuber
+package membershipsLevel
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service                *youtube.Service
 	errGetMembershipsLevel = errors.New("failed to get memberships level")
 )
 
@@ -20,9 +21,9 @@ type MembershipsLevel interface {
 	get([]string) []*youtube.MembershipsLevel
 }
 
-type MembershipsLevelOption func(*membershipsLevel)
+type Option func(*membershipsLevel)
 
-func NewMembershipsLevel(opts ...MembershipsLevelOption) MembershipsLevel {
+func NewMembershipsLevel(opts ...Option) MembershipsLevel {
 	m := &membershipsLevel{}
 	service = auth.NewY2BService()
 

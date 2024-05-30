@@ -1,7 +1,7 @@
 package search
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/search"
 	"github.com/spf13/cobra"
 )
 
@@ -10,36 +10,36 @@ var listCmd = &cobra.Command{
 	Short: "List search results",
 	Long:  "List search results",
 	Run: func(cmd *cobra.Command, args []string) {
-		s := yutuber.NewSearch(
-			yutuber.WithSearchChannelId(channelId),
-			yutuber.WithSearchChannelType(channelType),
-			yutuber.WithSearchEventType(eventType),
-			yutuber.WithSearchForContentOwner(forContentOwner),
-			yutuber.WithSearchForDeveloper(forDeveloper),
-			yutuber.WithSearchForMine(forMine),
-			yutuber.WithSearchLocation(location),
-			yutuber.WithSearchLocationRadius(locationRadius),
-			yutuber.WithSearchMaxResults(maxResults),
-			yutuber.WithSearchOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithSearchOrder(order),
-			yutuber.WithSearchPublishedAfter(publishedAfter),
-			yutuber.WithSearchPublishedBefore(publishedBefore),
-			yutuber.WithSearchQ(q),
-			yutuber.WithSearchRegionCode(regionCode),
-			yutuber.WithSearchRelevanceLanguage(relevanceLanguage),
-			yutuber.WithSearchSafeSearch(safeSearch),
-			yutuber.WithSearchTopicId(topicId),
-			yutuber.WithSearchTypes(types),
-			yutuber.WithSearchVideoCaption(videoCaption),
-			yutuber.WithSearchVideoCategoryId(videoCategoryId),
-			yutuber.WithSearchVideoDefinition(videoDefinition),
-			yutuber.WithSearchVideoDimension(videoDimension),
-			yutuber.WithSearchVideoDuration(videoDuration),
-			yutuber.WithSearchVideoEmbeddable(videoEmbeddable),
-			yutuber.WithSearchVideoLicense(videoLicense),
-			yutuber.WithSearchVideoPaidProductPlacement(videoPaidProductPlacement),
-			yutuber.WithSearchVideoSyndicated(videoSyndicated),
-			yutuber.WithSearchVideoType(videoType),
+		s := search.NewSearch(
+			search.WithChannelId(channelId),
+			search.WithChannelType(channelType),
+			search.WithEventType(eventType),
+			search.WithForContentOwner(forContentOwner),
+			search.WithForDeveloper(forDeveloper),
+			search.WithForMine(forMine),
+			search.WithLocation(location),
+			search.WithLocationRadius(locationRadius),
+			search.WithMaxResults(maxResults),
+			search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			search.WithOrder(order),
+			search.WithPublishedAfter(publishedAfter),
+			search.WithPublishedBefore(publishedBefore),
+			search.WithQ(q),
+			search.WithRegionCode(regionCode),
+			search.WithRelevanceLanguage(relevanceLanguage),
+			search.WithSafeSearch(safeSearch),
+			search.WithTopicId(topicId),
+			search.WithTypes(types),
+			search.WithVideoCaption(videoCaption),
+			search.WithVideoCategoryId(videoCategoryId),
+			search.WithVideoDefinition(videoDefinition),
+			search.WithVideoDimension(videoDimension),
+			search.WithVideoDuration(videoDuration),
+			search.WithVideoEmbeddable(videoEmbeddable),
+			search.WithVideoLicense(videoLicense),
+			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
+			search.WithVideoSyndicated(videoSyndicated),
+			search.WithVideoType(videoType),
 		)
 		s.List(parts, output)
 	},

@@ -1,7 +1,7 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/video"
 	"github.com/spf13/cobra"
 )
 
@@ -10,18 +10,18 @@ var updateCmd = &cobra.Command{
 	Short: "update a video on YouTube",
 	Long:  "update a video on YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := yutuber.NewVideo(
-			yutuber.WithVideoId(id),
-			yutuber.WithVideoTitle(title),
-			yutuber.WithVideoDescription(description),
-			yutuber.WithVideoTags(tags),
-			yutuber.WithVideoLanguage(language),
-			yutuber.WithVideoLicense(license),
-			yutuber.WithVideoPlaylistId(playListId),
-			yutuber.WithVideoThumbnail(thumbnail),
-			yutuber.WithVideoCategory(categoryId),
-			yutuber.WithVideoPrivacy(privacy),
-			yutuber.WithVideoEmbeddable(embeddable),
+		v := video.NewVideo(
+			video.WithId(id),
+			video.WithTitle(title),
+			video.WithDescription(description),
+			video.WithTags(tags),
+			video.WithLanguage(language),
+			video.WithLicense(license),
+			video.WithPlaylistId(playListId),
+			video.WithThumbnail(thumbnail),
+			video.WithCategory(categoryId),
+			video.WithPrivacy(privacy),
+			video.WithEmbeddable(embeddable),
 		)
 		v.Update()
 	},

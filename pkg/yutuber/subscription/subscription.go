@@ -1,4 +1,4 @@
-package yutuber
+package subscription
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service               *youtube.Service
 	errGetSubscription    = errors.New("failed to get subscription")
 	errDeleteSubscription = errors.New("failed to delete subscription")
 	errInsertSubscription = errors.New("failed to insert subscription")
@@ -38,9 +39,9 @@ type Subscription interface {
 	Delete()
 }
 
-type SubscriptionOption func(*subscription)
+type Option func(*subscription)
 
-func NewSubscription(opts ...SubscriptionOption) Subscription {
+func NewSubscription(opts ...Option) Subscription {
 	service = auth.NewY2BService()
 	s := &subscription{}
 
@@ -144,79 +145,79 @@ func (s *subscription) Delete() {
 	fmt.Printf("Subscription %s deleted", s.id)
 }
 
-func WithSubscriptionId(id string) SubscriptionOption {
+func WithId(id string) Option {
 	return func(s *subscription) {
 		s.id = id
 	}
 }
 
-func WithSubscriptionSubscriberChannelId(id string) SubscriptionOption {
+func WithSubscriberChannelId(id string) Option {
 	return func(s *subscription) {
 		s.subscriberChannelId = id
 	}
 }
 
-func WithSubscriptionDescription(description string) SubscriptionOption {
+func WithDescription(description string) Option {
 	return func(s *subscription) {
 		s.description = description
 	}
 }
 
-func WithSubscriptionChannelId(channelId string) SubscriptionOption {
+func WithChannelId(channelId string) Option {
 	return func(s *subscription) {
 		s.channelId = channelId
 	}
 }
 
-func WithSubscriptionForChannelId(forChannelId string) SubscriptionOption {
+func WithForChannelId(forChannelId string) Option {
 	return func(s *subscription) {
 		s.forChannelId = forChannelId
 	}
 }
 
-func WithSubscriptionMaxResults(maxResults int64) SubscriptionOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(s *subscription) {
 		s.maxResults = maxResults
 	}
 }
 
-func WithSubscriptionMine(mine string) SubscriptionOption {
+func WithMine(mine string) Option {
 	return func(s *subscription) {
 		s.mine = mine
 	}
 }
 
-func WithSubscriptionMyRecentSubscribers(myRecentSubscribers string) SubscriptionOption {
+func WithMyRecentSubscribers(myRecentSubscribers string) Option {
 	return func(s *subscription) {
 		s.myRecentSubscribers = myRecentSubscribers
 	}
 }
 
-func WithSubscriptionMySubscribers(mySubscribers string) SubscriptionOption {
+func WithMySubscribers(mySubscribers string) Option {
 	return func(s *subscription) {
 		s.mySubscribers = mySubscribers
 	}
 }
 
-func WithSubscriptionOnBehalfOfContentOwner(onBehalfOfContentOwner string) SubscriptionOption {
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(s *subscription) {
 		s.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
-func WithSubscriptionOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) SubscriptionOption {
+func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(s *subscription) {
 		s.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}
 }
 
-func WithSubscriptionOrder(order string) SubscriptionOption {
+func WithOrder(order string) Option {
 	return func(s *subscription) {
 		s.order = order
 	}
 }
 
-func WithSubscriptionTitle(title string) SubscriptionOption {
+func WithTitle(title string) Option {
 	return func(s *subscription) {
 		s.title = title
 	}

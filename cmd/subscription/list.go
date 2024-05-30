@@ -1,7 +1,7 @@
 package subscription
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/subscription"
 	"github.com/spf13/cobra"
 )
 
@@ -10,17 +10,17 @@ var listCmd = &cobra.Command{
 	Short: "list subscriptions' info",
 	Long:  "list subscriptions' info, such as id, title, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		s := yutuber.NewSubscription(
-			yutuber.WithSubscriptionId(id),
-			yutuber.WithSubscriptionChannelId(channelId),
-			yutuber.WithSubscriptionForChannelId(forChannelId),
-			yutuber.WithSubscriptionMaxResults(maxResults),
-			yutuber.WithSubscriptionMine(mine),
-			yutuber.WithSubscriptionMyRecentSubscribers(myRecentSubscribers),
-			yutuber.WithSubscriptionMySubscribers(mySubscribers),
-			yutuber.WithSubscriptionOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithSubscriptionOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			yutuber.WithSubscriptionOrder(order),
+		s := subscription.NewSubscription(
+			subscription.WithId(id),
+			subscription.WithChannelId(channelId),
+			subscription.WithForChannelId(forChannelId),
+			subscription.WithMaxResults(maxResults),
+			subscription.WithMine(mine),
+			subscription.WithMyRecentSubscribers(myRecentSubscribers),
+			subscription.WithMySubscribers(mySubscribers),
+			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			subscription.WithOrder(order),
 		)
 		s.List(parts, output)
 	},

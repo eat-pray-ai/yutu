@@ -1,4 +1,4 @@
-package yutuber
+package i18nLanguage
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service            *youtube.Service
 	errGetI18nLanguage = errors.New("failed to get i18n language")
 )
 
@@ -22,9 +23,9 @@ type I18nLanguage interface {
 	List(parts []string, output string)
 }
 
-type I18nLanguageOption func(*i18nLanguage)
+type Option func(*i18nLanguage)
 
-func NewI18nLanguage(opts ...I18nLanguageOption) I18nLanguage {
+func NewI18nLanguage(opts ...Option) I18nLanguage {
 	service = auth.NewY2BService()
 	i := &i18nLanguage{}
 
@@ -67,7 +68,7 @@ func (i *i18nLanguage) List(parts []string, output string) {
 	}
 }
 
-func WithI18nLanguageHl(hl string) I18nLanguageOption {
+func WithHl(hl string) Option {
 	return func(i *i18nLanguage) {
 		i.hl = hl
 	}

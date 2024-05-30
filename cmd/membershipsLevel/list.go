@@ -1,7 +1,7 @@
 package membershipsLevel
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/membershipsLevel"
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +10,7 @@ var listCmd = &cobra.Command{
 	Short: "list memberships levels",
 	Long:  "list memberships levels' info, such as id, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		m := yutuber.NewMembershipsLevel()
+		m := membershipsLevel.NewMembershipsLevel()
 		m.List(parts, output)
 	},
 }

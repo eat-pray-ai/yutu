@@ -1,7 +1,7 @@
 package activity
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/activity"
 	"github.com/spf13/cobra"
 )
 
@@ -10,14 +10,14 @@ var listCmd = &cobra.Command{
 	Short: "list activities",
 	Long:  "list activities, such as likes, favorites, uploads, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		a := yutuber.NewActivity(
-			yutuber.WithActivityChannelId(channelId),
-			yutuber.WithActivityHome(home),
-			yutuber.WithActivityMaxResults(maxResults),
-			yutuber.WithActivityMine(mine),
-			yutuber.WithActivityPublishedAfter(publishedAfter),
-			yutuber.WithActivityPublishedBefore(publishedBefore),
-			yutuber.WithActivityRegionCode(regionCode),
+		a := activity.NewActivity(
+			activity.WithChannelId(channelId),
+			activity.WithHome(home),
+			activity.WithMaxResults(maxResults),
+			activity.WithMine(mine),
+			activity.WithPublishedAfter(publishedAfter),
+			activity.WithPublishedBefore(publishedBefore),
+			activity.WithRegionCode(regionCode),
 		)
 		a.List(parts, output)
 	},

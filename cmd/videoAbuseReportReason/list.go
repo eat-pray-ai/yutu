@@ -1,7 +1,7 @@
 package videoAbuseReportReason
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/videoAbuseReportReason"
 	"github.com/spf13/cobra"
 )
 
@@ -10,8 +10,8 @@ var listCmd = &cobra.Command{
 	Short: "list YouTube video abuse report reasons",
 	Long:  "list YouTube video abuse report reasons",
 	Run: func(cmd *cobra.Command, args []string) {
-		va := yutuber.NewVideoAbuseReportReason(
-			yutuber.WithVideoAbuseReportReasonHL(hl),
+		va := videoAbuseReportReason.NewVideoAbuseReportReason(
+			videoAbuseReportReason.WithHL(hl),
 		)
 		va.List(parts, output)
 	},

@@ -1,7 +1,7 @@
 package member
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/member"
 	"github.com/spf13/cobra"
 )
 
@@ -10,11 +10,11 @@ var listCmd = &cobra.Command{
 	Short: "list channel's members",
 	Long:  "list channel's members' info, such as channelId, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		m := yutuber.NewMember(
-			yutuber.WithMemberChannelId(memberChannelId),
-			yutuber.WithMemberHasAccessToLevel(hasAccessToLevel),
-			yutuber.WithMemberMaxResults(maxResults),
-			yutuber.WithMemberMode(mode),
+		m := member.NewMember(
+			member.WithChannelId(memberChannelId),
+			member.WithHasAccessToLevel(hasAccessToLevel),
+			member.WithMaxResults(maxResults),
+			member.WithMode(mode),
 		)
 		m.List(parts, output)
 	},

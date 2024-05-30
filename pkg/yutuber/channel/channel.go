@@ -1,4 +1,4 @@
-package yutuber
+package channel
 
 import (
 	"errors"
@@ -42,9 +42,9 @@ type Channel interface {
 	get([]string) []*youtube.Channel
 }
 
-type ChannelOption func(*channel)
+type Option func(*channel)
 
-func NewChannel(opts ...ChannelOption) Channel {
+func NewChannel(opts ...Option) Channel {
 	c := &channel{}
 	service = auth.NewY2BService()
 
@@ -143,91 +143,91 @@ func (c *channel) Update() {
 	utils.PrintYAML(res)
 }
 
-func WithChannelCategoryId(categoryId string) ChannelOption {
+func WithCategoryId(categoryId string) Option {
 	return func(c *channel) {
 		c.categoryId = categoryId
 	}
 }
 
-func WithChannelForHandle(handle string) ChannelOption {
+func WithForHandle(handle string) Option {
 	return func(c *channel) {
 		c.forHandle = handle
 	}
 }
 
-func WithChannelForUsername(username string) ChannelOption {
+func WithForUsername(username string) Option {
 	return func(c *channel) {
 		c.forUsername = username
 	}
 }
 
-func WithChannelHl(hl string) ChannelOption {
+func WithHl(hl string) Option {
 	return func(c *channel) {
 		c.hl = hl
 	}
 }
 
-func WithChannelId(id string) ChannelOption {
+func WithId(id string) Option {
 	return func(c *channel) {
 		c.id = id
 	}
 }
 
-func WithChannelManagedByMe(managedByMe string) ChannelOption {
+func WithChannelManagedByMe(managedByMe string) Option {
 	return func(c *channel) {
 		c.managedByMe = managedByMe
 	}
 }
 
-func WithChannelMaxResults(maxResults int64) ChannelOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(c *channel) {
 		c.maxResults = maxResults
 	}
 }
 
-func WithChannelMine(mine string) ChannelOption {
+func WithMine(mine string) Option {
 	return func(c *channel) {
 		c.mine = mine
 	}
 }
 
-func WithChannelMySubscribers(mySubscribers string) ChannelOption {
+func WithMySubscribers(mySubscribers string) Option {
 	return func(c *channel) {
 		c.mySubscribers = mySubscribers
 	}
 }
 
-func WithChannelOnBehalfOfContentOwner(contentOwner string) ChannelOption {
+func WithOnBehalfOfContentOwner(contentOwner string) Option {
 	return func(c *channel) {
 		c.onBehalfOfContentOwner = contentOwner
 	}
 }
 
-func WithChannelCountry(country string) ChannelOption {
+func WithCountry(country string) Option {
 	return func(c *channel) {
 		c.country = country
 	}
 }
 
-func WithChannelCustomUrl(url string) ChannelOption {
+func WithCustomUrl(url string) Option {
 	return func(c *channel) {
 		c.customUrl = url
 	}
 }
 
-func WithChannelDefaultLanguage(language string) ChannelOption {
+func WithDefaultLanguage(language string) Option {
 	return func(c *channel) {
 		c.defaultLanguage = language
 	}
 }
 
-func WithChannelDescription(desc string) ChannelOption {
+func WithDescription(desc string) Option {
 	return func(c *channel) {
 		c.description = desc
 	}
 }
 
-func WithChannelTitle(title string) ChannelOption {
+func WithTitle(title string) Option {
 	return func(c *channel) {
 		c.title = title
 	}

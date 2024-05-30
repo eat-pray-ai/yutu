@@ -1,7 +1,7 @@
 package videoCategory
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/videoCategory"
 	"github.com/spf13/cobra"
 )
 
@@ -10,10 +10,10 @@ var listCmd = &cobra.Command{
 	Short: "list video categories",
 	Long:  "list video categories' info, such as ID, title, assignable, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		vc := yutuber.NewVideoCategory(
-			yutuber.WithVideoCategoryId(id),
-			yutuber.WithVideoCategoryHl(hl),
-			yutuber.WithVideoCategoryRegionCode(regionCode),
+		vc := videoCategory.NewVideoCategory(
+			videoCategory.WithId(id),
+			videoCategory.WithHl(hl),
+			videoCategory.WithRegionCode(regionCode),
 		)
 		vc.List(parts, output)
 	},

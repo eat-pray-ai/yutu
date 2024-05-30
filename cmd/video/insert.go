@@ -1,7 +1,7 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/video"
 
 	"github.com/spf13/cobra"
 )
@@ -11,27 +11,27 @@ var insertCmd = &cobra.Command{
 	Short: "upload a video to YouTube",
 	Long:  "upload a video to YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := yutuber.NewVideo(
-			yutuber.WithVideoAutoLevels(autoLevels),
-			yutuber.WithVideoFile(file),
-			yutuber.WithVideoTitle(title),
-			yutuber.WithVideoDescription(description),
-			yutuber.WithVideoTags(tags),
-			yutuber.WithVideoLanguage(language),
-			yutuber.WithVideoLicense(license),
-			yutuber.WithVideoThumbnail(thumbnail),
-			yutuber.WithVideoChannelId(channelId),
-			yutuber.WithVideoPlaylistId(playListId),
-			yutuber.WithVideoCategory(categoryId),
-			yutuber.WithVideoPrivacy(privacy),
-			yutuber.WithVideoForKids(forKids),
-			yutuber.WithVideoEmbeddable(embeddable),
-			yutuber.WithVideoPublishAt(publishAt),
-			yutuber.WithVideoStabilize(stabilize),
-			yutuber.WithVideoNotifySubscribers(notifySubscribers),
-			yutuber.WithVideoPublicStatsViewable(publicStatsViewable),
-			yutuber.WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithVideoOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		v := video.NewVideo(
+			video.WithAutoLevels(autoLevels),
+			video.WithFile(file),
+			video.WithTitle(title),
+			video.WithDescription(description),
+			video.WithTags(tags),
+			video.WithLanguage(language),
+			video.WithLicense(license),
+			video.WithThumbnail(thumbnail),
+			video.WithChannelId(channelId),
+			video.WithPlaylistId(playListId),
+			video.WithCategory(categoryId),
+			video.WithPrivacy(privacy),
+			video.WithForKids(forKids),
+			video.WithEmbeddable(embeddable),
+			video.WithPublishAt(publishAt),
+			video.WithStabilize(stabilize),
+			video.WithNotifySubscribers(notifySubscribers),
+			video.WithPublicStatsViewable(publicStatsViewable),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 		)
 		v.Insert()
 	},

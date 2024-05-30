@@ -1,7 +1,7 @@
 package subscription
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/subscription"
 	"github.com/spf13/cobra"
 )
 
@@ -10,11 +10,11 @@ var insertCmd = &cobra.Command{
 	Short: "Insert a subscription",
 	Long:  "Insert a subscription",
 	Run: func(cmd *cobra.Command, args []string) {
-		s := yutuber.NewSubscription(
-			yutuber.WithSubscriptionSubscriberChannelId(subscriberChannelId),
-			yutuber.WithSubscriptionDescription(description),
-			yutuber.WithSubscriptionChannelId(channelId),
-			yutuber.WithSubscriptionTitle(title),
+		s := subscription.NewSubscription(
+			subscription.WithSubscriberChannelId(subscriberChannelId),
+			subscription.WithDescription(description),
+			subscription.WithChannelId(channelId),
+			subscription.WithTitle(title),
 		)
 		s.Insert()
 	},

@@ -1,7 +1,7 @@
 package playlist
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlist"
 
 	"github.com/spf13/cobra"
 )
@@ -11,14 +11,14 @@ var listCmd = &cobra.Command{
 	Short: "list playlist's info",
 	Long:  "list playlist's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := yutuber.NewPlaylist(
-			yutuber.WithPlaylistId(id),
-			yutuber.WithPlaylistChannelId(channelId),
-			yutuber.WithPlaylistHl(hl),
-			yutuber.WithPlaylistMaxResults(maxResults),
-			yutuber.WithPlaylistMine(mine),
-			yutuber.WithPlaylistOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithPlaylistOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		p := playlist.NewPlaylist(
+			playlist.WithId(id),
+			playlist.WithChannelId(channelId),
+			playlist.WithHl(hl),
+			playlist.WithMaxResults(maxResults),
+			playlist.WithMine(mine),
+			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 		)
 		p.List(parts, output)
 	},

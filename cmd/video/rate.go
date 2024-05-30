@@ -1,7 +1,7 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/video"
 
 	"github.com/spf13/cobra"
 )
@@ -11,9 +11,9 @@ var rateCmd = &cobra.Command{
 	Short: "rate a video on YouTube",
 	Long:  "rate a video on YouTube, with the specified rating",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := yutuber.NewVideo(
-			yutuber.WithVideoId(id),
-			yutuber.WithVideoRating(rating),
+		v := video.NewVideo(
+			video.WithId(id),
+			video.WithRating(rating),
 		)
 		v.Rate()
 	},

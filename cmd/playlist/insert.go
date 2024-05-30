@@ -1,7 +1,7 @@
 package playlist
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlist"
 	"github.com/spf13/cobra"
 )
 
@@ -10,13 +10,13 @@ var insertCmd = &cobra.Command{
 	Short: "create a new playlist",
 	Long:  "create a new playlist, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := yutuber.NewPlaylist(
-			yutuber.WithPlaylistTitle(title),
-			yutuber.WithPlaylistDescription(description),
-			yutuber.WithPlaylistTags(tags),
-			yutuber.WithPlaylistLanguage(language),
-			yutuber.WithPlaylistChannelId(channelId),
-			yutuber.WithPlaylistPrivacy(privacy),
+		p := playlist.NewPlaylist(
+			playlist.WithTitle(title),
+			playlist.WithDescription(description),
+			playlist.WithTags(tags),
+			playlist.WithLanguage(language),
+			playlist.WithChannelId(channelId),
+			playlist.WithPrivacy(privacy),
 		)
 		p.Insert()
 	},

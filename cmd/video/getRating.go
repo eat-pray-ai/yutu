@@ -1,7 +1,7 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/video"
 
 	"github.com/spf13/cobra"
 )
@@ -11,9 +11,9 @@ var getRatingCmd = &cobra.Command{
 	Short: "get the rating of a video",
 	Long:  "get the rating of a video, with the specified video ID",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := yutuber.NewVideo(
-			yutuber.WithVideoId(id),
-			yutuber.WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		v := video.NewVideo(
+			video.WithId(id),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		v.GetRating()
 	},

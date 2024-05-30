@@ -1,7 +1,7 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/video"
 
 	"github.com/spf13/cobra"
 )
@@ -11,18 +11,18 @@ var listCmd = &cobra.Command{
 	Short: "list video's info",
 	Long:  "list video's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := yutuber.NewVideo(
-			yutuber.WithVideoId(id),
-			yutuber.WithVideoChart(chart),
-			yutuber.WithVideoHl(hl),
-			yutuber.WithVideoLocale(locale),
-			yutuber.WithVideoCategory(categoryId),
-			yutuber.WithVideoRegionCode(regionCode),
-			yutuber.WithVideoMaxHeight(maxHeight),
-			yutuber.WithVideoMaxWidth(maxWidth),
-			yutuber.WithVideoMaxResults(maxResults),
-			yutuber.WithVideoOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithVideoRating(rating),
+		v := video.NewVideo(
+			video.WithId(id),
+			video.WithChart(chart),
+			video.WithHl(hl),
+			video.WithLocale(locale),
+			video.WithCategory(categoryId),
+			video.WithRegionCode(regionCode),
+			video.WithMaxHeight(maxHeight),
+			video.WithMaxWidth(maxWidth),
+			video.WithMaxResults(maxResults),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			video.WithRating(rating),
 		)
 		v.List(parts, output)
 	},

@@ -1,7 +1,7 @@
 package channelBanner
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/channelBanner"
 	"github.com/spf13/cobra"
 )
 
@@ -10,10 +10,10 @@ var insertCmd = &cobra.Command{
 	Short: "Insert a ChannelBanner",
 	Long:  "Insert a ChannelBanner",
 	Run: func(cmd *cobra.Command, args []string) {
-		cb := yutuber.NewChannelBanner(
-			yutuber.WithChannelBannerFile(file),
-			yutuber.WithChannelBannerOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			yutuber.WithChannelBannerOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		cb := channelBanner.NewChannelBanner(
+			channelBanner.WithFile(file),
+			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 		)
 		cb.Insert()
 	},

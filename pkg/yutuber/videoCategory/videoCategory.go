@@ -1,4 +1,4 @@
-package yutuber
+package videoCategory
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	service             *youtube.Service
 	errGetVideoCategory = errors.New("failed to get video categoryId")
 )
 
@@ -25,9 +26,9 @@ type VideoCategory interface {
 	List([]string, string)
 }
 
-type VideoCategoryOption func(*videoCategory)
+type Option func(*videoCategory)
 
-func NewVideoCategory(opt ...VideoCategoryOption) VideoCategory {
+func NewVideoCategory(opt ...Option) VideoCategory {
 	service = auth.NewY2BService()
 	vc := &videoCategory{}
 	for _, o := range opt {
@@ -74,19 +75,19 @@ func (vc *videoCategory) List(parts []string, output string) {
 	}
 }
 
-func WithVideoCategoryId(id string) VideoCategoryOption {
+func WithId(id string) Option {
 	return func(vc *videoCategory) {
 		vc.id = id
 	}
 }
 
-func WithVideoCategoryHl(hl string) VideoCategoryOption {
+func WithHl(hl string) Option {
 	return func(vc *videoCategory) {
 		vc.hl = hl
 	}
 }
 
-func WithVideoCategoryRegionCode(regionCode string) VideoCategoryOption {
+func WithRegionCode(regionCode string) Option {
 	return func(vc *videoCategory) {
 		vc.regionCode = regionCode
 	}

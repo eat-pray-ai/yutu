@@ -1,7 +1,7 @@
 package subscription
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/subscription"
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +10,7 @@ var deleteCmd = &cobra.Command{
 	Short: "delete subscription",
 	Long:  "delete subscription",
 	Run: func(cmd *cobra.Command, args []string) {
-		s := yutuber.NewSubscription(yutuber.WithSubscriptionId(id))
+		s := subscription.NewSubscription(subscription.WithId(id))
 		s.Delete()
 	},
 }

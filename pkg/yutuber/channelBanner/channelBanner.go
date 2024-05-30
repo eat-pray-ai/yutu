@@ -1,4 +1,4 @@
-package yutuber
+package channelBanner
 
 import (
 	"errors"
@@ -11,6 +11,8 @@ import (
 )
 
 var (
+	service                *youtube.Service
+	errOpenFile            = errors.New("failed to open file")
 	errInsertChannelBanner = errors.New("failed to insert channelBanner")
 )
 
@@ -25,9 +27,9 @@ type ChannelBanner interface {
 	Insert()
 }
 
-type ChannelBannerOption func(banner *channelBanner)
+type Option func(banner *channelBanner)
 
-func NewChannelBanner(opts ...ChannelBannerOption) ChannelBanner {
+func NewChannelBanner(opts ...Option) ChannelBanner {
 	service = auth.NewY2BService()
 	cb := &channelBanner{}
 
@@ -63,19 +65,19 @@ func (cb *channelBanner) Insert() {
 	utils.PrintYAML(res)
 }
 
-func WithChannelBannerFile(file string) ChannelBannerOption {
+func WithFile(file string) Option {
 	return func(cb *channelBanner) {
 		cb.file = file
 	}
 }
 
-func WithChannelBannerOnBehalfOfContentOwner(onBehalfOfContentOwner string) ChannelBannerOption {
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(cb *channelBanner) {
 		cb.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
-func WithChannelBannerOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) ChannelBannerOption {
+func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(cb *channelBanner) {
 		cb.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}

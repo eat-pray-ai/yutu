@@ -1,7 +1,7 @@
 package channel
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/channel"
 	"github.com/spf13/cobra"
 )
 
@@ -10,17 +10,17 @@ var listCmd = &cobra.Command{
 	Short: "list channel's info",
 	Long:  "list channel's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		c := yutuber.NewChannel(
-			yutuber.WithChannelCategoryId(categoryId),
-			yutuber.WithChannelForHandle(forHandle),
-			yutuber.WithChannelForUsername(forUsername),
-			yutuber.WithChannelHl(hl),
-			yutuber.WithChannelId(id),
-			yutuber.WithChannelManagedByMe(managedByMe),
-			yutuber.WithChannelMaxResults(maxResults),
-			yutuber.WithChannelMine(mine),
-			yutuber.WithChannelMySubscribers(mySubscribers),
-			yutuber.WithChannelOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		c := channel.NewChannel(
+			channel.WithCategoryId(categoryId),
+			channel.WithForHandle(forHandle),
+			channel.WithForUsername(forUsername),
+			channel.WithHl(hl),
+			channel.WithId(id),
+			channel.WithChannelManagedByMe(managedByMe),
+			channel.WithMaxResults(maxResults),
+			channel.WithMine(mine),
+			channel.WithMySubscribers(mySubscribers),
+			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		c.List(parts, output)
 	},

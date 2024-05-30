@@ -1,7 +1,7 @@
 package playlistItem
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
 	"github.com/spf13/cobra"
 )
 
@@ -10,15 +10,15 @@ var insertCmd = &cobra.Command{
 	Short: "insert a playlist item into a playlist",
 	Long:  "insert a playlist item into a playlist",
 	Run: func(cmd *cobra.Command, args []string) {
-		pi := yutuber.NewPlaylistItem(
-			yutuber.WithPlaylistItemTitle(title),
-			yutuber.WithPlaylistItemDescription(description),
-			yutuber.WithPlaylistItemKind(kind),
-			yutuber.WithPlaylistItemKVideoId(kVideoId),
-			yutuber.WithPlaylistItemKChannelId(kChannelId),
-			yutuber.WithPlaylistItemKPlaylistId(kPlaylistId),
-			yutuber.WithPlaylistItemPlaylistId(playlistId),
-			yutuber.WithPlaylistItemPrivacy(privacy),
+		pi := playlistItem.NewPlaylistItem(
+			playlistItem.WithTitle(title),
+			playlistItem.WithDescription(description),
+			playlistItem.WithKind(kind),
+			playlistItem.WithKVideoId(kVideoId),
+			playlistItem.WithKChannelId(kChannelId),
+			playlistItem.WithKPlaylistId(kPlaylistId),
+			playlistItem.WithPlaylistId(playlistId),
+			playlistItem.WithPrivacy(privacy),
 		)
 		pi.Insert()
 	},

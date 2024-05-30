@@ -1,16 +1,17 @@
-package yutuber
+package activity
 
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"log"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
 
 var (
+	service        *youtube.Service
 	errGetActivity = errors.New("failed to get activity")
 )
 
@@ -29,10 +30,11 @@ type Activity interface {
 	get([]string) []*youtube.Activity
 }
 
-type ActivityOption func(*activity)
+type Option func(*activity)
 
-func NewActivity(opts ...ActivityOption) Activity {
+func NewActivity(opts ...Option) Activity {
 	a := &activity{}
+	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(a)
@@ -42,7 +44,6 @@ func NewActivity(opts ...ActivityOption) Activity {
 }
 
 func (a *activity) get(parts []string) []*youtube.Activity {
-	service := auth.NewY2BService()
 	call := service.Activities.List(parts)
 	if a.channelId != "" {
 		call = call.ChannelId(a.channelId)
@@ -91,43 +92,43 @@ func (a *activity) List(parts []string, output string) {
 	}
 }
 
-func WithActivityChannelId(channelId string) ActivityOption {
+func WithChannelId(channelId string) Option {
 	return func(a *activity) {
 		a.channelId = channelId
 	}
 }
 
-func WithActivityHome(home string) ActivityOption {
+func WithHome(home string) Option {
 	return func(a *activity) {
 		a.home = home
 	}
 }
 
-func WithActivityMaxResults(maxResults int64) ActivityOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(a *activity) {
 		a.maxResults = maxResults
 	}
 }
 
-func WithActivityMine(mine string) ActivityOption {
+func WithMine(mine string) Option {
 	return func(a *activity) {
 		a.mine = mine
 	}
 }
 
-func WithActivityPublishedAfter(publishedAfter string) ActivityOption {
+func WithPublishedAfter(publishedAfter string) Option {
 	return func(a *activity) {
 		a.publishedAfter = publishedAfter
 	}
 }
 
-func WithActivityPublishedBefore(publishedBefore string) ActivityOption {
+func WithPublishedBefore(publishedBefore string) Option {
 	return func(a *activity) {
 		a.publishedBefore = publishedBefore
 	}
 }
 
-func WithActivityRegionCode(regionCode string) ActivityOption {
+func WithRegionCode(regionCode string) Option {
 	return func(a *activity) {
 		a.regionCode = regionCode
 	}

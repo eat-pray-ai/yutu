@@ -1,4 +1,4 @@
-package yutuber
+package playlistItem
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	service               *youtube.Service
 	errGetPlaylistItem    = errors.New("failed to get playlist item")
 	errUpdatePlaylistItem = errors.New("failed to update playlist item")
 	errInsertPlaylistItem = errors.New("failed to insert playlist item")
@@ -42,9 +43,9 @@ type PlaylistItem interface {
 	get([]string) []*youtube.PlaylistItem
 }
 
-type PlaylistItemOption func(*playlistItem)
+type Option func(*playlistItem)
 
-func NewPlaylistItem(opts ...PlaylistItemOption) PlaylistItem {
+func NewPlaylistItem(opts ...Option) PlaylistItem {
 	p := &playlistItem{}
 	service = auth.NewY2BService()
 
@@ -175,79 +176,79 @@ func (pi *playlistItem) Delete() {
 	fmt.Printf("Playlsit Item %s deleted", pi.id)
 }
 
-func WithPlaylistItemId(id string) PlaylistItemOption {
+func WithId(id string) Option {
 	return func(p *playlistItem) {
 		p.id = id
 	}
 }
 
-func WithPlaylistItemTitle(title string) PlaylistItemOption {
+func WithTitle(title string) Option {
 	return func(p *playlistItem) {
 		p.title = title
 	}
 }
 
-func WithPlaylistItemDescription(description string) PlaylistItemOption {
+func WithDescription(description string) Option {
 	return func(p *playlistItem) {
 		p.description = description
 	}
 }
 
-func WithPlaylistItemKind(kind string) PlaylistItemOption {
+func WithKind(kind string) Option {
 	return func(p *playlistItem) {
 		p.kind = kind
 	}
 }
 
-func WithPlaylistItemKVideoId(kVideoId string) PlaylistItemOption {
+func WithKVideoId(kVideoId string) Option {
 	return func(p *playlistItem) {
 		p.kVideoId = kVideoId
 	}
 }
 
-func WithPlaylistItemKChannelId(kChannelId string) PlaylistItemOption {
+func WithKChannelId(kChannelId string) Option {
 	return func(p *playlistItem) {
 		p.kChannelId = kChannelId
 	}
 }
 
-func WithPlaylistItemKPlaylistId(kPlaylistId string) PlaylistItemOption {
+func WithKPlaylistId(kPlaylistId string) Option {
 	return func(p *playlistItem) {
 		p.kPlaylistId = kPlaylistId
 	}
 }
 
-func WithPlaylistItemVideoId(videoId string) PlaylistItemOption {
+func WithVideoId(videoId string) Option {
 	return func(p *playlistItem) {
 		p.videoId = videoId
 	}
 }
 
-func WithPlaylistItemPlaylistId(playlistId string) PlaylistItemOption {
+func WithPlaylistId(playlistId string) Option {
 	return func(p *playlistItem) {
 		p.playlistId = playlistId
 	}
 }
 
-func WithPlaylistItemChannelId(channelId string) PlaylistItemOption {
+func WithChannelId(channelId string) Option {
 	return func(p *playlistItem) {
 		p.channelId = channelId
 	}
 }
 
-func WithPlaylistItemPrivacy(privacy string) PlaylistItemOption {
+func WithPrivacy(privacy string) Option {
 	return func(p *playlistItem) {
 		p.privacy = privacy
 	}
 }
 
-func WithPlaylistItemMaxResults(maxResults int64) PlaylistItemOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(p *playlistItem) {
 		p.maxResults = maxResults
 	}
 }
 
-func WithPlaylistItemOnBehalfOfContentOwner(onBehalfOfContentOwner string) PlaylistItemOption {
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(p *playlistItem) {
 		p.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}

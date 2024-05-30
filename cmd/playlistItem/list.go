@@ -1,7 +1,7 @@
 package playlistItem
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
 	"github.com/spf13/cobra"
 )
 
@@ -10,12 +10,12 @@ var listCmd = &cobra.Command{
 	Short: "list playlist items",
 	Long:  "list playlist items' info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		pi := yutuber.NewPlaylistItem(
-			yutuber.WithPlaylistItemId(id),
-			yutuber.WithPlaylistItemPlaylistId(playlistId),
-			yutuber.WithPlaylistItemMaxResults(maxResults),
-			yutuber.WithPlaylistItemVideoId(videoId),
-			yutuber.WithPlaylistItemOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		pi := playlistItem.NewPlaylistItem(
+			playlistItem.WithId(id),
+			playlistItem.WithPlaylistId(playlistId),
+			playlistItem.WithMaxResults(maxResults),
+			playlistItem.WithVideoId(videoId),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		pi.List(parts, output)
 	},

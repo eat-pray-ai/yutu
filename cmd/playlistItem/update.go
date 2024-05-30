@@ -1,7 +1,7 @@
 package playlistItem
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
 	"github.com/spf13/cobra"
 )
 
@@ -10,11 +10,11 @@ var updateCmd = &cobra.Command{
 	Short: "update playlist item",
 	Long:  "update playlist item's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		pi := yutuber.NewPlaylistItem(
-			yutuber.WithPlaylistItemId(id),
-			yutuber.WithPlaylistItemTitle(title),
-			yutuber.WithPlaylistItemDescription(description),
-			yutuber.WithPlaylistItemPrivacy(privacy),
+		pi := playlistItem.NewPlaylistItem(
+			playlistItem.WithId(id),
+			playlistItem.WithTitle(title),
+			playlistItem.WithDescription(description),
+			playlistItem.WithPrivacy(privacy),
 		)
 		pi.Update()
 	},

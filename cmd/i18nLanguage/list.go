@@ -1,7 +1,7 @@
 package i18nLanguage
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/i18nLanguage"
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +10,7 @@ var listCmd = &cobra.Command{
 	Short: "list i18nLanguages",
 	Long:  "list i18nLanguages' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
-		i := yutuber.NewI18nLanguage(yutuber.WithI18nLanguageHl(hl))
+		i := i18nLanguage.NewI18nLanguage(i18nLanguage.WithHl(hl))
 		i.List(parts, output)
 	},
 }

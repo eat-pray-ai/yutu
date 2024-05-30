@@ -1,4 +1,4 @@
-package yutuber
+package search
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	service      *youtube.Service
 	errGetSearch = errors.New("failed to get search")
 )
 
@@ -50,9 +51,9 @@ type Search interface {
 	List([]string, string)
 }
 
-type SearchOption func(*search)
+type Option func(*search)
 
-func NewSearch(opts ...SearchOption) Search {
+func NewSearch(opts ...Option) Search {
 	s := &search{}
 	service = auth.NewY2BService()
 
@@ -208,175 +209,175 @@ func (s *search) List(parts []string, output string) {
 	}
 }
 
-func WithSearchChannelId(channelId string) SearchOption {
+func WithChannelId(channelId string) Option {
 	return func(s *search) {
 		s.channelId = channelId
 	}
 }
 
-func WithSearchChannelType(channelType string) SearchOption {
+func WithChannelType(channelType string) Option {
 	return func(s *search) {
 		s.channelType = channelType
 	}
 }
 
-func WithSearchEventType(eventType string) SearchOption {
+func WithEventType(eventType string) Option {
 	return func(s *search) {
 		s.eventType = eventType
 	}
 }
 
-func WithSearchForContentOwner(forContentOwner string) SearchOption {
+func WithForContentOwner(forContentOwner string) Option {
 	return func(s *search) {
 		s.forContentOwner = forContentOwner
 	}
 }
 
-func WithSearchForDeveloper(forDeveloper string) SearchOption {
+func WithForDeveloper(forDeveloper string) Option {
 	return func(s *search) {
 		s.forDeveloper = forDeveloper
 	}
 }
 
-func WithSearchForMine(forMine string) SearchOption {
+func WithForMine(forMine string) Option {
 	return func(s *search) {
 		s.forMine = forMine
 	}
 }
 
-func WithSearchLocation(location string) SearchOption {
+func WithLocation(location string) Option {
 	return func(s *search) {
 		s.location = location
 	}
 }
 
-func WithSearchLocationRadius(locationRadius string) SearchOption {
+func WithLocationRadius(locationRadius string) Option {
 	return func(s *search) {
 		s.locationRadius = locationRadius
 	}
 }
 
-func WithSearchMaxResults(maxResults int64) SearchOption {
+func WithMaxResults(maxResults int64) Option {
 	return func(s *search) {
 		s.maxResults = maxResults
 	}
 }
 
-func WithSearchOnBehalfOfContentOwner(onBehalfOfContentOwner string) SearchOption {
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(s *search) {
 		s.onBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
-func WithSearchOrder(order string) SearchOption {
+func WithOrder(order string) Option {
 	return func(s *search) {
 		s.order = order
 	}
 }
 
-func WithSearchPublishedAfter(publishedAfter string) SearchOption {
+func WithPublishedAfter(publishedAfter string) Option {
 	return func(s *search) {
 		s.publishedAfter = publishedAfter
 	}
 }
 
-func WithSearchPublishedBefore(publishedBefore string) SearchOption {
+func WithPublishedBefore(publishedBefore string) Option {
 	return func(s *search) {
 		s.publishedBefore = publishedBefore
 	}
 }
 
-func WithSearchQ(q string) SearchOption {
+func WithQ(q string) Option {
 	return func(s *search) {
 		s.q = q
 	}
 }
 
-func WithSearchRegionCode(regionCode string) SearchOption {
+func WithRegionCode(regionCode string) Option {
 	return func(s *search) {
 		s.regionCode = regionCode
 	}
 }
 
-func WithSearchRelevanceLanguage(relevanceLanguage string) SearchOption {
+func WithRelevanceLanguage(relevanceLanguage string) Option {
 	return func(s *search) {
 		s.relevanceLanguage = relevanceLanguage
 	}
 }
 
-func WithSearchSafeSearch(safeSearch string) SearchOption {
+func WithSafeSearch(safeSearch string) Option {
 	return func(s *search) {
 		s.safeSearch = safeSearch
 	}
 }
 
-func WithSearchTopicId(topicId string) SearchOption {
+func WithTopicId(topicId string) Option {
 	return func(s *search) {
 		s.topicId = topicId
 	}
 }
 
-func WithSearchTypes(types string) SearchOption {
+func WithTypes(types string) Option {
 	return func(s *search) {
 		s.types = types
 	}
 }
 
-func WithSearchVideoCaption(videoCaption string) SearchOption {
+func WithVideoCaption(videoCaption string) Option {
 	return func(s *search) {
 		s.videoCaption = videoCaption
 	}
 }
 
-func WithSearchVideoCategoryId(videoCategoryId string) SearchOption {
+func WithVideoCategoryId(videoCategoryId string) Option {
 	return func(s *search) {
 		s.videoCategoryId = videoCategoryId
 	}
 }
 
-func WithSearchVideoDefinition(videoDefinition string) SearchOption {
+func WithVideoDefinition(videoDefinition string) Option {
 	return func(s *search) {
 		s.videoDefinition = videoDefinition
 	}
 }
 
-func WithSearchVideoDimension(videoDimension string) SearchOption {
+func WithVideoDimension(videoDimension string) Option {
 	return func(s *search) {
 		s.videoDimension = videoDimension
 	}
 }
 
-func WithSearchVideoDuration(videoDuration string) SearchOption {
+func WithVideoDuration(videoDuration string) Option {
 	return func(s *search) {
 		s.videoDuration = videoDuration
 	}
 }
 
-func WithSearchVideoEmbeddable(videoEmbeddable string) SearchOption {
+func WithVideoEmbeddable(videoEmbeddable string) Option {
 	return func(s *search) {
 		s.videoEmbeddable = videoEmbeddable
 	}
 }
 
-func WithSearchVideoLicense(videoLicense string) SearchOption {
+func WithVideoLicense(videoLicense string) Option {
 	return func(s *search) {
 		s.videoLicense = videoLicense
 	}
 }
 
-func WithSearchVideoPaidProductPlacement(videoPaidProductPlacement string) SearchOption {
+func WithVideoPaidProductPlacement(videoPaidProductPlacement string) Option {
 	return func(s *search) {
 		s.videoPaidProductPlacement = videoPaidProductPlacement
 	}
 }
 
-func WithSearchVideoSyndicated(videoSyndicated string) SearchOption {
+func WithVideoSyndicated(videoSyndicated string) Option {
 	return func(s *search) {
 		s.videoSyndicated = videoSyndicated
 	}
 }
 
-func WithSearchVideoType(videoType string) SearchOption {
+func WithVideoType(videoType string) Option {
 	return func(s *search) {
 		s.videoType = videoType
 	}
