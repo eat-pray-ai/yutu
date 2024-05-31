@@ -10,7 +10,9 @@ var deleteCmd = &cobra.Command{
 	Short: "delete subscription",
 	Long:  "delete subscription",
 	Run: func(cmd *cobra.Command, args []string) {
-		s := subscription.NewSubscription(subscription.WithId(id))
+		s := subscription.NewSubscription(
+			subscription.WithId(id), subscription.WithService(),
+		)
 		s.Delete()
 	},
 }

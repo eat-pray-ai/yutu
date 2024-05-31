@@ -18,6 +18,7 @@ var listCmd = &cobra.Command{
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
+			activity.WithService(),
 		)
 		a.List(parts, output)
 	},
@@ -25,22 +26,30 @@ var listCmd = &cobra.Command{
 
 func init() {
 	activityCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of the channel")
+	listCmd.Flags().StringVarP(
+		&channelId, "channelId", "c", "", "ID of the channel",
+	)
 	listCmd.Flags().StringVarP(&home, "home", "h", "", "true or false")
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "x", 5, "Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "x", 5,
+		"Specifies the maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")
 	listCmd.Flags().StringVarP(
-		&publishedAfter, "publishedAfter", "a", "", "Filter on activities published after this date",
+		&publishedAfter, "publishedAfter", "a", "",
+		"Filter on activities published after this date",
 	)
 	listCmd.Flags().StringVarP(
-		&publishedBefore, "publishedBefore", "b", "", "Filter on activities published before this date",
+		&publishedBefore, "publishedBefore", "b", "",
+		"Filter on activities published before this date",
 	)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", "")
 
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "contentDetails"}, "Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet", "contentDetails"},
+		"Comma separated parts",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
+	listCmd.Flags().StringVarP(
+		&output, "output", "o", "", "Output format: json or yaml",
+	)
 }

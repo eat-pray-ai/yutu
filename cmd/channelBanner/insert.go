@@ -14,6 +14,7 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithFile(file),
 			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			channelBanner.WithService(),
 		)
 		cb.Insert()
 	},
@@ -22,9 +23,15 @@ var insertCmd = &cobra.Command{
 func init() {
 	channelBannerCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the banner image")
-	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
-	insertCmd.Flags().StringVarP(&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "")
+	insertCmd.Flags().StringVarP(
+		&file, "file", "f", "", "Path to the banner image",
+	)
+	insertCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
+	insertCmd.Flags().StringVarP(
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+	)
 
 	insertCmd.MarkFlagRequired("file")
 }

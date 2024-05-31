@@ -17,6 +17,7 @@ var insertCmd = &cobra.Command{
 			playlist.WithLanguage(language),
 			playlist.WithChannelId(channelId),
 			playlist.WithPrivacy(privacy),
+			playlist.WithService(),
 		)
 		p.Insert()
 	},
@@ -26,11 +27,21 @@ func init() {
 	playlistCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist")
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the playlist")
-	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, "Comma separated tags")
-	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the playlist")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the playlist")
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "public, private or unlisted")
+	insertCmd.Flags().StringVarP(
+		&description, "description", "d", "", "Description of the playlist",
+	)
+	insertCmd.Flags().StringArrayVarP(
+		&tags, "tags", "a", []string{}, "Comma separated tags",
+	)
+	insertCmd.Flags().StringVarP(
+		&language, "language", "l", "", "Language of the playlist",
+	)
+	insertCmd.Flags().StringVarP(
+		&channelId, "channelId", "c", "", "Channel ID of the playlist",
+	)
+	insertCmd.Flags().StringVarP(
+		&privacy, "privacy", "p", "", "public, private or unlisted",
+	)
 
 	insertCmd.MarkFlagRequired("title")
 	insertCmd.MarkFlagRequired("channel")

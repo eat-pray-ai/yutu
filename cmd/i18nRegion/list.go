@@ -10,7 +10,9 @@ var listCmd = &cobra.Command{
 	Short: "list i18nRegions",
 	Long:  "list i18nRegions' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
-		i := i18nRegion.NewI18nRegion(i18nRegion.WithHl(hl))
+		i := i18nRegion.NewI18nRegion(
+			i18nRegion.WithHl(hl), i18nRegion.WithService(),
+		)
 		i.List(parts, output)
 	},
 }

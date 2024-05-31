@@ -13,6 +13,7 @@ var deleteCmd = &cobra.Command{
 		p := playlist.NewPlaylist(
 			playlist.WithId(id),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlist.WithService(),
 		)
 		p.Delete()
 	},
@@ -21,6 +22,10 @@ var deleteCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", "ID of playlist to be deleted")
-	deleteCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
+	deleteCmd.Flags().StringVarP(
+		&id, "id", "i", "", "ID of playlist to be deleted",
+	)
+	deleteCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
 }

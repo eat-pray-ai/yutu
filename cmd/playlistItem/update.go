@@ -15,6 +15,7 @@ var updateCmd = &cobra.Command{
 			playlistItem.WithTitle(title),
 			playlistItem.WithDescription(description),
 			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithService(),
 		)
 		pi.Update()
 	},
@@ -24,7 +25,13 @@ func init() {
 	playlistItemCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist item")
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist item")
-	updateCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the playlist item")
-	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", "Privacy status of the playlist item")
+	updateCmd.Flags().StringVarP(
+		&title, "title", "t", "", "Title of the playlist item",
+	)
+	updateCmd.Flags().StringVarP(
+		&description, "description", "d", "", "Description of the playlist item",
+	)
+	updateCmd.Flags().StringVarP(
+		&privacy, "privacy", "p", "", "Privacy status of the playlist item",
+	)
 }

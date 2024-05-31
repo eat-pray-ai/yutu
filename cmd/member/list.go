@@ -11,10 +11,11 @@ var listCmd = &cobra.Command{
 	Long:  "list channel's members' info, such as channelId, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		m := member.NewMember(
-			member.WithChannelId(memberChannelId),
+			member.WithMemberChannelId(memberChannelId),
 			member.WithHasAccessToLevel(hasAccessToLevel),
 			member.WithMaxResults(maxResults),
 			member.WithMode(mode),
+			member.WithService(),
 		)
 		m.List(parts, output)
 	},

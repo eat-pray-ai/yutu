@@ -34,7 +34,6 @@ type Option func(*activity)
 
 func NewActivity(opts ...Option) Activity {
 	a := &activity{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(a)
@@ -131,5 +130,11 @@ func WithPublishedBefore(publishedBefore string) Option {
 func WithRegionCode(regionCode string) Option {
 	return func(a *activity) {
 		a.regionCode = regionCode
+	}
+}
+
+func WithService() Option {
+	return func(a *activity) {
+		service = auth.NewY2BService()
 	}
 }

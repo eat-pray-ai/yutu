@@ -25,7 +25,6 @@ type Option func(*membershipsLevel)
 
 func NewMembershipsLevel(opts ...Option) MembershipsLevel {
 	m := &membershipsLevel{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(m)
@@ -59,5 +58,11 @@ func (m *membershipsLevel) List(parts []string, output string) {
 				membershipsLevel.Snippet.LevelDetails.DisplayName,
 			)
 		}
+	}
+}
+
+func WithService() Option {
+	return func(m *membershipsLevel) {
+		service = auth.NewY2BService()
 	}
 }

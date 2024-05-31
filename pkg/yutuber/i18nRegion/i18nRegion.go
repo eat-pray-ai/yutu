@@ -26,7 +26,6 @@ type I18nRegion interface {
 type Option func(*i18nRegion)
 
 func NewI18nRegion(opts ...Option) I18nRegion {
-	service = auth.NewY2BService()
 	i := &i18nRegion{}
 
 	for _, opt := range opts {
@@ -71,5 +70,11 @@ func (i *i18nRegion) List(parts []string, output string) {
 func WithHl(hl string) Option {
 	return func(i *i18nRegion) {
 		i.hl = hl
+	}
+}
+
+func WithService() Option {
+	return func(i *i18nRegion) {
+		service = auth.NewY2BService()
 	}
 }

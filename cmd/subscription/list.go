@@ -21,6 +21,7 @@ var listCmd = &cobra.Command{
 			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			subscription.WithOrder(order),
+			subscription.WithService(),
 		)
 		s.List(parts, output)
 	},
@@ -46,13 +47,26 @@ func init() {
 		"Specifies the maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")
-	listCmd.Flags().StringVarP(&myRecentSubscribers, "myRecentSubscribers", "r", "", "true  or false")
-	listCmd.Flags().StringVarP(&mySubscribers, "mySubscribers", "s", "", "true  or false")
-	listCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
-	listCmd.Flags().StringVarP(&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "")
 	listCmd.Flags().StringVarP(
-		&order, "order", "O", "", "subscriptionOrderUnspecified, relevance(default), unread or alphabetical",
+		&myRecentSubscribers, "myRecentSubscribers", "r", "", "true  or false",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "Output format: json or yaml")
-	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
+	listCmd.Flags().StringVarP(
+		&mySubscribers, "mySubscribers", "s", "", "true  or false",
+	)
+	listCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
+	listCmd.Flags().StringVarP(
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+	)
+	listCmd.Flags().StringVarP(
+		&order, "order", "O", "",
+		"subscriptionOrderUnspecified, relevance(default), unread or alphabetical",
+	)
+	listCmd.Flags().StringVarP(
+		&output, "output", "o", "", "Output format: json or yaml",
+	)
+	listCmd.Flags().StringArrayVarP(
+		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+	)
 }

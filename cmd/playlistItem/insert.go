@@ -19,6 +19,7 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithKPlaylistId(kPlaylistId),
 			playlistItem.WithPlaylistId(playlistId),
 			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithService(),
 		)
 		pi.Insert()
 	},
@@ -43,7 +44,8 @@ func init() {
 		&kChannelId, "kChannelId", "C", "", "ID of the channel if kind is channel",
 	)
 	insertCmd.Flags().StringVarP(
-		&kPlaylistId, "kPlaylistId", "P", "", "ID of the playlist if kind is playlist",
+		&kPlaylistId, "kPlaylistId", "P", "",
+		"ID of the playlist if kind is playlist",
 	)
 	insertCmd.Flags().StringVarP(
 		&playlistId, "playlistId", "p", "",

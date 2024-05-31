@@ -30,7 +30,6 @@ type ChannelBanner interface {
 type Option func(banner *channelBanner)
 
 func NewChannelBanner(opts ...Option) ChannelBanner {
-	service = auth.NewY2BService()
 	cb := &channelBanner{}
 
 	for _, opt := range opts {
@@ -80,5 +79,11 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(cb *channelBanner) {
 		cb.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+	}
+}
+
+func WithService() Option {
+	return func(cb *channelBanner) {
+		service = auth.NewY2BService()
 	}
 }

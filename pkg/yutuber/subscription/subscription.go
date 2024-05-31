@@ -42,7 +42,6 @@ type Subscription interface {
 type Option func(*subscription)
 
 func NewSubscription(opts ...Option) Subscription {
-	service = auth.NewY2BService()
 	s := &subscription{}
 
 	for _, opt := range opts {
@@ -109,7 +108,10 @@ func (s *subscription) List(parts []string, output string) {
 	default:
 		fmt.Println("ID\tChannel ID\tChannel Title")
 		for _, subscription := range subscriptions {
-			fmt.Printf("%s\t%s\t%s\n", subscription.Id, subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title)
+			fmt.Printf(
+				"%s\t%s\t%s\n", subscription.Id,
+				subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title,
+			)
 		}
 	}
 }
@@ -220,5 +222,11 @@ func WithOrder(order string) Option {
 func WithTitle(title string) Option {
 	return func(s *subscription) {
 		s.title = title
+	}
+}
+
+func WithService() Option {
+	return func(s *subscription) {
+		service = auth.NewY2BService()
 	}
 }

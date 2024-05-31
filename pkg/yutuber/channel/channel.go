@@ -46,7 +46,6 @@ type Option func(*channel)
 
 func NewChannel(opts ...Option) Channel {
 	c := &channel{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(c)
@@ -230,5 +229,11 @@ func WithDescription(desc string) Option {
 func WithTitle(title string) Option {
 	return func(c *channel) {
 		c.title = title
+	}
+}
+
+func WithService() Option {
+	return func(c *channel) {
+		service = auth.NewY2BService()
 	}
 }

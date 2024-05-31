@@ -15,6 +15,7 @@ var insertCmd = &cobra.Command{
 			subscription.WithDescription(description),
 			subscription.WithChannelId(channelId),
 			subscription.WithTitle(title),
+			subscription.WithService(),
 		)
 		s.Insert()
 	},
@@ -23,8 +24,17 @@ var insertCmd = &cobra.Command{
 func init() {
 	subscriptionCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&subscriberChannelId, "subscriberChannelId", "s", "", "Subscriber's channel ID")
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the subscription")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of the channel to be subscribed")
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the subscription")
+	insertCmd.Flags().StringVarP(
+		&subscriberChannelId, "subscriberChannelId", "s", "",
+		"Subscriber's channel ID",
+	)
+	insertCmd.Flags().StringVarP(
+		&description, "description", "d", "", "Description of the subscription",
+	)
+	insertCmd.Flags().StringVarP(
+		&channelId, "channelId", "c", "", "ID of the channel to be subscribed",
+	)
+	insertCmd.Flags().StringVarP(
+		&title, "title", "t", "", "Title of the subscription",
+	)
 }

@@ -29,7 +29,6 @@ type VideoCategory interface {
 type Option func(*videoCategory)
 
 func NewVideoCategory(opt ...Option) VideoCategory {
-	service = auth.NewY2BService()
 	vc := &videoCategory{}
 	for _, o := range opt {
 		o(vc)
@@ -90,5 +89,11 @@ func WithHl(hl string) Option {
 func WithRegionCode(regionCode string) Option {
 	return func(vc *videoCategory) {
 		vc.regionCode = regionCode
+	}
+}
+
+func WithService() Option {
+	return func(vc *videoCategory) {
+		service = auth.NewY2BService()
 	}
 }

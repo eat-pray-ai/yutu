@@ -47,7 +47,6 @@ type Option func(*playlistItem)
 
 func NewPlaylistItem(opts ...Option) PlaylistItem {
 	p := &playlistItem{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(p)
@@ -251,5 +250,11 @@ func WithMaxResults(maxResults int64) Option {
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(p *playlistItem) {
 		p.onBehalfOfContentOwner = onBehalfOfContentOwner
+	}
+}
+
+func WithService() Option {
+	return func(p *playlistItem) {
+		service = auth.NewY2BService()
 	}
 }

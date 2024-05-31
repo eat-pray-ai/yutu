@@ -26,7 +26,6 @@ type VideoAbuseReportReason interface {
 type Option func(*videoAbuseReportReason)
 
 func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason {
-	service = auth.NewY2BService()
 	va := &videoAbuseReportReason{}
 	for _, o := range opt {
 		o(va)
@@ -69,5 +68,11 @@ func (vc *videoAbuseReportReason) List(parts []string, output string) {
 func WithHL(hl string) Option {
 	return func(vc *videoAbuseReportReason) {
 		vc.hl = hl
+	}
+}
+
+func WithService() Option {
+	return func(vc *videoAbuseReportReason) {
+		service = auth.NewY2BService()
 	}
 }

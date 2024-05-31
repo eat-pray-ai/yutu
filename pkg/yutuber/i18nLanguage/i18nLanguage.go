@@ -26,7 +26,6 @@ type I18nLanguage interface {
 type Option func(*i18nLanguage)
 
 func NewI18nLanguage(opts ...Option) I18nLanguage {
-	service = auth.NewY2BService()
 	i := &i18nLanguage{}
 
 	for _, opt := range opts {
@@ -71,5 +70,11 @@ func (i *i18nLanguage) List(parts []string, output string) {
 func WithHl(hl string) Option {
 	return func(i *i18nLanguage) {
 		i.hl = hl
+	}
+}
+
+func WithService() Option {
+	return func(i *i18nLanguage) {
+		service = auth.NewY2BService()
 	}
 }

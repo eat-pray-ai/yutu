@@ -70,7 +70,6 @@ type Option func(*video)
 
 func NewVideo(opts ...Option) Video {
 	v := &video{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(v)
@@ -201,6 +200,7 @@ func (v *video) Insert() {
 			playlistItem.WithPlaylistId(v.playlistId),
 			playlistItem.WithChannelId(v.channelId),
 			playlistItem.WithPrivacy(v.privacy),
+			playlistItem.WithService(),
 		)
 		pi.Insert()
 	}
@@ -257,6 +257,7 @@ func (v *video) Update() {
 			playlistItem.WithPlaylistId(v.playlistId),
 			playlistItem.WithChannelId(v.channelId),
 			playlistItem.WithPrivacy(v.privacy),
+			playlistItem.WithService(),
 		)
 		pi.Insert()
 	}
@@ -470,5 +471,11 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(v *video) {
 		v.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+	}
+}
+
+func WithService() Option {
+	return func(v *video) {
+		service = auth.NewY2BService()
 	}
 }

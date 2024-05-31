@@ -22,7 +22,6 @@ import (
 var (
 	credential     = "client_secret.json"
 	cacheFile      = "youtube.token.json"
-	errGetUser     = errors.New("unable to get current user")
 	errCreateSvc   = errors.New("unable to create YouTube service")
 	errReadPrompt  = errors.New("unable to read prompt")
 	errExchange    = errors.New("unable retrieve token from web or prompt")

@@ -30,7 +30,6 @@ type Option func(*member)
 
 func NewMember(opts ...Option) Member {
 	m := &member{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(m)
@@ -79,7 +78,7 @@ func (m *member) List(parts []string, output string) {
 	}
 }
 
-func WithChannelId(channelId string) Option {
+func WithMemberChannelId(channelId string) Option {
 	return func(m *member) {
 		m.memberChannelId = channelId
 	}
@@ -100,5 +99,11 @@ func WithMaxResults(results int64) Option {
 func WithMode(mode string) Option {
 	return func(m *member) {
 		m.mode = mode
+	}
+}
+
+func WithService() Option {
+	return func(m *member) {
+		service = auth.NewY2BService()
 	}
 }

@@ -14,6 +14,7 @@ var rateCmd = &cobra.Command{
 		v := video.NewVideo(
 			video.WithId(id),
 			video.WithRating(rating),
+			video.WithService(),
 		)
 		v.Rate()
 	},
@@ -23,7 +24,9 @@ func init() {
 	videoCmd.AddCommand(rateCmd)
 
 	rateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
-	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", "Rating of the video: like, dislike or none")
+	rateCmd.Flags().StringVarP(
+		&rating, "rating", "r", "", "Rating of the video: like, dislike or none",
+	)
 
 	rateCmd.MarkFlagRequired("id")
 	rateCmd.MarkFlagRequired("rating")

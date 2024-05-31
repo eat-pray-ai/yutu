@@ -55,7 +55,6 @@ type Option func(*search)
 
 func NewSearch(opts ...Option) Search {
 	s := &search{}
-	service = auth.NewY2BService()
 
 	for _, opt := range opts {
 		opt(s)
@@ -380,5 +379,11 @@ func WithVideoSyndicated(videoSyndicated string) Option {
 func WithVideoType(videoType string) Option {
 	return func(s *search) {
 		s.videoType = videoType
+	}
+}
+
+func WithService() Option {
+	return func(s *search) {
+		service = auth.NewY2BService()
 	}
 }
