@@ -23,9 +23,18 @@ on:
 permissions: read-all
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: './go.mod'
+      - run: go test -v ./...
   # Generate ldflags dynamically.
   # Optional: only needed for ldflags.
   args:
+    needs: [test]
     runs-on: ubuntu-latest
     outputs:
       commit-date: ${{ steps.ldflags.outputs.commit-date }}
@@ -35,16 +44,14 @@ jobs:
     steps:
       - id: checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - id: ldflags
         run: |
-          echo "commit-date=$(git log --date=iso8601-strict -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
-          echo "commit=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          echo "commit-date=$(git log -1 --date='format:%Y-%m-%d/%H.%M.%S' --pretty=%cd)" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
           echo "version=$(git describe --tags --always --dirty | cut -c2-)" >> "$GITHUB_OUTPUT"
           echo "tree-state=$(if git diff --quiet; then echo "clean"; else echo "dirty"; fi)" >> "$GITHUB_OUTPUT"
   # ===================================================================================================================================
-  # Prerequesite: Create a .slsa-goreleaser.yml in the root directory of your project.
+  # Prerequisite: Create a .slsa-goreleaser.yml in the root directory of your project.
   #   See format in https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/go/README.md#configuration-file
   #====================================================================================================================================
   build:
