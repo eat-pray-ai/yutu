@@ -1,0 +1,15 @@
+name: Publish to Homebrew
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - name: Update Homebrew formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          tag: ${{ github.event.release.tag_name }}
+          org: eat-pray-ai
+          formula: yutu
