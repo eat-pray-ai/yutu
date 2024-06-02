@@ -91,6 +91,8 @@ jobs:
           - darwin-arm64
           - windows-amd64.exe
           - windows-arm64.exe
+    env:
+      a: "b"
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -100,3 +102,14 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: '${{ github.workspace }}/yutu-${{ matrix.artifact }}'
+
+  winget-release:
+    needs: [build]
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: eat-pray-ai.yutu
+          installers-regex: '\.exe$' # Only .exe files
+          token: ${{ secrets.RELEASE_PAT }}
