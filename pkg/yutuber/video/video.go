@@ -21,6 +21,7 @@ var (
 	errSetThumbnail = errors.New("failed to set thumbnail")
 	errRating       = errors.New("failed to rate video")
 	errGetRating    = errors.New("failed to get rating")
+	errDeleteVideo  = errors.New("failed to delete video")
 )
 
 type video struct {
@@ -62,6 +63,7 @@ type Video interface {
 	Update()
 	Rate()
 	GetRating()
+	Delete()
 	get([]string) []*youtube.Video
 	setThumbnail(string, *youtube.Service)
 }
@@ -286,6 +288,19 @@ func (v *video) GetRating() {
 	}
 
 	utils.PrintYAML(res)
+}
+
+func (v *video) Delete() {
+	call := service.Videos.Delete(v.id)
+	if v.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.onBehalfOfContentOwner)
+	}
+
+	err := call.Do()
+	if err != nil {
+		log.Fatalln(errors.Join(errDeleteVideo, err))
+	}
+	fmt.Printf("Video %s deleted", v.id)
 }
 
 func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {
