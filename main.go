@@ -16,6 +16,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/video"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoAbuseReportReason"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoCategory"
+	_ "github.com/eat-pray-ai/yutu/cmd/watermark"
 )
 
 func main() {
