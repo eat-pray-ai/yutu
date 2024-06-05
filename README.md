@@ -15,6 +15,37 @@
 
 yutu is a fully functional CLI for YouTube.
 
+## Installation
+
+### Docker
+
+```shell
+❯ docker pull ghcr.io/eat-pray-ai/yutu:main
+❯ docker run --rm ghcr.io/eat-pray-ai/yutu:main
+```
+
+### Linux
+
+```shell
+❯ curl -sSfL https://github.com/eat-pray-ai/yutu/releases/latest/download/yutu-linux-$(uname -m) -o yutu
+```
+
+### macOS
+
+Homebrew is not available since this repository is not notable enough, star this repository to make it available on Homebrew.
+
+```shell
+❯ curl -sSfL https://github.com/eat-pray-ai/yutu/releases/latest/download/yutu-darwin-$(uname -m) -o yutu
+```
+
+### Windows
+
+Install yutu using winget(recommended), or download the latest release from the [releases page](https://github.com/eat-pray-ai/yutu/releases/latest).
+
+```shell
+❯ winget install yutu
+```
+
 ## Usage
 
 ```shell
@@ -43,6 +74,7 @@ Available Commands:
   video                  manipulate YouTube videos
   videoAbuseReportReason manipulate YouTube video abuse report reasons
   videoCategory          manipulate YouTube video categories
+  watermark              manipulate Youtube watermarks
 
 Flags:
   -h, --help   help for yutu
@@ -61,7 +93,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] rate, 50
   - [x] getRating, 1
   - [ ] reportAbuse, 50
-  - [ ] delete, 50
+  - [x] delete, 50
 - channels
   - [x] list, 1
   - [x] update, 50
@@ -122,8 +154,8 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - videoCategories
   - [x] list, 1
 - watermarks
-  - [ ] set, 50
-  - [ ] unset, 50
+  - [x] set, 50
+  - [x] unset, 50
 
 ## Star History
 
