@@ -16,8 +16,8 @@ var (
 
 var memberCmd = &cobra.Command{
 	Use:   "member",
-	Short: "manipulate YouTube members",
-	Long:  "manipulate YouTube members, only list for now",
+	Short: "list YouTube members",
+	Long:  "list YouTube members",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

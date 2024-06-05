@@ -57,23 +57,23 @@ Usage:
   yutu [command]
 
 Available Commands:
-  activity               manipulate YouTube activities
+  activity               list YouTube activities
   channel                manipulate YouTube channels
-  channelBanner          manipulate Youtube channelBanner
+  channelBanner          insert Youtube channelBanner
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
-  i18nLanguage           manipulate YouTube i18nLanguages
-  i18nRegion             manipulate YouTube i18nRegions
-  member                 manipulate YouTube members
-  membershipsLevel       manipulate YouTube memberships levels
+  i18nLanguage           list YouTube i18nLanguages
+  i18nRegion             list YouTube i18nRegions
+  member                 list YouTube members
+  membershipsLevel       list YouTube memberships levels
   playlist               manipulate YouTube playlists
   playlistItem           manipulate YouTube playlist items
   search                 Search for youtube resources
   subscription           manipulate YouTube subscriptions
   version                Show the version of yutu
   video                  manipulate YouTube videos
-  videoAbuseReportReason manipulate YouTube video abuse report reasons
-  videoCategory          manipulate YouTube video categories
+  videoAbuseReportReason list YouTube video abuse report reasons
+  videoCategory          list YouTube video categories
   watermark              manipulate Youtube watermarks
 
 Flags:

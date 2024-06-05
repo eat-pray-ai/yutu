@@ -13,8 +13,8 @@ var (
 
 var videoAbuseReportReasonCmd = &cobra.Command{
 	Use:   "videoAbuseReportReason",
-	Short: "manipulate YouTube video abuse report reasons",
-	Long:  "manipulate YouTube video abuse report reasons, only list for now",
+	Short: "list YouTube video abuse report reasons",
+	Long:  "list YouTube video abuse report reasons",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

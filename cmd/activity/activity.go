@@ -19,8 +19,8 @@ var (
 
 var activityCmd = &cobra.Command{
 	Use:   "activity",
-	Short: "manipulate YouTube activities",
-	Long:  "manipulate YouTube activities, only list for now",
+	Short: "list YouTube activities",
+	Long:  "list YouTube activities",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
