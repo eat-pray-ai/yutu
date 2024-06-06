@@ -114,12 +114,12 @@ func (v *video) get(parts []string) []*youtube.Video {
 	}
 	call = call.MaxResults(v.maxResults)
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideo, err), v.id)
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (v *video) List(parts []string, output string) {

@@ -39,12 +39,12 @@ func (vc *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseRepor
 		call = call.Hl(vc.hl)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideoAbuseReportReason, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (vc *videoAbuseReportReason) List(parts []string, output string) {

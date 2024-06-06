@@ -41,12 +41,12 @@ func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
 		call = call.Hl(i.hl)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetI18nRegion, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (i *i18nRegion) List(parts []string, output string) {

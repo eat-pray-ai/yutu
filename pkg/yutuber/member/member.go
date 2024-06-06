@@ -51,12 +51,12 @@ func (m *member) get(parts []string) []*youtube.Member {
 		call = call.Mode(m.mode)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetMember, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (m *member) List(parts []string, output string) {

@@ -48,12 +48,12 @@ func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 		call = call.RegionCode(vc.regionCode)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetVideoCategory, err), vc.regionCode)
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (vc *videoCategory) List(parts []string, output string) {

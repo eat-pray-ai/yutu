@@ -68,12 +68,12 @@ func (a *activity) get(parts []string) []*youtube.Activity {
 		call.RegionCode(a.regionCode)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetActivity, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (a *activity) List(parts []string, output string) {

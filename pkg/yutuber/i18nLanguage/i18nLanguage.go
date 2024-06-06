@@ -41,12 +41,12 @@ func (i *i18nLanguage) get(parts []string) []*youtube.I18nLanguage {
 		call = call.Hl(i.hl)
 	}
 
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetI18nLanguage, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (i *i18nLanguage) List(parts []string, output string) {

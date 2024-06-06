@@ -35,12 +35,12 @@ func NewMembershipsLevel(opts ...Option) MembershipsLevel {
 
 func (m *membershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
 	call := service.MembershipsLevels.List(parts)
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetMembershipsLevel, err))
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (m *membershipsLevel) List(parts []string, output string) {

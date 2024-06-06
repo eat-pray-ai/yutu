@@ -71,12 +71,12 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	}
 
 	call = call.MaxResults(pi.maxResults)
-	response, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
 	}
 
-	return response.Items
+	return res.Items
 }
 
 func (pi *playlistItem) List(parts []string, output string) {
