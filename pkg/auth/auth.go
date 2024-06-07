@@ -5,23 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/option"
+	"google.golang.org/api/youtube/v3"
 	"log"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
-	"runtime"
-
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/option"
-	"google.golang.org/api/youtube/v3"
 )
 
 var (
 	credential     = "client_secret.json"
-	cacheFile      = "youtube.token.json"
+	cacheToken     = "youtube.token.json"
 	errCreateSvc   = errors.New("unable to create YouTube service")
 	errReadPrompt  = errors.New("unable to read prompt")
 	errExchange    = errors.New("unable retrieve token from web or prompt")
@@ -42,7 +40,13 @@ For more information about the client_secrets.json file format, please visit:
 https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 `
 
-func NewY2BService() *youtube.Service {
+type Option func()
+
+func NewY2BService(opts ...Option) *youtube.Service {
+	for _, opt := range opts {
+		opt()
+	}
+
 	ctx := context.Background()
 	scope := []string{
 		youtube.YoutubeScope,
@@ -61,17 +65,17 @@ func NewY2BService() *youtube.Service {
 func getClient(ctx context.Context, scope ...string) *http.Client {
 	config := getConfig(scope...)
 
-	token, err := tokenFromFile(cacheFile)
+	token, err := tokenFromCache(cacheToken)
 	if err != nil {
-		return newClient(ctx, config, cacheFile)
+		return newClient(ctx, config, cacheToken)
 	} else if !token.Valid() {
 		tokenSource := config.TokenSource(ctx, token)
 		token, err = tokenSource.Token()
 		if token != nil {
-			saveToken(cacheFile, token)
+			saveToken(cacheToken, token)
 		}
 		if err != nil {
-			return newClient(ctx, config, cacheFile)
+			return newClient(ctx, config, cacheToken)
 		}
 	}
 
@@ -93,27 +97,27 @@ func getConfig(scope ...string) *oauth2.Config {
 	return config
 }
 
-func newClient(ctx context.Context, config *oauth2.Config, cacheFile string) *http.Client {
+func newClient(ctx context.Context, config *oauth2.Config, cacheToken string) *http.Client {
 	var token *oauth2.Token
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	token = getTokenFromWeb(config, authURL)
-	saveToken(cacheFile, token)
+	saveToken(cacheToken, token)
 
 	return config.Client(ctx, token)
 }
 
-func startWebServer(redirectURL string) (codeCh chan string, err error) {
+func startWebServer(redirectURL string) chan string {
 	u, err := url.Parse(redirectURL)
 	if err != nil {
-		return nil, err
+		log.Fatalln(errors.Join(errStartWeb, err))
 	}
 
 	listener, err := net.Listen("tcp", u.Host)
 	if err != nil {
-		return nil, err
+		log.Fatalln(errors.Join(errStartWeb, err))
 	}
 
-	codeCh = make(chan string)
+	codeCh := make(chan string)
 	go http.Serve(
 		listener, http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
@@ -128,23 +132,7 @@ func startWebServer(redirectURL string) (codeCh chan string, err error) {
 		),
 	)
 
-	return codeCh, err
-}
-
-func openURL(url string) error {
-	var err error
-	switch runtime.GOOS {
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	default:
-		err = fmt.Errorf("cannot open URL %s on this platform", url)
-	}
-
-	return err
+	return codeCh
 }
 
 func getCodeFromPrompt(authURL string) string {
@@ -169,13 +157,10 @@ func getCodeFromPrompt(authURL string) string {
 }
 
 func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
-	codeCh, err := startWebServer(config.RedirectURL)
-	if err != nil {
-		log.Fatalln(errors.Join(errStartWeb, err))
-	}
+	codeCh := startWebServer(config.RedirectURL)
 
 	var code string
-	if err := openURL(authURL); err == nil {
+	if err := utils.OpenURL(authURL); err == nil {
 		fmt.Printf(
 			"Your browser has been opened to an authorization URL. This "+
 				"program will resume once authorization has been provided.\n%v\n",
@@ -197,8 +182,8 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 	return token
 }
 
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
+func tokenFromCache(cacheToken string) (*oauth2.Token, error) {
+	f, err := os.Open(cacheToken)
 	if err != nil {
 		return nil, err
 	}
@@ -209,12 +194,24 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 	return t, err
 }
 
-func saveToken(file string, token *oauth2.Token) {
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+func saveToken(cacheToken string, token *oauth2.Token) {
+	f, err := os.OpenFile(cacheToken, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Fatalln(errors.Join(errCacheToken, err))
 	}
 
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
+}
+
+func WithCredential(cred string) Option {
+	return func() {
+		credential = cred
+	}
+}
+
+func WithCacheToken(token string) Option {
+	return func() {
+		cacheToken = token
+	}
 }
