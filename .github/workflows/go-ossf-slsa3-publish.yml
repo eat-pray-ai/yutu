@@ -91,8 +91,6 @@ jobs:
           - darwin-arm64
           - windows-amd64.exe
           - windows-arm64.exe
-    env:
-      a: "b"
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -113,6 +111,7 @@ jobs:
           identifier: eat-pray-ai.yutu
           installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.RELEASE_PAT }}
+          max-versions-to-keep: 3
 
   homebrew:
     needs: [build]
