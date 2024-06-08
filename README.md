@@ -15,7 +15,49 @@
 
 yutu is a fully functional CLI for YouTube.
 
+## Prerequisites
+
+Before you begin, an account on [Google Cloud Platform](https://console.cloud.google.com/) is required to create a **Project** and enable these APIs for this project, in `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`
+
+- [YouTube Data API v3(Required)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
+- [YouTube Analytics API(Optional)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
+- [YouTube Reporting API(Optional)](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
+
+After enabling the APIs, create an `OAuth content screen` with yourself as test user, then create an `OAuth Client ID` of type `Web Application` with `http://localhost:8216` as the redirect URI.
+
+Download this credential to your local machine with name `client_secret.json`, it should look like
+
+```json
+{
+  "web": {
+    "client_id": "11181119.apps.googleusercontent.com",
+    "project_id": "yutu-11181119",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "XXXXXXXXXXXXXXXX",
+    "redirect_uris": [
+      "http://localhost:8216"
+    ]
+  }
+}
+```
+
+To verify this credential, run the following command
+
+```shell
+❯ yutu auth --credentials client_secret.json
+```
+
+A browser window will open asking for your permission to access your YouTube account, after granting the permission, a token will be generated and saved to `youtube.token.json`.
+
 ## Installation
+
+You can download yutu from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
+
+### GitHub Actions
+
+There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [general](./actions/general/README.md) and [upload](./actions/upload/README.md) for more information.
 
 ### Docker
 
@@ -40,8 +82,6 @@ Homebrew is not available since this repository is not notable enough, star this
 
 ### Windows
 
-Install yutu using winget(recommended), or download the latest release from the [releases page](https://github.com/eat-pray-ai/yutu/releases/latest).
-
 ```shell
 ❯ winget install yutu
 ```
@@ -58,6 +98,7 @@ Usage:
 
 Available Commands:
   activity               list YouTube activities
+  auth                   authenticate with YouTube API
   channel                manipulate YouTube channels
   channelBanner          insert Youtube channelBanner
   completion             Generate the autocompletion script for the specified shell
@@ -117,10 +158,10 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - channelBanners
   - [x] insert, 50
 - channelSections
-  - [ ] list, 1
+  - [x] list, 1
   - [ ] insert, 50
   - [ ] update, 50
-  - [ ] delete, 50
+  - [x] delete, 50
 - comments
   - [ ] list, 1
   - [ ] insert, 50
