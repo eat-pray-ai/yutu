@@ -1,0 +1,25 @@
+name: Upload
+description: Upload a video to YouTube
+
+inputs:
+  version:
+    description: 'The version of the yutu binary to download'
+    required: false
+    default: ''
+  token:
+    description: 'The token to authenticate with the YouTube API'
+    required: true
+  flags:
+    description: 'The flags to pass to the command'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: eat-pray-ai/yutu/actions/general@main
+      with:
+        version: ${{ inputs.version }}
+        token: ${{ inputs.token }}
+        command: video
+        subcommand: insert
+        flags: ${{ inputs.flags }}
