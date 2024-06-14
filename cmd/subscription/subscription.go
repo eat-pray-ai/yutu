@@ -12,9 +12,9 @@ var (
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
-	mine                          string
-	myRecentSubscribers           string
-	mySubscribers                 string
+	mine                          bool
+	myRecentSubscribers           bool
+	mySubscribers                 bool
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string

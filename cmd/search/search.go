@@ -9,9 +9,9 @@ var (
 	channelId                 string
 	channelType               string
 	eventType                 string
-	forContentOwner           string
-	forDeveloper              string
-	forMine                   string
+	forContentOwner           bool
+	forDeveloper              bool
+	forMine                   bool
 	location                  string
 	locationRadius            string
 	maxResults                int64

@@ -14,9 +14,9 @@ var listCmd = &cobra.Command{
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),
 			search.WithEventType(eventType),
-			search.WithForContentOwner(forContentOwner),
-			search.WithForDeveloper(forDeveloper),
-			search.WithForMine(forMine),
+			search.WithForContentOwner(forContentOwner, true),
+			search.WithForDeveloper(forDeveloper, true),
+			search.WithForMine(forMine, true),
 			search.WithLocation(location),
 			search.WithLocationRadius(locationRadius),
 			search.WithMaxResults(maxResults),
@@ -60,16 +60,15 @@ func init() {
 	listCmd.Flags().StringVar(
 		&eventType, "eventType", "", "none(default), upcoming, live or completed",
 	)
-	listCmd.Flags().StringVar(
-		&forContentOwner, "forContentOwner", "", "Search owned by content owner",
+	listCmd.Flags().BoolVar(
+		&forContentOwner, "forContentOwner", false, "Search owned by content owner",
 	)
-	listCmd.Flags().StringVar(
-		&forDeveloper, "forDeveloper", "",
+	listCmd.Flags().BoolVar(
+		&forDeveloper, "forDeveloper", false,
 		"Only retrieve videos uploaded using the project id of the authenticated user",
 	)
-	listCmd.Flags().StringVar(
-		&forMine, "forMine", "",
-		"Search for the private videos of the authenticated user",
+	listCmd.Flags().BoolVar(
+		&forMine, "forMine", false, "Search for the private videos of the authenticated user",
 	)
 	listCmd.Flags().StringVar(
 		&location, "location", "", "Filter on location of the video",

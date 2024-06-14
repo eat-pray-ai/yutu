@@ -12,7 +12,7 @@ var (
 	description string
 	hl          string
 	maxResults  int64
-	mine        string
+	mine        bool
 	tags        []string
 	language    string
 	channelId   string

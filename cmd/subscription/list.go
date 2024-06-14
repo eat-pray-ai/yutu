@@ -15,9 +15,9 @@ var listCmd = &cobra.Command{
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),
-			subscription.WithMine(mine),
-			subscription.WithMyRecentSubscribers(myRecentSubscribers),
-			subscription.WithMySubscribers(mySubscribers),
+			subscription.WithMine(mine, true),
+			subscription.WithMyRecentSubscribers(myRecentSubscribers, true),
+			subscription.WithMySubscribers(mySubscribers, true),
 			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			subscription.WithOrder(order),
@@ -46,12 +46,12 @@ func init() {
 		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")
-	listCmd.Flags().StringVarP(
-		&myRecentSubscribers, "myRecentSubscribers", "r", "", "true  or false",
+	listCmd.Flags().BoolVarP(&mine, "mine", "m", true, "Return the subscriptions of the authenticated user")
+	listCmd.Flags().BoolVarP(
+		&myRecentSubscribers, "myRecentSubscribers", "r", false, "true  or false",
 	)
-	listCmd.Flags().StringVarP(
-		&mySubscribers, "mySubscribers", "s", "", "true  or false",
+	listCmd.Flags().BoolVarP(
+		&mySubscribers, "mySubscribers", "s", false, "Return the subscribers of the given channel owner",
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",

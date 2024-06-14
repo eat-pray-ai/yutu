@@ -18,9 +18,9 @@ type search struct {
 	channelId                 string
 	channelType               string
 	eventType                 string
-	forContentOwner           string
-	forDeveloper              string
-	forMine                   string
+	forContentOwner           *bool
+	forDeveloper              *bool
+	forMine                   *bool
 	location                  string
 	locationRadius            string
 	maxResults                int64
@@ -77,22 +77,16 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 		call.EventType(s.eventType)
 	}
 
-	if s.forContentOwner == "true" {
-		call.ForContentOwner(true)
-	} else if s.forContentOwner == "false" {
-		call.ForContentOwner(false)
+	if s.forContentOwner != nil {
+		call.ForContentOwner(*s.forContentOwner)
 	}
 
-	if s.forDeveloper == "true" {
-		call.ForDeveloper(true)
-	} else if s.forDeveloper == "false" {
-		call.ForDeveloper(false)
+	if s.forDeveloper != nil {
+		call.ForDeveloper(*s.forDeveloper)
 	}
 
-	if s.forMine == "true" {
-		call.ForMine(true)
-	} else if s.forMine == "false" {
-		call.ForMine(false)
+	if s.forMine != nil {
+		call.ForMine(*s.forMine)
 	}
 
 	if s.location != "" {
@@ -226,21 +220,27 @@ func WithEventType(eventType string) Option {
 	}
 }
 
-func WithForContentOwner(forContentOwner string) Option {
+func WithForContentOwner(forContentOwner bool, changed bool) Option {
 	return func(s *search) {
-		s.forContentOwner = forContentOwner
+		if changed {
+			s.forContentOwner = &forContentOwner
+		}
 	}
 }
 
-func WithForDeveloper(forDeveloper string) Option {
+func WithForDeveloper(forDeveloper bool, changed bool) Option {
 	return func(s *search) {
-		s.forDeveloper = forDeveloper
+		if changed {
+			s.forDeveloper = &forDeveloper
+		}
 	}
 }
 
-func WithForMine(forMine string) Option {
+func WithForMine(forMine bool, changed bool) Option {
 	return func(s *search) {
-		s.forMine = forMine
+		if changed {
+			s.forMine = &forMine
+		}
 	}
 }
 

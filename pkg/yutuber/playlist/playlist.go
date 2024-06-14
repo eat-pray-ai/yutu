@@ -24,7 +24,7 @@ type playlist struct {
 	description string
 	hl          string
 	maxResults  int64
-	mine        string
+	mine        *bool
 	tags        []string
 	language    string
 	channelId   string
@@ -63,10 +63,8 @@ func (p *playlist) get(parts []string) []*youtube.Playlist {
 	if p.hl != "" {
 		call = call.Hl(p.hl)
 	}
-	if p.mine == "true" {
-		call = call.Mine(true)
-	} else if p.mine == "false" {
-		call = call.Mine(false)
+	if p.mine != nil {
+		call = call.Mine(*p.mine)
 	}
 
 	call = call.MaxResults(p.maxResults)
@@ -218,9 +216,11 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine string) Option {
+func WithMine(mine bool, changed bool) Option {
 	return func(p *playlist) {
-		p.mine = mine
+		if changed {
+			p.mine = &mine
+		}
 	}
 }
 

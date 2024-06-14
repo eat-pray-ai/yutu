@@ -8,7 +8,7 @@ import (
 
 var (
 	id          string
-	autoLevels  string
+	autoLevels  bool
 	file        string
 	title       string
 	description string
@@ -30,7 +30,7 @@ var (
 	parts       []string
 	publishAt   string
 	regionCode  string
-	stabilize   string
+	stabilize   bool
 	maxHeight   int64
 	maxWidth    int64
 	maxResults  int64

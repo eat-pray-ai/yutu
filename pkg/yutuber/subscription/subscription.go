@@ -23,9 +23,9 @@ type subscription struct {
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
-	mine                          string
-	myRecentSubscribers           string
-	mySubscribers                 string
+	mine                          *bool
+	myRecentSubscribers           *bool
+	mySubscribers                 *bool
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string
@@ -64,20 +64,14 @@ func (s *subscription) get(parts []string) []*youtube.Subscription {
 	}
 	call = call.MaxResults(s.maxResults)
 
-	if s.mine == "true" {
-		call = call.Mine(true)
-	} else if s.mine == "false" {
-		call = call.Mine(false)
+	if s.mine != nil {
+		call = call.Mine(*s.mine)
 	}
-	if s.myRecentSubscribers == "true" {
-		call = call.MyRecentSubscribers(true)
-	} else if s.myRecentSubscribers == "false" {
-		call = call.MyRecentSubscribers(false)
+	if s.myRecentSubscribers != nil {
+		call = call.MyRecentSubscribers(*s.myRecentSubscribers)
 	}
-	if s.mySubscribers == "true" {
-		call = call.MySubscribers(true)
-	} else if s.mySubscribers == "false" {
-		call = call.MySubscribers(false)
+	if s.mySubscribers != nil {
+		call = call.MySubscribers(*s.mySubscribers)
 	}
 
 	if s.onBehalfOfContentOwner != "" {
@@ -183,21 +177,27 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine string) Option {
+func WithMine(mine bool, changed bool) Option {
 	return func(s *subscription) {
-		s.mine = mine
+		if changed {
+			s.mine = &mine
+		}
 	}
 }
 
-func WithMyRecentSubscribers(myRecentSubscribers string) Option {
+func WithMyRecentSubscribers(myRecentSubscribers bool, changed bool) Option {
 	return func(s *subscription) {
-		s.myRecentSubscribers = myRecentSubscribers
+		if changed {
+			s.myRecentSubscribers = &myRecentSubscribers
+		}
 	}
 }
 
-func WithMySubscribers(mySubscribers string) Option {
+func WithMySubscribers(mySubscribers bool, changed bool) Option {
 	return func(s *subscription) {
-		s.mySubscribers = mySubscribers
+		if changed {
+			s.mySubscribers = &mySubscribers
+		}
 	}
 }
 

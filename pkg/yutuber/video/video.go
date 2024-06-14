@@ -26,7 +26,7 @@ var (
 
 type video struct {
 	id          string
-	autoLevels  string
+	autoLevels  *bool
 	file        string
 	title       string
 	description string
@@ -46,7 +46,7 @@ type video struct {
 	embeddable  bool
 	publishAt   string
 	regionCode  string
-	stabilize   string
+	stabilize   *bool
 	maxHeight   int64
 	maxWidth    int64
 	maxResults  int64
@@ -167,10 +167,8 @@ func (v *video) Insert() {
 
 	call := service.Videos.Insert([]string{"snippet,status"}, video)
 
-	if v.autoLevels == "true" {
-		call = call.AutoLevels(true)
-	} else if v.autoLevels == "false" {
-		call = call.AutoLevels(false)
+	if v.autoLevels != nil {
+		call = call.AutoLevels(*v.autoLevels)
 	}
 	call = call.NotifySubscribers(v.notifySubscribers)
 	if v.onBehalfOfContentOwner != "" {
@@ -179,10 +177,8 @@ func (v *video) Insert() {
 	if v.onBehalfOfContentOwnerChannel != "" {
 		call = call.OnBehalfOfContentOwnerChannel(v.onBehalfOfContentOwnerChannel)
 	}
-	if v.stabilize == "true" {
-		call = call.Stabilize(true)
-	} else if v.stabilize == "false" {
-		call = call.Stabilize(false)
+	if v.stabilize != nil {
+		call = call.Stabilize(*v.stabilize)
 	}
 
 	res, err := call.Media(file).Do()
@@ -321,9 +317,11 @@ func WithId(id string) Option {
 	}
 }
 
-func WithAutoLevels(autoLevels string) Option {
+func WithAutoLevels(autoLevels bool, changed bool) Option {
 	return func(v *video) {
-		v.autoLevels = autoLevels
+		if changed {
+			v.autoLevels = &autoLevels
+		}
 	}
 }
 
@@ -447,9 +445,11 @@ func WithRegionCode(regionCode string) Option {
 	}
 }
 
-func WithStabilize(stabilize string) Option {
+func WithStabilize(stabilize bool, changed bool) Option {
 	return func(v *video) {
-		v.stabilize = stabilize
+		if changed {
+			v.stabilize = &stabilize
+		}
 	}
 }
 

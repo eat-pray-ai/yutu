@@ -12,9 +12,9 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		a := activity.NewActivity(
 			activity.WithChannelId(channelId),
-			activity.WithHome(home, cmd.Flags().Lookup("home").Changed),
+			activity.WithHome(home, true),
 			activity.WithMaxResults(maxResults),
-			activity.WithMine(mine, cmd.Flags().Lookup("mine").Changed),
+			activity.WithMine(mine, true),
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
@@ -29,7 +29,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&channelId, "channelId", "c", "", "ID of the channel",
 	)
-	listCmd.Flags().BoolVarP(&home, "home", "h", false, "true or false")
+	listCmd.Flags().BoolVarP(&home, "home", "H", false, "true or false")
 	listCmd.Flags().Int64VarP(
 		&maxResults, "maxResults", "x", 5,
 		"Specifies the maximum number of items that should be returned",

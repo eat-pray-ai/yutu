@@ -12,7 +12,7 @@ var insertCmd = &cobra.Command{
 	Long:  "upload a video to YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithAutoLevels(autoLevels),
+			video.WithAutoLevels(autoLevels, true),
 			video.WithFile(file),
 			video.WithTitle(title),
 			video.WithDescription(description),
@@ -27,7 +27,7 @@ var insertCmd = &cobra.Command{
 			video.WithForKids(forKids),
 			video.WithEmbeddable(embeddable),
 			video.WithPublishAt(publishAt),
-			video.WithStabilize(stabilize),
+			video.WithStabilize(stabilize, true),
 			video.WithNotifySubscribers(notifySubscribers),
 			video.WithPublicStatsViewable(publicStatsViewable),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
@@ -41,8 +41,8 @@ var insertCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(
-		&autoLevels, "autoLevels", "a", "", "true or false",
+	insertCmd.Flags().BoolVarP(
+		&autoLevels, "autoLevels", "a", true, "Should auto-levels be applied to the upload",
 	)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
@@ -84,7 +84,7 @@ func init() {
 		&publishAt, "publishAt", "U", "",
 		"Datetime when the video is scheduled to publish",
 	)
-	insertCmd.Flags().StringVarP(&stabilize, "stabilize", "s", "", "true or false")
+	insertCmd.Flags().BoolVarP(&stabilize, "stabilize", "s", true, "Should stabilize be applied to the upload")
 	insertCmd.Flags().BoolVarP(
 		&notifySubscribers, "notifySubscribers", "n", true,
 		"Notify the channel subscribers about the new video",
