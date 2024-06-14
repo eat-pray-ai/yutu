@@ -18,7 +18,7 @@ type channelSection struct {
 	id                     string
 	channelId              string
 	hl                     string
-	mine                   string
+	mine                   *bool
 	onBehalfOfContentOwner string
 }
 
@@ -52,10 +52,8 @@ func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
 	if cs.hl != "" {
 		call = call.Hl(cs.hl)
 	}
-	if cs.mine == "true" {
-		call = call.Mine(true)
-	} else if cs.mine == "false" {
-		call = call.Mine(false)
+	if cs.mine != nil {
+		call = call.Mine(*cs.mine)
 	}
 	if cs.onBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(cs.onBehalfOfContentOwner)
@@ -118,9 +116,11 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithMine(mine string) Option {
+func WithMine(mine bool, changed bool) Option {
 	return func(cs *channelSection) {
-		cs.mine = mine
+		if changed {
+			cs.mine = &mine
+		}
 	}
 }
 

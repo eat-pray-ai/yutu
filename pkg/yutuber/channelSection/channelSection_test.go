@@ -20,14 +20,14 @@ func TestNewChannelSection(t *testing.T) {
 				opts: []Option{
 					WithChannelId("channelId"),
 					WithHl("hl"),
-					WithMine("true"),
+					WithMine(true, true),
 					WithOnBehalfOfContentOwner("contentOwner"),
 				},
 			},
 			want: &channelSection{
 				channelId:              "channelId",
 				hl:                     "hl",
-				mine:                   "true",
+				mine:                   &[]bool{true}[0],
 				onBehalfOfContentOwner: "contentOwner",
 			},
 		},
