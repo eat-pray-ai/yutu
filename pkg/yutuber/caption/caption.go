@@ -3,6 +3,7 @@ package caption
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -290,5 +291,11 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 func WithVideoId(videoId string) Option {
 	return func(c *caption) {
 		c.videoId = videoId
+	}
+}
+
+func WithService() Option {
+	return func(c *caption) {
+		service = auth.NewY2BService()
 	}
 }

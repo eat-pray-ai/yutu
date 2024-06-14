@@ -15,6 +15,7 @@ var listCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			caption.WithService(),
 		)
 		c.List(parts, output)
 	},
