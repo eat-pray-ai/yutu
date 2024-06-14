@@ -221,8 +221,6 @@ func WithIsAutoSynced(isAutoSynced bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
 			c.isAutoSynced = &isAutoSynced
-		} else {
-			c.isAutoSynced = nil
 		}
 	}
 }
@@ -231,8 +229,6 @@ func WithIsCC(isCC bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
 			c.isCC = &isCC
-		} else {
-			c.isCC = nil
 		}
 	}
 }
@@ -241,8 +237,6 @@ func WithIsDraft(isDraft bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
 			c.isDraft = &isDraft
-		} else {
-			c.isDraft = nil
 		}
 	}
 }
@@ -251,8 +245,6 @@ func WithIsEasyReader(isEasyReader bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
 			c.isEasyReader = &isEasyReader
-		} else {
-			c.isEasyReader = nil
 		}
 	}
 }
@@ -261,8 +253,6 @@ func WithIsLarge(isLarge bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
 			c.isLarge = &isLarge
-		} else {
-			c.isLarge = nil
 		}
 	}
 }

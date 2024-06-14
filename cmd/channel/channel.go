@@ -12,10 +12,10 @@ var (
 	forUsername            string
 	hl                     string
 	id                     string
-	managedByMe            string
+	managedByMe            bool
 	maxResults             int64
-	mine                   string
-	mySubscribers          string
+	mine                   bool
+	mySubscribers          bool
 	onBehalfOfContentOwner string
 
 	country         string

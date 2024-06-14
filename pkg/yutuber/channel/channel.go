@@ -23,10 +23,10 @@ type channel struct {
 	forUsername            string
 	hl                     string
 	id                     string
-	managedByMe            string
+	managedByMe            *bool
 	maxResults             int64
-	mine                   string
-	mySubscribers          string
+	mine                   *bool
+	mySubscribers          *bool
 	onBehalfOfContentOwner string
 
 	country         string
@@ -76,24 +76,18 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 		call = call.Id(c.id)
 	}
 
-	if c.managedByMe == "true" {
-		call = call.ManagedByMe(true)
-	} else if c.managedByMe == "false" {
-		call = call.ManagedByMe(false)
+	if c.managedByMe != nil {
+		call = call.ManagedByMe(*c.managedByMe)
 	}
 
 	call = call.MaxResults(c.maxResults)
 
-	if c.mine == "true" {
-		call = call.Mine(true)
-	} else if c.mine == "false" {
-		call = call.Mine(false)
+	if c.mine != nil {
+		call = call.Mine(*c.mine)
 	}
 
-	if c.mySubscribers == "true" {
-		call = call.MySubscribers(true)
-	} else if c.mySubscribers == "false" {
-		call = call.MySubscribers(false)
+	if c.mySubscribers != nil {
+		call = call.MySubscribers(*c.mySubscribers)
 	}
 
 	if c.onBehalfOfContentOwner != "" {
@@ -172,9 +166,11 @@ func WithId(id string) Option {
 	}
 }
 
-func WithChannelManagedByMe(managedByMe string) Option {
+func WithChannelManagedByMe(managedByMe bool, changed bool) Option {
 	return func(c *channel) {
-		c.managedByMe = managedByMe
+		if changed {
+			c.managedByMe = &managedByMe
+		}
 	}
 }
 
@@ -184,15 +180,19 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine string) Option {
+func WithMine(mine bool, changed bool) Option {
 	return func(c *channel) {
-		c.mine = mine
+		if changed {
+			c.mine = &mine
+		}
 	}
 }
 
-func WithMySubscribers(mySubscribers string) Option {
+func WithMySubscribers(mySubscribers bool, changed bool) Option {
 	return func(c *channel) {
-		c.mySubscribers = mySubscribers
+		if changed {
+			c.mySubscribers = &mySubscribers
+		}
 	}
 }
 

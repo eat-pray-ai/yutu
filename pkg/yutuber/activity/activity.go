@@ -17,9 +17,9 @@ var (
 
 type activity struct {
 	channelId       string
-	home            string
+	home            *bool
 	maxResults      int64
-	mine            string
+	mine            *bool
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string
@@ -48,10 +48,12 @@ func (a *activity) get(parts []string) []*youtube.Activity {
 		call = call.ChannelId(a.channelId)
 	}
 
-	if a.home == "true" {
-		call = call.Home(true)
-	} else if a.home == "false" {
-		call = call.Home(false)
+	if a.home != nil {
+		call = call.Home(*a.home)
+	}
+
+	if a.mine != nil {
+		call = call.Mine(*a.mine)
 	}
 
 	call.MaxResults(a.maxResults)
@@ -97,9 +99,11 @@ func WithChannelId(channelId string) Option {
 	}
 }
 
-func WithHome(home string) Option {
+func WithHome(home bool, changed bool) Option {
 	return func(a *activity) {
-		a.home = home
+		if changed {
+			a.home = &home
+		}
 	}
 }
 
@@ -109,9 +113,11 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine string) Option {
+func WithMine(mine bool, changed bool) Option {
 	return func(a *activity) {
-		a.mine = mine
+		if changed {
+			a.mine = &mine
+		}
 	}
 }
 

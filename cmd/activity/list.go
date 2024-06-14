@@ -12,9 +12,9 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		a := activity.NewActivity(
 			activity.WithChannelId(channelId),
-			activity.WithHome(home),
+			activity.WithHome(home, cmd.Flags().Lookup("home").Changed),
 			activity.WithMaxResults(maxResults),
-			activity.WithMine(mine),
+			activity.WithMine(mine, cmd.Flags().Lookup("mine").Changed),
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
@@ -29,12 +29,12 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&channelId, "channelId", "c", "", "ID of the channel",
 	)
-	listCmd.Flags().StringVarP(&home, "home", "h", "", "true or false")
+	listCmd.Flags().BoolVarP(&home, "home", "h", false, "true or false")
 	listCmd.Flags().Int64VarP(
 		&maxResults, "maxResults", "x", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().StringVarP(&mine, "mine", "m", "", "true or false")
+	listCmd.Flags().BoolVarP(&mine, "mine", "m", true, "true or false")
 	listCmd.Flags().StringVarP(
 		&publishedAfter, "publishedAfter", "a", "",
 		"Filter on activities published after this date",

@@ -7,9 +7,9 @@ import (
 
 var (
 	channelId       string
-	home            string
+	home            bool
 	maxResults      int64
-	mine            string
+	mine            bool
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string
