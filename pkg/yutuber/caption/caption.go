@@ -154,8 +154,19 @@ func (c *caption) Update() {
 	if c.trackKind != "" {
 		caption.Snippet.TrackKind = c.trackKind
 	}
+	if c.videoId != "" {
+		caption.Snippet.VideoId = c.videoId
+	}
 
 	call := service.Captions.Update([]string{"snippet"}, caption)
+	if c.file != "" {
+		file, err := os.Open(c.file)
+		if err != nil {
+			log.Fatalln(errors.Join(errOpenFile, err))
+		}
+		defer file.Close()
+		call = call.Media(file)
+	}
 	if c.onBehalfOf != "" {
 		call = call.OnBehalfOf(c.onBehalfOf)
 	}
@@ -206,33 +217,53 @@ func WithAudioTrackType(audioTrackType string) Option {
 	}
 }
 
-func WithIsAutoSynced(isAutoSynced bool) Option {
+func WithIsAutoSynced(isAutoSynced bool, changed bool) Option {
 	return func(c *caption) {
-		c.isAutoSynced = &isAutoSynced
+		if changed {
+			c.isAutoSynced = &isAutoSynced
+		} else {
+			c.isAutoSynced = nil
+		}
 	}
 }
 
-func WithIsCC(isCC bool) Option {
+func WithIsCC(isCC bool, changed bool) Option {
 	return func(c *caption) {
-		c.isCC = &isCC
+		if changed {
+			c.isCC = &isCC
+		} else {
+			c.isCC = nil
+		}
 	}
 }
 
-func WithIsDraft(isDraft bool) Option {
+func WithIsDraft(isDraft bool, changed bool) Option {
 	return func(c *caption) {
-		c.isDraft = &isDraft
+		if changed {
+			c.isDraft = &isDraft
+		} else {
+			c.isDraft = nil
+		}
 	}
 }
 
-func WithIsEasyReader(isEasyReader bool) Option {
+func WithIsEasyReader(isEasyReader bool, changed bool) Option {
 	return func(c *caption) {
-		c.isEasyReader = &isEasyReader
+		if changed {
+			c.isEasyReader = &isEasyReader
+		} else {
+			c.isEasyReader = nil
+		}
 	}
 }
 
-func WithIsLarge(isLarge bool) Option {
+func WithIsLarge(isLarge bool, changed bool) Option {
 	return func(c *caption) {
-		c.isLarge = &isLarge
+		if changed {
+			c.isLarge = &isLarge
+		} else {
+			c.isLarge = nil
+		}
 	}
 }
 

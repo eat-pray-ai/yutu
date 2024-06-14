@@ -9,11 +9,11 @@ var (
 	id                     string
 	file                   string
 	audioTrackType         string
-	isAutoSynced           *bool
-	isCC                   *bool
-	isDraft                *bool
-	isEasyReader           *bool
-	isLarge                *bool
+	isAutoSynced           bool
+	isCC                   bool
+	isDraft                bool
+	isEasyReader           bool
+	isLarge                bool
 	language               string
 	name                   string
 	trackKind              string
