@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
+	"github.com/eat-pray-ai/yutu/pkg/yutuber/thumbnail"
 	"log"
 	"os"
 
@@ -65,7 +66,6 @@ type Video interface {
 	GetRating()
 	Delete()
 	get([]string) []*youtube.Video
-	setThumbnail(string, *youtube.Service)
 }
 
 type Option func(*video)
@@ -187,7 +187,12 @@ func (v *video) Insert() {
 	}
 
 	if v.thumbnail != "" {
-		v.setThumbnail(v.thumbnail, service)
+		t := thumbnail.NewThumbnail(
+			thumbnail.WithVideoId(v.id),
+			thumbnail.WithFile(v.thumbnail),
+			thumbnail.WithService(),
+		)
+		t.Set()
 	}
 
 	if v.playlistId != "" {
@@ -244,7 +249,12 @@ func (v *video) Update() {
 	}
 
 	if v.thumbnail != "" {
-		v.setThumbnail(v.thumbnail, service)
+		t := thumbnail.NewThumbnail(
+			thumbnail.WithVideoId(v.id),
+			thumbnail.WithFile(v.thumbnail),
+			thumbnail.WithService(),
+		)
+		t.Set()
 	}
 
 	if v.playlistId != "" {
@@ -297,18 +307,6 @@ func (v *video) Delete() {
 		log.Fatalln(errors.Join(errDeleteVideo, err))
 	}
 	fmt.Printf("Video %s deleted", v.id)
-}
-
-func (v *video) setThumbnail(thumbnail string, service *youtube.Service) {
-	file, err := os.Open(thumbnail)
-	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err), thumbnail)
-	}
-	call := service.Thumbnails.Set(v.id).Media(file)
-	_, err = call.Do()
-	if err != nil {
-		log.Fatalln(errors.Join(errSetThumbnail, err))
-	}
 }
 
 func WithId(id string) Option {
