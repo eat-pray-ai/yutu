@@ -59,7 +59,6 @@ A browser window will open asking for your permission to access your YouTube acc
   "refresh_token":"1//XXXXXXXXXX",
   "expiry":"2024-05-26T18:49:56.1911165+08:00"
 }
-
 ```
 
 ## Installation
@@ -73,8 +72,8 @@ There are two actions available for yutu, one is for general purpose and the oth
 ### Docker
 
 ```shell
-❯ docker pull ghcr.io/eat-pray-ai/yutu:main
-❯ docker run --rm ghcr.io/eat-pray-ai/yutu:main
+❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
+❯ docker run --rm ghcr.io/eat-pray-ai/yutu:latest
 ```
 
 ### Linux
@@ -108,28 +107,28 @@ Usage:
   yutu [command]
 
 Available Commands:
-  activity               list YouTube activities
-  auth                   authenticate with YouTube API
-  caption                manipulate YouTube captions
-  channel                manipulate YouTube channels
-  channelBanner          insert Youtube channelBanner
+  activity               List YouTube activities
+  auth                   Authenticate with YouTube API
+  caption                Manipulate YouTube captions
+  channel                Manipulate YouTube channels
+  channelBanner          Insert Youtube channelBanner
   channelSection         Manipulate channel section
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
-  i18nLanguage           list YouTube i18nLanguages
-  i18nRegion             list YouTube i18nRegions
-  member                 list YouTube members
-  membershipsLevel       list YouTube memberships levels
-  playlist               manipulate YouTube playlists
-  playlistItem           manipulate YouTube playlist items
+  i18nLanguage           List YouTube i18nLanguages
+  i18nRegion             List YouTube i18nRegions
+  member                 List YouTube members
+  membershipsLevel       List YouTube memberships levels
+  playlist               Manipulate YouTube playlists
+  playlistItem           Manipulate YouTube playlist items
   search                 Search for Youtube resources
-  subscription           manipulate YouTube subscriptions
+  subscription           Manipulate YouTube subscriptions
   thumbnail              Set thumbnail for a video
   version                Show the version of yutu
-  video                  manipulate YouTube videos
-  videoAbuseReportReason list YouTube video abuse report reasons
-  videoCategory          list YouTube video categories
-  watermark              manipulate Youtube watermarks
+  video                  Manipulate YouTube videos
+  videoAbuseReportReason List YouTube video abuse report reasons
+  videoCategory          List YouTube video categories
+  watermark              Manipulate Youtube watermarks
 
 Flags:
   -h, --help   help for yutu
