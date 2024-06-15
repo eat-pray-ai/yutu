@@ -46,7 +46,7 @@ func init() {
 		&license, "license", "L", "youtube", "youtube(default) or creativeCommon",
 	)
 	updateCmd.Flags().StringVarP(
-		&thumbnail, "thumbnail", "h", "", "Path to the thumbnail",
+		&thumbnail, "thumbnail", "T", "", "Path to the thumbnail file",
 	)
 	updateCmd.Flags().StringVarP(
 		&playListId, "playlistId", "y", "", "Playlist ID of the video",

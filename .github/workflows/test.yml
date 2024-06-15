@@ -10,7 +10,7 @@ on:
       - 'main.go'
       - '.github/actions/test/*'
     tags-ignore:
-      - '**'
+      - 'v*'
   pull_request:
     paths:
       - 'cmd/**'
