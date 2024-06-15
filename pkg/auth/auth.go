@@ -18,15 +18,17 @@ import (
 )
 
 var (
-	credential     = "client_secret.json"
-	cacheToken     = "youtube.token.json"
-	errCreateSvc   = errors.New("unable to create YouTube service")
-	errReadPrompt  = errors.New("unable to read prompt")
-	errExchange    = errors.New("unable retrieve token from web or prompt")
-	errStartWeb    = errors.New("unable to start web server")
-	errCacheToken  = errors.New("unable to cache token")
-	errReadSecret  = errors.New("unable to read client secret file")
-	errParseSecret = errors.New("unable to parse client secret to config")
+	state            = utils.RandomStage()
+	credential       = "client_secret.json"
+	cacheToken       = "youtube.token.json"
+	errStateMismatch = errors.New("state doesn't match, possible CSRF attack")
+	errCreateSvc     = errors.New("unable to create YouTube service")
+	errReadPrompt    = errors.New("unable to read prompt")
+	errExchange      = errors.New("unable retrieve token from web or prompt")
+	errStartWeb      = errors.New("unable to start web server")
+	errCacheToken    = errors.New("unable to cache token")
+	errReadSecret    = errors.New("unable to read client secret file")
+	errParseSecret   = errors.New("unable to parse client secret to config")
 )
 
 const missingClientSecretsMessage string = `
@@ -99,7 +101,7 @@ func getConfig(scope ...string) *oauth2.Config {
 
 func newClient(ctx context.Context, config *oauth2.Config, cacheToken string) *http.Client {
 	var token *oauth2.Token
-	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	authURL := config.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	token = getTokenFromWeb(config, authURL)
 	saveToken(cacheToken, token)
 
@@ -121,6 +123,13 @@ func startWebServer(redirectURL string) chan string {
 	go http.Serve(
 		listener, http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != "/" {
+					return
+				}
+				s := r.FormValue("state")
+				if s != state {
+					log.Fatalf("%v: %s != %s\n", errStateMismatch, s, state)
+				}
 				code := r.FormValue("code")
 				codeCh <- code
 				listener.Close()
