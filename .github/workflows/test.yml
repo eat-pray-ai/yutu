@@ -8,19 +8,18 @@ on:
       - 'pkg/**'
       - 'go.mod'
       - 'main.go'
-      - '.github/actions/test/*'
-    tags-ignore:
-      - 'v*'
+      - '.github/actions/test/**'
   pull_request:
     paths:
       - 'cmd/**'
       - 'pkg/**'
       - 'go.mod'
       - 'main.go'
-      - '.github/actions/test/*'
+      - '.github/actions/test/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    if: !startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: eat-pray-ai/yutu/.github/actions/test@main
