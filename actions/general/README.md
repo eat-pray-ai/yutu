@@ -41,7 +41,7 @@ Available Commands:
   membershipsLevel       list YouTube memberships levels
   playlist               manipulate YouTube playlists
   playlistItem           manipulate YouTube playlist items
-  search                 Search for youtube resources
+  search                 Search for Youtube resources
   subscription           manipulate YouTube subscriptions
   version                Show the version of yutu
   video                  manipulate YouTube videos

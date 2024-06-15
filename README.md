@@ -10,7 +10,8 @@
 ![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)
 ![GitHub Downloads](https://img.shields.io/github/downloads/eat-pray-ai/yutu/total?style=flat-square)
 ![GitHub Actions build Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/go-ossf-slsa3-publish.yml?style=flat-square&logo=githubactions)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
+![GitHub Actions CodeQL Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
+![GitHub Actions test Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/test.yml?style=flat-square&logo=githubactions&label=test)
 
 
 yutu is a fully functional CLI for YouTube.
@@ -50,6 +51,16 @@ To verify this credential, run the following command
 ```
 
 A browser window will open asking for your permission to access your YouTube account, after granting the permission, a token will be generated and saved to `youtube.token.json`.
+
+```json
+{
+  "access_token": "ya29.XXXXXXXXX",
+  "token_type":"Bearer",
+  "refresh_token":"1//XXXXXXXXXX",
+  "expiry":"2024-05-26T18:49:56.1911165+08:00"
+}
+
+```
 
 ## Installation
 
@@ -99,8 +110,10 @@ Usage:
 Available Commands:
   activity               list YouTube activities
   auth                   authenticate with YouTube API
+  caption                manipulate YouTube captions
   channel                manipulate YouTube channels
   channelBanner          insert Youtube channelBanner
+  channelSection         Manipulate channel section
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
   i18nLanguage           list YouTube i18nLanguages
@@ -109,8 +122,9 @@ Available Commands:
   membershipsLevel       list YouTube memberships levels
   playlist               manipulate YouTube playlists
   playlistItem           manipulate YouTube playlist items
-  search                 Search for youtube resources
+  search                 Search for Youtube resources
   subscription           manipulate YouTube subscriptions
+  thumbnail              Set thumbnail for a video
   version                Show the version of yutu
   video                  manipulate YouTube videos
   videoAbuseReportReason list YouTube video abuse report reasons
@@ -151,10 +165,10 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - activities
   - [x] list, 1
 - captions
-  - [ ] list, 50
-  - [ ] insert, 400
-  - [ ] update, 450
-  - [ ] delete, 50
+  - [x] list, 50
+  - [x] insert, 400
+  - [x] update, 450
+  - [x] delete, 50
 - channelBanners
   - [x] insert, 50
 - channelSections
