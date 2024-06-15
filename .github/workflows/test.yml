@@ -7,19 +7,19 @@ on:
       - 'pkg/**'
       - 'go.mod'
       - 'main.go'
+      - '.github/actions/test/*'
+    tags-ignore:
+      - '**'
   pull_request:
     paths:
       - 'cmd/**'
       - 'pkg/**'
       - 'go.mod'
       - 'main.go'
+      - '.github/actions/test/*'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: ./go.mod
-      - run: go test -v ./...
+      - uses: eat-pray-ai/yutu/.github/actions/test@main

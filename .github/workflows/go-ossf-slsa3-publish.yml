@@ -26,11 +26,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: './go.mod'
-      - run: go test -v ./...
+      - uses: eat-pray-ai/yutu/.github/actions/test@main
   # Generate ldflags dynamically.
   # Optional: only needed for ldflags.
   args:
@@ -84,22 +80,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        artifact:
-          - linux-amd64
-          - linux-arm64
-          - darwin-amd64
-          - darwin-arm64
-          - windows-amd64.exe
-          - windows-arm64.exe
+        os: [ linux, windows, darwin ]
+        arch: [ amd64, arm64 ]
+        include:
+          - suffix: ""
+          - os: windows
+            suffix: .exe
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: yutu-${{ matrix.artifact }}
+          name: yutu-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.suffix }}
       - name: Attest
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: '${{ github.workspace }}/yutu-${{ matrix.artifact }}'
+          subject-path: '${{ github.workspace }}/yutu-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.suffix }}'
 
   winget:
     needs: [build]
