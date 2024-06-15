@@ -7,8 +7,8 @@ import (
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "update channel's info",
-	Long:  "update channel's info, such as title, description, etc.",
+	Short: "Update channel's info",
+	Long:  "Update channel's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := channel.NewChannel(
 			channel.WithId(id),

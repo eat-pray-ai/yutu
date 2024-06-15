@@ -8,8 +8,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list playlist's info",
-	Long:  "list playlist's info, such as title, description, etc.",
+	Short: "List playlist's info",
+	Long:  "List playlist's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithId(id),

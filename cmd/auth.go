@@ -12,8 +12,8 @@ var (
 
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "authenticate with YouTube API",
-	Long:  "authenticate with YouTube API",
+	Short: "Authenticate with YouTube API",
+	Long:  "Authenticate with YouTube API",
 	Run: func(cmd *cobra.Command, args []string) {
 		auth.NewY2BService(
 			auth.WithCredential(credential),

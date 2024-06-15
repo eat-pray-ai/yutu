@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list subscriptions' info",
-	Long:  "list subscriptions' info, such as id, title, etc.",
+	Short: "List subscriptions' info",
+	Long:  "List subscriptions' info, such as id, title, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
 			subscription.WithId(id),

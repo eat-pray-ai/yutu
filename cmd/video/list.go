@@ -8,8 +8,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list video's info",
-	Long:  "list video's info, such as title, description, etc.",
+	Short: "List video's info",
+	Long:  "List video's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithId(id),

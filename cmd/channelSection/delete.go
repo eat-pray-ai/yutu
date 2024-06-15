@@ -7,8 +7,8 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete channel section",
-	Long:  "delete channel section",
+	Short: "Delete channel section",
+	Long:  "Delete channel section",
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
 			channelSection.WithId(id),

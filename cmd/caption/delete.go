@@ -7,8 +7,8 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete caption",
-	Long:  "delete caption of a video",
+	Short: "Delete caption",
+	Long:  "Delete caption of a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithId(id),

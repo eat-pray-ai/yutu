@@ -7,8 +7,8 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete a playlist",
-	Long:  "delete a playlist",
+	Short: "Delete a playlist",
+	Long:  "Delete a playlist",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithId(id),

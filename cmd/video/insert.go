@@ -8,8 +8,8 @@ import (
 
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "upload a video to YouTube",
-	Long:  "upload a video to YouTube, with the specified title, description, tags, etc.",
+	Short: "Upload a video to YouTube",
+	Long:  "Upload a video to YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithAutoLevels(autoLevels, true),

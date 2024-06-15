@@ -7,8 +7,8 @@ import (
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "update caption",
-	Long:  "update caption of a video",
+	Short: "Update caption",
+	Long:  "Update caption of a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithFile(file),

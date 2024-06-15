@@ -7,8 +7,8 @@ import (
 
 var unsetCmd = &cobra.Command{
 	Use:   "unset",
-	Short: "unset watermark for channel's video",
-	Long:  "unset watermark for channel's video",
+	Short: "Unset watermark for channel's video",
+	Long:  "Unset watermark for channel's video",
 	Run: func(cmd *cobra.Command, args []string) {
 		w := watermark.NewWatermark(watermark.WithChannelId(channelId))
 		w.Unset()

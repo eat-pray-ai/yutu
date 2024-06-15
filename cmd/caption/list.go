@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list captions",
-	Long:  "list captions of a video",
+	Short: "List captions",
+	Long:  "List captions of a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithId(id),

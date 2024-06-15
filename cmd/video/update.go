@@ -7,8 +7,8 @@ import (
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "update a video on YouTube",
-	Long:  "update a video on YouTube, with the specified title, description, tags, etc.",
+	Short: "Update a video on YouTube",
+	Long:  "Update a video on YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithId(id),

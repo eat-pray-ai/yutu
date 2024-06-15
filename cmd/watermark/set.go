@@ -7,8 +7,8 @@ import (
 
 var setCmd = &cobra.Command{
 	Use:   "set",
-	Short: "set watermark for channel's video",
-	Long:  "set watermark for channel's video",
+	Short: "Set watermark for channel's video",
+	Long:  "Set watermark for channel's video",
 	Run: func(cmd *cobra.Command, args []string) {
 		w := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),

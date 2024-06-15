@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list i18nLanguages",
-	Long:  "list i18nLanguages' id, hl, and name",
+	Short: "List i18nLanguages",
+	Long:  "List i18nLanguages' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
 		i := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithHl(hl), i18nLanguage.WithService(),

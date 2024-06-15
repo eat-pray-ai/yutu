@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list activities",
-	Long:  "list activities, such as likes, favorites, uploads, etc.",
+	Short: "List YouTube activities",
+	Long:  "List YouTube activities, such as likes, favorites, uploads, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		a := activity.NewActivity(
 			activity.WithChannelId(channelId),

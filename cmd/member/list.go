@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list channel's members",
-	Long:  "list channel's members' info, such as channelId, displayName, etc.",
+	Short: "List channel's members",
+	Long:  "List channel's members' info, such as channelId, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		m := member.NewMember(
 			member.WithMemberChannelId(memberChannelId),

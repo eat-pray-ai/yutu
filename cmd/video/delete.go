@@ -7,8 +7,8 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete a video on Youtube",
-	Long:  "delete a video on Youtube",
+	Short: "Delete a video on Youtube",
+	Long:  "Delete a video on Youtube",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(video.WithId(id))
 		v.Delete()

@@ -18,7 +18,7 @@ var (
 var channelSectionCmd = &cobra.Command{
 	Use:   "channelSection",
 	Short: "Manipulate channel section",
-	Long:  "list or delete channel section",
+	Long:  "List or delete channel section",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

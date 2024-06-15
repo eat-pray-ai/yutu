@@ -8,8 +8,8 @@ import (
 
 var rateCmd = &cobra.Command{
 	Use:   "rate",
-	Short: "rate a video on YouTube",
-	Long:  "rate a video on YouTube, with the specified rating",
+	Short: "Rate a video on YouTube",
+	Long:  "Rate a video on YouTube, with the specified rating",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithId(id),

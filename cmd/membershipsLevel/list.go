@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list memberships levels",
-	Long:  "list memberships levels' info, such as id, displayName, etc.",
+	Short: "List memberships levels",
+	Long:  "List memberships levels' info, such as id, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		m := membershipsLevel.NewMembershipsLevel(membershipsLevel.WithService())
 		m.List(parts, output)

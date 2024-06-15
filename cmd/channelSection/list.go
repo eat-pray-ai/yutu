@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list channel sections",
-	Long:  "list channel sections",
+	Short: "List channel sections",
+	Long:  "List channel sections",
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
 			channelSection.WithId(id),

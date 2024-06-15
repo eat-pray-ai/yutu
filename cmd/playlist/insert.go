@@ -7,8 +7,8 @@ import (
 
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "create a new playlist",
-	Long:  "create a new playlist, with the specified title, description, tags, etc.",
+	Short: "Create a new playlist",
+	Long:  "Create a new playlist, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithTitle(title),

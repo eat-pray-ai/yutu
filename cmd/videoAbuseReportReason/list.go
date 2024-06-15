@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list YouTube video abuse report reasons",
-	Long:  "list YouTube video abuse report reasons",
+	Short: "List YouTube video abuse report reasons",
+	Long:  "List YouTube video abuse report reasons",
 	Run: func(cmd *cobra.Command, args []string) {
 		va := videoAbuseReportReason.NewVideoAbuseReportReason(
 			videoAbuseReportReason.WithHL(hl),

@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list video categories",
-	Long:  "list video categories' info, such as ID, title, assignable, etc.",
+	Short: "List video categories",
+	Long:  "List video categories' info, such as ID, title, assignable, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		vc := videoCategory.NewVideoCategory(
 			videoCategory.WithId(id),

@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list i18nRegions",
-	Long:  "list i18nRegions' id, hl, and name",
+	Short: "List i18nRegions",
+	Long:  "List i18nRegions' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
 		i := i18nRegion.NewI18nRegion(
 			i18nRegion.WithHl(hl), i18nRegion.WithService(),

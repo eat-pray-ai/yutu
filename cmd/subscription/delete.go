@@ -7,8 +7,8 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete subscription",
-	Long:  "delete subscription",
+	Short: "Delete subscription",
+	Long:  "Delete subscription",
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
 			subscription.WithId(id), subscription.WithService(),

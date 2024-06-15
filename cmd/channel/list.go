@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list channel's info",
-	Long:  "list channel's info, such as title, description, etc.",
+	Short: "List channel's info",
+	Long:  "List channel's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := channel.NewChannel(
 			channel.WithCategoryId(categoryId),
