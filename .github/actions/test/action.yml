@@ -24,80 +24,80 @@ runs:
         chmod +x yutu
     - shell: bash
       run: |
-        yutu help
-        yutu completion
+        ./yutu help
+        ./yutu completion
         
-        yutu activity --help
-        yutu activity list --help
+        ./yutu activity --help
+        ./yutu activity list --help
         
-        yutu caption --help
-        yutu caption delete --help
-        yutu caption insert --help
-        yutu caption list --help
-        yutu caption update --help
+        ./yutu caption --help
+        ./yutu caption delete --help
+        ./yutu caption insert --help
+        ./yutu caption list --help
+        ./yutu caption update --help
         
-        yutu channel --help
-        yutu channel list --help
-        yutu channel update --help
+        ./yutu channel --help
+        ./yutu channel list --help
+        ./yutu channel update --help
         
-        yutu channelBanner --help
-        yutu channelBanner insert --help
+        ./yutu channelBanner --help
+        ./yutu channelBanner insert --help
         
-        yutu channelSection --help
-        yutu channelSection delete --help
-        yutu channelSection list --help
+        ./yutu channelSection --help
+        ./yutu channelSection delete --help
+        ./yutu channelSection list --help
         
-        yutu i18nLanguage --help
-        yutu i18nLanguage list --help
+        ./yutu i18nLanguage --help
+        ./yutu i18nLanguage list --help
         
-        yutu i18nRegion --help
-        yutu i18nRegion list --help
+        ./yutu i18nRegion --help
+        ./yutu i18nRegion list --help
         
-        yutu member --help
-        yutu member list --help
+        ./yutu member --help
+        ./yutu member list --help
         
-        yutu membershipsLevel --help
-        yutu membershipsLevel list --help
+        ./yutu membershipsLevel --help
+        ./yutu membershipsLevel list --help
         
-        yutu playlist --help
-        yutu playlist delete --help
-        yutu playlist insert --help
-        yutu playlist list --help
-        yutu playlist update --help
+        ./yutu playlist --help
+        ./yutu playlist delete --help
+        ./yutu playlist insert --help
+        ./yutu playlist list --help
+        ./yutu playlist update --help
         
-        yutu playlistItem --help
-        yutu playlistItem delete --help
-        yutu playlistItem insert --help
-        yutu playlistItem list --help
-        yutu playlistItem update --help
+        ./yutu playlistItem --help
+        ./yutu playlistItem delete --help
+        ./yutu playlistItem insert --help
+        ./yutu playlistItem list --help
+        ./yutu playlistItem update --help
         
-        yutu search --help
-        yutu search list --help
+        ./yutu search --help
+        ./yutu search list --help
         
-        yutu subscription --help
-        yutu subscription delete --help
-        yutu subscription insert --help
-        yutu subscription list --help
+        ./yutu subscription --help
+        ./yutu subscription delete --help
+        ./yutu subscription insert --help
+        ./yutu subscription list --help
         
-        yutu thumbnail --help
-        yutu thumbnail set --help
+        ./yutu thumbnail --help
+        ./yutu thumbnail set --help
         
-        yutu version --help
+        ./yutu version --help
         
-        yutu video --help
-        yutu video delete --help
-        yutu video getRating --help
-        yutu video insert --help
-        yutu video list --help
-        yutu video rate --help
-        yutu video update --help
+        ./yutu video --help
+        ./yutu video delete --help
+        ./yutu video getRating --help
+        ./yutu video insert --help
+        ./yutu video list --help
+        ./yutu video rate --help
+        ./yutu video update --help
         
-        yutu videoAbuseReportReason --help
-        yutu videoAbuseReportReason list --help
+        ./yutu videoAbuseReportReason --help
+        ./yutu videoAbuseReportReason list --help
         
-        yutu videoCategory --help
-        yutu videoCategory list --help
+        ./yutu videoCategory --help
+        ./yutu videoCategory list --help
         
-        yutu watermark --help
-        yutu watermark set --help
-        yutu watermark unset --help
+        ./yutu watermark --help
+        ./yutu watermark set --help
+        ./yutu watermark unset --help
