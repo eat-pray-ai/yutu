@@ -14,7 +14,7 @@ var rateCmd = &cobra.Command{
 		v := video.NewVideo(
 			video.WithId(id),
 			video.WithRating(rating),
-			video.WithService(),
+			video.WithService(nil),
 		)
 		v.Rate()
 	},

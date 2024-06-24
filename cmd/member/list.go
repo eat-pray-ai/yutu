@@ -15,7 +15,7 @@ var listCmd = &cobra.Command{
 			member.WithHasAccessToLevel(hasAccessToLevel),
 			member.WithMaxResults(maxResults),
 			member.WithMode(mode),
-			member.WithService(),
+			member.WithService(nil),
 		)
 		m.List(parts, output)
 	},

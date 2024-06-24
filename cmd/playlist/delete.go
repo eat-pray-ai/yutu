@@ -13,7 +13,7 @@ var deleteCmd = &cobra.Command{
 		p := playlist.NewPlaylist(
 			playlist.WithId(id),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlist.WithService(),
+			playlist.WithService(nil),
 		)
 		p.Delete()
 	},

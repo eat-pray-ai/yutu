@@ -24,7 +24,7 @@ var updateCmd = &cobra.Command{
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithVideoId(videoId),
-			caption.WithService(),
+			caption.WithService(nil),
 		)
 		c.Update()
 	},

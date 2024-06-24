@@ -32,7 +32,7 @@ var insertCmd = &cobra.Command{
 			video.WithPublicStatsViewable(publicStatsViewable),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			video.WithService(),
+			video.WithService(nil),
 		)
 		v.Insert()
 	},

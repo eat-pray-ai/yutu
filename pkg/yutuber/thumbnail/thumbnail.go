@@ -58,8 +58,12 @@ func WithFile(file string) Option {
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(t *thumbnail) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

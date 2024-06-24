@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 			playlist.WithMine(mine, true),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			playlist.WithService(),
+			playlist.WithService(nil),
 		)
 		p.List(parts, output)
 	},

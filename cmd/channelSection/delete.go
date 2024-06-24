@@ -13,6 +13,7 @@ var deleteCmd = &cobra.Command{
 		cs := channelSection.NewChannelSection(
 			channelSection.WithId(id),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			channelSection.WithService(nil),
 		)
 		cs.Delete()
 	},

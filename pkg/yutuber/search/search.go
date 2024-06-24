@@ -382,8 +382,12 @@ func WithVideoType(videoType string) Option {
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(s *search) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

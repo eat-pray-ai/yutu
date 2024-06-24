@@ -3,12 +3,12 @@ package video
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlistItem"
 	"github.com/eat-pray-ai/yutu/pkg/yutuber/thumbnail"
 	"log"
 	"os"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
@@ -190,7 +190,7 @@ func (v *video) Insert() {
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithVideoId(v.id),
 			thumbnail.WithFile(v.thumbnail),
-			thumbnail.WithService(),
+			thumbnail.WithService(service),
 		)
 		t.Set()
 	}
@@ -203,7 +203,7 @@ func (v *video) Insert() {
 			playlistItem.WithPlaylistId(v.playlistId),
 			playlistItem.WithChannelId(v.channelId),
 			playlistItem.WithPrivacy(v.privacy),
-			playlistItem.WithService(),
+			playlistItem.WithService(service),
 		)
 		pi.Insert()
 	}
@@ -252,7 +252,7 @@ func (v *video) Update() {
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithVideoId(v.id),
 			thumbnail.WithFile(v.thumbnail),
-			thumbnail.WithService(),
+			thumbnail.WithService(service),
 		)
 		t.Set()
 	}
@@ -265,7 +265,7 @@ func (v *video) Update() {
 			playlistItem.WithPlaylistId(v.playlistId),
 			playlistItem.WithChannelId(v.channelId),
 			playlistItem.WithPrivacy(v.privacy),
-			playlistItem.WithService(),
+			playlistItem.WithService(service),
 		)
 		pi.Insert()
 	}
@@ -487,8 +487,12 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(v *video) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

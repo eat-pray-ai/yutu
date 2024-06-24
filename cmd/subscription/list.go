@@ -21,7 +21,7 @@ var listCmd = &cobra.Command{
 			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			subscription.WithOrder(order),
-			subscription.WithService(),
+			subscription.WithService(nil),
 		)
 		s.List(parts, output)
 	},

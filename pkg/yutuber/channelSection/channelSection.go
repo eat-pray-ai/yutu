@@ -3,6 +3,7 @@ package channelSection
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -127,5 +128,15 @@ func WithMine(mine bool, changed bool) Option {
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(cs *channelSection) {
 		cs.onBehalfOfContentOwner = onBehalfOfContentOwner
+	}
+}
+
+func WithService(svc *youtube.Service) Option {
+	return func(cs *channelSection) {
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

@@ -82,8 +82,12 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(cb *channelBanner) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

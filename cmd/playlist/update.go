@@ -17,7 +17,7 @@ var updateCmd = &cobra.Command{
 			playlist.WithTags(tags),
 			playlist.WithLanguage(language),
 			playlist.WithPrivacy(privacy),
-			playlist.WithService(),
+			playlist.WithService(nil),
 		)
 		p.Update()
 	},

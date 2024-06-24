@@ -71,8 +71,12 @@ func WithHL(hl string) Option {
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(vc *videoAbuseReportReason) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

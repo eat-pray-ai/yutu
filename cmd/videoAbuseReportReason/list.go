@@ -12,7 +12,7 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		va := videoAbuseReportReason.NewVideoAbuseReportReason(
 			videoAbuseReportReason.WithHL(hl),
-			videoAbuseReportReason.WithService(),
+			videoAbuseReportReason.WithService(nil),
 		)
 		va.List(parts, output)
 	},

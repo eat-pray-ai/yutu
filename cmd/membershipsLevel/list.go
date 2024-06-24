@@ -10,7 +10,7 @@ var listCmd = &cobra.Command{
 	Short: "List memberships levels",
 	Long:  "List memberships levels' info, such as id, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		m := membershipsLevel.NewMembershipsLevel(membershipsLevel.WithService())
+		m := membershipsLevel.NewMembershipsLevel(membershipsLevel.WithService(nil))
 		m.List(parts, output)
 	},
 }

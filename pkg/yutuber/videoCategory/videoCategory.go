@@ -3,9 +3,9 @@ package videoCategory
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"log"
 
-	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
@@ -92,8 +92,12 @@ func WithRegionCode(regionCode string) Option {
 	}
 }
 
-func WithService() Option {
+func WithService(svc *youtube.Service) Option {
 	return func(vc *videoCategory) {
-		service = auth.NewY2BService()
+		if svc != nil {
+			service = svc
+		} else {
+			service = auth.NewY2BService()
+		}
 	}
 }

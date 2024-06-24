@@ -19,7 +19,7 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithKPlaylistId(kPlaylistId),
 			playlistItem.WithPlaylistId(playlistId),
 			playlistItem.WithPrivacy(privacy),
-			playlistItem.WithService(),
+			playlistItem.WithService(nil),
 		)
 		pi.Insert()
 	},

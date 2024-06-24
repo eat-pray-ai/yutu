@@ -14,7 +14,7 @@ var deleteCmd = &cobra.Command{
 			caption.WithId(id),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithService(),
+			caption.WithService(nil),
 		)
 		c.Delete()
 	},

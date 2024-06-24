@@ -17,7 +17,7 @@ var insertCmd = &cobra.Command{
 			playlist.WithLanguage(language),
 			playlist.WithChannelId(channelId),
 			playlist.WithPrivacy(privacy),
-			playlist.WithService(),
+			playlist.WithService(nil),
 		)
 		p.Insert()
 	},

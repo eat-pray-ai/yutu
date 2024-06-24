@@ -23,7 +23,7 @@ var listCmd = &cobra.Command{
 			video.WithMaxResults(maxResults),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithRating(rating),
-			video.WithService(),
+			video.WithService(nil),
 		)
 		v.List(parts, output)
 	},

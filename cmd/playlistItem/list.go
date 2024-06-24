@@ -16,7 +16,7 @@ var listCmd = &cobra.Command{
 			playlistItem.WithMaxResults(maxResults),
 			playlistItem.WithVideoId(videoId),
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithService(),
+			playlistItem.WithService(nil),
 		)
 		pi.List(parts, output)
 	},

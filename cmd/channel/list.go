@@ -21,7 +21,7 @@ var listCmd = &cobra.Command{
 			channel.WithMine(mine, true),
 			channel.WithMySubscribers(mySubscribers, true),
 			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channel.WithService(),
+			channel.WithService(nil),
 		)
 		c.List(parts, output)
 	},

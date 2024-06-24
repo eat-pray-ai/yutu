@@ -14,7 +14,7 @@ var listCmd = &cobra.Command{
 			videoCategory.WithId(id),
 			videoCategory.WithHl(hl),
 			videoCategory.WithRegionCode(regionCode),
-			videoCategory.WithService(),
+			videoCategory.WithService(nil),
 		)
 		vc.List(parts, output)
 	},

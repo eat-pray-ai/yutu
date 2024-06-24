@@ -22,7 +22,7 @@ var updateCmd = &cobra.Command{
 			video.WithCategory(categoryId),
 			video.WithPrivacy(privacy),
 			video.WithEmbeddable(embeddable),
-			video.WithService(),
+			video.WithService(nil),
 		)
 		v.Update()
 	},

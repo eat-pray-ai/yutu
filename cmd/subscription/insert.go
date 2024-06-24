@@ -15,7 +15,7 @@ var insertCmd = &cobra.Command{
 			subscription.WithDescription(description),
 			subscription.WithChannelId(channelId),
 			subscription.WithTitle(title),
-			subscription.WithService(),
+			subscription.WithService(nil),
 		)
 		s.Insert()
 	},

@@ -16,6 +16,7 @@ var listCmd = &cobra.Command{
 			channelSection.WithHl(hl),
 			channelSection.WithMine(mine, true),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			channelSection.WithService(nil),
 		)
 		cs.List(parts, output)
 	},

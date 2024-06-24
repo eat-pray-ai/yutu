@@ -13,7 +13,7 @@ var setCmd = &cobra.Command{
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),
 			thumbnail.WithVideoId(videoId),
-			thumbnail.WithService(),
+			thumbnail.WithService(nil),
 		)
 		t.Set()
 	},

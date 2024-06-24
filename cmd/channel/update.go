@@ -17,7 +17,7 @@ var updateCmd = &cobra.Command{
 			channel.WithDefaultLanguage(defaultLanguage),
 			channel.WithDescription(description),
 			channel.WithTitle(title),
-			channel.WithService(),
+			channel.WithService(nil),
 		)
 		c.Update()
 	},

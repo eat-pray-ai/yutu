@@ -18,7 +18,7 @@ var listCmd = &cobra.Command{
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
-			activity.WithService(),
+			activity.WithService(nil),
 		)
 		a.List(parts, output)
 	},

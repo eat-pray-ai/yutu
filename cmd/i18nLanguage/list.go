@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  "List i18nLanguages' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
 		i := i18nLanguage.NewI18nLanguage(
-			i18nLanguage.WithHl(hl), i18nLanguage.WithService(),
+			i18nLanguage.WithHl(hl), i18nLanguage.WithService(nil),
 		)
 		i.List(parts, output)
 	},

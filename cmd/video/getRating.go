@@ -14,7 +14,7 @@ var getRatingCmd = &cobra.Command{
 		v := video.NewVideo(
 			video.WithId(id),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithService(),
+			video.WithService(nil),
 		)
 		v.GetRating()
 	},

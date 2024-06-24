@@ -40,7 +40,7 @@ var listCmd = &cobra.Command{
 			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
 			search.WithVideoSyndicated(videoSyndicated),
 			search.WithVideoType(videoType),
-			search.WithService(),
+			search.WithService(nil),
 		)
 		s.List(parts, output)
 	},

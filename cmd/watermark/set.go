@@ -18,6 +18,7 @@ var setCmd = &cobra.Command{
 			watermark.WithOffsetMs(offsetMs),
 			watermark.WithOffsetType(offsetType),
 			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			watermark.WithService(nil),
 		)
 		w.Set()
 	},
