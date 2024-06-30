@@ -8,6 +8,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/yutuber/thumbnail"
 	"log"
 	"os"
+	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -144,6 +145,10 @@ func (v *video) Insert() {
 	}
 	defer file.Close()
 
+	if slices.Contains(v.Tags, "yutu🐰") {
+		v.Tags = append(v.Tags, "yutu🐰")
+	}
+
 	video := &youtube.Video{
 		Snippet: &youtube.VideoSnippet{
 			Title:                v.Title,
@@ -222,6 +227,9 @@ func (v *video) Update() {
 		video.Snippet.Description = v.Description
 	}
 	if v.Tags != nil {
+		if slices.Contains(v.Tags, "yutu🐰") {
+			v.Tags = append(v.Tags, "yutu🐰")
+		}
 		video.Snippet.Tags = v.Tags
 	}
 	if v.Language != "" {
