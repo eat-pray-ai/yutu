@@ -161,10 +161,16 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] insert, 50
   - [x] update, 50
   - [x] delete, 50
+- playlistImages
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] upload, ?
+  - [ ] delete, ?
 - activities
   - [x] list, 1
 - captions
   - [x] list, 50
+  - [x] download, ?
   - [x] insert, 400
   - [x] update, 450
   - [x] delete, 50
@@ -191,6 +197,31 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] list, 1
 - i18nRegions
   - [x] list, 1
+- liveBroadcasts
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] insertCuepoint, ?
+  - [ ] update, ?
+  - [ ] bind, ?
+  - [ ] transition, ?
+  - [ ] delete, ?
+- liveChatBans
+  - [ ] insert, ?
+  - [ ] delete, ?
+- liveChatMessages
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] delete, ?
+  - [ ] transition, ?
+- liveChatModerators
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] delete, ?
+- liveStreams
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] update, ?
+  - [ ] delete, ?
 - members
   - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
 - membershipsLevels
@@ -201,6 +232,15 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] list, 1
   - [x] insert, 50
   - [x] delete, 50
+- superChatEvents
+  - [ ] list, ?
+- tests
+  - [ ] insert, ?
+- thirdPartyLinks
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] update, ?
+  - [ ] delete, ?
 - thumbnails
   - [x] set, 50
 - videoAbuseReportReasons
