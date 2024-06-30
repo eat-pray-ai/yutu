@@ -3,14 +3,17 @@ description: Upload a video to YouTube
 
 inputs:
   version:
-    description: 'The version of the yutu binary to download'
+    description: 'Version of the yutu binary to download'
     required: false
     default: ''
+  credential:
+    description: 'Credential to authenticate with the YouTube API'
+    required: true
   token:
-    description: 'The token to authenticate with the YouTube API'
+    description: 'Token to authenticate with the YouTube API'
     required: true
   flags:
-    description: 'The flags to pass to the command'
+    description: 'Flags passed to the command/subcommand'
     required: true
 
 runs:
@@ -19,6 +22,7 @@ runs:
     - uses: eat-pray-ai/yutu/actions/general@main
       with:
         version: ${{ inputs.version }}
+        credential: ${{ inputs.credential }}
         token: ${{ inputs.token }}
         command: video
         subcommand: insert

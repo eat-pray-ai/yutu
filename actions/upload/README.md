@@ -29,6 +29,10 @@ jobs:
 
 **Optional**, The version of yutu to use, `v0.8.2` for example, leave empty to use the latest version.
 
+### `credential`
+
+**Required**, Please refer to [yutu prerequisites](https://github.com/eat-pray-ai/yutu?tab=readme-ov-file#prerequisites) to get a credential.
+
 ### `token`
 
 **Required**, Please refer to [yutu prerequisites](https://github.com/eat-pray-ai/yutu?tab=readme-ov-file#prerequisites) to generate a token.
