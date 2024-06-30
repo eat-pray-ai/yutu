@@ -42,6 +42,8 @@ runs:
         ./yutu caption list --help
         echo "------- update -------"
         ./yutu caption update --help
+        echo "------- download -------"
+        ./yutu caption download --help
         
         echo "======= channel ======="
         ./yutu channel --help

@@ -99,12 +99,12 @@ jobs:
     runs-on: windows-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: vedantmgoyal2009/winget-releaser@v2
+      - uses: vedantmgoyal9/winget-releaser@main
         with:
           identifier: eat-pray-ai.yutu
           installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.RELEASE_PAT }}
-          max-versions-to-keep: 3
+          max-versions-to-keep: 1
 
   homebrew:
     needs: [build]
