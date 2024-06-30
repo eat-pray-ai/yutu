@@ -6,17 +6,19 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
+	"io"
 	"log"
 	"os"
 )
 
 var (
-	service          *youtube.Service
-	errOpenFile      = errors.New("failed to open file")
-	errGetCaption    = errors.New("failed to get caption")
-	errUpdateCaption = errors.New("failed to update caption")
-	errDeleteCaption = errors.New("failed to delete caption")
-	errInsertCaption = errors.New("failed to insert caption")
+	service            *youtube.Service
+	errOpenFile        = errors.New("failed to open file")
+	errGetCaption      = errors.New("failed to get caption")
+	errUpdateCaption   = errors.New("failed to update caption")
+	errDeleteCaption   = errors.New("failed to delete caption")
+	errInsertCaption   = errors.New("failed to insert caption")
+	errDownloadCaption = errors.New("failed to download caption")
 )
 
 type caption struct {
@@ -34,6 +36,8 @@ type caption struct {
 	onBehalfOf             string
 	onBehalfOfContentOwner string
 	videoId                string
+	tfmt                   string
+	tlang                  string
 }
 
 type Caption interface {
@@ -42,6 +46,7 @@ type Caption interface {
 	Insert()
 	Update()
 	Delete()
+	Download()
 }
 
 type Option func(*caption)
@@ -200,6 +205,42 @@ func (c *caption) Delete() {
 	fmt.Printf("Caption %s deleted\n", c.id)
 }
 
+func (c *caption) Download() {
+	call := service.Captions.Download(c.id)
+	if c.tfmt != "" {
+		call = call.Tfmt(c.tfmt)
+	}
+	if c.tlang != "" {
+		call = call.Tlang(c.tlang)
+	}
+	if c.onBehalfOf != "" {
+		call = call.OnBehalfOf(c.onBehalfOf)
+	}
+	if c.onBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	}
+
+	res, err := call.Download()
+	if err != nil {
+		log.Fatalln(errors.Join(errDownloadCaption, err))
+	}
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		log.Fatalln(errors.Join(errDownloadCaption, err))
+	}
+
+	file, err := os.Create(c.file)
+	if err != nil {
+		log.Fatalln(errors.Join(errDownloadCaption, err))
+	}
+	defer file.Close()
+	_, err = file.Write(body)
+	if err != nil {
+		log.Fatalln(errors.Join(errDownloadCaption, err))
+	}
+}
+
 func WithId(id string) Option {
 	return func(c *caption) {
 		c.id = id
@@ -291,6 +332,18 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 func WithVideoId(videoId string) Option {
 	return func(c *caption) {
 		c.videoId = videoId
+	}
+}
+
+func WithTfmt(tfmt string) Option {
+	return func(c *caption) {
+		c.tfmt = tfmt
+	}
+}
+
+func WithTlang(tlang string) Option {
+	return func(c *caption) {
+		c.tlang = tlang
 	}
 }
 

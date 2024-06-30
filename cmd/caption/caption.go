@@ -22,6 +22,8 @@ var (
 	videoId                string
 	parts                  []string
 	output                 string
+	tfmt                   string
+	tlang                  string
 )
 
 var captionCmd = &cobra.Command{
