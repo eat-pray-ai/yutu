@@ -12,7 +12,7 @@ var rateCmd = &cobra.Command{
 	Long:  "Rate a video on YouTube, with the specified rating",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithId(id),
+			video.WithID(id),
 			video.WithRating(rating),
 			video.WithService(nil),
 		)

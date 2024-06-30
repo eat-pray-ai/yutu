@@ -19,19 +19,19 @@ var (
 )
 
 type playlist struct {
-	id          string
-	title       string
-	description string
-	hl          string
-	maxResults  int64
-	mine        *bool
-	tags        []string
-	language    string
-	channelId   string
-	privacy     string
+	ID          string   `yaml:"id" json:"id"`
+	Title       string   `yaml:"title" json:"title"`
+	Description string   `yaml:"description" json:"description"`
+	Hl          string   `yaml:"hl" json:"hl"`
+	MaxResults  int64    `yaml:"max_results" json:"max_results"`
+	Mine        *bool    `yaml:"mine" json:"mine"`
+	Tags        []string `yaml:"tags" json:"tags"`
+	Language    string   `yaml:"language" json:"language"`
+	ChannelId   string   `yaml:"channel_id" json:"channel_id"`
+	Privacy     string   `yaml:"privacy" json:"privacy"`
 
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
 
 type Playlist interface {
@@ -57,27 +57,28 @@ func NewPlaylist(opts ...Option) Playlist {
 func (p *playlist) get(parts []string) []*youtube.Playlist {
 	call := service.Playlists.List(parts)
 
-	if p.id != "" {
-		call = call.Id(p.id)
+	if p.ID != "" {
+		call = call.Id(p.ID)
 	}
-	if p.hl != "" {
-		call = call.Hl(p.hl)
+	if p.Hl != "" {
+		call = call.Hl(p.Hl)
 	}
-	if p.mine != nil {
-		call = call.Mine(*p.mine)
+	if p.Mine != nil {
+		call = call.Mine(*p.Mine)
 	}
 
-	call = call.MaxResults(p.maxResults)
-	if p.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.onBehalfOfContentOwner)
+	call = call.MaxResults(p.MaxResults)
+	if p.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
 	}
-	if p.onBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(p.onBehalfOfContentOwnerChannel)
+	if p.OnBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
 	}
 
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errGetPlaylist, err), p.id)
+		utils.PrintJSON(p)
+		log.Fatalln(errors.Join(errGetPlaylist, err), p.ID)
 	}
 
 	return res.Items
@@ -101,20 +102,21 @@ func (p *playlist) List(parts []string, output string) {
 func (p *playlist) Insert() {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
-			Title:           p.title,
-			Description:     p.description,
-			Tags:            p.tags,
-			DefaultLanguage: p.language,
-			ChannelId:       p.channelId,
+			Title:           p.Title,
+			Description:     p.Description,
+			Tags:            p.Tags,
+			DefaultLanguage: p.Language,
+			ChannelId:       p.ChannelId,
 		},
 		Status: &youtube.PlaylistStatus{
-			PrivacyStatus: p.privacy,
+			PrivacyStatus: p.Privacy,
 		},
 	}
 
 	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
 	playlist, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(p)
 		log.Fatalln(errors.Join(errInsertPlaylist, err))
 	}
 
@@ -123,26 +125,27 @@ func (p *playlist) Insert() {
 
 func (p *playlist) Update() {
 	playlist := p.get([]string{"id", "snippet", "status"})[0]
-	if p.title != "" {
-		playlist.Snippet.Title = p.title
+	if p.Title != "" {
+		playlist.Snippet.Title = p.Title
 	}
-	if p.description != "" {
-		playlist.Snippet.Description = p.description
+	if p.Description != "" {
+		playlist.Snippet.Description = p.Description
 	}
-	if p.tags != nil {
-		playlist.Snippet.Tags = p.tags
+	if p.Tags != nil {
+		playlist.Snippet.Tags = p.Tags
 	}
-	if p.language != "" {
-		playlist.Snippet.DefaultLanguage = p.language
+	if p.Language != "" {
+		playlist.Snippet.DefaultLanguage = p.Language
 	}
-	if p.privacy != "" {
-		playlist.Status.PrivacyStatus = p.privacy
+	if p.Privacy != "" {
+		playlist.Status.PrivacyStatus = p.Privacy
 	}
 
 	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.id)
+		utils.PrintJSON(p)
+		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.ID)
 	}
 
 	fmt.Println("Playlist updated:")
@@ -150,89 +153,90 @@ func (p *playlist) Update() {
 }
 
 func (p *playlist) Delete() {
-	call := service.Playlists.Delete(p.id)
-	if p.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.onBehalfOfContentOwner)
+	call := service.Playlists.Delete(p.ID)
+	if p.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
 	}
 
 	err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errDeletePlaylist, err), p.id)
+		utils.PrintJSON(p)
+		log.Fatalln(errors.Join(errDeletePlaylist, err), p.ID)
 	}
-	fmt.Printf("Playlist %s deleted", p.id)
+	fmt.Printf("Playlist %s deleted", p.ID)
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(p *playlist) {
-		p.id = id
+		p.ID = id
 	}
 }
 
 func WithTitle(title string) Option {
 	return func(p *playlist) {
-		p.title = title
+		p.Title = title
 	}
 }
 
 func WithDescription(description string) Option {
 	return func(p *playlist) {
-		p.description = description
+		p.Description = description
 	}
 }
 
 func WithTags(tags []string) Option {
 	return func(p *playlist) {
-		p.tags = tags
+		p.Tags = tags
 	}
 }
 
 func WithLanguage(language string) Option {
 	return func(p *playlist) {
-		p.language = language
+		p.Language = language
 	}
 }
 
 func WithChannelId(channelId string) Option {
 	return func(p *playlist) {
-		p.channelId = channelId
+		p.ChannelId = channelId
 	}
 }
 
 func WithPrivacy(privacy string) Option {
 	return func(p *playlist) {
-		p.privacy = privacy
+		p.Privacy = privacy
 	}
 }
 
 func WithHl(hl string) Option {
 	return func(p *playlist) {
-		p.hl = hl
+		p.Hl = hl
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(p *playlist) {
-		p.maxResults = maxResults
+		p.MaxResults = maxResults
 	}
 }
 
 func WithMine(mine bool, changed bool) Option {
 	return func(p *playlist) {
 		if changed {
-			p.mine = &mine
+			p.Mine = &mine
 		}
 	}
 }
 
 func WithOnBehalfOfContentOwner(contentOwner string) Option {
 	return func(p *playlist) {
-		p.onBehalfOfContentOwner = contentOwner
+		p.OnBehalfOfContentOwner = contentOwner
 	}
 }
 
 func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 	return func(p *playlist) {
-		p.onBehalfOfContentOwnerChannel = channel
+		p.OnBehalfOfContentOwnerChannel = channel
 	}
 }
 

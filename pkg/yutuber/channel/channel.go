@@ -18,22 +18,22 @@ var (
 )
 
 type channel struct {
-	categoryId             string
-	forHandle              string
-	forUsername            string
-	hl                     string
-	id                     string
-	managedByMe            *bool
-	maxResults             int64
-	mine                   *bool
-	mySubscribers          *bool
-	onBehalfOfContentOwner string
+	CategoryId             string `yaml:"category_id" json:"category_id"`
+	ForHandle              string `yaml:"for_handle" json:"for_handle"`
+	ForUsername            string `yaml:"for_username" json:"for_username"`
+	Hl                     string `yaml:"hl" json:"hl"`
+	ID                     string `yaml:"id" json:"id"`
+	ManagedByMe            *bool  `yaml:"managed_by_me" json:"managed_by_me"`
+	MaxResults             int64  `yaml:"max_results" json:"max_results"`
+	Mine                   *bool  `yaml:"mine" json:"mine"`
+	MySubscribers          *bool  `yaml:"my_subscribers" json:"my_subscribers"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 
-	country         string
-	customUrl       string
-	defaultLanguage string
-	description     string
-	title           string
+	Country         string `yaml:"country" json:"country"`
+	CustomUrl       string `yaml:"custom_url" json:"custom_url"`
+	DefaultLanguage string `yaml:"default_language" json:"default_language"`
+	Description     string `yaml:"description" json:"description"`
+	Title           string `yaml:"title" json:"title"`
 }
 
 type Channel interface {
@@ -56,47 +56,48 @@ func NewChannel(opts ...Option) Channel {
 
 func (c *channel) get(parts []string) []*youtube.Channel {
 	call := service.Channels.List(parts)
-	if c.categoryId != "" {
-		call = call.CategoryId(c.categoryId)
+	if c.CategoryId != "" {
+		call = call.CategoryId(c.CategoryId)
 	}
 
-	if c.forHandle != "" {
-		call = call.ForUsername(c.forHandle)
+	if c.ForHandle != "" {
+		call = call.ForUsername(c.ForHandle)
 	}
 
-	if c.forUsername != "" {
-		call = call.ForUsername(c.forUsername)
+	if c.ForUsername != "" {
+		call = call.ForUsername(c.ForUsername)
 	}
 
-	if c.hl != "" {
-		call = call.Hl(c.hl)
+	if c.Hl != "" {
+		call = call.Hl(c.Hl)
 	}
 
-	if c.id != "" {
-		call = call.Id(c.id)
+	if c.ID != "" {
+		call = call.Id(c.ID)
 	}
 
-	if c.managedByMe != nil {
-		call = call.ManagedByMe(*c.managedByMe)
+	if c.ManagedByMe != nil {
+		call = call.ManagedByMe(*c.ManagedByMe)
 	}
 
-	call = call.MaxResults(c.maxResults)
+	call = call.MaxResults(c.MaxResults)
 
-	if c.mine != nil {
-		call = call.Mine(*c.mine)
+	if c.Mine != nil {
+		call = call.Mine(*c.Mine)
 	}
 
-	if c.mySubscribers != nil {
-		call = call.MySubscribers(*c.mySubscribers)
+	if c.MySubscribers != nil {
+		call = call.MySubscribers(*c.MySubscribers)
 	}
 
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errGetChannel, err), c.id)
+		utils.PrintJSON(c)
+		log.Fatalln(errors.Join(errGetChannel, err), c.ID)
 	}
 
 	return res.Items
@@ -120,17 +121,18 @@ func (c *channel) List(parts []string, output string) {
 func (c *channel) Update() {
 	parts := []string{"snippet"}
 	channel := c.get(parts)[0]
-	if c.title != "" {
-		channel.Snippet.Title = c.title
+	if c.Title != "" {
+		channel.Snippet.Title = c.Title
 	}
-	if c.description != "" {
-		channel.Snippet.Description = c.description
+	if c.Description != "" {
+		channel.Snippet.Description = c.Description
 	}
 
 	call := service.Channels.Update(parts, channel)
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errUpdateChannel, err), c.id)
+		utils.PrintJSON(c)
+		log.Fatalln(errors.Join(errUpdateChannel, err), c.ID)
 	}
 	fmt.Println("Channel updated:")
 	utils.PrintYAML(res)
@@ -138,52 +140,52 @@ func (c *channel) Update() {
 
 func WithCategoryId(categoryId string) Option {
 	return func(c *channel) {
-		c.categoryId = categoryId
+		c.CategoryId = categoryId
 	}
 }
 
 func WithForHandle(handle string) Option {
 	return func(c *channel) {
-		c.forHandle = handle
+		c.ForHandle = handle
 	}
 }
 
 func WithForUsername(username string) Option {
 	return func(c *channel) {
-		c.forUsername = username
+		c.ForUsername = username
 	}
 }
 
 func WithHl(hl string) Option {
 	return func(c *channel) {
-		c.hl = hl
+		c.Hl = hl
 	}
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(c *channel) {
-		c.id = id
+		c.ID = id
 	}
 }
 
 func WithChannelManagedByMe(managedByMe bool, changed bool) Option {
 	return func(c *channel) {
 		if changed {
-			c.managedByMe = &managedByMe
+			c.ManagedByMe = &managedByMe
 		}
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(c *channel) {
-		c.maxResults = maxResults
+		c.MaxResults = maxResults
 	}
 }
 
 func WithMine(mine bool, changed bool) Option {
 	return func(c *channel) {
 		if changed {
-			c.mine = &mine
+			c.Mine = &mine
 		}
 	}
 }
@@ -191,44 +193,44 @@ func WithMine(mine bool, changed bool) Option {
 func WithMySubscribers(mySubscribers bool, changed bool) Option {
 	return func(c *channel) {
 		if changed {
-			c.mySubscribers = &mySubscribers
+			c.MySubscribers = &mySubscribers
 		}
 	}
 }
 
 func WithOnBehalfOfContentOwner(contentOwner string) Option {
 	return func(c *channel) {
-		c.onBehalfOfContentOwner = contentOwner
+		c.OnBehalfOfContentOwner = contentOwner
 	}
 }
 
 func WithCountry(country string) Option {
 	return func(c *channel) {
-		c.country = country
+		c.Country = country
 	}
 }
 
 func WithCustomUrl(url string) Option {
 	return func(c *channel) {
-		c.customUrl = url
+		c.CustomUrl = url
 	}
 }
 
 func WithDefaultLanguage(language string) Option {
 	return func(c *channel) {
-		c.defaultLanguage = language
+		c.DefaultLanguage = language
 	}
 }
 
 func WithDescription(desc string) Option {
 	return func(c *channel) {
-		c.description = desc
+		c.Description = desc
 	}
 }
 
 func WithTitle(title string) Option {
 	return func(c *channel) {
-		c.title = title
+		c.Title = title
 	}
 }
 

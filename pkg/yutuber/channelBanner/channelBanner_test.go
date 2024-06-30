@@ -24,9 +24,9 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &channelBanner{
-				file:                          "file",
-				onBehalfOfContentOwner:        "contentOwner",
-				onBehalfOfContentOwnerChannel: "contentOwnerChannel",
+				File:                          "file",
+				OnBehalfOfContentOwner:        "contentOwner",
+				OnBehalfOfContentOwnerChannel: "contentOwnerChannel",
 			},
 		},
 	}

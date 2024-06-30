@@ -16,13 +16,13 @@ var (
 )
 
 type activity struct {
-	channelId       string
-	home            *bool
-	maxResults      int64
-	mine            *bool
-	publishedAfter  string
-	publishedBefore string
-	regionCode      string
+	ChannelId       string `yaml:"channel_id" json:"channel_id"`
+	Home            *bool  `yaml:"home" json:"home"`
+	MaxResults      int64  `yaml:"max_results" json:"max_results"`
+	Mine            *bool  `yaml:"mine" json:"mine"`
+	PublishedAfter  string `yaml:"published_after" json:"published_after"`
+	PublishedBefore string `yaml:"published_before" json:"published_before"`
+	RegionCode      string `yaml:"region_code" json:"region_code"`
 }
 
 type Activity interface {
@@ -44,34 +44,35 @@ func NewActivity(opts ...Option) Activity {
 
 func (a *activity) get(parts []string) []*youtube.Activity {
 	call := service.Activities.List(parts)
-	if a.channelId != "" {
-		call = call.ChannelId(a.channelId)
+	if a.ChannelId != "" {
+		call = call.ChannelId(a.ChannelId)
 	}
 
-	if a.home != nil {
-		call = call.Home(*a.home)
+	if a.Home != nil {
+		call = call.Home(*a.Home)
 	}
 
-	if a.mine != nil {
-		call = call.Mine(*a.mine)
+	if a.Mine != nil {
+		call = call.Mine(*a.Mine)
 	}
 
-	call.MaxResults(a.maxResults)
+	call.MaxResults(a.MaxResults)
 
-	if a.publishedAfter != "" {
-		call.PublishedAfter(a.publishedAfter)
+	if a.PublishedAfter != "" {
+		call.PublishedAfter(a.PublishedAfter)
 	}
 
-	if a.publishedBefore != "" {
-		call.PublishedBefore(a.publishedBefore)
+	if a.PublishedBefore != "" {
+		call.PublishedBefore(a.PublishedBefore)
 	}
 
-	if a.regionCode != "" {
-		call.RegionCode(a.regionCode)
+	if a.RegionCode != "" {
+		call.RegionCode(a.RegionCode)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(a)
 		log.Fatalln(errors.Join(errGetActivity, err))
 	}
 
@@ -95,47 +96,47 @@ func (a *activity) List(parts []string, output string) {
 
 func WithChannelId(channelId string) Option {
 	return func(a *activity) {
-		a.channelId = channelId
+		a.ChannelId = channelId
 	}
 }
 
 func WithHome(home bool, changed bool) Option {
 	return func(a *activity) {
 		if changed {
-			a.home = &home
+			a.Home = &home
 		}
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(a *activity) {
-		a.maxResults = maxResults
+		a.MaxResults = maxResults
 	}
 }
 
 func WithMine(mine bool, changed bool) Option {
 	return func(a *activity) {
 		if changed {
-			a.mine = &mine
+			a.Mine = &mine
 		}
 	}
 }
 
 func WithPublishedAfter(publishedAfter string) Option {
 	return func(a *activity) {
-		a.publishedAfter = publishedAfter
+		a.PublishedAfter = publishedAfter
 	}
 }
 
 func WithPublishedBefore(publishedBefore string) Option {
 	return func(a *activity) {
-		a.publishedBefore = publishedBefore
+		a.PublishedBefore = publishedBefore
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
 	return func(a *activity) {
-		a.regionCode = regionCode
+		a.RegionCode = regionCode
 	}
 }
 

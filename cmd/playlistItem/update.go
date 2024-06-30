@@ -11,7 +11,7 @@ var updateCmd = &cobra.Command{
 	Long:  "Update playlist item's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithId(id),
+			playlistItem.WithID(id),
 			playlistItem.WithTitle(title),
 			playlistItem.WithDescription(description),
 			playlistItem.WithPrivacy(privacy),

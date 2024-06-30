@@ -11,7 +11,7 @@ var updateCmd = &cobra.Command{
 	Long:  "Update channel's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := channel.NewChannel(
-			channel.WithId(id),
+			channel.WithID(id),
 			channel.WithCountry(country),
 			channel.WithCustomUrl(customUrl),
 			channel.WithDefaultLanguage(defaultLanguage),

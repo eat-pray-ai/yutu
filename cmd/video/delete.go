@@ -10,7 +10,7 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a video on Youtube",
 	Long:  "Delete a video on Youtube",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(video.WithId(id))
+		v := video.NewVideo(video.WithID(id))
 		v.Delete()
 	},
 }

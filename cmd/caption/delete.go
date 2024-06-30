@@ -11,7 +11,7 @@ var deleteCmd = &cobra.Command{
 	Long:  "Delete caption of a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
-			caption.WithId(id),
+			caption.WithID(id),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithService(nil),

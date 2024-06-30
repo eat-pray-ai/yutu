@@ -11,7 +11,7 @@ var deleteCmd = &cobra.Command{
 	Long:  "Delete channel section",
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
-			channelSection.WithId(id),
+			channelSection.WithID(id),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelSection.WithService(nil),
 		)

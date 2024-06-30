@@ -11,7 +11,7 @@ var updateCmd = &cobra.Command{
 	Long:  "Update an existing playlist, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
-			playlist.WithId(id),
+			playlist.WithID(id),
 			playlist.WithTitle(title),
 			playlist.WithDescription(description),
 			playlist.WithTags(tags),

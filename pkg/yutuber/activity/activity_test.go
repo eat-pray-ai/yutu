@@ -18,7 +18,7 @@ func TestNewActivity(t *testing.T) {
 			name: "TestNewActivity",
 			args: args{
 				opts: []Option{
-					WithChannelId("channelId"),
+					WithChannelId("ChannelId"),
 					WithHome(true, true),
 					WithMaxResults(10),
 					WithMine(true, true),
@@ -28,13 +28,13 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &activity{
-				channelId:       "channelId",
-				home:            &[]bool{true}[0],
-				maxResults:      10,
-				mine:            &[]bool{true}[0],
-				publishedAfter:  "2021-01-01T00:00:00Z",
-				publishedBefore: "2021-01-31T00:00:00Z",
-				regionCode:      "US",
+				ChannelId:       "ChannelId",
+				Home:            &[]bool{true}[0],
+				MaxResults:      10,
+				Mine:            &[]bool{true}[0],
+				PublishedAfter:  "2021-01-01T00:00:00Z",
+				PublishedBefore: "2021-01-31T00:00:00Z",
+				RegionCode:      "US",
 			},
 		},
 		{
@@ -45,7 +45,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &activity{
-				home: &[]bool{false}[0],
+				Home: &[]bool{false}[0],
 			},
 		},
 		{
@@ -56,7 +56,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &activity{
-				maxResults: 5,
+				MaxResults: 5,
 			},
 		},
 	}

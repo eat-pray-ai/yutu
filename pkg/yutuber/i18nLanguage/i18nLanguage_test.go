@@ -22,7 +22,7 @@ func TestNewI18nLanguage(t *testing.T) {
 				},
 			},
 			want: &i18nLanguage{
-				hl: "hl",
+				Hl: "hl",
 			},
 		},
 	}

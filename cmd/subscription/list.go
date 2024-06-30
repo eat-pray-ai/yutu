@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  "List subscriptions' info, such as id, title, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
-			subscription.WithId(id),
+			subscription.WithID(id),
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),

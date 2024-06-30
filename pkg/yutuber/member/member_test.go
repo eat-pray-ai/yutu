@@ -25,10 +25,10 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &member{
-				memberChannelId:  "memberChannelId",
-				hasAccessToLevel: "hasAccessToLevel",
-				maxResults:       5,
-				mode:             "all_current",
+				MemberChannelId:  "memberChannelId",
+				HasAccessToLevel: "hasAccessToLevel",
+				MaxResults:       5,
+				Mode:             "all_current",
 			},
 		},
 		{
@@ -41,9 +41,9 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &member{
-				memberChannelId: "memberChannelId",
-				maxResults:      5,
-				mode:            "updates",
+				MemberChannelId: "memberChannelId",
+				MaxResults:      5,
+				Mode:            "updates",
 			},
 		},
 	}

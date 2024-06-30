@@ -18,15 +18,15 @@ func TestNewVideoCategory(t *testing.T) {
 			name: "TestNewVideoCategory",
 			args: args{
 				opt: []Option{
-					WithId("id"),
+					WithID("id"),
 					WithHl("hl"),
 					WithRegionCode("regionCode"),
 				},
 			},
 			want: &videoCategory{
-				id:         "id",
-				hl:         "hl",
-				regionCode: "regionCode",
+				ID:         "id",
+				Hl:         "hl",
+				RegionCode: "regionCode",
 			},
 		},
 	}

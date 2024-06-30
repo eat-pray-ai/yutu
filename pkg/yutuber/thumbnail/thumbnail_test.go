@@ -23,8 +23,8 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &thumbnail{
-				file:    "file",
-				videoId: "videoId",
+				File:    "file",
+				VideoId: "videoId",
 			},
 		},
 	}

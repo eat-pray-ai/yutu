@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  "List captions of a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
-			caption.WithId(id),
+			caption.WithID(id),
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),

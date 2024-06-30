@@ -16,10 +16,10 @@ var (
 )
 
 type channelBanner struct {
-	file string
+	File string `yaml:"file" json:"file"`
 
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
 
 type ChannelBanner interface {
@@ -39,23 +39,25 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 }
 
 func (cb *channelBanner) Insert() {
-	file, err := os.Open(cb.file)
+	file, err := os.Open(cb.File)
 	if err != nil {
-		log.Fatalln(errors.Join(errInsertChannelBanner, err), cb.file)
+		utils.PrintJSON(cb)
+		log.Fatalln(errors.Join(errInsertChannelBanner, err), cb.File)
 	}
 	defer file.Close()
 	cbr := &youtube.ChannelBannerResource{}
 
 	call := service.ChannelBanners.Insert(cbr).Media(file)
-	if cb.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cb.onBehalfOfContentOwner)
+	if cb.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(cb.OnBehalfOfContentOwner)
 	}
-	if cb.onBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(cb.onBehalfOfContentOwnerChannel)
+	if cb.OnBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(cb.OnBehalfOfContentOwnerChannel)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(cb)
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 
@@ -65,19 +67,19 @@ func (cb *channelBanner) Insert() {
 
 func WithFile(file string) Option {
 	return func(cb *channelBanner) {
-		cb.file = file
+		cb.File = file
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(cb *channelBanner) {
-		cb.onBehalfOfContentOwner = onBehalfOfContentOwner
+		cb.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(cb *channelBanner) {
-		cb.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		cb.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}
 }
 

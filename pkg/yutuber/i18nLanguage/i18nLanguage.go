@@ -15,7 +15,7 @@ var (
 )
 
 type i18nLanguage struct {
-	hl string
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type I18nLanguage interface {
@@ -37,12 +37,13 @@ func NewI18nLanguage(opts ...Option) I18nLanguage {
 
 func (i *i18nLanguage) get(parts []string) []*youtube.I18nLanguage {
 	call := service.I18nLanguages.List(parts)
-	if i.hl != "" {
-		call = call.Hl(i.hl)
+	if i.Hl != "" {
+		call = call.Hl(i.Hl)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(i)
 		log.Fatalln(errors.Join(errGetI18nLanguage, err))
 	}
 
@@ -69,7 +70,7 @@ func (i *i18nLanguage) List(parts []string, output string) {
 
 func WithHl(hl string) Option {
 	return func(i *i18nLanguage) {
-		i.hl = hl
+		i.Hl = hl
 	}
 }
 

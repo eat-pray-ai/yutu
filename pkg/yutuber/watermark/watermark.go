@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
 	"os"
@@ -16,13 +17,13 @@ var (
 )
 
 type watermark struct {
-	channelId              string
-	file                   string
-	inVideoPosition        string
-	durationMs             uint64
-	offsetMs               uint64
-	offsetType             string
-	onBehalfOfContentOwner string
+	ChannelId              string `yaml:"channel_id" json:"channel_id"`
+	File                   string `yaml:"file" json:"file"`
+	InVideoPosition        string `yaml:"in_video_position" json:"in_video_position"`
+	DurationMs             uint64 `yaml:"duration_ms" json:"duration_ms"`
+	OffsetMs               uint64 `yaml:"offset_ms" json:"offset_ms"`
+	OffsetType             string `yaml:"offset_type" json:"offset_type"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
 type Watermark interface {
@@ -42,37 +43,39 @@ func NewWatermark(opts ...Option) Watermark {
 	return w
 }
 
-func (w watermark) Set() {
-	file, err := os.Open(w.file)
+func (w *watermark) Set() {
+	file, err := os.Open(w.File)
 	if err != nil {
-		log.Fatalln(errors.Join(errSetWatermark, err), w.file)
+		utils.PrintJSON(w)
+		log.Fatalln(errors.Join(errSetWatermark, err), w.File)
 	}
 	defer file.Close()
 	inVideoBranding := &youtube.InvideoBranding{
 		Position: &youtube.InvideoPosition{},
 		Timing:   &youtube.InvideoTiming{},
 	}
-	if w.inVideoPosition != "" {
+	if w.InVideoPosition != "" {
 		inVideoBranding.Position.Type = "corner"
-		inVideoBranding.Position.CornerPosition = w.inVideoPosition
+		inVideoBranding.Position.CornerPosition = w.InVideoPosition
 	}
-	if w.durationMs != 0 {
-		inVideoBranding.Timing.DurationMs = w.durationMs
+	if w.DurationMs != 0 {
+		inVideoBranding.Timing.DurationMs = w.DurationMs
 	}
-	if w.offsetMs != 0 {
-		inVideoBranding.Timing.OffsetMs = w.offsetMs
+	if w.OffsetMs != 0 {
+		inVideoBranding.Timing.OffsetMs = w.OffsetMs
 	}
-	if w.offsetType != "" {
-		inVideoBranding.Timing.Type = w.offsetType
+	if w.OffsetType != "" {
+		inVideoBranding.Timing.Type = w.OffsetType
 	}
 
-	call := service.Watermarks.Set(w.channelId, inVideoBranding).Media(file)
-	if w.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(w.onBehalfOfContentOwner)
+	call := service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
+	if w.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
 
 	err = call.Do()
 	if err != nil {
+		utils.PrintJSON(w)
 		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
 	fmt.Println("Watermark set done")
@@ -80,13 +83,14 @@ func (w watermark) Set() {
 }
 
 func (w *watermark) Unset() {
-	call := service.Watermarks.Unset(w.channelId)
-	if w.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(w.onBehalfOfContentOwner)
+	call := service.Watermarks.Unset(w.ChannelId)
+	if w.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
 
 	err := call.Do()
 	if err != nil {
+		utils.PrintJSON(w)
 		log.Fatalln(errors.Join(errUnsetWatermark, err))
 	}
 
@@ -95,43 +99,43 @@ func (w *watermark) Unset() {
 
 func WithChannelId(channelId string) Option {
 	return func(w *watermark) {
-		w.channelId = channelId
+		w.ChannelId = channelId
 	}
 }
 
 func WithFile(file string) Option {
 	return func(w *watermark) {
-		w.file = file
+		w.File = file
 	}
 }
 
 func WithInVideoPosition(inVideoPosition string) Option {
 	return func(w *watermark) {
-		w.inVideoPosition = inVideoPosition
+		w.InVideoPosition = inVideoPosition
 	}
 }
 
 func WithDurationMs(durationMs uint64) Option {
 	return func(w *watermark) {
-		w.durationMs = durationMs
+		w.DurationMs = durationMs
 	}
 }
 
 func WithOffsetMs(offsetMs uint64) Option {
 	return func(w *watermark) {
-		w.offsetMs = offsetMs
+		w.OffsetMs = offsetMs
 	}
 }
 
 func WithOffsetType(offsetType string) Option {
 	return func(w *watermark) {
-		w.offsetType = offsetType
+		w.OffsetType = offsetType
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(w *watermark) {
-		w.onBehalfOfContentOwner = onBehalfOfContentOwner
+		w.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 

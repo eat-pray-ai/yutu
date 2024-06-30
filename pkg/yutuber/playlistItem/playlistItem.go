@@ -19,20 +19,20 @@ var (
 )
 
 type playlistItem struct {
-	id          string
-	title       string
-	description string
-	kind        string
-	kVideoId    string
-	kChannelId  string
-	kPlaylistId string
-	videoId     string
-	playlistId  string
-	channelId   string
-	privacy     string
-	maxResults  int64
+	ID          string `yaml:"id" json:"id"`
+	Title       string `yaml:"title" json:"title"`
+	Description string `yaml:"description" json:"description"`
+	Kind        string `yaml:"kind" json:"kind"`
+	KVideoId    string `yaml:"k_video_id" json:"k_video_id"`
+	KChannelId  string `yaml:"k_channel_id" json:"k_channel_id"`
+	KPlaylistId string `yaml:"k_playlist_id" json:"k_playlist_id"`
+	VideoId     string `yaml:"video_id" json:"video_id"`
+	PlaylistId  string `yaml:"playlist_id" json:"playlist_id"`
+	ChannelId   string `yaml:"channel_id" json:"channel_id"`
+	Privacy     string `yaml:"privacy" json:"privacy"`
+	MaxResults  int64  `yaml:"max_results" json:"max_results"`
 
-	onBehalfOfContentOwner string
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
 type PlaylistItem interface {
@@ -57,23 +57,24 @@ func NewPlaylistItem(opts ...Option) PlaylistItem {
 
 func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call := service.PlaylistItems.List(parts)
-	if pi.id != "" {
-		call = call.Id(pi.id)
+	if pi.ID != "" {
+		call = call.Id(pi.ID)
 	}
-	if pi.playlistId != "" {
-		call = call.PlaylistId(pi.playlistId)
+	if pi.PlaylistId != "" {
+		call = call.PlaylistId(pi.PlaylistId)
 	}
-	if pi.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.onBehalfOfContentOwner)
+	if pi.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
-	if pi.videoId != "" {
-		call = call.VideoId(pi.videoId)
+	if pi.VideoId != "" {
+		call = call.VideoId(pi.VideoId)
 	}
 
-	call = call.MaxResults(pi.maxResults)
+	call = call.MaxResults(pi.MaxResults)
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.id)
+		utils.PrintJSON(pi)
+		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.ID)
 	}
 
 	return res.Items
@@ -96,34 +97,34 @@ func (pi *playlistItem) List(parts []string, output string) {
 
 func (pi *playlistItem) Insert() {
 	var resourceId *youtube.ResourceId
-	switch pi.kind {
+	switch pi.Kind {
 	case "video":
 		resourceId = &youtube.ResourceId{
 			Kind:    "youtube#video",
-			VideoId: pi.kVideoId,
+			VideoId: pi.KVideoId,
 		}
 	case "channel":
 		resourceId = &youtube.ResourceId{
 			Kind:      "youtube#channel",
-			ChannelId: pi.kChannelId,
+			ChannelId: pi.KChannelId,
 		}
 	case "playlist":
 		resourceId = &youtube.ResourceId{
 			Kind:       "youtube#playlist",
-			PlaylistId: pi.kPlaylistId,
+			PlaylistId: pi.KPlaylistId,
 		}
 	}
 
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
-			Title:       pi.title,
-			Description: pi.description,
+			Title:       pi.Title,
+			Description: pi.Description,
 			ResourceId:  resourceId,
-			PlaylistId:  pi.playlistId,
-			ChannelId:   pi.channelId,
+			PlaylistId:  pi.PlaylistId,
+			ChannelId:   pi.ChannelId,
 		},
 		Status: &youtube.PlaylistItemStatus{
-			PrivacyStatus: pi.privacy,
+			PrivacyStatus: pi.Privacy,
 		},
 	}
 
@@ -132,7 +133,8 @@ func (pi *playlistItem) Insert() {
 	)
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.videoId)
+		utils.PrintJSON(pi)
+		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.VideoId)
 	}
 	fmt.Println("PlaylistItem inserted:")
 	utils.PrintYAML(res)
@@ -140,14 +142,14 @@ func (pi *playlistItem) Insert() {
 
 func (pi *playlistItem) Update() {
 	playlistItem := pi.get([]string{"id", "snippet", "status"})[0]
-	if pi.title != "" {
-		playlistItem.Snippet.Title = pi.title
+	if pi.Title != "" {
+		playlistItem.Snippet.Title = pi.Title
 	}
-	if pi.description != "" {
-		playlistItem.Snippet.Description = pi.description
+	if pi.Description != "" {
+		playlistItem.Snippet.Description = pi.Description
 	}
-	if pi.privacy != "" {
-		playlistItem.Status.PrivacyStatus = pi.privacy
+	if pi.Privacy != "" {
+		playlistItem.Status.PrivacyStatus = pi.Privacy
 	}
 
 	call := service.PlaylistItems.Update(
@@ -155,101 +157,103 @@ func (pi *playlistItem) Update() {
 	)
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.id)
+		utils.PrintJSON(pi)
+		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.ID)
 	}
 	fmt.Println("PlaylistItem updated:")
 	utils.PrintYAML(res)
 }
 
 func (pi *playlistItem) Delete() {
-	call := service.PlaylistItems.Delete(pi.id)
-	if pi.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.onBehalfOfContentOwner)
+	call := service.PlaylistItems.Delete(pi.ID)
+	if pi.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
 
 	err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errDeletePlaylistItem, err), pi.id)
+		utils.PrintJSON(pi)
+		log.Fatalln(errors.Join(errDeletePlaylistItem, err), pi.ID)
 	}
 
-	fmt.Printf("Playlsit Item %s deleted", pi.id)
+	fmt.Printf("Playlsit Item %s deleted", pi.ID)
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(p *playlistItem) {
-		p.id = id
+		p.ID = id
 	}
 }
 
 func WithTitle(title string) Option {
 	return func(p *playlistItem) {
-		p.title = title
+		p.Title = title
 	}
 }
 
 func WithDescription(description string) Option {
 	return func(p *playlistItem) {
-		p.description = description
+		p.Description = description
 	}
 }
 
 func WithKind(kind string) Option {
 	return func(p *playlistItem) {
-		p.kind = kind
+		p.Kind = kind
 	}
 }
 
 func WithKVideoId(kVideoId string) Option {
 	return func(p *playlistItem) {
-		p.kVideoId = kVideoId
+		p.KVideoId = kVideoId
 	}
 }
 
 func WithKChannelId(kChannelId string) Option {
 	return func(p *playlistItem) {
-		p.kChannelId = kChannelId
+		p.KChannelId = kChannelId
 	}
 }
 
 func WithKPlaylistId(kPlaylistId string) Option {
 	return func(p *playlistItem) {
-		p.kPlaylistId = kPlaylistId
+		p.KPlaylistId = kPlaylistId
 	}
 }
 
 func WithVideoId(videoId string) Option {
 	return func(p *playlistItem) {
-		p.videoId = videoId
+		p.VideoId = videoId
 	}
 }
 
 func WithPlaylistId(playlistId string) Option {
 	return func(p *playlistItem) {
-		p.playlistId = playlistId
+		p.PlaylistId = playlistId
 	}
 }
 
 func WithChannelId(channelId string) Option {
 	return func(p *playlistItem) {
-		p.channelId = channelId
+		p.ChannelId = channelId
 	}
 }
 
 func WithPrivacy(privacy string) Option {
 	return func(p *playlistItem) {
-		p.privacy = privacy
+		p.Privacy = privacy
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(p *playlistItem) {
-		p.maxResults = maxResults
+		p.MaxResults = maxResults
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(p *playlistItem) {
-		p.onBehalfOfContentOwner = onBehalfOfContentOwner
+		p.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 

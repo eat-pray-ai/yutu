@@ -37,6 +37,7 @@ func (m *membershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
 	call := service.MembershipsLevels.List(parts)
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(m)
 		log.Fatalln(errors.Join(errGetMembershipsLevel, err))
 	}
 

@@ -16,11 +16,11 @@ var (
 )
 
 type channelSection struct {
-	id                     string
-	channelId              string
-	hl                     string
-	mine                   *bool
-	onBehalfOfContentOwner string
+	ID                     string `yaml:"id" json:"id"`
+	ChannelId              string `yaml:"channel_id" json:"channel_id"`
+	Hl                     string `yaml:"hl" json:"hl"`
+	Mine                   *bool  `yaml:"mine" json:"mine"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
 type ChannelSection interface {
@@ -44,24 +44,25 @@ func NewChannelSection(opts ...Option) ChannelSection {
 
 func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
 	call := service.ChannelSections.List(parts)
-	if cs.id != "" {
-		call = call.Id(cs.id)
+	if cs.ID != "" {
+		call = call.Id(cs.ID)
 	}
-	if cs.channelId != "" {
-		call = call.ChannelId(cs.channelId)
+	if cs.ChannelId != "" {
+		call = call.ChannelId(cs.ChannelId)
 	}
-	if cs.hl != "" {
-		call = call.Hl(cs.hl)
+	if cs.Hl != "" {
+		call = call.Hl(cs.Hl)
 	}
-	if cs.mine != nil {
-		call = call.Mine(*cs.mine)
+	if cs.Mine != nil {
+		call = call.Mine(*cs.Mine)
 	}
-	if cs.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cs.onBehalfOfContentOwner)
+	if cs.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(cs)
 		log.Fatalln(errors.Join(errGetChannelSection, err))
 	}
 	return res.Items
@@ -86,48 +87,49 @@ func (cs *channelSection) List(parts []string, output string) {
 }
 
 func (cs *channelSection) Delete() {
-	call := service.ChannelSections.Delete(cs.id)
-	if cs.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cs.onBehalfOfContentOwner)
+	call := service.ChannelSections.Delete(cs.ID)
+	if cs.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
 	}
 
 	err := call.Do()
 	if err != nil {
+		utils.PrintJSON(cs)
 		log.Fatalln(errors.Join(errDeleteChannelSection, err))
 	}
 
-	fmt.Printf("Channel section %s deleted\n", cs.id)
+	fmt.Printf("Channel section %s deleted\n", cs.ID)
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(cs *channelSection) {
-		cs.id = id
+		cs.ID = id
 	}
 }
 
 func WithChannelId(channelId string) Option {
 	return func(cs *channelSection) {
-		cs.channelId = channelId
+		cs.ChannelId = channelId
 	}
 }
 
 func WithHl(hl string) Option {
 	return func(cs *channelSection) {
-		cs.hl = hl
+		cs.Hl = hl
 	}
 }
 
 func WithMine(mine bool, changed bool) Option {
 	return func(cs *channelSection) {
 		if changed {
-			cs.mine = &mine
+			cs.Mine = &mine
 		}
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(cs *channelSection) {
-		cs.onBehalfOfContentOwner = onBehalfOfContentOwner
+		cs.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 

@@ -15,10 +15,10 @@ var (
 )
 
 type member struct {
-	memberChannelId  string
-	hasAccessToLevel string
-	maxResults       int64
-	mode             string
+	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id"`
+	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level"`
+	MaxResults       int64  `yaml:"max_results" json:"max_results"`
+	Mode             string `yaml:"mode" json:"mode"`
 }
 
 type Member interface {
@@ -40,19 +40,20 @@ func NewMember(opts ...Option) Member {
 
 func (m *member) get(parts []string) []*youtube.Member {
 	call := service.Members.List(parts)
-	if m.memberChannelId != "" {
-		call = call.FilterByMemberChannelId(m.memberChannelId)
+	if m.MemberChannelId != "" {
+		call = call.FilterByMemberChannelId(m.MemberChannelId)
 	}
-	if m.hasAccessToLevel != "" {
-		call = call.HasAccessToLevel(m.hasAccessToLevel)
+	if m.HasAccessToLevel != "" {
+		call = call.HasAccessToLevel(m.HasAccessToLevel)
 	}
-	call = call.MaxResults(m.maxResults)
-	if m.mode != "" {
-		call = call.Mode(m.mode)
+	call = call.MaxResults(m.MaxResults)
+	if m.Mode != "" {
+		call = call.Mode(m.Mode)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(m)
 		log.Fatalln(errors.Join(errGetMember, err))
 	}
 
@@ -80,25 +81,25 @@ func (m *member) List(parts []string, output string) {
 
 func WithMemberChannelId(channelId string) Option {
 	return func(m *member) {
-		m.memberChannelId = channelId
+		m.MemberChannelId = channelId
 	}
 }
 
 func WithHasAccessToLevel(level string) Option {
 	return func(m *member) {
-		m.hasAccessToLevel = level
+		m.HasAccessToLevel = level
 	}
 }
 
 func WithMaxResults(results int64) Option {
 	return func(m *member) {
-		m.maxResults = results
+		m.MaxResults = results
 	}
 }
 
 func WithMode(mode string) Option {
 	return func(m *member) {
-		m.mode = mode
+		m.Mode = mode
 	}
 }
 

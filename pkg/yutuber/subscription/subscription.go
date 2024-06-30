@@ -17,19 +17,19 @@ var (
 )
 
 type subscription struct {
-	id                            string
-	subscriberChannelId           string
-	description                   string
-	channelId                     string
-	forChannelId                  string
-	maxResults                    int64
-	mine                          *bool
-	myRecentSubscribers           *bool
-	mySubscribers                 *bool
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	order                         string
-	title                         string
+	ID                            string `yaml:"id" json:"id"`
+	SubscriberChannelId           string `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
+	Description                   string `yaml:"description" json:"description"`
+	ChannelId                     string `yaml:"channel_id" json:"channel_id"`
+	ForChannelId                  string `yaml:"for_channel_id" json:"for_channel_id"`
+	MaxResults                    int64  `yaml:"max_results" json:"max_results"`
+	Mine                          *bool  `yaml:"mine" json:"mine"`
+	MyRecentSubscribers           *bool  `yaml:"my_recent_subscribers" json:"my_recent_subscribers"`
+	MySubscribers                 *bool  `yaml:"my_subscribers" json:"my_subscribers"`
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	Order                         string `yaml:"order" json:"order"`
+	Title                         string `yaml:"title" json:"title"`
 }
 
 type Subscription interface {
@@ -53,39 +53,40 @@ func NewSubscription(opts ...Option) Subscription {
 
 func (s *subscription) get(parts []string) []*youtube.Subscription {
 	call := service.Subscriptions.List(parts)
-	if s.id != "" {
-		call = call.Id(s.id)
+	if s.ID != "" {
+		call = call.Id(s.ID)
 	}
-	if s.channelId != "" {
-		call = call.ChannelId(s.channelId)
+	if s.ChannelId != "" {
+		call = call.ChannelId(s.ChannelId)
 	}
-	if s.forChannelId != "" {
-		call = call.ForChannelId(s.forChannelId)
+	if s.ForChannelId != "" {
+		call = call.ForChannelId(s.ForChannelId)
 	}
-	call = call.MaxResults(s.maxResults)
+	call = call.MaxResults(s.MaxResults)
 
-	if s.mine != nil {
-		call = call.Mine(*s.mine)
+	if s.Mine != nil {
+		call = call.Mine(*s.Mine)
 	}
-	if s.myRecentSubscribers != nil {
-		call = call.MyRecentSubscribers(*s.myRecentSubscribers)
+	if s.MyRecentSubscribers != nil {
+		call = call.MyRecentSubscribers(*s.MyRecentSubscribers)
 	}
-	if s.mySubscribers != nil {
-		call = call.MySubscribers(*s.mySubscribers)
+	if s.MySubscribers != nil {
+		call = call.MySubscribers(*s.MySubscribers)
 	}
 
-	if s.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.onBehalfOfContentOwner)
+	if s.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
 	}
-	if s.onBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(s.onBehalfOfContentOwnerChannel)
+	if s.OnBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
 	}
-	if s.order != "" {
-		call = call.Order(s.order)
+	if s.Order != "" {
+		call = call.Order(s.Order)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(s)
 		log.Fatalln(errors.Join(errGetSubscription, err))
 	}
 
@@ -113,18 +114,19 @@ func (s *subscription) List(parts []string, output string) {
 func (s *subscription) Insert() {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
-			ChannelId:   s.subscriberChannelId,
-			Description: s.description,
+			ChannelId:   s.SubscriberChannelId,
+			Description: s.Description,
 			ResourceId: &youtube.ResourceId{
-				ChannelId: s.channelId,
+				ChannelId: s.ChannelId,
 			},
-			Title: s.title,
+			Title: s.Title,
 		},
 	}
 
 	call := service.Subscriptions.Insert([]string{"snippet"}, subscription)
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(s)
 		log.Fatalln(errors.Join(errInsertSubscription, err))
 	}
 	fmt.Println("Subscription inserted")
@@ -132,55 +134,56 @@ func (s *subscription) Insert() {
 }
 
 func (s *subscription) Delete() {
-	call := service.Subscriptions.Delete(s.id)
+	call := service.Subscriptions.Delete(s.ID)
 	err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errDeleteSubscription, err), s.id)
+		utils.PrintJSON(s)
+		log.Fatalln(errors.Join(errDeleteSubscription, err), s.ID)
 	}
 
-	fmt.Printf("Subscription %s deleted", s.id)
+	fmt.Printf("Subscription %s deleted", s.ID)
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(s *subscription) {
-		s.id = id
+		s.ID = id
 	}
 }
 
 func WithSubscriberChannelId(id string) Option {
 	return func(s *subscription) {
-		s.subscriberChannelId = id
+		s.SubscriberChannelId = id
 	}
 }
 
 func WithDescription(description string) Option {
 	return func(s *subscription) {
-		s.description = description
+		s.Description = description
 	}
 }
 
 func WithChannelId(channelId string) Option {
 	return func(s *subscription) {
-		s.channelId = channelId
+		s.ChannelId = channelId
 	}
 }
 
 func WithForChannelId(forChannelId string) Option {
 	return func(s *subscription) {
-		s.forChannelId = forChannelId
+		s.ForChannelId = forChannelId
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(s *subscription) {
-		s.maxResults = maxResults
+		s.MaxResults = maxResults
 	}
 }
 
 func WithMine(mine bool, changed bool) Option {
 	return func(s *subscription) {
 		if changed {
-			s.mine = &mine
+			s.Mine = &mine
 		}
 	}
 }
@@ -188,7 +191,7 @@ func WithMine(mine bool, changed bool) Option {
 func WithMyRecentSubscribers(myRecentSubscribers bool, changed bool) Option {
 	return func(s *subscription) {
 		if changed {
-			s.myRecentSubscribers = &myRecentSubscribers
+			s.MyRecentSubscribers = &myRecentSubscribers
 		}
 	}
 }
@@ -196,32 +199,32 @@ func WithMyRecentSubscribers(myRecentSubscribers bool, changed bool) Option {
 func WithMySubscribers(mySubscribers bool, changed bool) Option {
 	return func(s *subscription) {
 		if changed {
-			s.mySubscribers = &mySubscribers
+			s.MySubscribers = &mySubscribers
 		}
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(s *subscription) {
-		s.onBehalfOfContentOwner = onBehalfOfContentOwner
+		s.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(s *subscription) {
-		s.onBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		s.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}
 }
 
 func WithOrder(order string) Option {
 	return func(s *subscription) {
-		s.order = order
+		s.Order = order
 	}
 }
 
 func WithTitle(title string) Option {
 	return func(s *subscription) {
-		s.title = title
+		s.Title = title
 	}
 }
 

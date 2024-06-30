@@ -15,7 +15,7 @@ var (
 )
 
 type i18nRegion struct {
-	hl string
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type I18nRegion interface {
@@ -37,12 +37,13 @@ func NewI18nRegion(opts ...Option) I18nRegion {
 
 func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
 	call := service.I18nRegions.List(parts)
-	if i.hl != "" {
-		call = call.Hl(i.hl)
+	if i.Hl != "" {
+		call = call.Hl(i.Hl)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(i)
 		log.Fatalln(errors.Join(errGetI18nRegion, err))
 	}
 
@@ -69,7 +70,7 @@ func (i *i18nRegion) List(parts []string, output string) {
 
 func WithHl(hl string) Option {
 	return func(i *i18nRegion) {
-		i.hl = hl
+		i.Hl = hl
 	}
 }
 

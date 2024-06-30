@@ -11,7 +11,7 @@ var deleteCmd = &cobra.Command{
 	Long:  "Delete a item from a playlist",
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithId(id),
+			playlistItem.WithID(id),
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)

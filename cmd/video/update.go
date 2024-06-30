@@ -11,7 +11,7 @@ var updateCmd = &cobra.Command{
 	Long:  "Update a video on YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithId(id),
+			video.WithID(id),
 			video.WithTitle(title),
 			video.WithDescription(description),
 			video.WithTags(tags),

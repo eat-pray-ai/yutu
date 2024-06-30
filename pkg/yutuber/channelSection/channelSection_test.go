@@ -25,10 +25,10 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &channelSection{
-				channelId:              "channelId",
-				hl:                     "hl",
-				mine:                   &[]bool{true}[0],
-				onBehalfOfContentOwner: "contentOwner",
+				ChannelId:              "channelId",
+				Hl:                     "hl",
+				Mine:                   &[]bool{true}[0],
+				OnBehalfOfContentOwner: "contentOwner",
 			},
 		},
 	}

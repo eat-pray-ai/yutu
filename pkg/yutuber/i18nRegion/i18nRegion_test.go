@@ -22,7 +22,7 @@ func TestNewI18nRegion(t *testing.T) {
 				},
 			},
 			want: &i18nRegion{
-				hl: "hl",
+				Hl: "hl",
 			},
 		},
 	}

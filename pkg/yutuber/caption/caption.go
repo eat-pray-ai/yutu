@@ -21,22 +21,22 @@ var (
 )
 
 type caption struct {
-	id                     string
-	file                   string
-	audioTrackType         string
-	isAutoSynced           *bool
-	isCC                   *bool
-	isDraft                *bool
-	isEasyReader           *bool
-	isLarge                *bool
-	language               string
-	name                   string
-	trackKind              string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
-	videoId                string
-	tfmt                   string
-	tlang                  string
+	ID                     string `yaml:"id" json:"id"`
+	File                   string `yaml:"file" json:"file"`
+	AudioTrackType         string `yaml:"audio_track_type" json:"audio_track_type"`
+	IsAutoSynced           *bool  `yaml:"is_auto_synced" json:"is_auto_synced"`
+	IsCC                   *bool  `yaml:"is_cc" json:"is_cc"`
+	IsDraft                *bool  `yaml:"is_draft" json:"is_draft"`
+	IsEasyReader           *bool  `yaml:"is_easy_reader" json:"is_easy_reader"`
+	IsLarge                *bool  `yaml:"is_large" json:"is_large"`
+	Language               string `yaml:"language" json:"language"`
+	Name                   string `yaml:"name" json:"name"`
+	TrackKind              string `yaml:"track_kind" json:"track_kind"`
+	OnBehalfOf             string `yaml:"on_behalf_of" json:"on_behalf_of"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	VideoId                string `yaml:"video_id" json:"video_id"`
+	Tfmt                   string `yaml:"tfmt" json:"tfmt"`
+	Tlang                  string `yaml:"tlang" json:"tlang"`
 }
 
 type Caption interface {
@@ -59,19 +59,20 @@ func NewCation(opts ...Option) Caption {
 }
 
 func (c *caption) get(parts []string) []*youtube.Caption {
-	call := service.Captions.List(parts, c.videoId)
-	if c.id != "" {
-		call = call.Id(c.id)
+	call := service.Captions.List(parts, c.VideoId)
+	if c.ID != "" {
+		call = call.Id(c.ID)
 	}
-	if c.onBehalfOf != "" {
-		call = call.OnBehalfOf(c.onBehalfOf)
+	if c.OnBehalfOf != "" {
+		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errGetCaption, err))
 	}
 
@@ -94,37 +95,39 @@ func (c *caption) List(parts []string, output string) {
 }
 
 func (c *caption) Insert() {
-	file, err := os.Open(c.file)
+	file, err := os.Open(c.File)
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 	defer file.Close()
 
 	caption := &youtube.Caption{
 		Snippet: &youtube.CaptionSnippet{
-			AudioTrackType: c.audioTrackType,
-			IsAutoSynced:   *c.isAutoSynced,
-			IsCC:           *c.isCC,
-			IsDraft:        *c.isDraft,
-			IsEasyReader:   *c.isEasyReader,
-			IsLarge:        *c.isLarge,
-			Language:       c.language,
-			Name:           c.name,
-			TrackKind:      c.trackKind,
-			VideoId:        c.videoId,
+			AudioTrackType: c.AudioTrackType,
+			IsAutoSynced:   *c.IsAutoSynced,
+			IsCC:           *c.IsCC,
+			IsDraft:        *c.IsDraft,
+			IsEasyReader:   *c.IsEasyReader,
+			IsLarge:        *c.IsLarge,
+			Language:       c.Language,
+			Name:           c.Name,
+			TrackKind:      c.TrackKind,
+			VideoId:        c.VideoId,
 		},
 	}
 
 	call := service.Captions.Insert([]string{"snippet"}, caption).Media(file)
-	if c.onBehalfOf != "" {
-		call = call.OnBehalfOf(c.onBehalfOf)
+	if c.OnBehalfOf != "" {
+		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 	fmt.Printf("Caption %s inserted\n", res.Id)
@@ -132,55 +135,57 @@ func (c *caption) Insert() {
 
 func (c *caption) Update() {
 	caption := c.get([]string{"snippet"})[0]
-	if c.audioTrackType != "" {
-		caption.Snippet.AudioTrackType = c.audioTrackType
+	if c.AudioTrackType != "" {
+		caption.Snippet.AudioTrackType = c.AudioTrackType
 	}
-	if c.isAutoSynced != nil {
-		caption.Snippet.IsAutoSynced = *c.isAutoSynced
+	if c.IsAutoSynced != nil {
+		caption.Snippet.IsAutoSynced = *c.IsAutoSynced
 	}
-	if c.isCC != nil {
-		caption.Snippet.IsCC = *c.isCC
+	if c.IsCC != nil {
+		caption.Snippet.IsCC = *c.IsCC
 	}
-	if c.isDraft != nil {
-		caption.Snippet.IsDraft = *c.isDraft
+	if c.IsDraft != nil {
+		caption.Snippet.IsDraft = *c.IsDraft
 	}
-	if c.isEasyReader != nil {
-		caption.Snippet.IsEasyReader = *c.isEasyReader
+	if c.IsEasyReader != nil {
+		caption.Snippet.IsEasyReader = *c.IsEasyReader
 	}
-	if c.isLarge != nil {
-		caption.Snippet.IsLarge = *c.isLarge
+	if c.IsLarge != nil {
+		caption.Snippet.IsLarge = *c.IsLarge
 	}
-	if c.language != "" {
-		caption.Snippet.Language = c.language
+	if c.Language != "" {
+		caption.Snippet.Language = c.Language
 	}
-	if c.name != "" {
-		caption.Snippet.Name = c.name
+	if c.Name != "" {
+		caption.Snippet.Name = c.Name
 	}
-	if c.trackKind != "" {
-		caption.Snippet.TrackKind = c.trackKind
+	if c.TrackKind != "" {
+		caption.Snippet.TrackKind = c.TrackKind
 	}
-	if c.videoId != "" {
-		caption.Snippet.VideoId = c.videoId
+	if c.VideoId != "" {
+		caption.Snippet.VideoId = c.VideoId
 	}
 
 	call := service.Captions.Update([]string{"snippet"}, caption)
-	if c.file != "" {
-		file, err := os.Open(c.file)
+	if c.File != "" {
+		file, err := os.Open(c.File)
 		if err != nil {
+			utils.PrintJSON(c)
 			log.Fatalln(errors.Join(errUpdateCaption, err))
 		}
 		defer file.Close()
 		call = call.Media(file)
 	}
-	if c.onBehalfOf != "" {
-		call = call.OnBehalfOf(c.onBehalfOf)
+	if c.OnBehalfOf != "" {
+		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errUpdateCaption, err))
 	}
 
@@ -188,80 +193,85 @@ func (c *caption) Update() {
 }
 
 func (c *caption) Delete() {
-	call := service.Captions.Delete(c.id)
-	if c.onBehalfOf != "" {
-		call = call.OnBehalfOf(c.onBehalfOf)
+	call := service.Captions.Delete(c.ID)
+	if c.OnBehalfOf != "" {
+		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	err := call.Do()
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDeleteCaption, err))
 	}
 
-	fmt.Printf("Caption %s deleted\n", c.id)
+	fmt.Printf("Caption %s deleted\n", c.ID)
 }
 
 func (c *caption) Download() {
-	call := service.Captions.Download(c.id)
-	if c.tfmt != "" {
-		call = call.Tfmt(c.tfmt)
+	call := service.Captions.Download(c.ID)
+	if c.Tfmt != "" {
+		call = call.Tfmt(c.Tfmt)
 	}
-	if c.tlang != "" {
-		call = call.Tlang(c.tlang)
+	if c.Tlang != "" {
+		call = call.Tlang(c.Tlang)
 	}
-	if c.onBehalfOf != "" {
-		call = call.OnBehalfOf(c.onBehalfOf)
+	if c.OnBehalfOf != "" {
+		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
-	if c.onBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.onBehalfOfContentOwner)
+	if c.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
 	res, err := call.Download()
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 
-	file, err := os.Create(c.file)
+	file, err := os.Create(c.File)
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 	defer file.Close()
 	_, err = file.Write(body)
 	if err != nil {
+		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(c *caption) {
-		c.id = id
+		c.ID = id
 	}
 }
 
 func WithFile(file string) Option {
 	return func(c *caption) {
-		c.file = file
+		c.File = file
 	}
 }
 
 func WithAudioTrackType(audioTrackType string) Option {
 	return func(c *caption) {
-		c.audioTrackType = audioTrackType
+		c.AudioTrackType = audioTrackType
 	}
 }
 
 func WithIsAutoSynced(isAutoSynced bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
-			c.isAutoSynced = &isAutoSynced
+			c.IsAutoSynced = &isAutoSynced
 		}
 	}
 }
@@ -269,7 +279,7 @@ func WithIsAutoSynced(isAutoSynced bool, changed bool) Option {
 func WithIsCC(isCC bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
-			c.isCC = &isCC
+			c.IsCC = &isCC
 		}
 	}
 }
@@ -277,7 +287,7 @@ func WithIsCC(isCC bool, changed bool) Option {
 func WithIsDraft(isDraft bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
-			c.isDraft = &isDraft
+			c.IsDraft = &isDraft
 		}
 	}
 }
@@ -285,7 +295,7 @@ func WithIsDraft(isDraft bool, changed bool) Option {
 func WithIsEasyReader(isEasyReader bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
-			c.isEasyReader = &isEasyReader
+			c.IsEasyReader = &isEasyReader
 		}
 	}
 }
@@ -293,56 +303,56 @@ func WithIsEasyReader(isEasyReader bool, changed bool) Option {
 func WithIsLarge(isLarge bool, changed bool) Option {
 	return func(c *caption) {
 		if changed {
-			c.isLarge = &isLarge
+			c.IsLarge = &isLarge
 		}
 	}
 }
 
 func WithLanguage(language string) Option {
 	return func(c *caption) {
-		c.language = language
+		c.Language = language
 	}
 }
 
 func WithName(name string) Option {
 	return func(c *caption) {
-		c.name = name
+		c.Name = name
 	}
 }
 
 func WithTrackKind(trackKind string) Option {
 	return func(c *caption) {
-		c.trackKind = trackKind
+		c.TrackKind = trackKind
 	}
 }
 
 func WithOnBehalfOf(onBehalfOf string) Option {
 	return func(c *caption) {
-		c.onBehalfOf = onBehalfOf
+		c.OnBehalfOf = onBehalfOf
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(c *caption) {
-		c.onBehalfOfContentOwner = onBehalfOfContentOwner
+		c.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithVideoId(videoId string) Option {
 	return func(c *caption) {
-		c.videoId = videoId
+		c.VideoId = videoId
 	}
 }
 
 func WithTfmt(tfmt string) Option {
 	return func(c *caption) {
-		c.tfmt = tfmt
+		c.Tfmt = tfmt
 	}
 }
 
 func WithTlang(tlang string) Option {
 	return func(c *caption) {
-		c.tlang = tlang
+		c.Tlang = tlang
 	}
 }
 

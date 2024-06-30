@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  "List video categories' info, such as ID, title, assignable, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		vc := videoCategory.NewVideoCategory(
-			videoCategory.WithId(id),
+			videoCategory.WithID(id),
 			videoCategory.WithHl(hl),
 			videoCategory.WithRegionCode(regionCode),
 			videoCategory.WithService(nil),

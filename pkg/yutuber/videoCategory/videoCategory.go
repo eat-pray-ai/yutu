@@ -16,9 +16,9 @@ var (
 )
 
 type videoCategory struct {
-	id         string
-	hl         string
-	regionCode string
+	ID         string `yaml:"id" json:"id"`
+	Hl         string `yaml:"hl" json:"hl"`
+	RegionCode string `yaml:"region_code" json:"region_code"`
 }
 
 type VideoCategory interface {
@@ -38,19 +38,20 @@ func NewVideoCategory(opt ...Option) VideoCategory {
 
 func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 	call := service.VideoCategories.List(parts)
-	if vc.id != "" {
-		call = call.Id(vc.id)
+	if vc.ID != "" {
+		call = call.Id(vc.ID)
 	}
-	if vc.hl != "" {
-		call = call.Hl(vc.hl)
+	if vc.Hl != "" {
+		call = call.Hl(vc.Hl)
 	}
-	if vc.regionCode != "" {
-		call = call.RegionCode(vc.regionCode)
+	if vc.RegionCode != "" {
+		call = call.RegionCode(vc.RegionCode)
 	}
 
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errGetVideoCategory, err), vc.regionCode)
+		utils.PrintJSON(vc)
+		log.Fatalln(errors.Join(errGetVideoCategory, err), vc.RegionCode)
 	}
 
 	return res.Items
@@ -74,21 +75,21 @@ func (vc *videoCategory) List(parts []string, output string) {
 	}
 }
 
-func WithId(id string) Option {
+func WithID(id string) Option {
 	return func(vc *videoCategory) {
-		vc.id = id
+		vc.ID = id
 	}
 }
 
 func WithHl(hl string) Option {
 	return func(vc *videoCategory) {
-		vc.hl = hl
+		vc.Hl = hl
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
 	return func(vc *videoCategory) {
-		vc.regionCode = regionCode
+		vc.RegionCode = regionCode
 	}
 }
 

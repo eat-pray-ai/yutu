@@ -12,7 +12,7 @@ var getRatingCmd = &cobra.Command{
 	Long:  "Get the rating of a video, with the specified video ID",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithId(id),
+			video.WithID(id),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithService(nil),
 		)

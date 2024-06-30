@@ -29,7 +29,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&channelId, "channelId", "c", "", "ID of the channel",
 	)
-	listCmd.Flags().BoolVarP(&home, "home", "H", false, "true or false")
+	listCmd.Flags().BoolVarP(&home, "home", "H", true, "true or false")
 	listCmd.Flags().Int64VarP(
 		&maxResults, "maxResults", "x", 5,
 		"Specifies the maximum number of items that should be returned",

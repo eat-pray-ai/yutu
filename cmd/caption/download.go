@@ -11,7 +11,7 @@ var downloadCmd = &cobra.Command{
 	Long:  "Download caption from a video",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
-			caption.WithId(id),
+			caption.WithID(id),
 			caption.WithFile(file),
 			caption.WithTfmt(tfmt),
 			caption.WithTlang(tlang),

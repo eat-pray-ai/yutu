@@ -22,7 +22,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &videoAbuseReportReason{
-				hl: "hl",
+				Hl: "hl",
 			},
 		},
 	}

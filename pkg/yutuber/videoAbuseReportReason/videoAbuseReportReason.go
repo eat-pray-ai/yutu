@@ -15,7 +15,7 @@ var (
 )
 
 type videoAbuseReportReason struct {
-	hl string
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type VideoAbuseReportReason interface {
@@ -33,22 +33,23 @@ func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason {
 	return va
 }
 
-func (vc *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseReportReason {
+func (va *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseReportReason {
 	call := service.VideoAbuseReportReasons.List(parts)
-	if vc.hl != "" {
-		call = call.Hl(vc.hl)
+	if va.Hl != "" {
+		call = call.Hl(va.Hl)
 	}
 
 	res, err := call.Do()
 	if err != nil {
+		utils.PrintJSON(va)
 		log.Fatalln(errors.Join(errGetVideoAbuseReportReason, err))
 	}
 
 	return res.Items
 }
 
-func (vc *videoAbuseReportReason) List(parts []string, output string) {
-	videoAbuseReportReasons := vc.get(parts)
+func (va *videoAbuseReportReason) List(parts []string, output string) {
+	videoAbuseReportReasons := va.get(parts)
 	switch output {
 	case "json":
 		utils.PrintJSON(videoAbuseReportReasons)
@@ -67,7 +68,7 @@ func (vc *videoAbuseReportReason) List(parts []string, output string) {
 
 func WithHL(hl string) Option {
 	return func(vc *videoAbuseReportReason) {
-		vc.hl = hl
+		vc.Hl = hl
 	}
 }
 

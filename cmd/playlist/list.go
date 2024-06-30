@@ -12,7 +12,7 @@ var listCmd = &cobra.Command{
 	Long:  "List playlist's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
-			playlist.WithId(id),
+			playlist.WithID(id),
 			playlist.WithChannelId(channelId),
 			playlist.WithHl(hl),
 			playlist.WithMaxResults(maxResults),

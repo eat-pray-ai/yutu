@@ -15,35 +15,35 @@ var (
 )
 
 type search struct {
-	channelId                 string
-	channelType               string
-	eventType                 string
-	forContentOwner           *bool
-	forDeveloper              *bool
-	forMine                   *bool
-	location                  string
-	locationRadius            string
-	maxResults                int64
-	onBehalfOfContentOwner    string
-	order                     string
-	publishedAfter            string
-	publishedBefore           string
-	q                         string
-	regionCode                string
-	relevanceLanguage         string
-	safeSearch                string
-	topicId                   string
-	types                     string
-	videoCaption              string
-	videoCategoryId           string
-	videoDefinition           string
-	videoDimension            string
-	videoDuration             string
-	videoEmbeddable           string
-	videoLicense              string
-	videoPaidProductPlacement string
-	videoSyndicated           string
-	videoType                 string
+	ChannelId                 string `yaml:"channel_id" json:"channel_id"`
+	ChannelType               string `yaml:"channel_type" json:"channel_type"`
+	EventType                 string `yaml:"event_type" json:"event_type"`
+	ForContentOwner           *bool  `yaml:"for_content_owner" json:"for_content_owner"`
+	ForDeveloper              *bool  `yaml:"for_developer" json:"for_developer"`
+	ForMine                   *bool  `yaml:"for_mine" json:"for_mine"`
+	Location                  string `yaml:"location" json:"location"`
+	LocationRadius            string `yaml:"location_radius" json:"location_radius"`
+	MaxResults                int64  `yaml:"max_results" json:"max_results"`
+	OnBehalfOfContentOwner    string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	Order                     string `yaml:"order" json:"order"`
+	PublishedAfter            string `yaml:"published_after" json:"published_after"`
+	PublishedBefore           string `yaml:"published_before" json:"published_before"`
+	Q                         string `yaml:"q" json:"q"`
+	RegionCode                string `yaml:"region_code" json:"region_code"`
+	RelevanceLanguage         string `yaml:"relevance_language" json:"relevance_language"`
+	SafeSearch                string `yaml:"safe_search" json:"safe_search"`
+	TopicId                   string `yaml:"topic_id" json:"topic_id"`
+	Types                     string `yaml:"types" json:"types"`
+	VideoCaption              string `yaml:"video_caption" json:"video_caption"`
+	VideoCategoryId           string `yaml:"video_category_id" json:"video_category_id"`
+	VideoDefinition           string `yaml:"video_definition" json:"video_definition"`
+	VideoDimension            string `yaml:"video_dimension" json:"video_dimension"`
+	VideoDuration             string `yaml:"video_duration" json:"video_duration"`
+	VideoEmbeddable           string `yaml:"video_embeddable" json:"video_embeddable"`
+	VideoLicense              string `yaml:"video_license" json:"video_license"`
+	VideoPaidProductPlacement string `yaml:"video_paid_product_placement" json:"video_paid_product_placement"`
+	VideoSyndicated           string `yaml:"video_syndicated" json:"video_syndicated"`
+	VideoType                 string `yaml:"video_type" json:"video_type"`
 }
 
 type Search interface {
@@ -65,123 +65,124 @@ func NewSearch(opts ...Option) Search {
 
 func (s *search) get(parts []string) []*youtube.SearchResult {
 	call := service.Search.List(parts)
-	if s.channelId != "" {
-		call.ChannelId(s.channelId)
+	if s.ChannelId != "" {
+		call.ChannelId(s.ChannelId)
 	}
 
-	if s.channelType != "" {
-		call.ChannelType(s.channelType)
+	if s.ChannelType != "" {
+		call.ChannelType(s.ChannelType)
 	}
 
-	if s.eventType != "" {
-		call.EventType(s.eventType)
+	if s.EventType != "" {
+		call.EventType(s.EventType)
 	}
 
-	if s.forContentOwner != nil {
-		call.ForContentOwner(*s.forContentOwner)
+	if s.ForContentOwner != nil {
+		call.ForContentOwner(*s.ForContentOwner)
 	}
 
-	if s.forDeveloper != nil {
-		call.ForDeveloper(*s.forDeveloper)
+	if s.ForDeveloper != nil {
+		call.ForDeveloper(*s.ForDeveloper)
 	}
 
-	if s.forMine != nil {
-		call.ForMine(*s.forMine)
+	if s.ForMine != nil {
+		call.ForMine(*s.ForMine)
 	}
 
-	if s.location != "" {
-		call.Location(s.location)
+	if s.Location != "" {
+		call.Location(s.Location)
 	}
 
-	if s.locationRadius != "" {
-		call.LocationRadius(s.locationRadius)
+	if s.LocationRadius != "" {
+		call.LocationRadius(s.LocationRadius)
 	}
 
-	call.MaxResults(s.maxResults)
+	call.MaxResults(s.MaxResults)
 
-	if s.onBehalfOfContentOwner != "" {
-		call.OnBehalfOfContentOwner(s.onBehalfOfContentOwner)
+	if s.OnBehalfOfContentOwner != "" {
+		call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
 	}
 
-	if s.order != "" {
-		call.Order(s.order)
+	if s.Order != "" {
+		call.Order(s.Order)
 	}
 
-	if s.publishedAfter != "" {
-		call.PublishedAfter(s.publishedAfter)
+	if s.PublishedAfter != "" {
+		call.PublishedAfter(s.PublishedAfter)
 	}
 
-	if s.publishedBefore != "" {
-		call.PublishedBefore(s.publishedBefore)
+	if s.PublishedBefore != "" {
+		call.PublishedBefore(s.PublishedBefore)
 	}
 
-	if s.q != "" {
-		call.Q(s.q)
+	if s.Q != "" {
+		call.Q(s.Q)
 	}
 
-	if s.regionCode != "" {
-		call.RegionCode(s.regionCode)
+	if s.RegionCode != "" {
+		call.RegionCode(s.RegionCode)
 	}
 
-	if s.relevanceLanguage != "" {
-		call.RelevanceLanguage(s.relevanceLanguage)
+	if s.RelevanceLanguage != "" {
+		call.RelevanceLanguage(s.RelevanceLanguage)
 	}
 
-	if s.safeSearch != "" {
-		call.SafeSearch(s.safeSearch)
+	if s.SafeSearch != "" {
+		call.SafeSearch(s.SafeSearch)
 	}
 
-	if s.topicId != "" {
-		call.TopicId(s.topicId)
+	if s.TopicId != "" {
+		call.TopicId(s.TopicId)
 	}
 
-	if s.types != "" {
-		call.Type(s.types)
+	if s.Types != "" {
+		call.Type(s.Types)
 	}
 
-	if s.videoCaption != "" {
-		call.VideoCaption(s.videoCaption)
+	if s.VideoCaption != "" {
+		call.VideoCaption(s.VideoCaption)
 	}
 
-	if s.videoCategoryId != "" {
-		call.VideoCategoryId(s.videoCategoryId)
+	if s.VideoCategoryId != "" {
+		call.VideoCategoryId(s.VideoCategoryId)
 	}
 
-	if s.videoDefinition != "" {
-		call.VideoDefinition(s.videoDefinition)
+	if s.VideoDefinition != "" {
+		call.VideoDefinition(s.VideoDefinition)
 	}
 
-	if s.videoDimension != "" {
-		call.VideoDimension(s.videoDimension)
+	if s.VideoDimension != "" {
+		call.VideoDimension(s.VideoDimension)
 	}
 
-	if s.videoDuration != "" {
-		call.VideoDuration(s.videoDuration)
+	if s.VideoDuration != "" {
+		call.VideoDuration(s.VideoDuration)
 	}
 
-	if s.videoEmbeddable != "" {
-		call.VideoEmbeddable(s.videoEmbeddable)
+	if s.VideoEmbeddable != "" {
+		call.VideoEmbeddable(s.VideoEmbeddable)
 	}
 
-	if s.videoLicense != "" {
-		call.VideoLicense(s.videoLicense)
+	if s.VideoLicense != "" {
+		call.VideoLicense(s.VideoLicense)
 	}
 
-	if s.videoPaidProductPlacement != "" {
-		call.VideoPaidProductPlacement(s.videoPaidProductPlacement)
+	if s.VideoPaidProductPlacement != "" {
+		call.VideoPaidProductPlacement(s.VideoPaidProductPlacement)
 	}
 
-	if s.videoSyndicated != "" {
-		call.VideoSyndicated(s.videoSyndicated)
+	if s.VideoSyndicated != "" {
+		call.VideoSyndicated(s.VideoSyndicated)
 	}
 
-	if s.videoType != "" {
-		call.VideoType(s.videoType)
+	if s.VideoType != "" {
+		call.VideoType(s.VideoType)
 	}
 
 	res, err := call.Do()
 	if err != nil {
-		log.Fatalln(errors.Join(errGetSearch, err), s.q)
+		utils.PrintJSON(s)
+		log.Fatalln(errors.Join(errGetSearch, err), s.Q)
 	}
 
 	return res.Items
@@ -204,26 +205,26 @@ func (s *search) List(parts []string, output string) {
 
 func WithChannelId(channelId string) Option {
 	return func(s *search) {
-		s.channelId = channelId
+		s.ChannelId = channelId
 	}
 }
 
 func WithChannelType(channelType string) Option {
 	return func(s *search) {
-		s.channelType = channelType
+		s.ChannelType = channelType
 	}
 }
 
 func WithEventType(eventType string) Option {
 	return func(s *search) {
-		s.eventType = eventType
+		s.EventType = eventType
 	}
 }
 
 func WithForContentOwner(forContentOwner bool, changed bool) Option {
 	return func(s *search) {
 		if changed {
-			s.forContentOwner = &forContentOwner
+			s.ForContentOwner = &forContentOwner
 		}
 	}
 }
@@ -231,7 +232,7 @@ func WithForContentOwner(forContentOwner bool, changed bool) Option {
 func WithForDeveloper(forDeveloper bool, changed bool) Option {
 	return func(s *search) {
 		if changed {
-			s.forDeveloper = &forDeveloper
+			s.ForDeveloper = &forDeveloper
 		}
 	}
 }
@@ -239,146 +240,146 @@ func WithForDeveloper(forDeveloper bool, changed bool) Option {
 func WithForMine(forMine bool, changed bool) Option {
 	return func(s *search) {
 		if changed {
-			s.forMine = &forMine
+			s.ForMine = &forMine
 		}
 	}
 }
 
 func WithLocation(location string) Option {
 	return func(s *search) {
-		s.location = location
+		s.Location = location
 	}
 }
 
 func WithLocationRadius(locationRadius string) Option {
 	return func(s *search) {
-		s.locationRadius = locationRadius
+		s.LocationRadius = locationRadius
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
 	return func(s *search) {
-		s.maxResults = maxResults
+		s.MaxResults = maxResults
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(s *search) {
-		s.onBehalfOfContentOwner = onBehalfOfContentOwner
+		s.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithOrder(order string) Option {
 	return func(s *search) {
-		s.order = order
+		s.Order = order
 	}
 }
 
 func WithPublishedAfter(publishedAfter string) Option {
 	return func(s *search) {
-		s.publishedAfter = publishedAfter
+		s.PublishedAfter = publishedAfter
 	}
 }
 
 func WithPublishedBefore(publishedBefore string) Option {
 	return func(s *search) {
-		s.publishedBefore = publishedBefore
+		s.PublishedBefore = publishedBefore
 	}
 }
 
 func WithQ(q string) Option {
 	return func(s *search) {
-		s.q = q
+		s.Q = q
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
 	return func(s *search) {
-		s.regionCode = regionCode
+		s.RegionCode = regionCode
 	}
 }
 
 func WithRelevanceLanguage(relevanceLanguage string) Option {
 	return func(s *search) {
-		s.relevanceLanguage = relevanceLanguage
+		s.RelevanceLanguage = relevanceLanguage
 	}
 }
 
 func WithSafeSearch(safeSearch string) Option {
 	return func(s *search) {
-		s.safeSearch = safeSearch
+		s.SafeSearch = safeSearch
 	}
 }
 
 func WithTopicId(topicId string) Option {
 	return func(s *search) {
-		s.topicId = topicId
+		s.TopicId = topicId
 	}
 }
 
 func WithTypes(types string) Option {
 	return func(s *search) {
-		s.types = types
+		s.Types = types
 	}
 }
 
 func WithVideoCaption(videoCaption string) Option {
 	return func(s *search) {
-		s.videoCaption = videoCaption
+		s.VideoCaption = videoCaption
 	}
 }
 
 func WithVideoCategoryId(videoCategoryId string) Option {
 	return func(s *search) {
-		s.videoCategoryId = videoCategoryId
+		s.VideoCategoryId = videoCategoryId
 	}
 }
 
 func WithVideoDefinition(videoDefinition string) Option {
 	return func(s *search) {
-		s.videoDefinition = videoDefinition
+		s.VideoDefinition = videoDefinition
 	}
 }
 
 func WithVideoDimension(videoDimension string) Option {
 	return func(s *search) {
-		s.videoDimension = videoDimension
+		s.VideoDimension = videoDimension
 	}
 }
 
 func WithVideoDuration(videoDuration string) Option {
 	return func(s *search) {
-		s.videoDuration = videoDuration
+		s.VideoDuration = videoDuration
 	}
 }
 
 func WithVideoEmbeddable(videoEmbeddable string) Option {
 	return func(s *search) {
-		s.videoEmbeddable = videoEmbeddable
+		s.VideoEmbeddable = videoEmbeddable
 	}
 }
 
 func WithVideoLicense(videoLicense string) Option {
 	return func(s *search) {
-		s.videoLicense = videoLicense
+		s.VideoLicense = videoLicense
 	}
 }
 
 func WithVideoPaidProductPlacement(videoPaidProductPlacement string) Option {
 	return func(s *search) {
-		s.videoPaidProductPlacement = videoPaidProductPlacement
+		s.VideoPaidProductPlacement = videoPaidProductPlacement
 	}
 }
 
 func WithVideoSyndicated(videoSyndicated string) Option {
 	return func(s *search) {
-		s.videoSyndicated = videoSyndicated
+		s.VideoSyndicated = videoSyndicated
 	}
 }
 
 func WithVideoType(videoType string) Option {
 	return func(s *search) {
-		s.videoType = videoType
+		s.VideoType = videoType
 	}
 }
 

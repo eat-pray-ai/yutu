@@ -15,7 +15,7 @@ var listCmd = &cobra.Command{
 			channel.WithForHandle(forHandle),
 			channel.WithForUsername(forUsername),
 			channel.WithHl(hl),
-			channel.WithId(id),
+			channel.WithID(id),
 			channel.WithChannelManagedByMe(managedByMe, true),
 			channel.WithMaxResults(maxResults),
 			channel.WithMine(mine, true),

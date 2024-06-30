@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  "List playlist items' info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithId(id),
+			playlistItem.WithID(id),
 			playlistItem.WithPlaylistId(playlistId),
 			playlistItem.WithMaxResults(maxResults),
 			playlistItem.WithVideoId(videoId),

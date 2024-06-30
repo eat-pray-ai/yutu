@@ -12,7 +12,7 @@ var listCmd = &cobra.Command{
 	Long:  "List video's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithId(id),
+			video.WithID(id),
 			video.WithChart(chart),
 			video.WithHl(hl),
 			video.WithLocale(locale),
