@@ -101,7 +101,6 @@ func init() {
 	)
 
 	insertCmd.MarkFlagRequired("file")
-	insertCmd.MarkFlagRequired("title")
 	insertCmd.MarkFlagRequired("categoryId")
 	insertCmd.MarkFlagRequired("privacy")
 }

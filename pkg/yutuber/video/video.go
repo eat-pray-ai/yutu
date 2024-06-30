@@ -149,6 +149,10 @@ func (v *video) Insert() {
 		v.Tags = append(v.Tags, "yutu🐰")
 	}
 
+	if v.Title == "" {
+		v.Title = utils.GetFileName(v.File)
+	}
+
 	video := &youtube.Video{
 		Snippet: &youtube.VideoSnippet{
 			Title:                v.Title,

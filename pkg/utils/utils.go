@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 
 	"gopkg.in/yaml.v3"
@@ -42,4 +43,10 @@ func RandomStage() string {
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
 	return state
+}
+
+func GetFileName(file string) string {
+	base := filepath.Base(file)
+	fileName := base[:len(base)-len(filepath.Ext(base))]
+	return fileName
 }
