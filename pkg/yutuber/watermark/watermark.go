@@ -11,7 +11,6 @@ import (
 
 var (
 	service           *youtube.Service
-	errOpenFile       = errors.New("failed to open file")
 	errSetWatermark   = errors.New("failed to set watermark")
 	errUnsetWatermark = errors.New("failed to unset watermark")
 )
@@ -46,7 +45,7 @@ func NewWatermark(opts ...Option) Watermark {
 func (w watermark) Set() {
 	file, err := os.Open(w.file)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err), w.file)
+		log.Fatalln(errors.Join(errSetWatermark, err), w.file)
 	}
 	defer file.Close()
 	inVideoBranding := &youtube.InvideoBranding{

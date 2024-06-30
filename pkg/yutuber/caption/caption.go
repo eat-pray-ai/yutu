@@ -13,7 +13,6 @@ import (
 
 var (
 	service            *youtube.Service
-	errOpenFile        = errors.New("failed to open file")
 	errGetCaption      = errors.New("failed to get caption")
 	errUpdateCaption   = errors.New("failed to update caption")
 	errDeleteCaption   = errors.New("failed to delete caption")
@@ -97,7 +96,7 @@ func (c *caption) List(parts []string, output string) {
 func (c *caption) Insert() {
 	file, err := os.Open(c.file)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err))
+		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 	defer file.Close()
 
@@ -168,7 +167,7 @@ func (c *caption) Update() {
 	if c.file != "" {
 		file, err := os.Open(c.file)
 		if err != nil {
-			log.Fatalln(errors.Join(errOpenFile, err))
+			log.Fatalln(errors.Join(errUpdateCaption, err))
 		}
 		defer file.Close()
 		call = call.Media(file)

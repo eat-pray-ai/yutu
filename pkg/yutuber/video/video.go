@@ -14,15 +14,13 @@ import (
 )
 
 var (
-	service         *youtube.Service
-	errGetVideo     = errors.New("failed to get video")
-	errInsertVideo  = errors.New("failed to insert video")
-	errUpdateVideo  = errors.New("failed to update video")
-	errOpenFile     = errors.New("failed to open file")
-	errSetThumbnail = errors.New("failed to set thumbnail")
-	errRating       = errors.New("failed to rate video")
-	errGetRating    = errors.New("failed to get rating")
-	errDeleteVideo  = errors.New("failed to delete video")
+	service        *youtube.Service
+	errGetVideo    = errors.New("failed to get video")
+	errInsertVideo = errors.New("failed to insert video")
+	errUpdateVideo = errors.New("failed to update video")
+	errRating      = errors.New("failed to rate video")
+	errGetRating   = errors.New("failed to get rating")
+	errDeleteVideo = errors.New("failed to delete video")
 )
 
 type video struct {
@@ -140,7 +138,7 @@ func (v *video) List(parts []string, output string) {
 func (v *video) Insert() {
 	file, err := os.Open(v.file)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err), v.file)
+		log.Fatalln(errors.Join(errInsertVideo, err), v.file)
 	}
 	defer file.Close()
 

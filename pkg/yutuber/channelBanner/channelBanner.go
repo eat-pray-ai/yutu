@@ -12,7 +12,6 @@ import (
 
 var (
 	service                *youtube.Service
-	errOpenFile            = errors.New("failed to open file")
 	errInsertChannelBanner = errors.New("failed to insert channelBanner")
 )
 
@@ -42,7 +41,7 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 func (cb *channelBanner) Insert() {
 	file, err := os.Open(cb.file)
 	if err != nil {
-		log.Fatalln(errors.Join(errOpenFile, err), cb.file)
+		log.Fatalln(errors.Join(errInsertChannelBanner, err), cb.file)
 	}
 	defer file.Close()
 	cbr := &youtube.ChannelBannerResource{}
