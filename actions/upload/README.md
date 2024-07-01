@@ -33,9 +33,21 @@ jobs:
 
 **Required**, Please refer to [yutu prerequisites](https://github.com/eat-pray-ai/yutu?tab=readme-ov-file#prerequisites) to get a credential.
 
+Note: The credential should be base64 encoded as input, for example:
+
+```shell
+base64 -w 0 client_secret.json
+```
+
 ### `token`
 
 **Required**, Please refer to [yutu prerequisites](https://github.com/eat-pray-ai/yutu?tab=readme-ov-file#prerequisites) to generate a token.
+
+Note: The token should be base64 encoded as input, for example:
+
+```shell
+base64 -w 0 youtube.token.json
+```
 
 ### `flags`
 

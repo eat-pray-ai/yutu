@@ -7,10 +7,10 @@ inputs:
     required: false
     default: ''
   credential:
-    description: 'Credential to authenticate with the YouTube API'
+    description: 'Base64 encoded credential to authenticate with the YouTube API'
     required: true
   token:
-    description: 'Token to authenticate with the YouTube API'
+    description: 'Base64 encoded token to authenticate with the YouTube API'
     required: true
   flags:
     description: 'Flags passed to the command/subcommand'

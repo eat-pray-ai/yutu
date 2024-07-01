@@ -7,10 +7,10 @@ inputs:
     required: false
     default: ''
   credential:
-    description: 'Credential to authenticate with the YouTube API'
+    description: 'Base64 encoded credential to authenticate with the YouTube API'
     required: true
   token:
-    description: 'Token to authenticate with the YouTube API'
+    description: 'Base64 encoded token to authenticate with the YouTube API'
     required: true
   command:
     description: 'Command to run, such as `video`, `channel` or `playlist`'
@@ -37,6 +37,6 @@ runs:
     - shell: bash
       run: |
         chmod +x yutu-linux-amd64
-        echo ${{ inputs.credential }} > ./client_secret.json
-        echo ${{ inputs.token }} > ./youtube.token.json
+        echo ${{ inputs.credential }} | base64 --decode > ./client_secret.json
+        echo ${{ inputs.token }} | base64 --decode > ./youtube.token.json
         ./yutu-linux-amd64 ${{ inputs.command }} ${{ inputs.subcommand }} ${{ inputs.flags }}
