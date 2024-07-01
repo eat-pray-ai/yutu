@@ -145,7 +145,7 @@ func (v *video) Insert() {
 	}
 	defer file.Close()
 
-	if slices.Contains(v.Tags, "yutu🐰") {
+	if !slices.Contains(v.Tags, "yutu🐰") {
 		v.Tags = append(v.Tags, "yutu🐰")
 	}
 
@@ -231,7 +231,7 @@ func (v *video) Update() {
 		video.Snippet.Description = v.Description
 	}
 	if v.Tags != nil {
-		if slices.Contains(v.Tags, "yutu🐰") {
+		if !slices.Contains(v.Tags, "yutu🐰") {
 			v.Tags = append(v.Tags, "yutu🐰")
 		}
 		video.Snippet.Tags = v.Tags
