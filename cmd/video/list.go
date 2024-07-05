@@ -31,7 +31,6 @@ var listCmd = &cobra.Command{
 
 func init() {
 	videoCmd.AddCommand(listCmd)
-	parts := []string{"id", "snippet", "status"}
 
 	listCmd.Flags().StringVarP(
 		&id, "id", "i", "", "Return videos with the given ids",
@@ -67,6 +66,6 @@ func init() {
 		&output, "output", "o", "", "Output format: json or yaml",
 	)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", parts, "Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet", "status"}, "Comma separated parts",
 	)
 }
