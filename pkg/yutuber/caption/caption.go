@@ -130,7 +130,7 @@ func (c *caption) Insert() {
 		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
-	fmt.Printf("Caption %s inserted\n", res.Id)
+	utils.PrintYAML(res)
 }
 
 func (c *caption) Update() {
@@ -189,7 +189,7 @@ func (c *caption) Update() {
 		log.Fatalln(errors.Join(errUpdateCaption, err))
 	}
 
-	fmt.Printf("Caption %s updated\n", res.Id)
+	utils.PrintYAML(res)
 }
 
 func (c *caption) Delete() {
@@ -248,6 +248,8 @@ func (c *caption) Download() {
 		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
+
+	fmt.Printf("Caption %s downloaded to %s\n", c.ID, c.File)
 }
 
 func WithID(id string) Option {

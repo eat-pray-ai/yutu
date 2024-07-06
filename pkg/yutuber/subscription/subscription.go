@@ -129,7 +129,7 @@ func (s *subscription) Insert() {
 		utils.PrintJSON(s)
 		log.Fatalln(errors.Join(errInsertSubscription, err))
 	}
-	fmt.Println("Subscription inserted")
+
 	utils.PrintYAML(res)
 }
 

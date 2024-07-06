@@ -218,7 +218,6 @@ func (v *video) Insert() {
 		pi.Insert()
 	}
 
-	fmt.Println("Video inserted:")
 	utils.PrintYAML(res)
 }
 
@@ -284,7 +283,6 @@ func (v *video) Update() {
 		pi.Insert()
 	}
 
-	fmt.Println("Video updated:")
 	utils.PrintYAML(res)
 }
 

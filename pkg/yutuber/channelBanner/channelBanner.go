@@ -2,7 +2,6 @@ package channelBanner
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -61,7 +60,6 @@ func (cb *channelBanner) Insert() {
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 
-	fmt.Println("ChannelBanner inserted:")
 	utils.PrintYAML(res)
 }
 

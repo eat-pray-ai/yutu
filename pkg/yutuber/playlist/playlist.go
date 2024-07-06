@@ -114,13 +114,13 @@ func (p *playlist) Insert() {
 	}
 
 	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
-	playlist, err := call.Do()
+	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(p)
 		log.Fatalln(errors.Join(errInsertPlaylist, err))
 	}
 
-	fmt.Printf("Playlist %s inserted\n", playlist.Id)
+	utils.PrintYAML(res)
 }
 
 func (p *playlist) Update() {
@@ -148,7 +148,6 @@ func (p *playlist) Update() {
 		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.ID)
 	}
 
-	fmt.Println("Playlist updated:")
 	utils.PrintYAML(res)
 }
 

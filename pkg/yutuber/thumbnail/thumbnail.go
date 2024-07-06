@@ -2,7 +2,6 @@ package thumbnail
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -41,12 +40,13 @@ func (t *thumbnail) Set() {
 		log.Fatalln(errors.Join(errSetThumbnail, err), t.File)
 	}
 	call := service.Thumbnails.Set(t.VideoId).Media(file)
-	_, err = call.Do()
+	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(t)
 		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
-	fmt.Printf("Thumbnail set for video ID %v\n", t.VideoId)
+
+	utils.PrintYAML(res)
 }
 
 func WithVideoId(videoId string) Option {

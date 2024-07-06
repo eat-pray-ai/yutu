@@ -134,7 +134,6 @@ func (c *channel) Update() {
 		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errUpdateChannel, err), c.ID)
 	}
-	fmt.Println("Channel updated:")
 	utils.PrintYAML(res)
 }
 
