@@ -19,6 +19,8 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithKPlaylistId(kPlaylistId),
 			playlistItem.WithPlaylistId(playlistId),
 			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithChannelId(channelId),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
 		pi.Insert(false)
@@ -58,4 +60,5 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&privacy, "privacy", "r", "", "public, private, or unlisted",
 	)
+	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 }

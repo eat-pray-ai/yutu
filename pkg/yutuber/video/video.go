@@ -198,7 +198,7 @@ func (v *video) Insert(silent bool) {
 
 	if v.Thumbnail != "" {
 		t := thumbnail.NewThumbnail(
-			thumbnail.WithVideoId(v.ID),
+			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
@@ -207,12 +207,12 @@ func (v *video) Insert(silent bool) {
 
 	if v.PlaylistId != "" {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithTitle(v.Title),
-			playlistItem.WithDescription(v.Description),
+			playlistItem.WithTitle(res.Snippet.Title),
+			playlistItem.WithDescription(res.Snippet.Description),
 			playlistItem.WithVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),
-			playlistItem.WithChannelId(v.ChannelId),
-			playlistItem.WithPrivacy(v.Privacy),
+			playlistItem.WithChannelId(res.Snippet.ChannelId),
+			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
 		pi.Insert(true)
@@ -265,7 +265,7 @@ func (v *video) Update(silent bool) {
 
 	if v.Thumbnail != "" {
 		t := thumbnail.NewThumbnail(
-			thumbnail.WithVideoId(v.ID),
+			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
@@ -274,12 +274,13 @@ func (v *video) Update(silent bool) {
 
 	if v.PlaylistId != "" {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithTitle(v.Title),
-			playlistItem.WithDescription(v.Description),
+			playlistItem.WithTitle(res.Snippet.Title),
+			playlistItem.WithDescription(res.Snippet.Description),
+			playlistItem.WithKind("video"),
 			playlistItem.WithVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),
-			playlistItem.WithChannelId(v.ChannelId),
-			playlistItem.WithPrivacy(v.Privacy),
+			playlistItem.WithChannelId(res.Snippet.ChannelId),
+			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
 		pi.Insert(true)

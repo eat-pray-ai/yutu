@@ -15,6 +15,7 @@ var updateCmd = &cobra.Command{
 			playlistItem.WithTitle(title),
 			playlistItem.WithDescription(description),
 			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
 		pi.Update(false)
@@ -34,4 +35,5 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&privacy, "privacy", "p", "", "Privacy status of the playlist item",
 	)
+	updateCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 }

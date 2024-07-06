@@ -131,6 +131,10 @@ func (pi *playlistItem) Insert(silent bool) {
 	call := service.PlaylistItems.Insert(
 		[]string{"snippet", "status"}, playlistItem,
 	)
+	if pi.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	}
+
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
@@ -157,6 +161,10 @@ func (pi *playlistItem) Update(silent bool) {
 	call := service.PlaylistItems.Update(
 		[]string{"snippet", "status"}, playlistItem,
 	)
+	if pi.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	}
+
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
