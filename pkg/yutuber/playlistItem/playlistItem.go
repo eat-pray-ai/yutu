@@ -138,7 +138,7 @@ func (pi *playlistItem) Insert(silent bool) {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
-		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.VideoId)
+		log.Fatalln(errors.Join(errInsertPlaylistItem, err))
 	}
 
 	if !silent {
