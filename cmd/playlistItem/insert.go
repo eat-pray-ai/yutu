@@ -21,7 +21,7 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithPrivacy(privacy),
 			playlistItem.WithService(nil),
 		)
-		pi.Insert()
+		pi.Insert(false)
 	},
 }
 

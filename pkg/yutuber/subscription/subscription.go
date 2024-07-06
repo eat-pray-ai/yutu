@@ -35,7 +35,7 @@ type subscription struct {
 type Subscription interface {
 	get([]string) []*youtube.Subscription
 	List([]string, string)
-	Insert()
+	Insert(silent bool)
 	Delete()
 }
 
@@ -111,7 +111,7 @@ func (s *subscription) List(parts []string, output string) {
 	}
 }
 
-func (s *subscription) Insert() {
+func (s *subscription) Insert(silent bool) {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.SubscriberChannelId,
@@ -130,7 +130,9 @@ func (s *subscription) Insert() {
 		log.Fatalln(errors.Join(errInsertSubscription, err))
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func (s *subscription) Delete() {

@@ -17,7 +17,7 @@ var insertCmd = &cobra.Command{
 			subscription.WithTitle(title),
 			subscription.WithService(nil),
 		)
-		s.Insert()
+		s.Insert(false)
 	},
 }
 

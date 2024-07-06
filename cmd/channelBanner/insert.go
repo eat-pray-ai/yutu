@@ -16,7 +16,7 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			channelBanner.WithService(nil),
 		)
-		cb.Insert()
+		cb.Insert(false)
 	},
 }
 

@@ -19,7 +19,7 @@ var updateCmd = &cobra.Command{
 			channel.WithTitle(title),
 			channel.WithService(nil),
 		)
-		c.Update()
+		c.Update(false)
 	},
 }
 

@@ -19,7 +19,7 @@ var updateCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithService(nil),
 		)
-		p.Update()
+		p.Update(false)
 	},
 }
 

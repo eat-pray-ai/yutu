@@ -22,7 +22,7 @@ type channelBanner struct {
 }
 
 type ChannelBanner interface {
-	Insert()
+	Insert(silent bool)
 }
 
 type Option func(banner *channelBanner)
@@ -37,7 +37,7 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 	return cb
 }
 
-func (cb *channelBanner) Insert() {
+func (cb *channelBanner) Insert(silent bool) {
 	file, err := os.Open(cb.File)
 	if err != nil {
 		utils.PrintJSON(cb)
@@ -60,7 +60,9 @@ func (cb *channelBanner) Insert() {
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func WithFile(file string) Option {

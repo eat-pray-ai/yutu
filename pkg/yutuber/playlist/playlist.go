@@ -36,8 +36,8 @@ type playlist struct {
 
 type Playlist interface {
 	List([]string, string)
-	Insert()
-	Update()
+	Insert(silent bool)
+	Update(silent bool)
 	Delete()
 	get([]string) []*youtube.Playlist
 }
@@ -99,7 +99,7 @@ func (p *playlist) List(parts []string, output string) {
 	}
 }
 
-func (p *playlist) Insert() {
+func (p *playlist) Insert(silent bool) {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -120,10 +120,12 @@ func (p *playlist) Insert() {
 		log.Fatalln(errors.Join(errInsertPlaylist, err))
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
-func (p *playlist) Update() {
+func (p *playlist) Update(silent bool) {
 	playlist := p.get([]string{"id", "snippet", "status"})[0]
 	if p.Title != "" {
 		playlist.Snippet.Title = p.Title
@@ -148,7 +150,9 @@ func (p *playlist) Update() {
 		log.Fatalln(errors.Join(errUpdatePlaylist, err), p.ID)
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func (p *playlist) Delete() {

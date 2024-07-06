@@ -20,7 +20,7 @@ type thumbnail struct {
 }
 
 type Thumbnail interface {
-	Set()
+	Set(silent bool)
 }
 
 type Option func(*thumbnail)
@@ -33,7 +33,7 @@ func NewThumbnail(opts ...Option) Thumbnail {
 	return t
 }
 
-func (t *thumbnail) Set() {
+func (t *thumbnail) Set(silent bool) {
 	file, err := os.Open(t.File)
 	if err != nil {
 		utils.PrintJSON(t)
@@ -46,7 +46,9 @@ func (t *thumbnail) Set() {
 		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func WithVideoId(videoId string) Option {

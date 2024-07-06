@@ -15,7 +15,7 @@ var setCmd = &cobra.Command{
 			thumbnail.WithVideoId(videoId),
 			thumbnail.WithService(nil),
 		)
-		t.Set()
+		t.Set(false)
 	},
 }
 

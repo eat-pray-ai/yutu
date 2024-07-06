@@ -59,8 +59,8 @@ type video struct {
 
 type Video interface {
 	List([]string, string)
-	Insert()
-	Update()
+	Insert(silent bool)
+	Update(silent bool)
 	Rate()
 	GetRating()
 	Delete()
@@ -137,7 +137,7 @@ func (v *video) List(parts []string, output string) {
 	}
 }
 
-func (v *video) Insert() {
+func (v *video) Insert(silent bool) {
 	file, err := os.Open(v.File)
 	if err != nil {
 		utils.PrintJSON(v)
@@ -202,7 +202,7 @@ func (v *video) Insert() {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set()
+		t.Set(true)
 	}
 
 	if v.PlaylistId != "" {
@@ -215,13 +215,15 @@ func (v *video) Insert() {
 			playlistItem.WithPrivacy(v.Privacy),
 			playlistItem.WithService(service),
 		)
-		pi.Insert()
+		pi.Insert(true)
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
-func (v *video) Update() {
+func (v *video) Update(silent bool) {
 	video := v.get([]string{"id", "snippet", "status"})[0]
 	if v.Title != "" {
 		video.Snippet.Title = v.Title
@@ -267,7 +269,7 @@ func (v *video) Update() {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set()
+		t.Set(true)
 	}
 
 	if v.PlaylistId != "" {
@@ -280,10 +282,12 @@ func (v *video) Update() {
 			playlistItem.WithPrivacy(v.Privacy),
 			playlistItem.WithService(service),
 		)
-		pi.Insert()
+		pi.Insert(true)
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func (v *video) Rate() {

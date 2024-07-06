@@ -26,7 +26,7 @@ var updateCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithService(nil),
 		)
-		c.Update()
+		c.Update(false)
 	},
 }
 

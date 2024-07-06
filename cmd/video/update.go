@@ -24,7 +24,7 @@ var updateCmd = &cobra.Command{
 			video.WithEmbeddable(embeddable),
 			video.WithService(nil),
 		)
-		v.Update()
+		v.Update(false)
 	},
 }
 

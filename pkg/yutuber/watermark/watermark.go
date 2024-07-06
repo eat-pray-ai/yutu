@@ -78,8 +78,8 @@ func (w *watermark) Set() {
 		utils.PrintJSON(w)
 		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
-	fmt.Println("Watermark set done")
 
+	fmt.Println("Watermark set done")
 }
 
 func (w *watermark) Unset() {

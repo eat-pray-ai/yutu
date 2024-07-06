@@ -42,8 +42,8 @@ type caption struct {
 type Caption interface {
 	get(parts []string) []*youtube.Caption
 	List(parts []string, output string)
-	Insert()
-	Update()
+	Insert(silent bool)
+	Update(silent bool)
 	Delete()
 	Download()
 }
@@ -94,7 +94,7 @@ func (c *caption) List(parts []string, output string) {
 	}
 }
 
-func (c *caption) Insert() {
+func (c *caption) Insert(silent bool) {
 	file, err := os.Open(c.File)
 	if err != nil {
 		utils.PrintJSON(c)
@@ -130,10 +130,13 @@ func (c *caption) Insert() {
 		utils.PrintJSON(c)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
-	utils.PrintYAML(res)
+
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
-func (c *caption) Update() {
+func (c *caption) Update(silent bool) {
 	caption := c.get([]string{"snippet"})[0]
 	if c.AudioTrackType != "" {
 		caption.Snippet.AudioTrackType = c.AudioTrackType
@@ -189,7 +192,9 @@ func (c *caption) Update() {
 		log.Fatalln(errors.Join(errUpdateCaption, err))
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func (c *caption) Delete() {

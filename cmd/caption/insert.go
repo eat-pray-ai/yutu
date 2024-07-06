@@ -26,7 +26,7 @@ var insertCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithService(nil),
 		)
-		c.Insert()
+		c.Insert(false)
 	},
 }
 

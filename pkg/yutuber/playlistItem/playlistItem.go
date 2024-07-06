@@ -37,8 +37,8 @@ type playlistItem struct {
 
 type PlaylistItem interface {
 	List([]string, string)
-	Insert()
-	Update()
+	Insert(silent bool)
+	Update(silent bool)
 	Delete()
 	get([]string) []*youtube.PlaylistItem
 }
@@ -95,7 +95,7 @@ func (pi *playlistItem) List(parts []string, output string) {
 	}
 }
 
-func (pi *playlistItem) Insert() {
+func (pi *playlistItem) Insert(silent bool) {
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
 	case "video":
@@ -137,10 +137,12 @@ func (pi *playlistItem) Insert() {
 		log.Fatalln(errors.Join(errInsertPlaylistItem, err), pi.VideoId)
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
-func (pi *playlistItem) Update() {
+func (pi *playlistItem) Update(silent bool) {
 	playlistItem := pi.get([]string{"id", "snippet", "status"})[0]
 	if pi.Title != "" {
 		playlistItem.Snippet.Title = pi.Title
@@ -161,7 +163,9 @@ func (pi *playlistItem) Update() {
 		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.ID)
 	}
 
-	utils.PrintYAML(res)
+	if !silent {
+		utils.PrintYAML(res)
+	}
 }
 
 func (pi *playlistItem) Delete() {
