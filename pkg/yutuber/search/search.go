@@ -97,6 +97,9 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 		call.LocationRadius(s.LocationRadius)
 	}
 
+	if s.MaxResults <= 0 {
+		s.MaxResults = 1
+	}
 	call.MaxResults(s.MaxResults)
 
 	if s.OnBehalfOfContentOwner != "" {

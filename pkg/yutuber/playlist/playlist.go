@@ -66,7 +66,9 @@ func (p *playlist) get(parts []string) []*youtube.Playlist {
 	if p.Mine != nil {
 		call = call.Mine(*p.Mine)
 	}
-
+	if p.MaxResults <= 0 {
+		p.MaxResults = 1
+	}
 	call = call.MaxResults(p.MaxResults)
 	if p.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)

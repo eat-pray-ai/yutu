@@ -46,6 +46,9 @@ func (m *member) get(parts []string) []*youtube.Member {
 	if m.HasAccessToLevel != "" {
 		call = call.HasAccessToLevel(m.HasAccessToLevel)
 	}
+	if m.MaxResults <= 0 {
+		m.MaxResults = 1
+	}
 	call = call.MaxResults(m.MaxResults)
 	if m.Mode != "" {
 		call = call.Mode(m.Mode)

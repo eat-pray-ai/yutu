@@ -80,6 +80,9 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 		call = call.ManagedByMe(*c.ManagedByMe)
 	}
 
+	if c.MaxResults <= 0 {
+		c.MaxResults = 1
+	}
 	call = call.MaxResults(c.MaxResults)
 
 	if c.Mine != nil {

@@ -56,6 +56,9 @@ func (a *activity) get(parts []string) []*youtube.Activity {
 		call = call.Mine(*a.Mine)
 	}
 
+	if a.MaxResults <= 0 {
+		a.MaxResults = 1
+	}
 	call.MaxResults(a.MaxResults)
 
 	if a.PublishedAfter != "" {

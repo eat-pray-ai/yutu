@@ -69,7 +69,9 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	if pi.VideoId != "" {
 		call = call.VideoId(pi.VideoId)
 	}
-
+	if pi.MaxResults <= 0 {
+		pi.MaxResults = 1
+	}
 	call = call.MaxResults(pi.MaxResults)
 	res, err := call.Do()
 	if err != nil {
