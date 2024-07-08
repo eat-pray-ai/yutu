@@ -213,6 +213,7 @@ func (v *video) Insert(silent bool) {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(res.Snippet.Title),
 			playlistItem.WithDescription(res.Snippet.Description),
+			playlistItem.WithKind("video"),
 			playlistItem.WithVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
