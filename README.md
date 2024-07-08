@@ -140,6 +140,8 @@ Use "yutu [command] --help" for more information about a command.
 
 Here are the features that are currently supported by yutu, and the ones that are planned to be supported in the future. The quota costs for each feature is also mentioned since there is a quota limits of 10,000 units/day.
 
+<details>
+  <summary>Features list</summary>
 - videos
   - [x] list, 1
   - [x] insert, 1600
@@ -250,6 +252,8 @@ Here are the features that are currently supported by yutu, and the ones that ar
 - watermarks
   - [x] set, 50
   - [x] unset, 50
+
+</details>
 
 ## Star History
 
