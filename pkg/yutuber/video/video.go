@@ -214,7 +214,7 @@ func (v *video) Insert(silent bool) {
 			playlistItem.WithTitle(res.Snippet.Title),
 			playlistItem.WithDescription(res.Snippet.Description),
 			playlistItem.WithKind("video"),
-			playlistItem.WithVideoId(res.Id),
+			playlistItem.WithKVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
