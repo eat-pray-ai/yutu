@@ -30,6 +30,7 @@ binary: yutu-{{ .Os }}-{{ .Arch }}.exe
 
 # (Optional) ldflags generated dynamically in the workflow, and set as the `evaluated-envs` input variables in the workflow.
 ldflags:
+  - "-w -s"
   - "-X {{ .Env.MODULE_PATH }}/cmd.Version={{ .Env.VERSION }}"
   - "-X {{ .Env.MODULE_PATH }}/cmd.Commit={{ .Env.COMMIT }}"
   - "-X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .Env.COMMIT_DATE }}"
