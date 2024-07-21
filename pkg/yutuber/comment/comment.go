@@ -12,16 +12,25 @@ var (
 	service                *youtube.Service
 	errGetComment          = errors.New("failed to get comment")
 	errMarkAsSpam          = errors.New("failed to mark comment as spam")
+	errDeleteComment       = errors.New("failed to delete comment")
+	errInsertComment       = errors.New("failed to insert comment")
+	errUpdateComment       = errors.New("failed to update comment")
 	errSetModerationStatus = errors.New("failed to set comment moderation status")
 )
 
 type comment struct {
 	IDs              []string `yaml:"ids" json:"ids"`
+	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
+	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
+	ChannelId        string   `yaml:"channel_id" json:"channel_id"`
 	MaxResults       int64    `yaml:"max_results" json:"max_results"`
 	ParentId         string   `yaml:"parent_id" json:"parent_id"`
 	TextFormat       string   `yaml:"text_format" json:"text_format"`
+	TextOriginal     string   `yaml:"text_original" json:"text_original"`
 	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status"`
 	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author"`
+	VideoId          string   `yaml:"video_id" json:"video_id"`
+	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating"`
 }
 
 type Comment interface {
@@ -29,6 +38,7 @@ type Comment interface {
 	List([]string, string)
 	Insert(silent bool)
 	Update(silent bool)
+	Delete()
 	MarkAsSpam(silent bool)
 	SetModerationStatus(silent bool)
 }
@@ -47,31 +57,36 @@ func NewComment(opts ...Option) Comment {
 
 func (c *comment) get(parts []string) []*youtube.Comment {
 	call := service.Comments.List(parts)
+	var result []*youtube.Comment
 
-	if c.IDs[0] != "" {
-		call = call.Id(c.IDs[0])
+	for _, id := range c.IDs {
+		if c.IDs[0] != "" {
+			call = call.Id(id)
+		}
+
+		if c.MaxResults <= 0 {
+			c.MaxResults = 1
+		}
+		call = call.MaxResults(c.MaxResults)
+
+		if c.ParentId != "" {
+			call = call.ParentId(c.ParentId)
+		}
+
+		if c.TextFormat != "" {
+			call = call.TextFormat(c.TextFormat)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			utils.PrintJSON(c)
+			log.Fatalln(errors.Join(errGetComment, err))
+		}
+
+		result = append(result, res.Items...)
 	}
 
-	if c.MaxResults <= 0 {
-		c.MaxResults = 1
-	}
-	call = call.MaxResults(c.MaxResults)
-
-	if c.ParentId != "" {
-		call = call.ParentId(c.ParentId)
-	}
-
-	if c.TextFormat != "" {
-		call = call.TextFormat(c.TextFormat)
-	}
-
-	res, err := call.Do()
-	if err != nil {
-		utils.PrintJSON(c)
-		log.Fatalln(errors.Join(errGetComment, err))
-	}
-
-	return res.Items
+	return result
 }
 
 func (c *comment) List(parts []string, output string) {
@@ -90,13 +105,55 @@ func (c *comment) List(parts []string, output string) {
 }
 
 func (c *comment) Insert(silent bool) {
-	// TODO implement me
-	panic("implement me")
+	comment := &youtube.Comment{
+		Snippet: &youtube.CommentSnippet{
+			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
+				Value: c.AuthorChannelId,
+			},
+			ChannelId:    c.ChannelId,
+			ParentId:     c.ParentId,
+			TextOriginal: c.TextOriginal,
+			VideoId:      c.VideoId,
+		},
+	}
+
+	call := service.Comments.Insert([]string{"snippet"}, comment)
+	res, err := call.Do()
+	if err != nil {
+		utils.PrintJSON(c)
+		log.Fatalln(errors.Join(errInsertComment, err))
+	}
+
+	if !silent {
+		fmt.Printf("Comment %s inserted", res.Id)
+	}
 }
 
 func (c *comment) Update(silent bool) {
-	// TODO implement me
-	panic("implement me")
+	comment := c.get([]string{"id", "snippet"})[0]
+
+	if c.CanRate != nil {
+		comment.Snippet.CanRate = *c.CanRate
+	}
+
+	if c.TextOriginal != "" {
+		comment.Snippet.TextOriginal = c.TextOriginal
+	}
+
+	if c.ViewerRating != "" {
+		comment.Snippet.ViewerRating = c.ViewerRating
+	}
+
+	call := service.Comments.Update([]string{"snippet"}, comment)
+	res, err := call.Do()
+	if err != nil {
+		utils.PrintJSON(c)
+		log.Fatalln(errors.Join(errUpdateComment, err))
+	}
+
+	if !silent {
+		fmt.Printf("Comment %s updated", res.Id)
+	}
 }
 
 func (c *comment) MarkAsSpam(silent bool) {
@@ -127,5 +184,16 @@ func (c *comment) SetModerationStatus(silent bool) {
 
 	if !silent {
 		fmt.Printf("Comment %s moderation status set to %s", c.IDs, c.ModerationStatus)
+	}
+}
+
+func (c *comment) Delete() {
+	for _, id := range c.IDs {
+		call := service.Comments.Delete(id)
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(c)
+			log.Fatalln(errors.Join(errDeleteComment, err))
+		}
 	}
 }
