@@ -197,3 +197,79 @@ func (c *comment) Delete() {
 		}
 	}
 }
+
+func WithIDs(ids []string) Option {
+	return func(c *comment) {
+		c.IDs = ids
+	}
+}
+
+func WithAuthorChannelId(authorChannelId string) Option {
+	return func(c *comment) {
+		c.AuthorChannelId = authorChannelId
+	}
+}
+
+func WithCanRate(canRate bool, changed bool) Option {
+	return func(c *comment) {
+		if changed {
+			c.CanRate = &canRate
+		}
+	}
+}
+
+func WithChannelId(channelId string) Option {
+	return func(c *comment) {
+		c.ChannelId = channelId
+	}
+}
+
+func WithMaxResults(maxResults int64) Option {
+	return func(c *comment) {
+		c.MaxResults = maxResults
+	}
+}
+
+func WithParentId(parentId string) Option {
+	return func(c *comment) {
+		c.ParentId = parentId
+	}
+}
+
+func WithTextFormat(textFormat string) Option {
+	return func(c *comment) {
+		c.TextFormat = textFormat
+	}
+}
+
+func WithTextOriginal(textOriginal string) Option {
+	return func(c *comment) {
+		c.TextOriginal = textOriginal
+	}
+}
+
+func WithModerationStatus(moderationStatus string) Option {
+	return func(c *comment) {
+		c.ModerationStatus = moderationStatus
+	}
+}
+
+func WithBanAuthor(banAuthor bool, changed bool) Option {
+	return func(c *comment) {
+		if changed {
+			c.BanAuthor = &banAuthor
+		}
+	}
+}
+
+func WithVideoId(videoId string) Option {
+	return func(c *comment) {
+		c.VideoId = videoId
+	}
+}
+
+func WithViewerRating(viewerRating string) Option {
+	return func(c *comment) {
+		c.ViewerRating = viewerRating
+	}
+}
