@@ -51,7 +51,7 @@ func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(vc)
-		log.Fatalln(errors.Join(errGetVideoCategory, err), vc.RegionCode)
+		log.Fatalln(errors.Join(errGetVideoCategory, err))
 	}
 
 	return res.Items

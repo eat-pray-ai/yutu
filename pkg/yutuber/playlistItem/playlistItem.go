@@ -76,7 +76,7 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
-		log.Fatalln(errors.Join(errGetPlaylistItem, err), pi.ID)
+		log.Fatalln(errors.Join(errGetPlaylistItem, err))
 	}
 
 	return res.Items
@@ -170,7 +170,7 @@ func (pi *playlistItem) Update(silent bool) {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
-		log.Fatalln(errors.Join(errUpdatePlaylistItem, err), pi.ID)
+		log.Fatalln(errors.Join(errUpdatePlaylistItem, err))
 	}
 
 	if !silent {
@@ -187,7 +187,7 @@ func (pi *playlistItem) Delete() {
 	err := call.Do()
 	if err != nil {
 		utils.PrintJSON(pi)
-		log.Fatalln(errors.Join(errDeletePlaylistItem, err), pi.ID)
+		log.Fatalln(errors.Join(errDeletePlaylistItem, err))
 	}
 
 	fmt.Printf("Playlsit Item %s deleted", pi.ID)

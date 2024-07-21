@@ -100,7 +100,7 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(c)
-		log.Fatalln(errors.Join(errGetChannel, err), c.ID)
+		log.Fatalln(errors.Join(errGetChannel, err))
 	}
 
 	return res.Items
@@ -135,7 +135,7 @@ func (c *channel) Update(silent bool) {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(c)
-		log.Fatalln(errors.Join(errUpdateChannel, err), c.ID)
+		log.Fatalln(errors.Join(errUpdateChannel, err))
 	}
 
 	if !silent {

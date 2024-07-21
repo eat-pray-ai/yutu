@@ -47,7 +47,7 @@ func (w *watermark) Set() {
 	file, err := os.Open(w.File)
 	if err != nil {
 		utils.PrintJSON(w)
-		log.Fatalln(errors.Join(errSetWatermark, err), w.File)
+		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
 	defer file.Close()
 	inVideoBranding := &youtube.InvideoBranding{

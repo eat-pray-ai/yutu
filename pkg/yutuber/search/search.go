@@ -185,7 +185,7 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(s)
-		log.Fatalln(errors.Join(errGetSearch, err), s.Q)
+		log.Fatalln(errors.Join(errGetSearch, err))
 	}
 
 	return res.Items

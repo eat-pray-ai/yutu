@@ -120,7 +120,7 @@ func (v *video) get(parts []string) []*youtube.Video {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(v)
-		log.Fatalln(errors.Join(errGetVideo, err), v.ID)
+		log.Fatalln(errors.Join(errGetVideo, err))
 	}
 
 	return res.Items
@@ -145,7 +145,7 @@ func (v *video) Insert(silent bool) {
 	file, err := os.Open(v.File)
 	if err != nil {
 		utils.PrintJSON(v)
-		log.Fatalln(errors.Join(errInsertVideo, err), v.File)
+		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
 	defer file.Close()
 
@@ -265,7 +265,7 @@ func (v *video) Update(silent bool) {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(v)
-		log.Fatalln(errors.Join(errUpdateVideo, err), v.ID)
+		log.Fatalln(errors.Join(errUpdateVideo, err))
 	}
 
 	if v.Thumbnail != "" {
@@ -301,7 +301,7 @@ func (v *video) Rate() {
 	err := call.Do()
 	if err != nil {
 		utils.PrintJSON(v)
-		log.Fatalln(errors.Join(errRating, err), v.ID)
+		log.Fatalln(errors.Join(errRating, err))
 	}
 	fmt.Printf("Video %s rated %s\n", v.ID, v.Rating)
 }
@@ -314,7 +314,7 @@ func (v *video) GetRating() {
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(v)
-		log.Fatalln(errors.Join(errGetRating, err), v.ID)
+		log.Fatalln(errors.Join(errGetRating, err))
 	}
 
 	utils.PrintYAML(res)

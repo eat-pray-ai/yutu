@@ -37,7 +37,7 @@ func (t *thumbnail) Set(silent bool) {
 	file, err := os.Open(t.File)
 	if err != nil {
 		utils.PrintJSON(t)
-		log.Fatalln(errors.Join(errSetThumbnail, err), t.File)
+		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
 	call := service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()

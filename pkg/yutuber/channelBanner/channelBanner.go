@@ -41,7 +41,7 @@ func (cb *channelBanner) Insert(silent bool) {
 	file, err := os.Open(cb.File)
 	if err != nil {
 		utils.PrintJSON(cb)
-		log.Fatalln(errors.Join(errInsertChannelBanner, err), cb.File)
+		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 	defer file.Close()
 	cbr := &youtube.ChannelBannerResource{}

@@ -143,7 +143,7 @@ func (s *subscription) Delete() {
 	err := call.Do()
 	if err != nil {
 		utils.PrintJSON(s)
-		log.Fatalln(errors.Join(errDeleteSubscription, err), s.ID)
+		log.Fatalln(errors.Join(errDeleteSubscription, err))
 	}
 
 	fmt.Printf("Subscription %s deleted", s.ID)
