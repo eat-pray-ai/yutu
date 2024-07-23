@@ -8,10 +8,10 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete YouTube comments",
-	Long:  "Delete YouTube comments by IDs",
+	Long:  "Delete YouTube comments by ids",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
-			comment.WithIDs(IDs),
+			comment.WithIDs(ids),
 			comment.WithService(nil),
 		)
 		c.Delete()
@@ -21,5 +21,5 @@ var deleteCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringSliceVarP(&IDs, "ids", "i", []string{}, "Comma separated IDs of comments")
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
 }

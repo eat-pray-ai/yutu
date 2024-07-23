@@ -6,18 +6,20 @@ import (
 )
 
 var (
-	IDs              []string
-	AuthorChannelId  string
-	CanRate          bool
-	ChannelId        string
-	MaxResults       int64
-	ParentId         string
-	TextFormat       string
-	TextOriginal     string
-	ModerationStatus string
-	BanAuthor        bool
-	VideoId          string
-	ViewerRating     string
+	ids              []string
+	authorChannelId  string
+	canRate          bool
+	channelId        string
+	maxResults       int64
+	parentId         string
+	textFormat       string
+	textOriginal     string
+	moderationStatus string
+	banAuthor        bool
+	videoId          string
+	viewerRating     string
+	parts            []string
+	output           string
 )
 
 var commentCmd = &cobra.Command{

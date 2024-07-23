@@ -8,10 +8,10 @@ import (
 var markAsSpamCmd = &cobra.Command{
 	Use:   "markAsSpam",
 	Short: "Mark YouTube comments as spam",
-	Long:  "Mark YouTube comments as spam by IDs",
+	Long:  "Mark YouTube comments as spam by ids",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
-			comment.WithIDs(IDs),
+			comment.WithIDs(ids),
 			comment.WithService(nil),
 		)
 		c.MarkAsSpam(false)
@@ -21,5 +21,5 @@ var markAsSpamCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
-	markAsSpamCmd.Flags().StringSliceVarP(&IDs, "ids", "i", []string{}, "Comma separated IDs of comments")
+	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
 }
