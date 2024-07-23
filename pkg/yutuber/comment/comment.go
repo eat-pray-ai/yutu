@@ -118,6 +118,10 @@ func (c *comment) Insert(silent bool) {
 		},
 	}
 
+	if c.CanRate != nil {
+		comment.Snippet.CanRate = *c.CanRate
+	}
+
 	call := service.Comments.Insert([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
