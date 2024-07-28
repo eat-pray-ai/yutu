@@ -8,6 +8,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/channelBanner"
 	_ "github.com/eat-pray-ai/yutu/cmd/channelSection"
 	_ "github.com/eat-pray-ai/yutu/cmd/comment"
+	_ "github.com/eat-pray-ai/yutu/cmd/commentThread"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nLanguage"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nRegion"
 	_ "github.com/eat-pray-ai/yutu/cmd/member"
