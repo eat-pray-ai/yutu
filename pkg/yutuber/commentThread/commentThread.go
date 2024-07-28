@@ -16,17 +16,17 @@ var (
 )
 
 type commentThread struct {
-	AllThreadsRelatedToChannelId string `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
-	AuthorChannelId              string `yaml:"author_channel_id" json:"author_channel_id"`
-	ChannelId                    string `yaml:"channel_id" json:"channel_id"`
-	ID                           string `yaml:"id" json:"id"`
-	MaxResults                   int64  `yaml:"max_results" json:"max_results"`
-	ModerationStatus             string `yaml:"moderation_status" json:"moderation_status"`
-	Order                        string `yaml:"order" json:"order"`
-	SearchTerms                  string `yaml:"search_terms" json:"search_terms"`
-	TextFormat                   string `yaml:"text_format" json:"text_format"`
-	TextOriginal                 string `yaml:"text_original" json:"text_original"`
-	VideoId                      string `yaml:"video_id" json:"video_id"`
+	ID                           []string `yaml:"id" json:"id"`
+	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
+	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
+	ChannelId                    string   `yaml:"channel_id" json:"channel_id"`
+	MaxResults                   int64    `yaml:"max_results" json:"max_results"`
+	ModerationStatus             string   `yaml:"moderation_status" json:"moderation_status"`
+	Order                        string   `yaml:"order" json:"order"`
+	SearchTerms                  string   `yaml:"search_terms" json:"search_terms"`
+	TextFormat                   string   `yaml:"text_format" json:"text_format"`
+	TextOriginal                 string   `yaml:"text_original" json:"text_original"`
+	VideoId                      string   `yaml:"video_id" json:"video_id"`
 }
 
 type CommentThread interface {
@@ -50,16 +50,16 @@ func NewCommentThread(opts ...Option) CommentThread {
 func (c *commentThread) get(parts []string) []*youtube.CommentThread {
 	call := service.CommentThreads.List(parts)
 
+	if c.ID != nil {
+		call = call.Id(c.ID...)
+	}
+
 	if c.AllThreadsRelatedToChannelId != "" {
 		call = call.AllThreadsRelatedToChannelId(c.AllThreadsRelatedToChannelId)
 	}
 
 	if c.ChannelId != "" {
 		call = call.ChannelId(c.ChannelId)
-	}
-
-	if c.ID != "" {
-		call = call.Id(c.ID)
 	}
 
 	if c.MaxResults <= 0 {
@@ -157,7 +157,7 @@ func WithChannelId(channelId string) Option {
 	}
 }
 
-func WithID(id string) Option {
+func WithID(id []string) Option {
 	return func(c *commentThread) {
 		c.ID = id
 	}

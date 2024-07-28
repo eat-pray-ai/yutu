@@ -30,6 +30,6 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&parentId, "parentId", "P", "", "Returns replies to the specified comment")
 	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "", "textFormatUnspecified, html(default) or plainText")
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"snippet"}, "Comma separated parts of a comment")
+	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts of a comment")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "json or yaml")
 }
