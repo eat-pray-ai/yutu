@@ -1,0 +1,113 @@
+# Features
+
+Here are the features that are currently supported by yutu, and the ones that are planned to be supported in the future. The quota costs for each feature is also mentioned since there is a quota limits of 10,000 units/day.
+
+- videos
+  - [x] list, 1
+  - [x] insert, 1600
+  - [x] update, 50
+  - [x] rate, 50
+  - [x] getRating, 1
+  - [x] reportAbuse, 50
+  - [x] delete, 50
+- channels
+  - [x] list, 1
+  - [x] update, 50
+- playlists
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [x] delete, 50
+- playlistItems
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [x] delete, 50
+- playlistImages
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] upload, ?
+  - [ ] delete, ?
+- activities
+  - [x] list, 1
+- captions
+  - [x] list, 50
+  - [x] download, ?
+  - [x] insert, 400
+  - [x] update, 450
+  - [x] delete, 50
+- channelBanners
+  - [x] insert, 50
+- channelSections
+  - [x] list, 1
+  - [ ] insert, 50
+  - [ ] update, 50
+  - [x] delete, 50
+- comments
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [x] setModerationStatus, 50
+  - [x] delete, 50
+- commentThreads
+  - [x] list, 1
+  - [x] insert, 50
+- <s>guideCategories</s>
+  - [x] <s>list, 1 deprecated API</s>
+- i18nLanguages
+  - [x] list, 1
+- i18nRegions
+  - [x] list, 1
+- liveBroadcasts
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] insertCuepoint, ?
+  - [ ] update, ?
+  - [ ] bind, ?
+  - [ ] transition, ?
+  - [ ] delete, ?
+- liveChatBans
+  - [ ] insert, ?
+  - [ ] delete, ?
+- liveChatMessages
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] delete, ?
+  - [ ] transition, ?
+- liveChatModerators
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] delete, ?
+- liveStreams
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] update, ?
+  - [ ] delete, ?
+- members
+  - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
+- membershipsLevels
+  - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
+- search
+  - [x] list, 100
+- subscriptions
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] delete, 50
+- superChatEvents
+  - [ ] list, ?
+- tests
+  - [ ] insert, ?
+- thirdPartyLinks
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] update, ?
+  - [ ] delete, ?
+- thumbnails
+  - [x] set, 50
+- videoAbuseReportReasons
+  - [x] list, 1
+- videoCategories
+  - [x] list, 1
+- watermarks
+  - [x] set, 50
+  - [x] unset, 50
