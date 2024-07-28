@@ -7,33 +7,36 @@ import (
 )
 
 var (
-	id          string
-	autoLevels  bool
-	file        string
-	title       string
-	description string
-	hl          string
-	tags        []string
-	language    string
-	locale      string
-	license     string
-	thumbnail   string
-	rating      string
-	chart       string
-	channelId   string
-	playListId  string
-	categoryId  string
-	privacy     string
-	forKids     bool
-	embeddable  bool
-	output      string
-	parts       []string
-	publishAt   string
-	regionCode  string
-	stabilize   bool
-	maxHeight   int64
-	maxWidth    int64
-	maxResults  int64
+	id                string
+	autoLevels        bool
+	file              string
+	title             string
+	description       string
+	hl                string
+	tags              []string
+	language          string
+	locale            string
+	license           string
+	thumbnail         string
+	rating            string
+	chart             string
+	channelId         string
+	comments          string
+	playListId        string
+	categoryId        string
+	privacy           string
+	forKids           bool
+	embeddable        bool
+	output            string
+	parts             []string
+	publishAt         string
+	regionCode        string
+	reasonId          string
+	secondaryReasonId string
+	stabilize         bool
+	maxHeight         int64
+	maxWidth          int64
+	maxResults        int64
 
 	notifySubscribers             bool
 	publicStatsViewable           bool

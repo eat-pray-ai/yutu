@@ -22,34 +22,38 @@ var (
 	errRating      = errors.New("failed to rate video")
 	errGetRating   = errors.New("failed to get rating")
 	errDeleteVideo = errors.New("failed to delete video")
+	errReportAbuse = errors.New("failed to report abuse")
 )
 
 type video struct {
-	ID          string   `yaml:"id" json:"id"`
-	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels"`
-	File        string   `yaml:"file" json:"file"`
-	Title       string   `yaml:"title" json:"title"`
-	Description string   `yaml:"description" json:"description"`
-	Hl          string   `yaml:"hl" json:"hl"`
-	Tags        []string `yaml:"tags" json:"tags"`
-	Language    string   `yaml:"language" json:"language"`
-	Locale      string   `yaml:"locale" json:"locale"`
-	License     string   `yaml:"license" json:"license"`
-	Thumbnail   string   `yaml:"thumbnail" json:"thumbnail"`
-	Rating      string   `yaml:"rating" json:"rating"`
-	Chart       string   `yaml:"chart" json:"chart"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id"`
-	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id"`
-	CategoryId  string   `yaml:"category_id" json:"category_id"`
-	Privacy     string   `yaml:"privacy" json:"privacy"`
-	ForKids     bool     `yaml:"for_kids" json:"for_kids"`
-	Embeddable  bool     `yaml:"embeddable" json:"embeddable"`
-	PublishAt   string   `yaml:"publish_at" json:"publish_at"`
-	RegionCode  string   `yaml:"region_code" json:"region_code"`
-	Stabilize   *bool    `yaml:"stabilize" json:"stabilize"`
-	MaxHeight   int64    `yaml:"max_height" json:"max_height"`
-	MaxWidth    int64    `yaml:"max_width" json:"max_width"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results"`
+	ID                string   `yaml:"id" json:"id"`
+	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
+	File              string   `yaml:"file" json:"file"`
+	Title             string   `yaml:"title" json:"title"`
+	Description       string   `yaml:"description" json:"description"`
+	Hl                string   `yaml:"hl" json:"hl"`
+	Tags              []string `yaml:"tags" json:"tags"`
+	Language          string   `yaml:"language" json:"language"`
+	Locale            string   `yaml:"locale" json:"locale"`
+	License           string   `yaml:"license" json:"license"`
+	Thumbnail         string   `yaml:"thumbnail" json:"thumbnail"`
+	Rating            string   `yaml:"rating" json:"rating"`
+	Chart             string   `yaml:"chart" json:"chart"`
+	ChannelId         string   `yaml:"channel_id" json:"channel_id"`
+	Comments          string   `yaml:"comments" json:"comments"`
+	PlaylistId        string   `yaml:"playlist_id" json:"playlist_id"`
+	CategoryId        string   `yaml:"category_id" json:"category_id"`
+	Privacy           string   `yaml:"privacy" json:"privacy"`
+	ForKids           bool     `yaml:"for_kids" json:"for_kids"`
+	Embeddable        bool     `yaml:"embeddable" json:"embeddable"`
+	PublishAt         string   `yaml:"publish_at" json:"publish_at"`
+	RegionCode        string   `yaml:"region_code" json:"region_code"`
+	ReasonId          string   `yaml:"reason_id" json:"reason_id"`
+	SecondaryReasonId string   `yaml:"secondary_reason_id" json:"secondary_reason_id"`
+	Stabilize         *bool    `yaml:"stabilize" json:"stabilize"`
+	MaxHeight         int64    `yaml:"max_height" json:"max_height"`
+	MaxWidth          int64    `yaml:"max_width" json:"max_width"`
+	MaxResults        int64    `yaml:"max_results" json:"max_results"`
 
 	NotifySubscribers             bool   `yaml:"notify_subscribers" json:"notify_subscribers"`
 	PublicStatsViewable           bool   `yaml:"public_stats_viewable" json:"public_stats_viewable"`
@@ -59,11 +63,12 @@ type video struct {
 
 type Video interface {
 	List([]string, string)
-	Insert(silent bool)
-	Update(silent bool)
+	Insert(bool)
+	Update(bool)
 	Rate()
 	GetRating()
 	Delete()
+	ReportAbuse()
 	get([]string) []*youtube.Video
 }
 
@@ -334,6 +339,29 @@ func (v *video) Delete() {
 	fmt.Printf("Video %s deleted", v.ID)
 }
 
+func (v *video) ReportAbuse() {
+	videoAbuseReport := &youtube.VideoAbuseReport{
+		Comments:          v.Comments,
+		Language:          v.Language,
+		ReasonId:          v.ReasonId,
+		SecondaryReasonId: v.SecondaryReasonId,
+		VideoId:           v.ID,
+	}
+
+	call := service.Videos.ReportAbuse(videoAbuseReport)
+	if v.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+	}
+
+	err := call.Do()
+	if err != nil {
+		utils.PrintJSON(v)
+		log.Fatalln(errors.Join(errReportAbuse, err))
+	}
+
+	fmt.Printf("Video %s reported for abuse", v.ID)
+}
+
 func WithID(id string) Option {
 	return func(v *video) {
 		v.ID = id
@@ -509,6 +537,24 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(v *video) {
 		v.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+	}
+}
+
+func WithComments(comments string) Option {
+	return func(v *video) {
+		v.Comments = comments
+	}
+}
+
+func WithReasonId(reasonId string) Option {
+	return func(v *video) {
+		v.ReasonId = reasonId
+	}
+}
+
+func WithSecondaryReasonId(secondaryReasonId string) Option {
+	return func(v *video) {
+		v.SecondaryReasonId = secondaryReasonId
 	}
 }
 
