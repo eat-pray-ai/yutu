@@ -130,7 +130,7 @@ func (c *comment) Insert(silent bool) {
 	}
 
 	if !silent {
-		fmt.Printf("Comment %s inserted", res.Id)
+		utils.PrintYAML(res)
 	}
 }
 
@@ -157,7 +157,7 @@ func (c *comment) Update(silent bool) {
 	}
 
 	if !silent {
-		fmt.Printf("Comment %s updated", res.Id)
+		utils.PrintYAML(res)
 	}
 }
 

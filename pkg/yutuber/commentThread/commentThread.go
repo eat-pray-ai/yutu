@@ -135,7 +135,7 @@ func (c *commentThread) Insert(silent bool) {
 	}
 
 	if !silent {
-		fmt.Printf("Comment thread %s inserted\n", res.Id)
+		utils.PrintYAML(res)
 	}
 }
 
