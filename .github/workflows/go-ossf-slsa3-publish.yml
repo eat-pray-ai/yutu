@@ -104,7 +104,7 @@ jobs:
           identifier: eat-pray-ai.yutu
           installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.RELEASE_PAT }}
-          max-versions-to-keep: 2
+          max-versions-to-keep: 3
 
   homebrew:
     needs: [build]
