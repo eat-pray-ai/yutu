@@ -64,6 +64,28 @@ runs:
         echo "------- insert -------"
         ./yutu channelSection list --help
         
+        echo "======= comment ======="
+        ./yutu comment --help
+        echo "------- delete -------"
+        ./yutu comment delete --help
+        echo "------- insert -------"
+        ./yutu comment insert --help
+        echo "------- list -------"
+        ./yutu comment list --help
+        echo "------- markAsSpam -------"
+        ./yutu comment markAsSpam --help
+        echo "------- setModerationStatus -------"
+        ./yutu comment setModerationStatus --help
+        echo "------- update -------"
+        ./yutu comment update --help
+        
+        echo "======= commentThread ======="
+        ./yutu commentThread --help
+        echo "------- list -------"
+        ./yutu commentThread list --help
+        echo "------- insert -------"
+        ./yutu commentThread insert --help
+        
         echo "======= i18nLanguage ======="
         ./yutu i18nLanguage --help
         echo "------- list -------"
@@ -142,6 +164,8 @@ runs:
         ./yutu video rate --help
         echo "------- update -------"
         ./yutu video update --help
+        echo "------- reportAbuse -------"
+        ./yutu video reportAbuse --help
         
         echo "======= videoAbuseReport ======="
         ./yutu videoAbuseReportReason --help
