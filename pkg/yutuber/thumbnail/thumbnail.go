@@ -2,6 +2,7 @@ package thumbnail
 
 import (
 	"errors"
+	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -20,7 +21,7 @@ type thumbnail struct {
 }
 
 type Thumbnail interface {
-	Set(silent bool)
+	Set(output string)
 }
 
 type Option func(*thumbnail)
@@ -33,7 +34,7 @@ func NewThumbnail(opts ...Option) Thumbnail {
 	return t
 }
 
-func (t *thumbnail) Set(silent bool) {
+func (t *thumbnail) Set(output string) {
 	file, err := os.Open(t.File)
 	if err != nil {
 		utils.PrintJSON(t)
@@ -46,8 +47,14 @@ func (t *thumbnail) Set(silent bool) {
 		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Println("Thumbnail set done")
 	}
 }
 

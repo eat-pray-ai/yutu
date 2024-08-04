@@ -23,7 +23,7 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
-		pi.Insert(false)
+		pi.Insert(output)
 	},
 }
 
@@ -61,4 +61,5 @@ func init() {
 		&privacy, "privacy", "r", "", "public, private, or unlisted",
 	)
 	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

@@ -17,7 +17,7 @@ var updateCmd = &cobra.Command{
 			comment.WithViewerRating(viewerRating),
 			comment.WithService(nil),
 		)
-		c.Update(false)
+		c.Update(output)
 	},
 }
 
@@ -28,4 +28,5 @@ func init() {
 	updateCmd.Flags().BoolVarP(&canRate, "canRate", "r", false, "Whether the viewer can rate the comment")
 	updateCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
 	updateCmd.Flags().StringVarP(&viewerRating, "viewerRating", "v", "", "none, like or dislike")
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

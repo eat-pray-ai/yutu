@@ -79,7 +79,7 @@ func (w *watermark) Set() {
 		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
 
-	fmt.Println("Watermark set done")
+	fmt.Printf("Watermark set for channel %s\n", w.ChannelId)
 }
 
 func (w *watermark) Unset() {
@@ -94,7 +94,7 @@ func (w *watermark) Unset() {
 		log.Fatalln(errors.Join(errUnsetWatermark, err))
 	}
 
-	fmt.Println("Watermark unset done")
+	fmt.Printf("Watermark unset for channel %s\n", w.ChannelId)
 }
 
 func WithChannelId(channelId string) Option {

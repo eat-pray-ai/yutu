@@ -63,8 +63,8 @@ type video struct {
 
 type Video interface {
 	List([]string, string)
-	Insert(bool)
-	Update(bool)
+	Insert(string)
+	Update(string)
 	Rate()
 	GetRating()
 	Delete()
@@ -146,7 +146,7 @@ func (v *video) List(parts []string, output string) {
 	}
 }
 
-func (v *video) Insert(silent bool) {
+func (v *video) Insert(output string) {
 	file, err := os.Open(v.File)
 	if err != nil {
 		utils.PrintJSON(v)
@@ -211,7 +211,7 @@ func (v *video) Insert(silent bool) {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set(true)
+		t.Set("silent")
 	}
 
 	if v.PlaylistId != "" {
@@ -225,15 +225,21 @@ func (v *video) Insert(silent bool) {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
-		pi.Insert(true)
+		pi.Insert("silent")
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Video inserted: %s\n", res.Id)
 	}
 }
 
-func (v *video) Update(silent bool) {
+func (v *video) Update(output string) {
 	video := v.get([]string{"id", "snippet", "status"})[0]
 	if v.Title != "" {
 		video.Snippet.Title = v.Title
@@ -279,7 +285,7 @@ func (v *video) Update(silent bool) {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set(true)
+		t.Set("silent")
 	}
 
 	if v.PlaylistId != "" {
@@ -293,11 +299,17 @@ func (v *video) Update(silent bool) {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
-		pi.Insert(true)
+		pi.Insert("silent")
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Video updated: %s\n", res.Id)
 	}
 }
 

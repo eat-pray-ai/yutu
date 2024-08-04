@@ -36,8 +36,8 @@ type playlist struct {
 
 type Playlist interface {
 	List([]string, string)
-	Insert(silent bool)
-	Update(silent bool)
+	Insert(output string)
+	Update(output string)
 	Delete()
 	get([]string) []*youtube.Playlist
 }
@@ -101,7 +101,7 @@ func (p *playlist) List(parts []string, output string) {
 	}
 }
 
-func (p *playlist) Insert(silent bool) {
+func (p *playlist) Insert(output string) {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -122,12 +122,18 @@ func (p *playlist) Insert(silent bool) {
 		log.Fatalln(errors.Join(errInsertPlaylist, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Playlist inserted: %s\n", res.Id)
 	}
 }
 
-func (p *playlist) Update(silent bool) {
+func (p *playlist) Update(output string) {
 	playlist := p.get([]string{"id", "snippet", "status"})[0]
 	if p.Title != "" {
 		playlist.Snippet.Title = p.Title
@@ -152,8 +158,14 @@ func (p *playlist) Update(silent bool) {
 		log.Fatalln(errors.Join(errUpdatePlaylist, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Playlist updated: %s\n", res.Id)
 	}
 }
 

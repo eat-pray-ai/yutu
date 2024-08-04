@@ -14,7 +14,7 @@ var markAsSpamCmd = &cobra.Command{
 			comment.WithIDs(ids),
 			comment.WithService(nil),
 		)
-		c.MarkAsSpam(false)
+		c.MarkAsSpam(output)
 	},
 }
 
@@ -22,4 +22,5 @@ func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
+	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

@@ -2,6 +2,7 @@ package channelBanner
 
 import (
 	"errors"
+	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
@@ -22,7 +23,7 @@ type channelBanner struct {
 }
 
 type ChannelBanner interface {
-	Insert(silent bool)
+	Insert(output string)
 }
 
 type Option func(banner *channelBanner)
@@ -37,7 +38,7 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 	return cb
 }
 
-func (cb *channelBanner) Insert(silent bool) {
+func (cb *channelBanner) Insert(output string) {
 	file, err := os.Open(cb.File)
 	if err != nil {
 		utils.PrintJSON(cb)
@@ -60,8 +61,14 @@ func (cb *channelBanner) Insert(silent bool) {
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("ChannelBanner inserted: %s\n", res.Url)
 	}
 }
 

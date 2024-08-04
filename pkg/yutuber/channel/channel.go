@@ -38,7 +38,7 @@ type channel struct {
 
 type Channel interface {
 	List([]string, string)
-	Update(silent bool)
+	Update(output string)
 	get([]string) []*youtube.Channel
 }
 
@@ -121,7 +121,7 @@ func (c *channel) List(parts []string, output string) {
 	}
 }
 
-func (c *channel) Update(silent bool) {
+func (c *channel) Update(output string) {
 	parts := []string{"snippet"}
 	channel := c.get(parts)[0]
 	if c.Title != "" {
@@ -138,8 +138,14 @@ func (c *channel) Update(silent bool) {
 		log.Fatalln(errors.Join(errUpdateChannel, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Channel updated: %s\n", res.Id)
 	}
 }
 

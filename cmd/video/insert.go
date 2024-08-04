@@ -34,7 +34,7 @@ var insertCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			video.WithService(nil),
 		)
-		v.Insert(false)
+		v.Insert(output)
 	},
 }
 
@@ -99,6 +99,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	insertCmd.MarkFlagRequired("file")
 	insertCmd.MarkFlagRequired("categoryId")

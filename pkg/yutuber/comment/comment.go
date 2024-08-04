@@ -37,11 +37,11 @@ type comment struct {
 type Comment interface {
 	get([]string) []*youtube.Comment
 	List([]string, string)
-	Insert(silent bool)
-	Update(silent bool)
+	Insert(output string)
+	Update(output string)
 	Delete()
-	MarkAsSpam(silent bool)
-	SetModerationStatus(silent bool)
+	MarkAsSpam(output string)
+	SetModerationStatus(output string)
 }
 
 type Option func(*comment)
@@ -105,7 +105,7 @@ func (c *comment) List(parts []string, output string) {
 	}
 }
 
-func (c *comment) Insert(silent bool) {
+func (c *comment) Insert(output string) {
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -129,12 +129,18 @@ func (c *comment) Insert(silent bool) {
 		log.Fatalln(errors.Join(errInsertComment, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Comment inserted: %s\n", res.Id)
 	}
 }
 
-func (c *comment) Update(silent bool) {
+func (c *comment) Update(output string) {
 	comment := c.get([]string{"id", "snippet"})[0]
 
 	if c.CanRate != nil {
@@ -156,12 +162,18 @@ func (c *comment) Update(silent bool) {
 		log.Fatalln(errors.Join(errUpdateComment, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Comment updated: %s\n", res.Id)
 	}
 }
 
-func (c *comment) MarkAsSpam(silent bool) {
+func (c *comment) MarkAsSpam(output string) {
 	call := service.Comments.MarkAsSpam(c.IDs)
 	err := call.Do()
 	if err != nil {
@@ -169,12 +181,18 @@ func (c *comment) MarkAsSpam(silent bool) {
 		log.Fatalln(errors.Join(errMarkAsSpam, err))
 	}
 
-	if !silent {
-		fmt.Printf("Comment %s marked as spam", c.IDs)
+	switch output {
+	case "json":
+		utils.PrintJSON(c)
+	case "yaml":
+		utils.PrintYAML(c)
+	case "silent":
+	default:
+		fmt.Printf("Comment marked as spam: %s\n", c.IDs)
 	}
 }
 
-func (c *comment) SetModerationStatus(silent bool) {
+func (c *comment) SetModerationStatus(output string) {
 	call := service.Comments.SetModerationStatus(c.IDs, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
@@ -187,8 +205,14 @@ func (c *comment) SetModerationStatus(silent bool) {
 		log.Fatalln(errors.Join(errSetModerationStatus, err))
 	}
 
-	if !silent {
-		fmt.Printf("Comment %s moderation status set to %s", c.IDs, c.ModerationStatus)
+	switch output {
+	case "json":
+		utils.PrintJSON(c)
+	case "yaml":
+		utils.PrintYAML(c)
+	case "silent":
+	default:
+		fmt.Printf("Comment moderation status set to %s: %s\n", c.ModerationStatus, c.IDs)
 	}
 }
 

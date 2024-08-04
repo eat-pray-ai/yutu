@@ -16,7 +16,7 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			channelBanner.WithService(nil),
 		)
-		cb.Insert(false)
+		cb.Insert(output)
 	},
 }
 
@@ -32,6 +32,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	insertCmd.MarkFlagRequired("file")
 }

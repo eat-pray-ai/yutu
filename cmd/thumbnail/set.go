@@ -15,13 +15,14 @@ var setCmd = &cobra.Command{
 			thumbnail.WithVideoId(videoId),
 			thumbnail.WithService(nil),
 		)
-		t.Set(false)
+		t.Set(output)
 	},
 }
 
 func init() {
 	thumbnailCmd.AddCommand(setCmd)
 
-	setCmd.Flags().StringP("file", "f", "", "Path to the thumbnail file")
-	setCmd.Flags().StringP("videoId", "v", "", "ID of the video")
+	setCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the thumbnail file")
+	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
+	setCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

@@ -19,7 +19,7 @@ var updateCmd = &cobra.Command{
 			channel.WithTitle(title),
 			channel.WithService(nil),
 		)
-		c.Update(false)
+		c.Update(output)
 	},
 }
 
@@ -41,6 +41,7 @@ func init() {
 		&description, "description", "d", "", "Description of the channel",
 	)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the channel")
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	updateCmd.MarkFlagRequired("id")
 }

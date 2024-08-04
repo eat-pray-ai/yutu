@@ -32,7 +32,7 @@ type commentThread struct {
 type CommentThread interface {
 	get([]string) []*youtube.CommentThread
 	List([]string, string)
-	Insert(silent bool)
+	Insert(output string)
 }
 
 type Option func(*commentThread)
@@ -111,7 +111,7 @@ func (c *commentThread) List(parts []string, output string) {
 	}
 }
 
-func (c *commentThread) Insert(silent bool) {
+func (c *commentThread) Insert(output string) {
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
 			ChannelId: c.ChannelId,
@@ -134,8 +134,14 @@ func (c *commentThread) Insert(silent bool) {
 		log.Fatalln(errors.Join(errInsertCommentThread, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("CommentThread inserted: %s\n", res.Id)
 	}
 }
 

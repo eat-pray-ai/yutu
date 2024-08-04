@@ -19,7 +19,7 @@ var updateCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithService(nil),
 		)
-		p.Update(false)
+		p.Update(output)
 	},
 }
 
@@ -40,6 +40,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&privacy, "privacy", "p", "", "Privacy status of the playlist",
 	)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	updateCmd.MarkFlagRequired("id")
 }

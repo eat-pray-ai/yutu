@@ -26,7 +26,7 @@ var updateCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithService(nil),
 		)
-		c.Update(false)
+		c.Update(output)
 	},
 }
 
@@ -59,4 +59,5 @@ func init() {
 	updateCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	updateCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

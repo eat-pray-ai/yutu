@@ -19,7 +19,7 @@ var insertCmd = &cobra.Command{
 			comment.WithVideoId(videoId),
 			comment.WithService(nil),
 		)
-		c.Insert(false)
+		c.Insert(output)
 	},
 }
 
@@ -32,4 +32,5 @@ func init() {
 	insertCmd.Flags().StringVarP(&parentId, "parentId", "p", "", "ID of the parent comment")
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

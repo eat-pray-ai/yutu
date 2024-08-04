@@ -42,8 +42,8 @@ type caption struct {
 type Caption interface {
 	get(parts []string) []*youtube.Caption
 	List(parts []string, output string)
-	Insert(silent bool)
-	Update(silent bool)
+	Insert(output string)
+	Update(output string)
 	Delete()
 	Download()
 }
@@ -94,7 +94,7 @@ func (c *caption) List(parts []string, output string) {
 	}
 }
 
-func (c *caption) Insert(silent bool) {
+func (c *caption) Insert(output string) {
 	file, err := os.Open(c.File)
 	if err != nil {
 		utils.PrintJSON(c)
@@ -131,12 +131,18 @@ func (c *caption) Insert(silent bool) {
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Caption inserted: %s\n", res.Id)
 	}
 }
 
-func (c *caption) Update(silent bool) {
+func (c *caption) Update(output string) {
 	caption := c.get([]string{"snippet"})[0]
 	if c.AudioTrackType != "" {
 		caption.Snippet.AudioTrackType = c.AudioTrackType
@@ -192,8 +198,14 @@ func (c *caption) Update(silent bool) {
 		log.Fatalln(errors.Join(errUpdateCaption, err))
 	}
 
-	if !silent {
+	switch output {
+	case "json":
+		utils.PrintJSON(res)
+	case "yaml":
 		utils.PrintYAML(res)
+	case "silent":
+	default:
+		fmt.Printf("Caption updated: %s\n", res.Id)
 	}
 }
 

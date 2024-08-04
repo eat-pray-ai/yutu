@@ -26,7 +26,7 @@ var insertCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithService(nil),
 		)
-		c.Insert(false)
+		c.Insert(output)
 	},
 }
 
@@ -59,4 +59,5 @@ func init() {
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	insertCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

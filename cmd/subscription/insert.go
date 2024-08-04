@@ -17,7 +17,7 @@ var insertCmd = &cobra.Command{
 			subscription.WithTitle(title),
 			subscription.WithService(nil),
 		)
-		s.Insert(false)
+		s.Insert(output)
 	},
 }
 
@@ -37,4 +37,5 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&title, "title", "t", "", "Title of the subscription",
 	)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

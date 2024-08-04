@@ -24,7 +24,7 @@ var updateCmd = &cobra.Command{
 			video.WithEmbeddable(embeddable),
 			video.WithService(nil),
 		)
-		v.Update(false)
+		v.Update(output)
 	},
 }
 
@@ -61,6 +61,7 @@ func init() {
 	updateCmd.Flags().BoolVarP(
 		&embeddable, "embeddable", "e", true, "Whether the video is embeddable",
 	)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	updateCmd.MarkFlagRequired("id")
 }

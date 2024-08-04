@@ -19,7 +19,7 @@ var insertCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithService(nil),
 		)
-		p.Insert(false)
+		p.Insert(output)
 	},
 }
 
@@ -42,6 +42,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&privacy, "privacy", "p", "", "public, private or unlisted",
 	)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 
 	insertCmd.MarkFlagRequired("title")
 	insertCmd.MarkFlagRequired("channel")

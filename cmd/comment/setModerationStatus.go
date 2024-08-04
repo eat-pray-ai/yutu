@@ -15,7 +15,7 @@ var setModerationStatusCmd = &cobra.Command{
 			comment.WithModerationStatus(moderationStatus),
 			comment.WithBanAuthor(banAuthor, true),
 		)
-		c.SetModerationStatus(false)
+		c.SetModerationStatus(output)
 	},
 }
 
@@ -27,4 +27,5 @@ func init() {
 		&moderationStatus, "moderationStatus", "s", "", "heldForReview, published or rejected",
 	)
 	setModerationStatusCmd.Flags().BoolVarP(&banAuthor, "banAuthor", "b", false, "true or false")
+	setModerationStatusCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }
