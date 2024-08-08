@@ -1,7 +1,7 @@
 package commentThread
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/commentThread"
+	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
 )
 

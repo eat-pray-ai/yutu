@@ -1,7 +1,7 @@
 package membershipsLevel
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/membershipsLevel"
+	"github.com/eat-pray-ai/yutu/pkg/membershipsLevel"
 	"github.com/spf13/cobra"
 )
 

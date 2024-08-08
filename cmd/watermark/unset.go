@@ -1,7 +1,7 @@
 package watermark
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/watermark"
+	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/spf13/cobra"
 )
 

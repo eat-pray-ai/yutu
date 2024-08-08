@@ -1,7 +1,7 @@
 package comment
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/comment"
+	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
 

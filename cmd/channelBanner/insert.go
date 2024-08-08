@@ -1,7 +1,7 @@
 package channelBanner
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/channelBanner"
+	"github.com/eat-pray-ai/yutu/pkg/channelBanner"
 	"github.com/spf13/cobra"
 )
 

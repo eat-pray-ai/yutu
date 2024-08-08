@@ -1,7 +1,7 @@
 package i18nLanguage
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/i18nLanguage"
+	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
 	"github.com/spf13/cobra"
 )
 

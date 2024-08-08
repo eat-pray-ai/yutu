@@ -1,7 +1,7 @@
 package member
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/member"
+	"github.com/eat-pray-ai/yutu/pkg/member"
 	"github.com/spf13/cobra"
 )
 

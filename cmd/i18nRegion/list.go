@@ -1,7 +1,7 @@
 package i18nRegion
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/i18nRegion"
+	"github.com/eat-pray-ai/yutu/pkg/i18nRegion"
 	"github.com/spf13/cobra"
 )
 

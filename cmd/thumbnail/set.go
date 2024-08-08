@@ -1,7 +1,7 @@
 package thumbnail
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/thumbnail"
+	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/spf13/cobra"
 )
 

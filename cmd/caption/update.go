@@ -1,7 +1,7 @@
 package caption
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/caption"
+	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
 )
 

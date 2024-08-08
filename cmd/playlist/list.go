@@ -1,8 +1,7 @@
 package playlist
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/playlist"
-
+	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
 

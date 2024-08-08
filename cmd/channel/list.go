@@ -1,7 +1,7 @@
 package channel
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/channel"
+	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
 )
 

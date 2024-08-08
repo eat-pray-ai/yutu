@@ -1,7 +1,7 @@
 package activity
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/activity"
+	"github.com/eat-pray-ai/yutu/pkg/activity"
 	"github.com/spf13/cobra"
 )
 

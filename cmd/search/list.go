@@ -1,7 +1,7 @@
 package search
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/search"
+	"github.com/eat-pray-ai/yutu/pkg/search"
 	"github.com/spf13/cobra"
 )
 

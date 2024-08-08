@@ -1,7 +1,7 @@
 package videoCategory
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/videoCategory"
+	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
 	"github.com/spf13/cobra"
 )
 

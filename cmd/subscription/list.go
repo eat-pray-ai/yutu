@@ -1,7 +1,7 @@
 package subscription
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/subscription"
+	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
 )
 

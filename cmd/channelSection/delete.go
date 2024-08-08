@@ -1,7 +1,7 @@
 package channelSection
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/channelSection"
+	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/spf13/cobra"
 )
 

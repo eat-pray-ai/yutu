@@ -1,7 +1,7 @@
 package videoAbuseReportReason
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/yutuber/videoAbuseReportReason"
+	"github.com/eat-pray-ai/yutu/pkg/videoAbuseReportReason"
 	"github.com/spf13/cobra"
 )
 
