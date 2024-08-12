@@ -3,7 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.22
 
 require (
-	github.com/savioxavier/termlink v1.3.0
+	github.com/savioxavier/termlink v1.4.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/oauth2 v0.22.0
