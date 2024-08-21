@@ -38,11 +38,11 @@ func init() {
 		&chart, "chart", "c", "", "chartUnspecified or mostPopular",
 	)
 	listCmd.Flags().StringVarP(
-		&hl, "hl", "L", "", "Specifies the localization language",
+		&hl, "hl", "l", "", "Specifies the localization language",
 	)
-	listCmd.Flags().StringVarP(&locale, "locale", "l", "", "")
+	listCmd.Flags().StringVarP(&locale, "locale", "L", "", "")
 	listCmd.Flags().StringVarP(
-		&categoryId, "videoCategoryId", "v", "",
+		&categoryId, "videoCategoryId", "g", "",
 		"Specific to the specified video category",
 	)
 	listCmd.Flags().StringVarP(
@@ -62,7 +62,7 @@ func init() {
 		"Return videos liked/disliked by the authenticated user",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 	listCmd.Flags().StringArrayVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, "Comma separated parts",

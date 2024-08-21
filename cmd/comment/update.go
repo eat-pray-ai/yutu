@@ -25,8 +25,8 @@ func init() {
 	commentCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, "ID of the comment")
-	updateCmd.Flags().BoolVarP(&canRate, "canRate", "r", false, "Whether the viewer can rate the comment")
+	updateCmd.Flags().BoolVarP(&canRate, "canRate", "R", false, "Whether the viewer can rate the comment")
 	updateCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
-	updateCmd.Flags().StringVarP(&viewerRating, "viewerRating", "v", "", "none, like or dislike")
+	updateCmd.Flags().StringVarP(&viewerRating, "viewerRating", "r", "", "none, like or dislike")
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

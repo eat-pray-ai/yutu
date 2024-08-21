@@ -31,7 +31,7 @@ func init() {
 	channelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
-		&categoryId, "categoryId", "c", "",
+		&categoryId, "categoryId", "g", "",
 		"Return the channels within the specified guide category ID",
 	)
 	listCmd.Flags().StringVarP(
@@ -49,7 +49,7 @@ func init() {
 		&id, "id", "i", "", "Return the channels with the specified IDs",
 	)
 	listCmd.Flags().BoolVarP(
-		&managedByMe, "managedByMe", "M", false,
+		&managedByMe, "managedByMe", "E", false,
 		"Specify the maximum number of items that should be returned",
 	)
 	listCmd.Flags().Int64VarP(
@@ -57,18 +57,18 @@ func init() {
 		"The maximum number of items that should be returned",
 	)
 	listCmd.Flags().BoolVarP(
-		&mine, "mine", "m", true,
+		&mine, "mine", "M", true,
 		"Return the ids of channels owned by the authenticated user",
 	)
 	listCmd.Flags().BoolVarP(
-		&mySubscribers, "mySubscribers", "s", false,
+		&mySubscribers, "mySubscribers", "S", false,
 		"Return the channels subscribed to the authenticated user",
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 	listCmd.Flags().StringArrayVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"},

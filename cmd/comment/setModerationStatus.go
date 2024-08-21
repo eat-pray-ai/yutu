@@ -26,6 +26,6 @@ func init() {
 	setModerationStatusCmd.Flags().StringVarP(
 		&moderationStatus, "moderationStatus", "s", "", "heldForReview, published or rejected",
 	)
-	setModerationStatusCmd.Flags().BoolVarP(&banAuthor, "banAuthor", "b", false, "true or false")
+	setModerationStatusCmd.Flags().BoolVarP(&banAuthor, "banAuthor", "A", false, "true or false")
 	setModerationStatusCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

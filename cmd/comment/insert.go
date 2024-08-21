@@ -28,8 +28,8 @@ func init() {
 
 	insertCmd.Flags().StringVarP(&authorChannelId, "authorChannelId", "a", "", "Channel ID of the comment author")
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the video owner")
-	insertCmd.Flags().BoolVarP(&canRate, "canRate", "r", false, "Whether the viewer can rate the comment")
-	insertCmd.Flags().StringVarP(&parentId, "parentId", "p", "", "ID of the parent comment")
+	insertCmd.Flags().BoolVarP(&canRate, "canRate", "R", false, "Whether the viewer can rate the comment")
+	insertCmd.Flags().StringVarP(&parentId, "parentId", "P", "", "ID of the parent comment")
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")

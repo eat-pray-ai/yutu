@@ -41,7 +41,7 @@ func init() {
 	videoCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().BoolVarP(
-		&autoLevels, "autoLevels", "a", true, "Should auto-levels be applied to the upload",
+		&autoLevels, "autoLevels", "A", true, "Should auto-levels be applied to the upload",
 	)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
@@ -49,7 +49,7 @@ func init() {
 		&description, "description", "d", "", "Description of the video",
 	)
 	insertCmd.Flags().StringArrayVarP(
-		&tags, "tags", "T", []string{}, "Comma separated tags",
+		&tags, "tags", "a", []string{}, "Comma separated tags",
 	)
 	insertCmd.Flags().StringVarP(
 		&language, "language", "l", "", "Language of the video",
@@ -74,18 +74,18 @@ func init() {
 		"Privacy status of the video: public, private, or unlisted",
 	)
 	insertCmd.Flags().BoolVarP(
-		&forKids, "forKids", "k", false, "Whether the video is for kids",
+		&forKids, "forKids", "K", false, "Whether the video is for kids",
 	)
 	insertCmd.Flags().BoolVarP(
-		&embeddable, "embeddable", "e", true, "Whether the video is embeddable",
+		&embeddable, "embeddable", "E", true, "Whether the video is embeddable",
 	)
 	insertCmd.Flags().StringVarP(
 		&publishAt, "publishAt", "U", "",
 		"Datetime when the video is scheduled to publish",
 	)
-	insertCmd.Flags().BoolVarP(&stabilize, "stabilize", "s", true, "Should stabilize be applied to the upload")
+	insertCmd.Flags().BoolVarP(&stabilize, "stabilize", "S", true, "Should stabilize be applied to the upload")
 	insertCmd.Flags().BoolVarP(
-		&notifySubscribers, "notifySubscribers", "n", true,
+		&notifySubscribers, "notifySubscribers", "N", true,
 		"Notify the channel subscribers about the new video",
 	)
 	insertCmd.Flags().BoolVarP(

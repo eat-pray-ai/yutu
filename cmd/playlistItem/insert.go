@@ -46,11 +46,11 @@ func init() {
 		&kChannelId, "kChannelId", "C", "", "ID of the channel if kind is channel",
 	)
 	insertCmd.Flags().StringVarP(
-		&kPlaylistId, "kPlaylistId", "P", "",
+		&kPlaylistId, "kPlaylistId", "Y", "",
 		"ID of the playlist if kind is playlist",
 	)
 	insertCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "p", "",
+		&playlistId, "playlistId", "y", "",
 		"The ID that YouTube uses to uniquely identify the playlist that the playlist item is in",
 	)
 	insertCmd.Flags().StringVarP(
@@ -58,7 +58,7 @@ func init() {
 		"The ID that YouTube uses to uniquely identify the user that added the item to the playlist",
 	)
 	insertCmd.Flags().StringVarP(
-		&privacy, "privacy", "r", "", "public, private, or unlisted",
+		&privacy, "privacy", "p", "", "public, private, or unlisted",
 	)
 	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")

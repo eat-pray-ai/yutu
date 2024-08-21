@@ -33,5 +33,5 @@ func init() {
 	)
 	reportAbuseCmd.Flags().StringVarP(&comments, "comments", "c", "", "Additional comments regarding the abuse report")
 	reportAbuseCmd.Flags().StringVarP(&language, "language", "l", "", "The language that the content was viewed in")
-	reportAbuseCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "o", "", "")
+	reportAbuseCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 }

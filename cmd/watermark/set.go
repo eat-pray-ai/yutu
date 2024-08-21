@@ -27,7 +27,7 @@ var setCmd = &cobra.Command{
 func init() {
 	wartermarkCmd.AddCommand(setCmd)
 
-	setCmd.Flags().StringVarP(&channelId, "channelId", "i", "", "ID of channel to set watermark")
+	setCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of channel to set watermark")
 	setCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the watermark file")
 	setCmd.Flags().StringVarP(
 		&inVideoPosition, "inVideoPosition", "p", "", "topLeft, topRight, bottomLeft or bottomRight",
@@ -35,7 +35,7 @@ func init() {
 	setCmd.Flags().Uint64VarP(
 		&durationMs, "durationMs", "d", 0, "Duration in milliseconds for which the watermark should be displayed",
 	)
-	setCmd.Flags().Uint64VarP(&offsetMs, "offsetMs", "o", 0, "Defines the time at which the watermark will appear")
+	setCmd.Flags().Uint64VarP(&offsetMs, "offsetMs", "m", 0, "Defines the time at which the watermark will appear")
 	setCmd.Flags().StringVarP(&offsetType, "offsetType", "t", "", "offsetFromStart or offsetFromEnd")
 	setCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 

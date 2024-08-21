@@ -21,6 +21,6 @@ var unsetCmd = &cobra.Command{
 func init() {
 	wartermarkCmd.AddCommand(unsetCmd)
 
-	unsetCmd.Flags().StringVarP(&channelId, "channelId", "i", "", "ID of the channel to set watermark")
+	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of the channel to set watermark")
 	unsetCmd.MarkFlagRequired("channelId")
 }

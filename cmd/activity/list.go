@@ -31,10 +31,10 @@ func init() {
 	)
 	listCmd.Flags().BoolVarP(&home, "home", "H", true, "true or false")
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "x", 5,
+		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().BoolVarP(&mine, "mine", "m", true, "true or false")
+	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "true or false")
 	listCmd.Flags().StringVarP(
 		&publishedAfter, "publishedAfter", "a", "",
 		"Filter on activities published after this date",
@@ -50,6 +50,6 @@ func init() {
 		"Comma separated parts",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 }

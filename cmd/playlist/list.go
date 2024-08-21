@@ -42,7 +42,7 @@ func init() {
 		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().BoolVarP(&mine, "mine", "m", true, "Return the playlists owned by the authenticated user")
+	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "Return the playlists owned by the authenticated user")
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
@@ -54,6 +54,6 @@ func init() {
 		"Comma separated parts",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 }

@@ -46,12 +46,12 @@ func init() {
 		&maxResults, "maxResults", "n", 5,
 		"Specifies the maximum number of items that should be returned",
 	)
-	listCmd.Flags().BoolVarP(&mine, "mine", "m", true, "Return the subscriptions of the authenticated user")
+	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "Return the subscriptions of the authenticated user")
 	listCmd.Flags().BoolVarP(
-		&myRecentSubscribers, "myRecentSubscribers", "r", false, "true  or false",
+		&myRecentSubscribers, "myRecentSubscribers", "R", false, "true  or false",
 	)
 	listCmd.Flags().BoolVarP(
-		&mySubscribers, "mySubscribers", "s", false, "Return the subscribers of the given channel owner",
+		&mySubscribers, "mySubscribers", "S", false, "Return the subscribers of the given channel owner",
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
@@ -64,7 +64,7 @@ func init() {
 		"subscriptionOrderUnspecified, relevance(default), unread or alphabetical",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 	listCmd.Flags().StringArrayVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",

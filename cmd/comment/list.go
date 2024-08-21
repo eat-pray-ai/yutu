@@ -26,7 +26,7 @@ func init() {
 
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "m", 5, "Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "Specifies the maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(&parentId, "parentId", "P", "", "Returns replies to the specified comment")
 	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "", "textFormatUnspecified, html(default) or plainText")

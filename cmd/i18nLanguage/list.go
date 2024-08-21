@@ -24,6 +24,6 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 }

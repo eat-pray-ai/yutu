@@ -30,7 +30,7 @@ func init() {
 		&channelId, "channelId", "c", "", " Return the ChannelSections owned by the specified channel ID",
 	)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", "Return content in specified language")
-	listCmd.Flags().BoolVarP(&mine, "mine", "m", false, "Return the ChannelSections owned by the authenticated user")
+	listCmd.Flags().BoolVarP(&mine, "mine", "M", false, "Return the ChannelSections owned by the authenticated user")
 	listCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
 	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
 	listCmd.Flags().StringVarP(&output, "output", "o", "json", "json or yaml")

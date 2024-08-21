@@ -46,7 +46,7 @@ func init() {
 		&license, "license", "L", "youtube", "youtube(default) or creativeCommon",
 	)
 	updateCmd.Flags().StringVarP(
-		&thumbnail, "thumbnail", "T", "", "Path to the thumbnail file",
+		&thumbnail, "thumbnail", "u", "", "Path to the thumbnail file",
 	)
 	updateCmd.Flags().StringVarP(
 		&playListId, "playlistId", "y", "", "Playlist ID of the video",
@@ -59,7 +59,7 @@ func init() {
 		"Privacy status of the video: public, private or unlisted",
 	)
 	updateCmd.Flags().BoolVarP(
-		&embeddable, "embeddable", "e", true, "Whether the video is embeddable",
+		&embeddable, "embeddable", "E", true, "Whether the video is embeddable",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 

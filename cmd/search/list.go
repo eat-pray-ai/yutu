@@ -155,5 +155,5 @@ func init() {
 	listCmd.Flags().StringSliceVar(
 		&parts, "parts", []string{"id", "snippet"}, "Comma separated parts",
 	)
-	listCmd.Flags().StringVar(&output, "output", "", "Output format: json or yaml")
+	listCmd.Flags().StringVar(&output, "output", "", "json or yaml")
 }

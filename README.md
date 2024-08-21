@@ -151,6 +151,10 @@ Use "yutu [command] --help" for more information about a command.
 
 Please refer to [features.md](./features.md) for more information.
 
+## Contributing
+
+Please refer to [CONTRIBUTING.md](./CONTRIBUTING.md) for more information.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=eat-pray-ai/yutu&type=Date)](https://star-history.com/#eat-pray-ai/yutu&Date)

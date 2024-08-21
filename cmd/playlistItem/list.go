@@ -27,7 +27,7 @@ func init() {
 
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist item")
 	listCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "I", "",
+		&playlistId, "playlistId", "y", "",
 		"Return the playlist items within the given playlist",
 	)
 	listCmd.Flags().Int64VarP(
@@ -42,7 +42,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "Output format: json or yaml",
+		&output, "output", "o", "", "json or yaml",
 	)
 	listCmd.Flags().StringArrayVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"},
