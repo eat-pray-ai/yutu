@@ -31,8 +31,7 @@ func init() {
 		"Return the playlist items within the given playlist",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(
 		&videoId, "videoId", "v", "",

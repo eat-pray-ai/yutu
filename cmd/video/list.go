@@ -51,8 +51,7 @@ func init() {
 	listCmd.Flags().Int64VarP(&maxHeight, "maxHeight", "H", 0, "")
 	listCmd.Flags().Int64VarP(&maxWidth, "maxWidth", "W", 0, "")
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",

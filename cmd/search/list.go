@@ -77,8 +77,7 @@ func init() {
 		&locationRadius, "locationRadius", "", "Filter on distance from the location",
 	)
 	listCmd.Flags().Int64Var(
-		&maxResults, "maxResults", 5,
-		"Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVar(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", "",

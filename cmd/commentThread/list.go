@@ -38,7 +38,7 @@ func init() {
 		&channelId, "channelId", "c", "", "Returns the comment threads for all the channel comments",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVarP(
 		&moderationStatus, "moderationStatus", "m", "", "published(default), heldForReview, likelySpam or rejected",
@@ -47,6 +47,6 @@ func init() {
 	listCmd.Flags().StringVarP(&searchTerms, "searchTerms", "s", "", "Search terms")
 	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "", "textFormatUnspecified or html(default)")
 	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "Returns the comment threads of the specified video")
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Parts to be fetched")
+	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
 }

@@ -31,8 +31,7 @@ func init() {
 	)
 	listCmd.Flags().BoolVarP(&home, "home", "H", true, "true or false")
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"Specifies the maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "true or false")
 	listCmd.Flags().StringVarP(

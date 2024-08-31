@@ -53,8 +53,7 @@ func init() {
 		"Specify the maximum number of items that should be returned",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"The maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
 	)
 	listCmd.Flags().BoolVarP(
 		&mine, "mine", "M", true,
