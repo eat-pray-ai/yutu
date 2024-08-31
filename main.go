@@ -17,6 +17,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/playlistItem"
 	_ "github.com/eat-pray-ai/yutu/cmd/search"
 	_ "github.com/eat-pray-ai/yutu/cmd/subscription"
+	_ "github.com/eat-pray-ai/yutu/cmd/superChatEvent"
 	_ "github.com/eat-pray-ai/yutu/cmd/thumbnail"
 	_ "github.com/eat-pray-ai/yutu/cmd/video"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoAbuseReportReason"
