@@ -1,0 +1,74 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
+env:
+  - MODULE_PATH=github.com/{{ .Env.GITHUB_REPOSITORY }}
+
+before:
+  hooks:
+    - go generate ./...
+
+builds:
+  - id: yutu
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./main.go
+    flags:
+      - -trimpath
+      - -tags=netgo
+    ldflags:
+      - -s -w
+      - -X {{ .Env.MODULE_PATH }}/cmd.Version={{ .Version }}
+      - -X {{ .Env.MODULE_PATH }}/cmd.Commit={{ .ShortCommit }}
+      - -X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .CommitDate }}
+      - -X {{ .Env.MODULE_PATH }}/cmd.Os={{ .Os }}
+      - -X {{ .Env.MODULE_PATH }}/cmd.Arch={{ .Arch }}
+
+archives:
+  - format: binary
+
+source:
+  enabled: true
+
+checksum:
+  algorithm: blake2b
+  split: true
+  ids:
+    - yutu
+    - source
+
+changelog:
+  use: github
+  sort: ""
+  abbrev: 0
+  groups:
+    - title: "Features"
+      regexp: "^.*?:sparkles:.+"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^.*?:bug:.+"
+      order: 1
+    - title: "Documentation"
+      regexp: "^.*?:memo:.+"
+      order: 2
+    - title: "Others"
+      order: 3
+
+release:
+  discussion_category_name: General
+
