@@ -94,7 +94,7 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] insert, 50
   - [x] delete, 50
 - superChatEvents
-  - [ ] list, ?
+  - [x] list, ?
 - tests
   - [ ] insert, ?
 - thirdPartyLinks

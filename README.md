@@ -149,7 +149,7 @@ Use "yutu [command] --help" for more information about a command.
 
 ## Features
 
-Please refer to [features.md](./features.md) for more information.
+Please refer to [FEATURES.md](./FEATURES.md) for more information.
 
 ## Contributing
 
