@@ -39,11 +39,14 @@ jobs:
       - id: checkout
         uses: actions/checkout@v4
       - id: ldflags
+        shell: bash
         run: |
-          echo "commit-date=$(git log -1 --date='format:%Y-%m-%d/%H.%M.%S' --pretty=%cd)" >> "$GITHUB_OUTPUT"
-          echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-          echo "version=$(git describe --tags --always --dirty | cut -c2-)" >> "$GITHUB_OUTPUT"
-          echo "tree-state=$(if git diff --quiet; then echo "clean"; else echo "dirty"; fi)" >> "$GITHUB_OUTPUT"
+          {
+            echo "commit-date=$(git log -1 --date='format:%Y-%m-%d/%H.%M.%S' --pretty=%cd)"
+            echo "commit=$(git rev-parse --short HEAD)"
+            echo "version=$(git describe --tags --always --dirty | cut -c2-)"
+            echo "tree-state=$(if git diff --quiet; then echo "clean"; else echo "dirty"; fi)"
+          } >> "$GITHUB_OUTPUT"
   # ===================================================================================================================================
   # Prerequisite: Create a .slsa-goreleaser.yml in the root directory of your project.
   #   See format in https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/go/README.md#configuration-file
@@ -63,7 +66,7 @@ jobs:
     with:
       go-version-file: go.mod
       config-file: .slsa-goreleaser/${{ matrix.os }}-${{ matrix.arch }}.yml
-      evaluated-envs: "MODULE_PATH:github.com/${{ github.repository }}, COMMIT_DATE:${{needs.args.outputs.commit-date}}, COMMIT:${{needs.args.outputs.commit}}, VERSION:${{needs.args.outputs.version}}, TREE_STATE:${{needs.args.outputs.tree-state}}"
+      evaluated-envs: "MODULE_PATH:github.com/${{ github.repository }}, COMMIT_DATE:${{needs.args.outputs.commit-date}}, COMMIT:${{needs.args.outputs.commit}}, VERSION:${{needs.args.outputs.version}}"
       # =======================================================================================================
       # Optional: For more options, see https://github.com/slsa-framework/slsa-github-generator#golang-projects
       # =======================================================================================================

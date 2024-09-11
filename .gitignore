@@ -24,3 +24,5 @@ qodana.yaml
 
 # Go workspace file
 go.work
+
+dist/
