@@ -9,6 +9,7 @@ on:
       - 'go.mod'
       - 'main.go'
       - '.github/actions/test/**'
+      - 'scripts/**'
   pull_request:
     paths:
       - 'cmd/**'
@@ -16,9 +17,15 @@ on:
       - 'go.mod'
       - 'main.go'
       - '.github/actions/test/**'
+      - 'scripts/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    if: !startsWith(github.ref, 'refs/tags/')
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
       - uses: eat-pray-ai/yutu/.github/actions/test@main

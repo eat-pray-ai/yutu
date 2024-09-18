@@ -11,6 +11,12 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
       - name: Test
         uses: eat-pray-ai/yutu/.github/actions/test@main
       - name: Run goreleaser
