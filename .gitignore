@@ -27,3 +27,6 @@ qodana.yaml
 go.work
 
 dist/
+
+# except for the following files
+!winres/*

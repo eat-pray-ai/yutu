@@ -19,7 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           distribution: goreleaser
-          args: release --clean --snapshot
+          args: release --clean
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -46,11 +46,11 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist/yutu_{{ matrix.path }}
+          merge-multiple: true
       - name: Attest
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: '${{ github.workspace }}/dist/yutu_${{ matrix.path }}'
+          subject-path: '${{ github.workspace }}/yutu_${{ matrix.path }}'
 
   winget:
     needs: [goreleaser]
