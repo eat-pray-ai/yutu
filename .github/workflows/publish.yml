@@ -1,0 +1,91 @@
+name: Go releaser
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions: read-all
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        uses: eat-pray-ai/yutu/.github/actions/test@main
+      - name: Run goreleaser
+        uses: goreleaser/goreleaser-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          distribution: goreleaser
+          args: release --clean --snapshot
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist
+
+  attestation:
+    needs: [goreleaser]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - darwin_amd64_v1/yutu
+          - darwin_arm64/yutu
+          - linux_amd64_v1/yutu
+          - linux_arm64/yutu
+          - windows_amd64_v1/yutu.exe
+          - windows_arm64/yutu.exe
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist/yutu_{{ matrix.path }}
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '${{ github.workspace }}/dist/yutu_${{ matrix.path }}'
+
+  winget:
+    needs: [goreleaser]
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: eat-pray-ai.yutu
+          installers-regex: '\.exe$' # Only .exe files
+          token: ${{ secrets.RELEASE_PAT }}
+          max-versions-to-keep: 3
+
+  homebrew:
+    needs: [goreleaser]
+    runs-on: macos-latest
+    if: false
+    steps:
+      - uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          tag: ${{ github.event.release.tag_name }}
+          org: eat-pray-ai
+          formula: yutu
+
+  github-package:
+    needs: [goreleaser]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - uses: eat-pray-ai/yutu/.github/actions/github-packages@main
+        with:
+          version: ${{ github.event.release.tag_name }}
