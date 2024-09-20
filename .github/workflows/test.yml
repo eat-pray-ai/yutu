@@ -6,23 +6,25 @@ on:
     paths:
       - 'cmd/**'
       - 'pkg/**'
+      - 'scripts/**'
       - 'go.mod'
       - 'main.go'
       - '.github/actions/test/**'
-      - 'scripts/**'
+      - '.github/workflows/test.yml'
   pull_request:
     paths:
       - 'cmd/**'
       - 'pkg/**'
+      - 'scripts/**'
       - 'go.mod'
       - 'main.go'
       - '.github/actions/test/**'
-      - 'scripts/**'
+      - '.github/workflows/test.yml'
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: !startsWith(github.ref, 'refs/tags/')
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
