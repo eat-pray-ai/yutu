@@ -13,6 +13,7 @@
 ![GitHub Actions CodeQL Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)
 ![GitHub Actions test Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/test.yml?style=flat-square&logo=githubactions&label=test)
 
+[![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=490920&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
 yutu is a fully functional CLI for YouTube.
 
@@ -87,7 +88,6 @@ There are two actions available for yutu, one is for general purpose and the oth
 ```shell
 ❯ curl -sSfL https://github.com/eat-pray-ai/yutu/releases/latest/download/yutu-linux-$(uname -m) -o /usr/local/bin/yutu
 ❯ chmod +x /usr/local/bin/yutu
-
 ```
 
 ### macOS
@@ -103,6 +103,21 @@ Homebrew is not available since this repository is not notable enough, star this
 
 ```shell
 ❯ winget install yutu
+```
+
+### Verifying Installation
+
+Verify the integrity and provenance of `yutu` using its associated cryptographically signed attestations.
+
+```shell
+# Docker
+❯ gh attestation verify oci://ghcr.io/eat-pray-ai/yutu:latest --repo eat-pray-ai/yutu
+
+# macOS and Linux
+❯ gh attestation verify $(which yutu) --repo eat-pray-ai/yutu
+
+# Windows
+❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
 
 ## Usage
