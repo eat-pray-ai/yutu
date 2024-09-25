@@ -68,7 +68,7 @@ You can download yutu from [releases page](https://github.com/eat-pray-ai/yutu/r
 
 ### GitHub Actions
 
-There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [general](./actions/general/README.md) and [upload](./actions/upload/README.md) for more information.
+There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [youtube-action](https://github.com/eat-pray-ai/youtube-action) and [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader) for more information.
 
 ### Docker
 
