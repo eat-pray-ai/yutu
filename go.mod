@@ -6,7 +6,7 @@ require (
 	github.com/savioxavier/termlink v1.4.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	golang.org/x/oauth2 v0.23.0
+	golang.org/x/oauth2 v0.24.0
 )
 
 require (
