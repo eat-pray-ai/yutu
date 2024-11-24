@@ -1,6 +1,7 @@
 package member
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/member"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,10 @@ var listCmd = &cobra.Command{
 			member.WithHasAccessToLevel(hasAccessToLevel),
 			member.WithMaxResults(maxResults),
 			member.WithMode(mode),
-			member.WithService(nil),
+			member.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		m.List(parts, output)
 	},

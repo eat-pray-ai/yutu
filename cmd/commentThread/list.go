@@ -1,6 +1,7 @@
 package commentThread
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +21,10 @@ var listCmd = &cobra.Command{
 			commentThread.WithSearchTerms(searchTerms),
 			commentThread.WithTextFormat(textFormat),
 			commentThread.WithVideoId(videoId),
-			commentThread.WithService(nil),
+			commentThread.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		ct.List(parts, output)
 	},

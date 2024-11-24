@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
@@ -14,6 +15,10 @@ var setModerationStatusCmd = &cobra.Command{
 			comment.WithIDs(ids),
 			comment.WithModerationStatus(moderationStatus),
 			comment.WithBanAuthor(banAuthor, true),
+			comment.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.SetModerationStatus(output)
 	},

@@ -1,6 +1,7 @@
 package watermark
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,10 @@ var unsetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		w := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),
-			watermark.WithService(nil),
+			watermark.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		w.Unset()
 	},

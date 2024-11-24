@@ -1,6 +1,7 @@
 package thumbnail
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +14,10 @@ var setCmd = &cobra.Command{
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),
 			thumbnail.WithVideoId(videoId),
-			thumbnail.WithService(nil),
+			thumbnail.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		t.Set(output)
 	},

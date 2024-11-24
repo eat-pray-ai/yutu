@@ -20,6 +20,8 @@ var (
 	viewerRating     string
 	parts            []string
 	output           string
+	credential       string
+	cacheToken       string
 )
 
 var commentCmd = &cobra.Command{
@@ -33,4 +35,7 @@ var commentCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(commentCmd)
+
+	commentCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	commentCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

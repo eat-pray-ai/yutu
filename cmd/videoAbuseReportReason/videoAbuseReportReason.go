@@ -6,9 +6,11 @@ import (
 )
 
 var (
-	hl     string
-	parts  []string
-	output string
+	hl         string
+	parts      []string
+	output     string
+	credential string
+	cacheToken string
 )
 
 var videoAbuseReportReasonCmd = &cobra.Command{
@@ -22,4 +24,7 @@ var videoAbuseReportReasonCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(videoAbuseReportReasonCmd)
+
+	videoAbuseReportReasonCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	videoAbuseReportReasonCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

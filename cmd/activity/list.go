@@ -2,6 +2,7 @@ package activity
 
 import (
 	"github.com/eat-pray-ai/yutu/pkg/activity"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +19,10 @@ var listCmd = &cobra.Command{
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
-			activity.WithService(nil),
+			activity.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		a.List(parts, output)
 	},

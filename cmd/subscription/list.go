@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
 )
@@ -11,6 +12,10 @@ var listCmd = &cobra.Command{
 	Long:  "List subscriptions' info, such as id, title, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
+			subscription.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 			subscription.WithID(id),
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),

@@ -1,6 +1,7 @@
 package watermark
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,10 @@ var setCmd = &cobra.Command{
 			watermark.WithOffsetMs(offsetMs),
 			watermark.WithOffsetType(offsetType),
 			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			watermark.WithService(nil),
+			watermark.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		w.Set()
 	},

@@ -6,9 +6,11 @@ import (
 )
 
 var (
-	file    string
-	videoId string
-	output  string
+	file       string
+	videoId    string
+	output     string
+	credential string
+	cacheToken string
 )
 
 var thumbnailCmd = &cobra.Command{
@@ -22,4 +24,7 @@ var thumbnailCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(thumbnailCmd)
+
+	thumbnailCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	thumbnailCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

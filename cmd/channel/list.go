@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,10 @@ var listCmd = &cobra.Command{
 			channel.WithMine(mine, true),
 			channel.WithMySubscribers(mySubscribers, true),
 			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channel.WithService(nil),
+			channel.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.List(parts, output)
 	},

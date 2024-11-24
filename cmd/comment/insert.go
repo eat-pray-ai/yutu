@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,10 @@ var insertCmd = &cobra.Command{
 			comment.WithParentId(parentId),
 			comment.WithTextOriginal(textOriginal),
 			comment.WithVideoId(videoId),
-			comment.WithService(nil),
+			comment.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.Insert(output)
 	},

@@ -1,6 +1,7 @@
 package search
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/search"
 	"github.com/spf13/cobra"
 )
@@ -11,6 +12,10 @@ var listCmd = &cobra.Command{
 	Long:  "List search results",
 	Run: func(cmd *cobra.Command, args []string) {
 		s := search.NewSearch(
+			search.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),
 			search.WithEventType(eventType),
@@ -40,7 +45,6 @@ var listCmd = &cobra.Command{
 			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
 			search.WithVideoSyndicated(videoSyndicated),
 			search.WithVideoType(videoType),
-			search.WithService(nil),
 		)
 		s.List(parts, output)
 	},

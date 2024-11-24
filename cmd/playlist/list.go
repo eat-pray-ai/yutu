@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
@@ -11,14 +12,18 @@ var listCmd = &cobra.Command{
 	Long:  "List playlist's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
+			playlist.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 			playlist.WithID(id),
 			playlist.WithChannelId(channelId),
 			playlist.WithHl(hl),
 			playlist.WithMaxResults(maxResults),
+
 			playlist.WithMine(mine, true),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			playlist.WithService(nil),
 		)
 		p.List(parts, output)
 	},

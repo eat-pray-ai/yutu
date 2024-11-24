@@ -1,6 +1,7 @@
 package caption
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,10 @@ var listCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithService(nil),
+			caption.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.List(parts, output)
 	},

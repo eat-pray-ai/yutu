@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,10 @@ var listCmd = &cobra.Command{
 			comment.WithMaxResults(maxResults),
 			comment.WithParentId(parentId),
 			comment.WithTextFormat(textFormat),
-			comment.WithService(nil),
+			comment.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.List(parts, output)
 	},

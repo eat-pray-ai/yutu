@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,10 @@ var markAsSpamCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithIDs(ids),
-			comment.WithService(nil),
+			comment.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.MarkAsSpam(output)
 	},

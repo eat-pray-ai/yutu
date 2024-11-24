@@ -6,8 +6,10 @@ import (
 )
 
 var (
-	parts  []string
-	output string
+	parts      []string
+	output     string
+	credential string
+	cacheToken string
 )
 
 var membershipsLevelCmd = &cobra.Command{
@@ -21,4 +23,7 @@ var membershipsLevelCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(membershipsLevelCmd)
+
+	membershipsLevelCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	membershipsLevelCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

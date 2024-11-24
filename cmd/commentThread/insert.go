@@ -1,6 +1,7 @@
 package commentThread
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,10 @@ var insertCmd = &cobra.Command{
 			commentThread.WithChannelId(channelId),
 			commentThread.WithTextOriginal(textOriginal),
 			commentThread.WithVideoId(videoId),
-			commentThread.WithService(nil),
+			commentThread.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		ct.Insert(output)
 	},

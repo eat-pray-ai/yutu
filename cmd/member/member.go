@@ -12,6 +12,8 @@ var (
 	mode             string
 	parts            []string
 	output           string
+	credential       string
+	cacheToken       string
 )
 
 var memberCmd = &cobra.Command{
@@ -25,4 +27,7 @@ var memberCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(memberCmd)
+
+	memberCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	memberCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

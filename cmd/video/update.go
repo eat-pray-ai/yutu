@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +23,10 @@ var updateCmd = &cobra.Command{
 			video.WithCategory(categoryId),
 			video.WithPrivacy(privacy),
 			video.WithEmbeddable(embeddable),
-			video.WithService(nil),
+			video.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		v.Update(output)
 	},

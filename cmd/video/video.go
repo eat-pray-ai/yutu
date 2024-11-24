@@ -42,6 +42,8 @@ var (
 	publicStatsViewable           bool
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
+	credential                    string
+	cacheToken                    string
 )
 
 // videoCmd represents the video command
@@ -57,13 +59,6 @@ var videoCmd = &cobra.Command{
 func init() {
 	cmd.RootCmd.AddCommand(videoCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// videoCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// videoCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	videoCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	videoCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

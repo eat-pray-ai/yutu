@@ -1,6 +1,7 @@
 package videoCategory
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
 	"github.com/spf13/cobra"
 )
@@ -14,7 +15,10 @@ var listCmd = &cobra.Command{
 			videoCategory.WithID(id),
 			videoCategory.WithHl(hl),
 			videoCategory.WithRegionCode(regionCode),
-			videoCategory.WithService(nil),
+			videoCategory.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		vc.List(parts, output)
 	},

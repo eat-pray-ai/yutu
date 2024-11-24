@@ -1,6 +1,7 @@
 package channelSection
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/spf13/cobra"
 )
@@ -11,12 +12,15 @@ var listCmd = &cobra.Command{
 	Long:  "List channel sections",
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
+			channelSection.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 			channelSection.WithID(id),
 			channelSection.WithChannelId(channelId),
 			channelSection.WithHl(hl),
 			channelSection.WithMine(mine, true),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelSection.WithService(nil),
 		)
 		cs.List(parts, output)
 	},

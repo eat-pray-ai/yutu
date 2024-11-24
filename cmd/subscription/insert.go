@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,10 @@ var insertCmd = &cobra.Command{
 			subscription.WithDescription(description),
 			subscription.WithChannelId(channelId),
 			subscription.WithTitle(title),
-			subscription.WithService(nil),
+			subscription.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		s.Insert(output)
 	},

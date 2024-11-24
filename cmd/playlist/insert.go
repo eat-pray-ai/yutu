@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,10 @@ var insertCmd = &cobra.Command{
 			playlist.WithLanguage(language),
 			playlist.WithChannelId(channelId),
 			playlist.WithPrivacy(privacy),
-			playlist.WithService(nil),
+			playlist.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		p.Insert(output)
 	},

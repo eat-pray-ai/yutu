@@ -13,6 +13,8 @@ var (
 	offsetMs               uint64
 	offsetType             string
 	onBehalfOfContentOwner string
+	credential             string
+	cacheToken             string
 )
 
 var wartermarkCmd = &cobra.Command{
@@ -26,4 +28,7 @@ var wartermarkCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(wartermarkCmd)
+
+	wartermarkCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	wartermarkCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

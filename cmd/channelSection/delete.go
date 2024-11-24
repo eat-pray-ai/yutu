@@ -1,6 +1,7 @@
 package channelSection
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +14,10 @@ var deleteCmd = &cobra.Command{
 		cs := channelSection.NewChannelSection(
 			channelSection.WithID(id),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelSection.WithService(nil),
+			channelSection.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		cs.Delete()
 	},

@@ -37,6 +37,8 @@ var (
 	videoType                 string
 	parts                     []string
 	output                    string
+	credential                string
+	cacheToken                string
 )
 
 var searchCmd = &cobra.Command{
@@ -50,4 +52,7 @@ var searchCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(searchCmd)
+
+	searchCmd.PersistentFlags().StringVarP(&credential, "credential", "", "client_secret.json", "Path to client secret file")
+	searchCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "", "youtube.token.json", "Path to token cache file")
 }

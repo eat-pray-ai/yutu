@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,10 @@ var updateCmd = &cobra.Command{
 			channel.WithDefaultLanguage(defaultLanguage),
 			channel.WithDescription(description),
 			channel.WithTitle(title),
-			channel.WithService(nil),
+			channel.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.Update(output)
 	},
