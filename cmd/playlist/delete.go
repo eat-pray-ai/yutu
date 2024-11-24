@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +14,10 @@ var deleteCmd = &cobra.Command{
 		p := playlist.NewPlaylist(
 			playlist.WithID(id),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlist.WithService(nil),
+			playlist.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		p.Delete()
 	},

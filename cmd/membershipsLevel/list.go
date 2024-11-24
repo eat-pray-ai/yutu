@@ -1,6 +1,7 @@
 package membershipsLevel
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/membershipsLevel"
 	"github.com/spf13/cobra"
 )
@@ -10,7 +11,11 @@ var listCmd = &cobra.Command{
 	Short: "List memberships levels",
 	Long:  "List memberships levels' info, such as id, displayName, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		m := membershipsLevel.NewMembershipsLevel(membershipsLevel.WithService(nil))
+		m := membershipsLevel.NewMembershipsLevel(
+			membershipsLevel.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)))
 		m.List(parts, output)
 	},
 }

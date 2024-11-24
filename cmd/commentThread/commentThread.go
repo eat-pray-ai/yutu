@@ -19,6 +19,8 @@ var (
 	videoId                      string
 	parts                        []string
 	output                       string
+	credential                   string
+	cacheToken                   string
 )
 
 var commentThreadCmd = &cobra.Command{
@@ -32,4 +34,11 @@ var commentThreadCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(commentThreadCmd)
+
+	commentThreadCmd.PersistentFlags().StringVarP(
+		&credential, "credential", "c", "client_secret.json", "Path to client secret file",
+	)
+	commentThreadCmd.PersistentFlags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file",
+	)
 }

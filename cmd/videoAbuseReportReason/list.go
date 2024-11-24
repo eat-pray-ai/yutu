@@ -1,6 +1,7 @@
 package videoAbuseReportReason
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/videoAbuseReportReason"
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,10 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		va := videoAbuseReportReason.NewVideoAbuseReportReason(
 			videoAbuseReportReason.WithHL(hl),
-			videoAbuseReportReason.WithService(nil),
+			videoAbuseReportReason.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		va.List(parts, output)
 	},

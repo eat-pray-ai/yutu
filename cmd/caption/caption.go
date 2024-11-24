@@ -24,6 +24,8 @@ var (
 	output                 string
 	tfmt                   string
 	tlang                  string
+	credential             string
+	cacheToken             string
 )
 
 var captionCmd = &cobra.Command{
@@ -37,4 +39,11 @@ var captionCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(captionCmd)
+
+	captionCmd.PersistentFlags().StringVarP(
+		&credential, "credential", "c", "client_secret.json", "Path to client secret file",
+	)
+	captionCmd.PersistentFlags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file",
+	)
 }

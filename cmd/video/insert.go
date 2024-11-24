@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +32,10 @@ var insertCmd = &cobra.Command{
 			video.WithPublicStatsViewable(publicStatsViewable),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			video.WithService(nil),
+			video.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		v.Insert(output)
 	},

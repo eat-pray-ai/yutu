@@ -6,9 +6,11 @@ import (
 )
 
 var (
-	hl     string
-	parts  []string
-	output string
+	hl         string
+	parts      []string
+	output     string
+	credential string
+	cacheToken string
 )
 
 var i18nRegionCmd = &cobra.Command{
@@ -22,4 +24,11 @@ var i18nRegionCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(i18nRegionCmd)
+
+	i18nRegionCmd.PersistentFlags().StringVarP(
+		&credential, "credential", "c", "client_secret.json", "Path to client secret file",
+	)
+	i18nRegionCmd.PersistentFlags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file",
+	)
 }

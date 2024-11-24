@@ -1,6 +1,7 @@
 package playlistItem
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +17,10 @@ var listCmd = &cobra.Command{
 			playlistItem.WithMaxResults(maxResults),
 			playlistItem.WithVideoId(videoId),
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithService(nil),
+			playlistItem.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		pi.List(parts, output)
 	},

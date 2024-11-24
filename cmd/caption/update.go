@@ -1,6 +1,7 @@
 package caption
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,10 @@ var updateCmd = &cobra.Command{
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithVideoId(videoId),
-			caption.WithService(nil),
+			caption.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.Update(output)
 	},
@@ -55,7 +59,7 @@ func init() {
 	)
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the caption track")
 	updateCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the caption track")
-	updateCmd.Flags().StringVarP(&trackKind, "trackKind", "t", "standard", "standard, ASR or forced")
+	updateCmd.Flags().StringVarP(&trackKind, "trackKind", "T", "standard", "standard, ASR or forced")
 	updateCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	updateCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")

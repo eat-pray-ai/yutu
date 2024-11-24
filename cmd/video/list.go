@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -11,6 +12,10 @@ var listCmd = &cobra.Command{
 	Long:  "List video's info, such as title, description, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
+			video.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 			video.WithID(id),
 			video.WithChart(chart),
 			video.WithHl(hl),
@@ -22,7 +27,6 @@ var listCmd = &cobra.Command{
 			video.WithMaxResults(maxResults),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithRating(rating),
-			video.WithService(nil),
 		)
 		v.List(parts, output)
 	},

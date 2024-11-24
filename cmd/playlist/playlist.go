@@ -22,6 +22,8 @@ var (
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
+	credential                    string
+	cacheToken                    string
 )
 
 var playlistCmd = &cobra.Command{
@@ -35,4 +37,7 @@ var playlistCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(playlistCmd)
+
+	playlistCmd.PersistentFlags().StringVarP(&credential, "credential", "c", "client_secret.json", "Path to client secret file")
+	playlistCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file")
 }

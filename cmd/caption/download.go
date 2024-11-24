@@ -1,6 +1,7 @@
 package caption
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,10 @@ var downloadCmd = &cobra.Command{
 			caption.WithTlang(tlang),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithService(nil),
+			caption.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		c.Download()
 	},
@@ -28,7 +32,7 @@ func init() {
 
 	downloadCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
 	downloadCmd.Flags().StringVarP(&file, "file", "f", "", "Path to save the caption file")
-	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", "sbv, srt or vtt")
+	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "T", "", "sbv, srt or vtt")
 	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", "Translate the captions into this language")
 	downloadCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	downloadCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")

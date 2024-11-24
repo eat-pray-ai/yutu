@@ -1,6 +1,7 @@
 package i18nLanguage
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +12,11 @@ var listCmd = &cobra.Command{
 	Long:  "List i18nLanguages' id, hl, and name",
 	Run: func(cmd *cobra.Command, args []string) {
 		i := i18nLanguage.NewI18nLanguage(
-			i18nLanguage.WithHl(hl), i18nLanguage.WithService(nil),
+			i18nLanguage.WithHl(hl),
+			i18nLanguage.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		i.List(parts, output)
 	},

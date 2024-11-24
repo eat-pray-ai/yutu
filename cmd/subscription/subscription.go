@@ -21,6 +21,8 @@ var (
 	title                         string
 	parts                         []string
 	output                        string
+	credential                    string
+	cacheToken                    string
 )
 
 var subscriptionCmd = &cobra.Command{
@@ -34,4 +36,7 @@ var subscriptionCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(subscriptionCmd)
+
+	subscriptionCmd.PersistentFlags().StringVarP(&credential, "credential", "c", "client_secret.json", "Path to client secret file")
+	subscriptionCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file")
 }

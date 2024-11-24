@@ -6,11 +6,12 @@ import (
 )
 
 var (
-	file   string
-	output string
-
+	file                          string
+	output                        string
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
+	credential                    string
+	cacheToken                    string
 )
 
 var channelBannerCmd = &cobra.Command{
@@ -24,4 +25,11 @@ var channelBannerCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(channelBannerCmd)
+
+	channelBannerCmd.PersistentFlags().StringVarP(
+		&credential, "credential", "c", "client_secret.json", "Path to client secret file",
+	)
+	channelBannerCmd.PersistentFlags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file",
+	)
 }

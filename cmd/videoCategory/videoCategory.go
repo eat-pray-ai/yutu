@@ -11,6 +11,8 @@ var (
 	regionCode string
 	parts      []string
 	output     string
+	credential string
+	cacheToken string
 )
 
 var videoCategoryCmd = &cobra.Command{
@@ -24,4 +26,11 @@ var videoCategoryCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(videoCategoryCmd)
+
+	videoCategoryCmd.PersistentFlags().StringVarP(
+		&credential, "credential", "c", "client_secret.json", "Path to client secret file",
+	)
+	videoCategoryCmd.PersistentFlags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file",
+	)
 }

@@ -1,6 +1,7 @@
 package channelBanner
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/channelBanner"
 	"github.com/spf13/cobra"
 )
@@ -14,7 +15,10 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithFile(file),
 			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			channelBanner.WithService(nil),
+			channelBanner.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		cb.Insert(output)
 	},

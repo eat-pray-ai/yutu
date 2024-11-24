@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -10,7 +11,13 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a video on Youtube",
 	Long:  "Delete a video on Youtube",
 	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(video.WithID(id))
+		v := video.NewVideo(
+			video.WithID(id),
+			video.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
+		)
 		v.Delete()
 	},
 }

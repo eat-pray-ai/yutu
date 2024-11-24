@@ -13,6 +13,8 @@ var (
 	onBehalfOfContentOwner string
 	parts                  []string
 	output                 string
+	credential             string
+	cacheToken             string
 )
 
 var channelSectionCmd = &cobra.Command{
@@ -26,4 +28,7 @@ var channelSectionCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(channelSectionCmd)
+
+	channelSectionCmd.PersistentFlags().StringVarP(&credential, "credential", "c", "client_secret.json", "Path to client secret file")
+	channelSectionCmd.PersistentFlags().StringVarP(&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file")
 }

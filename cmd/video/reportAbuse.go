@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,10 @@ var reportAbuseCmd = &cobra.Command{
 			video.WithComments(comments),
 			video.WithLanguage(language),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithService(nil),
+			video.WithService(auth.NewY2BService(
+				auth.WithCredential(credential),
+				auth.WithCacheToken(cacheToken),
+			)),
 		)
 		v.ReportAbuse()
 	},
