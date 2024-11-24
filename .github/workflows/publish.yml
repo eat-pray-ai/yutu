@@ -20,7 +20,7 @@ jobs:
         with:
           go-version-file: ./go.mod
       - name: Test
-        uses: eat-pray-ai/yutu/.github/actions/test@main
+        uses: zamai/yutu/.github/actions/test@main
       - name: Run goreleaser
         uses: goreleaser/goreleaser-action@v6
         env:
@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: vedantmgoyal9/winget-releaser@main
         with:
-          identifier: eat-pray-ai.yutu
+          identifier: zamai.yutu
           installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.RELEASE_PAT }}
           max-versions-to-keep: 3
@@ -81,7 +81,7 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PAT }}
           tag: ${{ github.event.release.tag_name }}
-          org: eat-pray-ai
+          org: zamai
           formula: yutu
 
   github-package:
@@ -94,6 +94,6 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - uses: eat-pray-ai/yutu/.github/actions/github-packages@main
+      - uses: zamai/yutu/.github/actions/github-packages@main
         with:
           version: ${{ github.event.release.tag_name }}

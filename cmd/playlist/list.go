@@ -37,7 +37,7 @@ func init() {
 		"Return the playlists with the given IDs for Stubby or Apiary.",
 	)
 	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "", "",
+		&channelId, "channelId", "C", "",
 		"Return the playlists owned by the specified channel ID",
 	)
 	listCmd.Flags().StringVarP(

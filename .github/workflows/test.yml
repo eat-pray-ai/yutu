@@ -30,4 +30,4 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
-      - uses: eat-pray-ai/yutu/.github/actions/test@main
+      - uses: zamai/yutu/.github/actions/test@main
