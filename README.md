@@ -48,7 +48,7 @@ Download this credential to your local machine with name `client_secret.json`, i
 To verify this credential, run the following command
 
 ```shell
-❯ yutu auth --credentials client_secret.json
+❯ yutu auth --credential client_secret.json
 ```
 
 A browser window will open asking for your permission to access your YouTube account, after granting the permission, a token will be generated and saved to `youtube.token.json`.
@@ -80,7 +80,7 @@ There are two actions available for yutu, one is for general purpose and the oth
 ### Gopher
 
 ```shell
-❯ go install https://github.com/eat-pray-ai/yutu@latest
+❯ go install github.com/eat-pray-ai/yutu@latest
 ```
 
 ### Linux
