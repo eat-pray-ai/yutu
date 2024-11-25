@@ -140,11 +140,13 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(w *watermark) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *watermark) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

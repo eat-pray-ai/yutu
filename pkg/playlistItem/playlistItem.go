@@ -284,11 +284,13 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(p *playlistItem) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *playlistItem) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

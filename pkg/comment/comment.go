@@ -212,7 +212,9 @@ func (c *comment) SetModerationStatus(output string) {
 		utils.PrintYAML(c)
 	case "silent":
 	default:
-		fmt.Printf("Comment moderation status set to %s: %s\n", c.ModerationStatus, c.IDs)
+		fmt.Printf(
+			"Comment moderation status set to %s: %s\n", c.ModerationStatus, c.IDs,
+		)
 	}
 }
 
@@ -304,11 +306,13 @@ func WithViewerRating(viewerRating string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(c *comment) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *comment) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

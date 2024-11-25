@@ -571,11 +571,13 @@ func WithSecondaryReasonId(secondaryReasonId string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(v *video) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *video) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

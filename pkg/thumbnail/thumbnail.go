@@ -71,11 +71,13 @@ func WithFile(file string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(t *thumbnail) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *thumbnail) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

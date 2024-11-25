@@ -106,7 +106,9 @@ func (c *commentThread) List(parts []string, output string) {
 	default:
 		fmt.Println("ID\tTopLevelCommentID")
 		for _, commentThread := range commentThreads {
-			fmt.Printf("%s\t%s\n", commentThread.Id, commentThread.Snippet.TopLevelComment.Id)
+			fmt.Printf(
+				"%s\t%s\n", commentThread.Id, commentThread.Snippet.TopLevelComment.Id,
+			)
 		}
 	}
 }
@@ -212,11 +214,13 @@ func WithVideoId(videoId string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(c *commentThread) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *commentThread) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

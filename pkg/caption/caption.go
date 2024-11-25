@@ -376,11 +376,13 @@ func WithTlang(tlang string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(c *caption) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *caption) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

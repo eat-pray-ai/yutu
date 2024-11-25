@@ -246,11 +246,13 @@ func WithTitle(title string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(c *channel) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *channel) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

@@ -258,11 +258,13 @@ func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(p *playlist) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *playlist) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }

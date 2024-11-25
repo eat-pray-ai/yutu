@@ -63,11 +63,13 @@ func (m *membershipsLevel) List(parts []string, output string) {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(m *membershipsLevel) {
-		if svc != nil {
-			service = svc
-		} else {
-			service = auth.NewY2BService()
+	return func(_ *membershipsLevel) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
 		}
+		service = svc
 	}
 }
