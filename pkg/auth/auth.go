@@ -215,12 +215,24 @@ func saveToken(cacheToken string, token *oauth2.Token) {
 
 func WithCredential(cred string) Option {
 	return func() {
-		credential = cred
+		if cred != "" {
+			credential = cred
+			return
+		}
+		if cred, ok := os.LookupEnv("YUTU_CREDENTIAL"); ok {
+			credential = cred
+		}
 	}
 }
 
 func WithCacheToken(token string) Option {
 	return func() {
-		cacheToken = token
+		if token != "" {
+			cacheToken = token
+			return
+		}
+		if token, ok := os.LookupEnv("YUTU_CACHE_TOKEN"); ok {
+			cacheToken = token
+		}
 	}
 }
