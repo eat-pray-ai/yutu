@@ -61,6 +61,15 @@ A browser window will open asking for your permission to access your YouTube acc
   "expiry":"2024-05-26T18:49:56.1911165+08:00"
 }
 ```
+By default, `yutu` will read `client_secret.json` and `youtube.token.json` from the current directory, `--credential/-c` and `--cacheToken/-t` flags are available only in `auth` subcommand. To modify the default path in all subcommands, set these environment variables
+
+```shell
+❯ export YUTU_CREDENTIAL=client_secret.json
+❯ export YUTU_CACHE_TOKEN=youtube.token.json
+# or
+❯ YUTU_CREDENTIAL=client_secret.json YUTU_CACHE_TOKEN=youtube.token.json yutu subcommand --flag value
+```
+
 
 ## Installation
 
@@ -124,7 +133,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ```shell
 ❯ yutu help
-yutu is a fully functional CLI for YouTube, which can be used to manupulate YouTube videos, playlists, channels, etc.
+yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc.
 
 Usage:
   yutu [flags]
