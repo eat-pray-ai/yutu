@@ -13,6 +13,7 @@ var listCmd = &cobra.Command{
 		sc := superChatEvent.NewSuperChatEvent(
 			superChatEvent.WithHl(hl),
 			superChatEvent.WithMaxResults(maxResults),
+			superChatEvent.WithService(nil),
 		)
 		sc.List(parts, output)
 	},
@@ -25,8 +26,11 @@ func init() {
 		&hl, "hl", "l", "", "Return rendered funding amounts in specified language",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5,
+		"The maximum number of items that should be returned",
 	)
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
+	listCmd.Flags().StringSliceVarP(
+		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "json or yaml")
 }

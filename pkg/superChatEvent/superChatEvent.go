@@ -3,6 +3,7 @@ package superChatEvent
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -78,5 +79,17 @@ func WithHl(hl string) Option {
 func WithMaxResults(maxResults int64) Option {
 	return func(s *superChatEvent) {
 		s.MaxResults = maxResults
+	}
+}
+
+func WithService(svc *youtube.Service) Option {
+	return func(_ *superChatEvent) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
+		}
+		service = svc
 	}
 }
