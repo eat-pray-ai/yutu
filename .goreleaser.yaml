@@ -61,16 +61,22 @@ changelog:
   abbrev: 0
   groups:
     - title: "Features"
-      regexp: "^.*?:sparkles:.+"
+      regexp: "^:(boom|sparkles|art|zap|recycle|wheelchair|children_crossing):.+"
       order: 0
-    - title: "Bug Fixes"
-      regexp: "^.*?:bug:.+"
+    - title: "Bug Fixes and Tests"
+      regexp: "^:(bug|ambulance|white_check_mark|lock|rotating_light|pencil2):.+"
       order: 1
     - title: "Documentation"
-      regexp: "^.*?:memo:.+"
+      regexp: "^:memo:.+"
       order: 2
-    - title: "Others"
+    - title: "CI/CD"
+      regexp: "^:(green_heart|construction_worker|rocket):.+"
       order: 3
+    - title: "Others"
+      order: 999
+  filters:
+    exclude:
+      - "^.*?:arrow_up:.+"
 
 release:
   discussion_category_name: General
