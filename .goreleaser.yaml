@@ -7,6 +7,7 @@
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
 version: 2
+project_name: yutu
 
 env:
   - MODULE_PATH=github.com/{{ .Env.GITHUB_REPOSITORY }}
@@ -19,6 +20,7 @@ before:
 
 builds:
   - id: yutu
+    binary: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     env:
       - CGO_ENABLED=0
       - GO111MODULE=on
