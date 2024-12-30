@@ -2,32 +2,8 @@
 
 Here are the features that are currently supported by yutu, and the ones that are planned to be supported in the future. The quota costs for each feature is also mentioned since there is a quota limits of 10,000 units/day.
 
-- videos
-  - [x] list, 1
-  - [x] insert, 1600
-  - [x] update, 50
-  - [x] rate, 50
-  - [x] getRating, 1
-  - [x] reportAbuse, 50
-  - [x] delete, 50
-- channels
-  - [x] list, 1
-  - [x] update, 50
-- playlists
-  - [x] list, 1
-  - [x] insert, 50
-  - [x] update, 50
-  - [x] delete, 50
-- playlistItems
-  - [x] list, 1
-  - [x] insert, 50
-  - [x] update, 50
-  - [x] delete, 50
-- playlistImages
-  - [ ] list, ?
+- abuseReports
   - [ ] insert, ?
-  - [ ] upload, ?
-  - [ ] delete, ?
 - activities
   - [x] list, 1
 - captions
@@ -36,6 +12,9 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] insert, 400
   - [x] update, 450
   - [x] delete, 50
+- channels
+  - [x] list, 1
+  - [x] update, 50
 - channelBanners
   - [x] insert, 50
 - channelSections
@@ -87,6 +66,21 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
 - membershipsLevels
   - [x] list, 1 [🚫issue #3](https://github.com/eat-pray-ai/yutu/issues/3)
+- playlists
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [x] delete, 50
+- playlistItems
+  - [x] list, 1
+  - [x] insert, 50
+  - [x] update, 50
+  - [x] delete, 50
+- playlistImages
+  - [ ] list, ?
+  - [ ] insert, ?
+  - [ ] upload, ?
+  - [ ] delete, ?
 - search
   - [x] list, 100
 - subscriptions
@@ -104,6 +98,14 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [ ] delete, ?
 - thumbnails
   - [x] set, 50
+- videos
+  - [x] list, 1
+  - [x] insert, 1600
+  - [x] update, 50
+  - [x] rate, 50
+  - [x] getRating, 1
+  - [x] reportAbuse, 50
+  - [x] delete, 50
 - videoAbuseReportReasons
   - [x] list, 1
 - videoCategories

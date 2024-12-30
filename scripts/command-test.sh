@@ -18,53 +18,16 @@ chmod +x yutu
 
 ./yutu help
 ./yutu completion
+./yutu version
 
-echo "======= video ======="
-./yutu video --help
-echo "------- delete -------"
-./yutu video delete --help
-echo "------- getRating -------"
-./yutu video getRating --help
-echo "------- insert -------"
-./yutu video insert --help
-echo "------- list -------"
-./yutu video list --help
-echo "------- rate -------"
-./yutu video rate --help
-echo "------- update -------"
-./yutu video update --help
-echo "------- reportAbuse -------"
-./yutu video reportAbuse --help
+# yutu
+echo "======= auth ======="
+./yutu auth --help
 
-echo "======= channel ======="
-./yutu channel --help
-echo "------- list -------"
-./yutu channel list --help
-echo "------- update -------"
-./yutu channel update --help
+echo "======= version ======="
+./yutu version --help
 
-echo "======= playlist ======="
-./yutu playlist --help
-echo "------- delete -------"
-./yutu playlist delete --help
-echo "------- insert -------"
-./yutu playlist insert --help
-echo "------- list -------"
-./yutu playlist list --help
-echo "------- update -------"
-./yutu playlist update --help
-
-echo "======= playlistItem ======="
-./yutu playlistItem --help
-echo "------- delete -------"
-./yutu playlistItem delete --help
-echo "------- insert -------"
-./yutu playlistItem insert --help
-echo "------- list -------"
-./yutu playlistItem list --help
-echo "------- update -------"
-./yutu playlistItem update --help
-
+# youtube api
 echo "======= activity ======="
 ./yutu activity --help
 echo "------- list -------"
@@ -82,6 +45,13 @@ echo "------- update -------"
 ./yutu caption update --help
 echo "------- download -------"
 ./yutu caption download --help
+
+echo "======= channel ======="
+./yutu channel --help
+echo "------- list -------"
+./yutu channel list --help
+echo "------- update -------"
+./yutu channel update --help
 
 echo "======= channelBanner ======="
 ./yutu channelBanner --help
@@ -127,6 +97,21 @@ echo "======= i18nRegion ======="
 echo "------- list -------"
 ./yutu i18nRegion list --help
 
+echo "======= liveBroadcast ======="
+echo "pending implementation"
+
+echo "======= liveChatBan ======="
+echo "pending implementation"
+
+echo "======= liveChatMessage ======="
+echo "pending implementation"
+
+echo "======= liveChatModerator ======="
+echo "pending implementation"
+
+echo "======= liveStream ======="
+echo "pending implementation"
+
 echo "======= member ======="
 ./yutu member --help
 echo "------- list -------"
@@ -136,6 +121,31 @@ echo "======= membershipsLevel ======="
 ./yutu membershipsLevel --help
 echo "------- list -------"
 ./yutu membershipsLevel list --help
+
+echo "======= playlist ======="
+./yutu playlist --help
+echo "------- delete -------"
+./yutu playlist delete --help
+echo "------- insert -------"
+./yutu playlist insert --help
+echo "------- list -------"
+./yutu playlist list --help
+echo "------- update -------"
+./yutu playlist update --help
+
+echo "======= playlistItem ======="
+./yutu playlistItem --help
+echo "------- delete -------"
+./yutu playlistItem delete --help
+echo "------- insert -------"
+./yutu playlistItem insert --help
+echo "------- list -------"
+./yutu playlistItem list --help
+echo "------- update -------"
+./yutu playlistItem update --help
+
+echo "======= playlistImage ======="
+echo "pending implementation"
 
 echo "======= search ======="
 ./yutu search --help
@@ -156,12 +166,35 @@ echo "======= superChatEvent ======="
 echo "------- list -------"
 ./yutu superChatEvent list --help
 
+echo "======= test ======="
+echo "pending implementation"
+
+echo "======= thirdPartyLink ======="
+echo "pending implementation"
+
 echo "======= thumbnail ======="
 ./yutu thumbnail --help
 echo "------- set -------"
 ./yutu thumbnail set --help
 
-echo "======= videoAbuseReport ======="
+echo "======= video ======="
+./yutu video --help
+echo "------- delete -------"
+./yutu video delete --help
+echo "------- getRating -------"
+./yutu video getRating --help
+echo "------- insert -------"
+./yutu video insert --help
+echo "------- list -------"
+./yutu video list --help
+echo "------- rate -------"
+./yutu video rate --help
+echo "------- update -------"
+./yutu video update --help
+echo "------- reportAbuse -------"
+./yutu video reportAbuse --help
+
+echo "======= videoAbuseReportReason ======="
 ./yutu videoAbuseReportReason --help
 echo "------- list -------"
 ./yutu videoAbuseReportReason list --help
@@ -177,6 +210,3 @@ echo "------- set -------"
 ./yutu watermark set --help
 echo "------- unset -------"
 ./yutu watermark unset --help
-
-echo "======= version ======="
-./yutu version --help
