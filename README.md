@@ -95,17 +95,15 @@ There are two actions available for yutu, one is for general purpose and the oth
 ### Linux
 
 ```shell
-❯ curl -sSfL https://github.com/eat-pray-ai/yutu/releases/latest/download/yutu-linux-$(uname -m) -o /usr/local/bin/yutu
-❯ chmod +x /usr/local/bin/yutu
+❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
 ### macOS
 
-Homebrew is not available since this repository is not notable enough, star this repository to make it available on Homebrew.
+Homebrew is not available since this repository is not notable enough, which requires at least 75 stars. Star this repository to make it available on Homebrew.
 
 ```shell
-❯ curl -sSfL https://github.com/eat-pray-ai/yutu/releases/latest/download/yutu-darwin-$(uname -m) -o /usr/local/bin/yutu
-❯ chmod +x /usr/local/bin/yutu
+❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
 ### Windows
