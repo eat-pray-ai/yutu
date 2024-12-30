@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 MOD="github.com/eat-pray-ai/yutu/cmd"
 Version="${MOD}.Version=$(git describe --tags --always --dirty | cut -c2-)"
