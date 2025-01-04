@@ -31,6 +31,10 @@ builds:
     goarch:
       - amd64
       - arm64
+    goamd64:
+      - v1
+    goarm64:
+      - v8.0
     flags:
       - -trimpath
       - -tags=netgo
@@ -44,15 +48,18 @@ builds:
 
 archives:
   - format: binary
+    builds:
+      - yutu
+    name_template: "{{ .Binary }}"
 
 source:
   enabled: true
+  name_template: "{{ .ProjectName }}"
 
 checksum:
   algorithm: blake2b
   split: true
   ids:
-    - yutu
     - source
 
 changelog:
@@ -61,16 +68,16 @@ changelog:
   abbrev: 0
   groups:
     - title: "Features"
-      regexp: "^:(boom|sparkles|art|zap|recycle|wheelchair|children_crossing):.+"
+      regexp: "^.*?:(boom|sparkles|art|zap|recycle|wheelchair|children_crossing):.+"
       order: 0
     - title: "Bug Fixes and Tests"
-      regexp: "^:(bug|ambulance|white_check_mark|lock|rotating_light|pencil2):.+"
+      regexp: "^.*?:(bug|ambulance|white_check_mark|lock|rotating_light|pencil2):.+"
       order: 1
     - title: "Documentation"
-      regexp: "^:memo:.+"
+      regexp: "^.*?:memo:.+"
       order: 2
     - title: "CI/CD"
-      regexp: "^:(green_heart|construction_worker|rocket):.+"
+      regexp: "^.*?:(green_heart|construction_worker|rocket):.+"
       order: 3
     - title: "Others"
       order: 999
