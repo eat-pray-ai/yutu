@@ -31,7 +31,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: dist
+          name: binary
+          path: dist/yutu_*/yutu-*
 
   attestation:
     needs: [goreleaser]
@@ -44,19 +45,19 @@ jobs:
       fail-fast: false
       matrix:
         path:
-          - darwin_amd64_v1/yutu
-          - darwin_arm64/yutu
-          - linux_amd64_v1/yutu
-          - linux_arm64/yutu
-          - windows_amd64_v1/yutu.exe
-          - windows_arm64/yutu.exe
+          - darwin_amd64_v1/yutu-darwin-amd64
+          - darwin_arm64_v8.0/yutu-darwin-arm64
+          - linux_amd64_v1/yutu-linux-amd64
+          - linux_arm64_v8.0/yutu-linux-arm64
+          - windows_amd64_v1/yutu-windows-amd64.exe
+          - windows_arm64_v8.0/yutu-windows-arm64.exe
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          merge-multiple: true
+          name: binary
       - name: Attest
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v2
         with:
           subject-path: '${{ github.workspace }}/yutu_${{ matrix.path }}'
 
@@ -77,7 +78,7 @@ jobs:
     runs-on: macos-latest
     if: false
     steps:
-      - uses: dawidd6/action-homebrew-bump-formula@v3
+      - uses: dawidd6/action-homebrew-bump-formula@v4
         with:
           token: ${{ secrets.RELEASE_PAT }}
           tag: ${{ github.event.release.tag_name }}
@@ -95,5 +96,3 @@ jobs:
       id-token: write
     steps:
       - uses: eat-pray-ai/yutu/.github/actions/github-packages@main
-        with:
-          version: ${{ github.event.release.tag_name }}
