@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 var (
@@ -40,6 +41,14 @@ with information from the {{ Google Cloud Console }}
 {{ https://cloud.google.com/console }}
 For more information about the client_secrets.json file format, please visit:
 https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
+`
+
+const manualInputMessage = `
+After completing the authorization flow, enter the authorization code on command line.
+
+If you end up in an error page after completing the authorization flow, and the url in the address bar is in the form of
+'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
+ONLY 'COPY-THIS' part is the code you need to enter on command line.
 `
 
 type Option func()
@@ -150,18 +159,15 @@ func getCodeFromPrompt(authURL string) string {
 		"It seems that your browser is not open. Go to the following "+
 			"link in your browser:\n%v\n", authURL,
 	)
-	fmt.Print(
-		"After completing the authorization flow, enter the authorization " +
-			"code on command line. \nIf you end up in an error page after completing " +
-			"the authorization flow, and the url in the address bar is in the form of " +
-			"\n'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'\n" +
-			"ONLY 'COPY-THIS' is the code you need to enter on command line.\n",
-	)
+	fmt.Print(manualInputMessage)
 	_, err := fmt.Scan(&code)
 	if err != nil {
 		log.Fatalln(errors.Join(errReadPrompt, err))
 	}
 
+	if strings.HasPrefix(code, "4%2F") {
+		code = strings.Replace(code, "4%2F", "4/", 1)
+	}
 	return code
 }
 

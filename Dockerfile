@@ -10,5 +10,8 @@ RUN if [[ "${TARGETARCH}" == "arm64" ]]; then \
     chmod +x /app/yutu
 
 FROM scratch AS yutu
-COPY --from=binary /app/yutu /usr/local/bin/yutu
-ENTRYPOINT ["/usr/local/bin/yutu"]
+WORKDIR /app
+EXPOSE 8216/tcp
+COPY --from=binary /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=binary /app/yutu /yutu
+ENTRYPOINT ["/yutu"]
