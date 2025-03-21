@@ -102,9 +102,12 @@ There are two actions available for yutu, one is for general purpose and the oth
 
 ### macOS
 
-Homebrew is not available since this repository is not notable enough, which requires at least 75 stars. Star this repository to make it available on Homebrew.
+Install `yutu` using [Homebrew🍺](https://brew.sh/)(recommended), or run the shell script.
 
 ```shell
+❯ brew install yutu
+
+# or
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
@@ -122,7 +125,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 # Docker
 ❯ gh attestation verify oci://ghcr.io/eat-pray-ai/yutu:latest --repo eat-pray-ai/yutu
 
-# macOS and Linux
+# Linux and macOS(if installed using shell script)
 ❯ gh attestation verify $(which yutu) --repo eat-pray-ai/yutu
 
 # Windows
