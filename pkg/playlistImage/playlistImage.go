@@ -3,6 +3,7 @@ package playlistImage
 import (
 	"errors"
 	"fmt"
+	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"log"
@@ -198,4 +199,82 @@ func (pi *playlistImage) Delete() {
 		log.Fatalln(errors.Join(errDeletePlaylistImage, err))
 	}
 	fmt.Printf("PlaylistImage %s deleted\n", pi.ID)
+}
+
+func WithID(id string) Option {
+	return func(pi *playlistImage) {
+		pi.ID = id
+	}
+}
+
+func WithKind(kind string) Option {
+	return func(pi *playlistImage) {
+		pi.Kind = kind
+	}
+}
+
+func WithHeight(height int64) Option {
+	return func(pi *playlistImage) {
+		pi.Height = height
+	}
+}
+
+func WithPlaylistID(playlistID string) Option {
+	return func(pi *playlistImage) {
+		pi.PlaylistID = playlistID
+	}
+}
+
+func WithType(t string) Option {
+	return func(pi *playlistImage) {
+		pi.Type = t
+	}
+}
+
+func WithWidth(width int64) Option {
+	return func(pi *playlistImage) {
+		pi.Width = width
+	}
+}
+
+func WithFile(file string) Option {
+	return func(pi *playlistImage) {
+		pi.File = file
+	}
+}
+
+func WithParent(parent string) Option {
+	return func(pi *playlistImage) {
+		pi.Parent = parent
+	}
+}
+
+func WithMaxResults(maxResults int64) Option {
+	return func(pi *playlistImage) {
+		pi.MaxResults = maxResults
+	}
+}
+
+func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
+	return func(pi *playlistImage) {
+		pi.OnBehalfOfContentOwner = onBehalfOfContentOwner
+	}
+}
+
+func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
+	return func(pi *playlistImage) {
+		pi.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+	}
+}
+
+func WithService(svc *youtube.Service) Option {
+	return func(pi *playlistImage) {
+		if svc == nil {
+			svc = auth.NewY2BService(
+				auth.WithCredential(""),
+				auth.WithCacheToken(""),
+			)
+		}
+		service = svc
+	}
 }
