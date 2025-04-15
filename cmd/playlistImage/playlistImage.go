@@ -25,7 +25,7 @@ var (
 var playlistImageCmd = &cobra.Command{
 	Use:   "playlistImage",
 	Short: "Manipulate YouTube playlist images",
-	Long:  "List, insert, update, or delete YouTube playlist images.",
+	Long:  "List, insert, update, or delete YouTube playlist images",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

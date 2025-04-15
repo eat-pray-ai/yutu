@@ -27,7 +27,7 @@ var (
 var playlistItemCmd = &cobra.Command{
 	Use:   "playlistItem",
 	Short: "Manipulate YouTube playlist items",
-	Long:  "Manipulate YouTube playlist items, such as insert, update, etc.",
+	Long:  "List, insert, update, or delete YouTube playlist items",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

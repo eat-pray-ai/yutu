@@ -41,8 +41,8 @@ var (
 
 var searchCmd = &cobra.Command{
 	Use:   "search",
-	Short: "Search for Youtube resources",
-	Long:  "Search for Youtube resources",
+	Short: "Search for YouTube resources",
+	Long:  "Search for YouTube resources",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

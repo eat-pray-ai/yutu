@@ -17,8 +17,8 @@ var (
 
 var wartermarkCmd = &cobra.Command{
 	Use:   "watermark",
-	Short: "Manipulate Youtube watermarks",
-	Long:  "Set or unset Youtube watermarks",
+	Short: "Manipulate YouTube watermarks",
+	Long:  "Set or unset YouTube watermarks",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

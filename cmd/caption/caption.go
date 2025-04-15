@@ -29,7 +29,7 @@ var (
 var captionCmd = &cobra.Command{
 	Use:   "caption",
 	Short: "Manipulate YouTube captions",
-	Long:  "Manipulate YouTube captions, such as list, update, etc.",
+	Long:  "List, insert, update, download, or delete YouTube captions",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
