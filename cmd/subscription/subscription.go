@@ -26,7 +26,7 @@ var (
 var subscriptionCmd = &cobra.Command{
 	Use:   "subscription",
 	Short: "Manipulate YouTube subscriptions",
-	Long:  "Manipulate YouTube subscriptions, such as list, insert and delete",
+	Long:  "List, insert, or delete YouTube subscriptions",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
