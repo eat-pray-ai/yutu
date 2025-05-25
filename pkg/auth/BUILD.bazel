@@ -1,0 +1,15 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "auth",
+    srcs = ["auth.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/auth",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/utils",
+        "@org_golang_google_api//option",
+        "@org_golang_google_api//youtube/v3:youtube",
+        "@org_golang_x_oauth2//:oauth2",
+        "@org_golang_x_oauth2//google",
+    ],
+)

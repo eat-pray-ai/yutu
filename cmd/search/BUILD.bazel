@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "search",
+    srcs = [
+        "list.go",
+        "search.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/search",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/search",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

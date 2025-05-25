@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "playlistItem",
+    srcs = ["playlistItem.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/playlistItem",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "playlistItem_test",
+    srcs = ["playlistItem_test.go"],
+    embed = [":playlistItem"],
+)

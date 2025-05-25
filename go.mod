@@ -1,6 +1,6 @@
 module github.com/eat-pray-ai/yutu
 
-go 1.24.2
+go 1.24.3
 
 require (
 	github.com/savioxavier/termlink v1.4.2

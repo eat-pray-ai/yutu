@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "caption",
+    srcs = ["caption.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/caption",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "caption_test",
+    srcs = ["caption_test.go"],
+    embed = [":caption"],
+)

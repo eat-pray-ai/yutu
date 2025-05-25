@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "channelBanner",
+    srcs = [
+        "channelBanner.go",
+        "insert.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/channelBanner",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/channelBanner",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

@@ -1,0 +1,17 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "watermark",
+    srcs = [
+        "set.go",
+        "unset.go",
+        "watermark.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/watermark",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/watermark",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

@@ -1,0 +1,18 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "subscription",
+    srcs = [
+        "delete.go",
+        "insert.go",
+        "list.go",
+        "subscription.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/subscription",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/subscription",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

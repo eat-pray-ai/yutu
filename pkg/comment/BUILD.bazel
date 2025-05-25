@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "comment",
+    srcs = ["comment.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/comment",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "comment_test",
+    srcs = ["comment_test.go"],
+    embed = [":comment"],
+)

@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "membershipsLevel",
+    srcs = ["membershipsLevel.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/membershipsLevel",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "membershipsLevel_test",
+    srcs = ["membershipsLevel_test.go"],
+    embed = [":membershipsLevel"],
+)
