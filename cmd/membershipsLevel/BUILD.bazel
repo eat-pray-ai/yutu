@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "membershipsLevel",
+    srcs = [
+        "list.go",
+        "membershipsLevel.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/membershipsLevel",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/membershipsLevel",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

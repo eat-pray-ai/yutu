@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "member",
+    srcs = ["member.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/member",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "member_test",
+    srcs = ["member_test.go"],
+    embed = [":member"],
+)

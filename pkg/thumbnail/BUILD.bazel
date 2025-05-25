@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "thumbnail",
+    srcs = ["thumbnail.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/thumbnail",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "thumbnail_test",
+    srcs = ["thumbnail_test.go"],
+    embed = [":thumbnail"],
+)

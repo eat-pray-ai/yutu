@@ -1,0 +1,41 @@
+load("@gazelle//:def.bzl", "gazelle")
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+gazelle(name = "gazelle")
+
+go_library(
+    name = "yutu_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/eat-pray-ai/yutu",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//cmd",
+        "//cmd/activity",
+        "//cmd/caption",
+        "//cmd/channel",
+        "//cmd/channelBanner",
+        "//cmd/channelSection",
+        "//cmd/comment",
+        "//cmd/commentThread",
+        "//cmd/i18nLanguage",
+        "//cmd/i18nRegion",
+        "//cmd/member",
+        "//cmd/membershipsLevel",
+        "//cmd/playlist",
+        "//cmd/playlistItem",
+        "//cmd/search",
+        "//cmd/subscription",
+        "//cmd/superChatEvent",
+        "//cmd/thumbnail",
+        "//cmd/video",
+        "//cmd/videoAbuseReportReason",
+        "//cmd/videoCategory",
+        "//cmd/watermark",
+    ],
+)
+
+go_binary(
+    name = "yutu",
+    embed = [":yutu_lib"],
+    visibility = ["//visibility:public"],
+)

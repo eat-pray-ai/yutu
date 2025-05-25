@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "playlist",
+    srcs = [
+        "delete.go",
+        "insert.go",
+        "list.go",
+        "playlist.go",
+        "update.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/playlist",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/playlist",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

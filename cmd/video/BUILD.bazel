@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "video",
+    srcs = [
+        "delete.go",
+        "getRating.go",
+        "insert.go",
+        "list.go",
+        "rate.go",
+        "reportAbuse.go",
+        "update.go",
+        "video.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/video",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/video",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

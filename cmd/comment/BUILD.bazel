@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "comment",
+    srcs = [
+        "comment.go",
+        "delete.go",
+        "insert.go",
+        "list.go",
+        "markAsSpam.go",
+        "setModerationStatus.go",
+        "update.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/comment",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/comment",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

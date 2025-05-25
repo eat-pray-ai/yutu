@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "activity",
+    srcs = [
+        "activity.go",
+        "list.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/activity",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/activity",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

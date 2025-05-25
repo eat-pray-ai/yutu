@@ -1,0 +1,20 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "caption",
+    srcs = [
+        "caption.go",
+        "delete.go",
+        "download.go",
+        "insert.go",
+        "list.go",
+        "update.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/caption",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg/caption",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)

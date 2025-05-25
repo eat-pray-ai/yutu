@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "i18nRegion",
+    srcs = ["i18nRegion.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/i18nRegion",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/auth",
+        "//pkg/utils",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "i18nRegion_test",
+    srcs = ["i18nRegion_test.go"],
+    embed = [":i18nRegion"],
+)
