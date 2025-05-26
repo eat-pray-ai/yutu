@@ -1,5 +1,5 @@
 load("@gazelle//:def.bzl", "gazelle")
-load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
 
 gazelle(name = "gazelle")
 
@@ -38,4 +38,40 @@ go_binary(
     name = "yutu",
     embed = [":yutu_lib"],
     visibility = ["//visibility:public"],
+)
+
+go_cross_binary(
+    name = "yutu-darwin-amd64",
+    platform = "@rules_go//go/toolchain:darwin_amd64",
+    target = "yutu",
+)
+
+go_cross_binary(
+    name = "yutu-darwin-arm64",
+    platform = "@rules_go//go/toolchain:darwin_arm64",
+    target = "yutu",
+)
+
+go_cross_binary(
+    name = "yutu-linux-amd64",
+    platform = "@rules_go//go/toolchain:linux_amd64",
+    target = "yutu",
+)
+
+go_cross_binary(
+    name = "yutu-linux-arm64",
+    platform = "@rules_go//go/toolchain:linux_arm64",
+    target = "yutu",
+)
+
+go_cross_binary(
+    name = "yutu-windows-amd64.exe",
+    platform = "@rules_go//go/toolchain:windows_amd64",
+    target = "yutu",
+)
+
+go_cross_binary(
+    name = "yutu-windows-arm64.exe",
+    platform = "@rules_go//go/toolchain:windows_arm64",
+    target = "yutu",
 )

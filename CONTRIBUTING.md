@@ -14,12 +14,18 @@ Here are some commands which may useful.
 # run tests
 ## unit tests
 ❯ go test ./...
+## or with bazel
+❯ bazel test //...
 ## verify binary commands, detect shorthands conflicts, etc.
 ❯ ./scripts/command-test.sh
 
 # build the binary
 ## install goreleaser: https://goreleaser.com/install
 ❯ GITHUB_REPOSITORY=eat-pray-ai/yutu goreleaser build --clean --auto-snapshot
+# or with bazel
+❯ bazel build //:yutu  # build the binary for the current platform
+❯ bazel build //...    # build all targets
+❯ bazel build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //:yutu
 
 # script to install yutu
 ❯ ./scripts/install.sh
