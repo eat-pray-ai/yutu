@@ -1,2 +1,7 @@
 # Enable Bzlmod for every Bazel command
 common --enable_bzlmod
+
+# build, test, and run commands
+build --stamp --workspace_status_command=./scripts/bazel-status.sh
+test --stamp --workspace_status_command=./scripts/bazel-status.sh
+run --stamp --workspace_status_command=./scripts/bazel-status.sh

@@ -9,6 +9,13 @@ go_library(
     ],
     importpath = "github.com/eat-pray-ai/yutu/cmd",
     visibility = ["//visibility:public"],
+    x_defs = {
+        "Version": "{STABLE_VERSION}",
+        "Commit": "{STABLE_GIT_SHORT_SHA}",
+        "CommitDate": "{STABLE_GIT_COMMIT_DATE}",
+        "Os": "{STABLE_OS}",
+        "Arch": "{STABLE_ARCH}",
+    },
     deps = [
         "//pkg/auth",
         "@com_github_savioxavier_termlink//:termlink",

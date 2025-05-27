@@ -38,6 +38,13 @@ go_binary(
     name = "yutu",
     embed = [":yutu_lib"],
     visibility = ["//visibility:public"],
+    x_defs = {
+        "Version": "{STABLE_VERSION}",
+        "Commit": "{STABLE_GIT_SHORT_SHA}",
+        "CommitDate": "{STABLE_GIT_COMMIT_DATE}",
+        "Os": "{STABLE_OS}",
+        "Arch": "{STABLE_ARCH}",
+    },
 )
 
 go_cross_binary(
