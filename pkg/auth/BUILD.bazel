@@ -2,7 +2,10 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "auth",
-    srcs = ["auth.go"],
+    srcs = [
+        "auth.go",
+        "service.go",
+    ],
     importpath = "github.com/eat-pray-ai/yutu/pkg/auth",
     visibility = ["//visibility:public"],
     deps = [

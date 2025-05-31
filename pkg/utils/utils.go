@@ -40,7 +40,7 @@ func OpenURL(url string) error {
 
 func RandomStage() string {
 	b := make([]byte, 128)
-	rand.Read(b)
+	_, _ = rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
 	return state
 }
@@ -49,4 +49,9 @@ func GetFileName(file string) string {
 	base := filepath.Base(file)
 	fileName := base[:len(base)-len(filepath.Ext(base))]
 	return fileName
+}
+
+func IsJson(s string) bool {
+	var js json.RawMessage
+	return json.Unmarshal([]byte(s), &js) == nil
 }

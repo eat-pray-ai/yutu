@@ -4,6 +4,7 @@ go_library(
     name = "cmd",
     srcs = [
         "auth.go",
+        "mcp.go",
         "root.go",
         "version.go",
     ],
@@ -18,6 +19,7 @@ go_library(
     },
     deps = [
         "//pkg/auth",
+        "@com_github_mark3labs_mcp_go//server",
         "@com_github_savioxavier_termlink//:termlink",
         "@com_github_spf13_cobra//:cobra",
         "@com_github_spf13_viper//:viper",

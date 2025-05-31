@@ -18,6 +18,7 @@ var authCmd = &cobra.Command{
 		auth.NewY2BService(
 			auth.WithCredential(credential),
 			auth.WithCacheToken(cacheToken),
+			auth.WithCacheable(true),
 		)
 	},
 }
@@ -25,6 +26,12 @@ var authCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(authCmd)
 
-	authCmd.Flags().StringVarP(&credential, "credential", "c", "client_secret.json", "Path to client secret file")
-	authCmd.Flags().StringVarP(&cacheToken, "cacheToken", "t", "youtube.token.json", "Path to token cache file")
+	authCmd.Flags().StringVarP(
+		&credential, "credential", "c", "client_secret.json",
+		"Path to client secret file, or base64 encoded string, or json string",
+	)
+	authCmd.Flags().StringVarP(
+		&cacheToken, "cacheToken", "t", "youtube.token.json",
+		"Path to token cache file, or base64 encoded string, or json string",
+	)
 }
