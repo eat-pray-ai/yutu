@@ -89,7 +89,10 @@ func (pi *playlistImage) List(parts []string, output string) {
 	default:
 		fmt.Println("ID\tKind\tPlaylistID\tType")
 		for _, image := range playlistImages {
-			fmt.Printf("%s\t%s\t%s\t%s\n", image.Id, image.Kind, image.Snippet.PlaylistId, image.Snippet.Type)
+			fmt.Printf(
+				"%s\t%s\t%s\t%s\n",
+				image.Id, image.Kind, image.Snippet.PlaylistId, image.Snippet.Type,
+			)
 		}
 	}
 }

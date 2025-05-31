@@ -32,7 +32,7 @@ var channelCmd = &cobra.Command{
 	Short: "Manipulate YouTube channels",
 	Long:  "List or update YouTube channels",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

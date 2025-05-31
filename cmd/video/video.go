@@ -50,7 +50,7 @@ var videoCmd = &cobra.Command{
 	Short: "Manipulate YouTube videos",
 	Long:  "List, insert, update, rate, get rating, report abuse, or delete YouTube videos",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

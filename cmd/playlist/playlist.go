@@ -29,7 +29,7 @@ var playlistCmd = &cobra.Command{
 	Short: "Manipulate YouTube playlists",
 	Long:  "List, insert, update, or delete YouTube playlists",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

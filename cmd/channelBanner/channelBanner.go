@@ -18,7 +18,7 @@ var channelBannerCmd = &cobra.Command{
 	Short: "Insert Youtube channel banner",
 	Long:  "Insert Youtube channel banner",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

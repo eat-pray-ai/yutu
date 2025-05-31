@@ -26,7 +26,7 @@ var commentThreadCmd = &cobra.Command{
 	Short: "Manipulate YouTube comment threads",
 	Long:  "List or insert YouTube comment threads",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

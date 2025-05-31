@@ -17,7 +17,7 @@ var superChatEventCmd = &cobra.Command{
 	Short: "List Super Chat events for a YouTube channel",
 	Long:  "List Super Chat events for a YouTube channel",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

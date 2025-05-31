@@ -16,7 +16,7 @@ var i18nLanguageCmd = &cobra.Command{
 	Short: "List YouTube i18n languages",
 	Long:  "List YouTube i18n languages",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

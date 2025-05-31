@@ -18,7 +18,7 @@ var videoCategoryCmd = &cobra.Command{
 	Short: "List YouTube video categories",
 	Long:  "List YouTube video categories",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

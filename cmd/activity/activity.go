@@ -22,7 +22,7 @@ var activityCmd = &cobra.Command{
 	Short: "List YouTube activities",
 	Long:  "List YouTube activities",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

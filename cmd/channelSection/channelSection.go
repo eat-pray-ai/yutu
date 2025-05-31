@@ -20,7 +20,7 @@ var channelSectionCmd = &cobra.Command{
 	Short: "Manipulate YouTube channel sections",
 	Long:  "List or delete YouTube channel sections",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

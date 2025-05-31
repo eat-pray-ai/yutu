@@ -27,7 +27,7 @@ var commentCmd = &cobra.Command{
 	Short: "Manipulate YouTube comments",
 	Long:  "List, insert, update, mark as spam, set moderation status, or delete YouTube comments",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

@@ -19,7 +19,7 @@ var memberCmd = &cobra.Command{
 	Short: "List YouTube members",
 	Long:  "List YouTube members",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

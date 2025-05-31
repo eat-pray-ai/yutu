@@ -15,7 +15,7 @@ var membershipsLevelCmd = &cobra.Command{
 	Short: "List YouTube memberships levels",
 	Long:  "List YouTube memberships levels",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

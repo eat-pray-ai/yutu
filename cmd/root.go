@@ -13,7 +13,7 @@ var RootCmd = &cobra.Command{
 	Long:  "yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc.",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

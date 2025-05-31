@@ -16,7 +16,7 @@ var thumbnailCmd = &cobra.Command{
 	Short: "Set thumbnail for a YouTube video",
 	Long:  "Set thumbnail for a YouTube video",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

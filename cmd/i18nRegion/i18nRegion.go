@@ -16,7 +16,7 @@ var i18nRegionCmd = &cobra.Command{
 	Short: "List YouTube i18n regions",
 	Long:  "List YouTube i18n regions",
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 
