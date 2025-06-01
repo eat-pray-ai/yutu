@@ -75,7 +75,7 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call = call.MaxResults(pi.MaxResults)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errGetPlaylistItem, err))
 	}
 
@@ -86,9 +86,9 @@ func (pi *playlistItem) List(parts []string, output string) {
 	playlistItems := pi.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistItems)
+		utils.PrintJSON(playlistItems, nil)
 	case "yaml":
-		utils.PrintYAML(playlistItems)
+		utils.PrintYAML(playlistItems, nil)
 	default:
 		fmt.Println("ID\tTitle")
 		for _, playlistItem := range playlistItems {
@@ -139,15 +139,15 @@ func (pi *playlistItem) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errInsertPlaylistItem, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Playlist Item inserted: %s\n", res.Id)
@@ -175,15 +175,15 @@ func (pi *playlistItem) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errUpdatePlaylistItem, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Playlist Item updated: %s\n", res.Id)
@@ -198,7 +198,7 @@ func (pi *playlistItem) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errDeletePlaylistItem, err))
 	}
 

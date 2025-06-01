@@ -72,7 +72,7 @@ func (c *caption) get(parts []string) []*youtube.Caption {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errGetCaption, err))
 	}
 
@@ -83,9 +83,9 @@ func (c *caption) List(parts []string, output string) {
 	captions := c.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(captions)
+		utils.PrintJSON(captions, nil)
 	case "yaml":
-		utils.PrintYAML(captions)
+		utils.PrintYAML(captions, nil)
 	default:
 		fmt.Println("ID\tName")
 		for _, caption := range captions {
@@ -97,7 +97,7 @@ func (c *caption) List(parts []string, output string) {
 func (c *caption) Insert(output string) {
 	file, err := os.Open(c.File)
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 	defer file.Close()
@@ -127,15 +127,15 @@ func (c *caption) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errInsertCaption, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Caption inserted: %s\n", res.Id)
@@ -179,7 +179,7 @@ func (c *caption) Update(output string) {
 	if c.File != "" {
 		file, err := os.Open(c.File)
 		if err != nil {
-			utils.PrintJSON(c)
+			utils.PrintJSON(c, nil)
 			log.Fatalln(errors.Join(errUpdateCaption, err))
 		}
 		defer file.Close()
@@ -194,15 +194,15 @@ func (c *caption) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errUpdateCaption, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Caption updated: %s\n", res.Id)
@@ -220,7 +220,7 @@ func (c *caption) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errDeleteCaption, err))
 	}
 
@@ -244,25 +244,25 @@ func (c *caption) Download() {
 
 	res, err := call.Download()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 
 	file, err := os.Create(c.File)
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 	defer file.Close()
 	_, err = file.Write(body)
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 

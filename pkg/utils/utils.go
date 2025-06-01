@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -12,14 +14,20 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func PrintJSON(data interface{}) {
+func PrintJSON(data interface{}, writer io.Writer) {
+	if writer == nil {
+		writer = os.Stdout
+	}
 	marshalled, _ := json.MarshalIndent(data, "", "  ")
-	fmt.Println(string(marshalled))
+	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
-func PrintYAML(data interface{}) {
+func PrintYAML(data interface{}, writer io.Writer) {
+	if writer == nil {
+		writer = os.Stdout
+	}
 	marshalled, _ := yaml.Marshal(data)
-	fmt.Print(string(marshalled))
+	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
 func OpenURL(url string) error {
@@ -54,4 +62,12 @@ func GetFileName(file string) string {
 func IsJson(s string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(s), &js) == nil
+}
+
+func BoolPtr(b string) *bool {
+	if b == "" {
+		return nil
+	}
+	val := b == "true"
+	return &val
 }

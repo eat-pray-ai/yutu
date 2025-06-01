@@ -37,21 +37,21 @@ func NewThumbnail(opts ...Option) Thumbnail {
 func (t *thumbnail) Set(output string) {
 	file, err := os.Open(t.File)
 	if err != nil {
-		utils.PrintJSON(t)
+		utils.PrintJSON(t, nil)
 		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
 	call := service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(t)
+		utils.PrintJSON(t, nil)
 		log.Fatalln(errors.Join(errSetThumbnail, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Println("Thumbnail set done")

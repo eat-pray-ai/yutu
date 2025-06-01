@@ -184,7 +184,7 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s)
+		utils.PrintJSON(s, nil)
 		log.Fatalln(errors.Join(errGetSearch, err))
 	}
 
@@ -195,9 +195,9 @@ func (s *search) List(parts []string, output string) {
 	results := s.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(results)
+		utils.PrintJSON(results, nil)
 	case "yaml":
-		utils.PrintYAML(results)
+		utils.PrintYAML(results, nil)
 	default:
 		fmt.Println("Kind\tTitle")
 		for _, result := range results {

@@ -43,7 +43,7 @@ func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(i)
+		utils.PrintJSON(i, nil)
 		log.Fatalln(errors.Join(errGetI18nRegion, err))
 	}
 
@@ -54,9 +54,9 @@ func (i *i18nRegion) List(parts []string, output string) {
 	i18nRegions := i.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nRegions)
+		utils.PrintJSON(i18nRegions, nil)
 	case "yaml":
-		utils.PrintYAML(i18nRegions)
+		utils.PrintYAML(i18nRegions, nil)
 	default:
 		fmt.Println("ID\tgl\tname")
 		for _, i18nRegion := range i18nRegions {

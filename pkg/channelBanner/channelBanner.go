@@ -41,7 +41,7 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 func (cb *channelBanner) Insert(output string) {
 	file, err := os.Open(cb.File)
 	if err != nil {
-		utils.PrintJSON(cb)
+		utils.PrintJSON(cb, nil)
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 	defer file.Close()
@@ -57,15 +57,15 @@ func (cb *channelBanner) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(cb)
+		utils.PrintJSON(cb, nil)
 		log.Fatalln(errors.Join(errInsertChannelBanner, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("ChannelBanner inserted: %s\n", res.Url)

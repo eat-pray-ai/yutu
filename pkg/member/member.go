@@ -56,7 +56,7 @@ func (m *member) get(parts []string) []*youtube.Member {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(m)
+		utils.PrintJSON(m, nil)
 		log.Fatalln(errors.Join(errGetMember, err))
 	}
 
@@ -67,9 +67,9 @@ func (m *member) List(parts []string, output string) {
 	members := m.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(members)
+		utils.PrintJSON(members, nil)
 	case "yaml":
-		utils.PrintYAML(members)
+		utils.PrintYAML(members, nil)
 	default:
 		fmt.Println("channelId\tdisplayName")
 		for _, member := range members {

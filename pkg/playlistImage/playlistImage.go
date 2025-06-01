@@ -72,7 +72,7 @@ func (pi *playlistImage) get(parts []string) []*youtube.PlaylistImage {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errGetPlaylistImage, err))
 	}
 
@@ -83,9 +83,9 @@ func (pi *playlistImage) List(parts []string, output string) {
 	playlistImages := pi.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistImages)
+		utils.PrintJSON(playlistImages, nil)
 	case "yaml":
-		utils.PrintYAML(playlistImages)
+		utils.PrintYAML(playlistImages, nil)
 	default:
 		fmt.Println("ID\tKind\tPlaylistID\tType")
 		for _, image := range playlistImages {
@@ -100,7 +100,7 @@ func (pi *playlistImage) List(parts []string, output string) {
 func (pi *playlistImage) Insert(output string) {
 	file, err := os.Open(pi.File)
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errInsertPlaylistImage, err))
 	}
 	defer file.Close()
@@ -126,15 +126,15 @@ func (pi *playlistImage) Insert(output string) {
 	call = call.Part("kind", "snippet")
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errInsertPlaylistImage, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	default:
 		fmt.Printf("PlaylistImage inserted: %s\n", res.Id)
 	}
@@ -165,7 +165,7 @@ func (pi *playlistImage) Update(output string) {
 	if pi.File != "" {
 		file, err := os.Open(pi.File)
 		if err != nil {
-			utils.PrintJSON(pi)
+			utils.PrintJSON(pi, nil)
 			log.Fatalln(errors.Join(errUpdatePlaylistImage, err))
 		}
 		defer file.Close()
@@ -175,15 +175,15 @@ func (pi *playlistImage) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errUpdatePlaylistImage, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	default:
 		fmt.Printf("PlaylistImage updated: %s\n", res.Id)
 	}
@@ -198,7 +198,7 @@ func (pi *playlistImage) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi)
+		utils.PrintJSON(pi, nil)
 		log.Fatalln(errors.Join(errDeletePlaylistImage, err))
 	}
 	fmt.Printf("PlaylistImage %s deleted\n", pi.ID)

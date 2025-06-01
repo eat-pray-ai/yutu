@@ -80,7 +80,7 @@ func (c *comment) get(parts []string) []*youtube.Comment {
 
 		res, err := call.Do()
 		if err != nil {
-			utils.PrintJSON(c)
+			utils.PrintJSON(c, nil)
 			log.Fatalln(errors.Join(errGetComment, err))
 		}
 
@@ -94,9 +94,9 @@ func (c *comment) List(parts []string, output string) {
 	comments := c.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(comments)
+		utils.PrintJSON(comments, nil)
 	case "yaml":
-		utils.PrintYAML(comments)
+		utils.PrintYAML(comments, nil)
 	default:
 		fmt.Println("ID\tTextDisplay")
 		for _, comment := range comments {
@@ -125,15 +125,15 @@ func (c *comment) Insert(output string) {
 	call := service.Comments.Insert([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errInsertComment, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Comment inserted: %s\n", res.Id)
@@ -158,15 +158,15 @@ func (c *comment) Update(output string) {
 	call := service.Comments.Update([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errUpdateComment, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Comment updated: %s\n", res.Id)
@@ -177,15 +177,15 @@ func (c *comment) MarkAsSpam(output string) {
 	call := service.Comments.MarkAsSpam(c.IDs)
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errMarkAsSpam, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 	case "yaml":
-		utils.PrintYAML(c)
+		utils.PrintYAML(c, nil)
 	case "silent":
 	default:
 		fmt.Printf("Comment marked as spam: %s\n", c.IDs)
@@ -201,15 +201,15 @@ func (c *comment) SetModerationStatus(output string) {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errSetModerationStatus, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 	case "yaml":
-		utils.PrintYAML(c)
+		utils.PrintYAML(c, nil)
 	case "silent":
 	default:
 		fmt.Printf(
@@ -223,7 +223,7 @@ func (c *comment) Delete() {
 		call := service.Comments.Delete(id)
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(c)
+			utils.PrintJSON(c, nil)
 			log.Fatalln(errors.Join(errDeleteComment, err))
 		}
 	}

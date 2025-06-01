@@ -89,7 +89,7 @@ func (s *subscription) get(parts []string) []*youtube.Subscription {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s)
+		utils.PrintJSON(s, nil)
 		log.Fatalln(errors.Join(errGetSubscription, err))
 	}
 
@@ -100,9 +100,9 @@ func (s *subscription) List(parts []string, output string) {
 	subscriptions := s.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(subscriptions)
+		utils.PrintJSON(subscriptions, nil)
 	case "yaml":
-		utils.PrintYAML(subscriptions)
+		utils.PrintYAML(subscriptions, nil)
 	default:
 		fmt.Println("ID\tChannel ID\tChannel Title")
 		for _, subscription := range subscriptions {
@@ -129,15 +129,15 @@ func (s *subscription) Insert(output string) {
 	call := service.Subscriptions.Insert([]string{"snippet"}, subscription)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s)
+		utils.PrintJSON(s, nil)
 		log.Fatalln(errors.Join(errInsertSubscription, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	default:
 		fmt.Printf("Subscription inserted: %s\n", res.Id)
 	}
@@ -147,7 +147,7 @@ func (s *subscription) Delete() {
 	call := service.Subscriptions.Delete(s.ID)
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s)
+		utils.PrintJSON(s, nil)
 		log.Fatalln(errors.Join(errDeleteSubscription, err))
 	}
 

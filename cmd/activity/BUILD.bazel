@@ -11,6 +11,8 @@ go_library(
     deps = [
         "//cmd",
         "//pkg/activity",
+        "//pkg/utils",
+        "@com_github_mark3labs_mcp_go//mcp",
         "@com_github_spf13_cobra//:cobra",
     ],
 )

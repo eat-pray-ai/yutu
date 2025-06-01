@@ -99,7 +99,7 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errGetChannel, err))
 	}
 
@@ -110,9 +110,9 @@ func (c *channel) List(parts []string, output string) {
 	channels := c.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(channels)
+		utils.PrintJSON(channels, nil)
 	case "yaml":
-		utils.PrintYAML(channels)
+		utils.PrintYAML(channels, nil)
 	default:
 		fmt.Println("ID\tTitle")
 		for _, channel := range channels {
@@ -134,15 +134,15 @@ func (c *channel) Update(output string) {
 	call := service.Channels.Update(parts, channel)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errUpdateChannel, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Channel updated: %s\n", res.Id)

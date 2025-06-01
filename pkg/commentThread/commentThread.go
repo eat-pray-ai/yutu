@@ -89,7 +89,7 @@ func (c *commentThread) get(parts []string) []*youtube.CommentThread {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c)
+		utils.PrintJSON(c, nil)
 		log.Fatalln(errors.Join(errGetCommentThread, err))
 	}
 
@@ -100,9 +100,9 @@ func (c *commentThread) List(parts []string, output string) {
 	commentThreads := c.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(commentThreads)
+		utils.PrintJSON(commentThreads, nil)
 	case "yaml":
-		utils.PrintYAML(commentThreads)
+		utils.PrintYAML(commentThreads, nil)
 	default:
 		fmt.Println("ID\tTopLevelCommentID")
 		for _, commentThread := range commentThreads {
@@ -132,15 +132,15 @@ func (c *commentThread) Insert(output string) {
 
 	res, err := service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
 	if err != nil {
-		utils.PrintJSON(ct)
+		utils.PrintJSON(ct, nil)
 		log.Fatalln(errors.Join(errInsertCommentThread, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("CommentThread inserted: %s\n", res.Id)

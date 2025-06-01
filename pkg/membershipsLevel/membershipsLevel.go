@@ -37,7 +37,7 @@ func (m *membershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
 	call := service.MembershipsLevels.List(parts)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(m)
+		utils.PrintJSON(m, nil)
 		log.Fatalln(errors.Join(errGetMembershipsLevel, err))
 	}
 
@@ -48,9 +48,9 @@ func (m *membershipsLevel) List(parts []string, output string) {
 	membershipsLevels := m.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(membershipsLevels)
+		utils.PrintJSON(membershipsLevels, nil)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels)
+		utils.PrintYAML(membershipsLevels, nil)
 	default:
 		fmt.Println("id\tdisplayName")
 		for _, membershipsLevel := range membershipsLevels {

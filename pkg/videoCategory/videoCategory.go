@@ -50,7 +50,7 @@ func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(vc)
+		utils.PrintJSON(vc, nil)
 		log.Fatalln(errors.Join(errGetVideoCategory, err))
 	}
 
@@ -61,9 +61,9 @@ func (vc *videoCategory) List(parts []string, output string) {
 	videoCategories := vc.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(videoCategories)
+		utils.PrintJSON(videoCategories, nil)
 	case "yaml":
-		utils.PrintYAML(videoCategories)
+		utils.PrintYAML(videoCategories, nil)
 	default:
 		fmt.Println("ID\tTitle\tAssignable")
 		for _, videoCategory := range videoCategories {

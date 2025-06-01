@@ -62,7 +62,7 @@ func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(cs)
+		utils.PrintJSON(cs, nil)
 		log.Fatalln(errors.Join(errGetChannelSection, err))
 	}
 	return res.Items
@@ -72,9 +72,9 @@ func (cs *channelSection) List(parts []string, output string) {
 	channelSections := cs.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(channelSections)
+		utils.PrintJSON(channelSections, nil)
 	case "yaml":
-		utils.PrintYAML(channelSections)
+		utils.PrintYAML(channelSections, nil)
 	default:
 		fmt.Println("ID\tChannelID\tTitle")
 		for _, channelSection := range channelSections {
@@ -94,7 +94,7 @@ func (cs *channelSection) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(cs)
+		utils.PrintJSON(cs, nil)
 		log.Fatalln(errors.Join(errDeleteChannelSection, err))
 	}
 

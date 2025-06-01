@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"log"
-
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
+	"io"
 )
 
 var (
@@ -26,8 +25,8 @@ type activity struct {
 }
 
 type Activity interface {
-	List([]string, string)
-	get([]string) []*youtube.Activity
+	List([]string, string, io.Writer) error
+	get([]string) ([]*youtube.Activity, error)
 }
 
 type Option func(*activity)
@@ -42,7 +41,7 @@ func NewActivity(opts ...Option) Activity {
 	return a
 }
 
-func (a *activity) get(parts []string) []*youtube.Activity {
+func (a *activity) get(parts []string) ([]*youtube.Activity, error) {
 	call := service.Activities.List(parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
@@ -75,26 +74,36 @@ func (a *activity) get(parts []string) []*youtube.Activity {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(a)
-		log.Fatalln(errors.Join(errGetActivity, err))
+		return nil, errors.Join(errGetActivity, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (a *activity) List(parts []string, output string) {
-	activities := a.get(parts)
+func (a *activity) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	activities, err := a.get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(activities)
+		utils.PrintJSON(activities, writer)
 	case "yaml":
-		utils.PrintYAML(activities)
+		utils.PrintYAML(activities, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle\tType")
 		for _, activity := range activities {
-			fmt.Printf("%s\t%s\n", activity.Id, activity.Snippet.Title)
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\t%s\n",
+				activity.Id, activity.Snippet.Title, activity.Snippet.Type,
+			)
 		}
 	}
+
+	return nil
 }
 
 func WithChannelId(channelId string) Option {
@@ -103,10 +112,10 @@ func WithChannelId(channelId string) Option {
 	}
 }
 
-func WithHome(home bool, changed bool) Option {
+func WithHome(home *bool) Option {
 	return func(a *activity) {
-		if changed {
-			a.Home = &home
+		if home != nil {
+			a.Home = home
 		}
 	}
 }
@@ -117,10 +126,10 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine bool, changed bool) Option {
+func WithMine(mine *bool) Option {
 	return func(a *activity) {
-		if changed {
-			a.Mine = &mine
+		if mine != nil {
+			a.Mine = mine
 		}
 	}
 }

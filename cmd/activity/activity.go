@@ -2,14 +2,15 @@ package activity
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
 	channelId       string
-	home            bool
+	home            = utils.BoolPtr("false")
 	maxResults      int64
-	mine            bool
+	mine            = utils.BoolPtr("true")
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string

@@ -124,7 +124,7 @@ func (v *video) get(parts []string) []*youtube.Video {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errGetVideo, err))
 	}
 
@@ -135,9 +135,9 @@ func (v *video) List(parts []string, output string) {
 	videos := v.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(videos)
+		utils.PrintJSON(videos, nil)
 	case "yaml":
-		utils.PrintYAML(videos)
+		utils.PrintYAML(videos, nil)
 	default:
 		fmt.Println("ID\tTitle")
 		for _, video := range videos {
@@ -149,7 +149,7 @@ func (v *video) List(parts []string, output string) {
 func (v *video) Insert(output string) {
 	file, err := os.Open(v.File)
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
 	defer file.Close()
@@ -201,7 +201,7 @@ func (v *video) Insert(output string) {
 
 	res, err := call.Media(file).Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errInsertVideo, err))
 	}
 
@@ -230,9 +230,9 @@ func (v *video) Insert(output string) {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Video inserted: %s\n", res.Id)
@@ -275,7 +275,7 @@ func (v *video) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errUpdateVideo, err))
 	}
 
@@ -304,9 +304,9 @@ func (v *video) Update(output string) {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Video updated: %s\n", res.Id)
@@ -317,7 +317,7 @@ func (v *video) Rate() {
 	call := service.Videos.Rate(v.ID, v.Rating)
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errRating, err))
 	}
 	fmt.Printf("Video %s rated %s\n", v.ID, v.Rating)
@@ -330,11 +330,11 @@ func (v *video) GetRating() {
 	}
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errGetRating, err))
 	}
 
-	utils.PrintYAML(res)
+	utils.PrintYAML(res, nil)
 }
 
 func (v *video) Delete() {
@@ -345,7 +345,7 @@ func (v *video) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errDeleteVideo, err))
 	}
 	fmt.Printf("Video %s deleted", v.ID)
@@ -367,7 +367,7 @@ func (v *video) ReportAbuse() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v)
+		utils.PrintJSON(v, nil)
 		log.Fatalln(errors.Join(errReportAbuse, err))
 	}
 

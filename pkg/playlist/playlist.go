@@ -79,7 +79,7 @@ func (p *playlist) get(parts []string) []*youtube.Playlist {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p)
+		utils.PrintJSON(p, nil)
 		log.Fatalln(errors.Join(errGetPlaylist, err))
 	}
 
@@ -90,9 +90,9 @@ func (p *playlist) List(parts []string, output string) {
 	playlists := p.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(playlists)
+		utils.PrintJSON(playlists, nil)
 	case "yaml":
-		utils.PrintYAML(playlists)
+		utils.PrintYAML(playlists, nil)
 	default:
 		fmt.Println("ID\tTitle")
 		for _, playlist := range playlists {
@@ -118,15 +118,15 @@ func (p *playlist) Insert(output string) {
 	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p)
+		utils.PrintJSON(p, nil)
 		log.Fatalln(errors.Join(errInsertPlaylist, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Playlist inserted: %s\n", res.Id)
@@ -154,15 +154,15 @@ func (p *playlist) Update(output string) {
 	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p)
+		utils.PrintJSON(p, nil)
 		log.Fatalln(errors.Join(errUpdatePlaylist, err))
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res)
+		utils.PrintJSON(res, nil)
 	case "yaml":
-		utils.PrintYAML(res)
+		utils.PrintYAML(res, nil)
 	case "silent":
 	default:
 		fmt.Printf("Playlist updated: %s\n", res.Id)
@@ -177,7 +177,7 @@ func (p *playlist) Delete() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p)
+		utils.PrintJSON(p, nil)
 		log.Fatalln(errors.Join(errDeletePlaylist, err))
 	}
 	fmt.Printf("Playlist %s deleted", p.ID)

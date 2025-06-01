@@ -41,7 +41,7 @@ func (va *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseRepor
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(va)
+		utils.PrintJSON(va, nil)
 		log.Fatalln(errors.Join(errGetVideoAbuseReportReason, err))
 	}
 
@@ -52,9 +52,9 @@ func (va *videoAbuseReportReason) List(parts []string, output string) {
 	videoAbuseReportReasons := va.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons)
+		utils.PrintJSON(videoAbuseReportReasons, nil)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons)
+		utils.PrintYAML(videoAbuseReportReasons, nil)
 	default:
 		fmt.Println("ID\tTitle")
 		for _, videoAbuseReportReason := range videoAbuseReportReasons {

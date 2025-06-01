@@ -48,7 +48,7 @@ func (s *superChatEvent) get(parts []string) []*youtube.SuperChatEvent {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s)
+		utils.PrintJSON(s, nil)
 		log.Fatalln(errors.Join(errGetSuperChatEvent, err))
 	}
 
@@ -59,9 +59,9 @@ func (s *superChatEvent) List(parts []string, output string) {
 	events := s.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(events)
+		utils.PrintJSON(events, nil)
 	case "yaml":
-		utils.PrintYAML(events)
+		utils.PrintYAML(events, nil)
 	default:
 		fmt.Println("ID\tAmount")
 		for _, event := range events {

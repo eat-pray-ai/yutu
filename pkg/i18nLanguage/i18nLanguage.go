@@ -43,7 +43,7 @@ func (i *i18nLanguage) get(parts []string) []*youtube.I18nLanguage {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(i)
+		utils.PrintJSON(i, nil)
 		log.Fatalln(errors.Join(errGetI18nLanguage, err))
 	}
 
@@ -54,9 +54,9 @@ func (i *i18nLanguage) List(parts []string, output string) {
 	i18nLanguages := i.get(parts)
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nLanguages)
+		utils.PrintJSON(i18nLanguages, nil)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages)
+		utils.PrintYAML(i18nLanguages, nil)
 	default:
 		fmt.Println("id\thl\tname")
 		for _, i18nLanguage := range i18nLanguages {

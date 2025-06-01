@@ -46,7 +46,7 @@ func NewWatermark(opts ...Option) Watermark {
 func (w *watermark) Set() {
 	file, err := os.Open(w.File)
 	if err != nil {
-		utils.PrintJSON(w)
+		utils.PrintJSON(w, nil)
 		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
 	defer file.Close()
@@ -75,7 +75,7 @@ func (w *watermark) Set() {
 
 	err = call.Do()
 	if err != nil {
-		utils.PrintJSON(w)
+		utils.PrintJSON(w, nil)
 		log.Fatalln(errors.Join(errSetWatermark, err))
 	}
 
@@ -90,7 +90,7 @@ func (w *watermark) Unset() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(w)
+		utils.PrintJSON(w, nil)
 		log.Fatalln(errors.Join(errUnsetWatermark, err))
 	}
 
