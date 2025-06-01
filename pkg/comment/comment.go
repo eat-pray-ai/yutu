@@ -241,10 +241,10 @@ func WithAuthorChannelId(authorChannelId string) Option {
 	}
 }
 
-func WithCanRate(canRate bool, changed bool) Option {
+func WithCanRate(canRate *bool) Option {
 	return func(c *comment) {
-		if changed {
-			c.CanRate = &canRate
+		if canRate != nil {
+			c.CanRate = canRate
 		}
 	}
 }
@@ -285,10 +285,10 @@ func WithModerationStatus(moderationStatus string) Option {
 	}
 }
 
-func WithBanAuthor(banAuthor bool, changed bool) Option {
+func WithBanAuthor(banAuthor *bool) Option {
 	return func(c *comment) {
-		if changed {
-			c.BanAuthor = &banAuthor
+		if banAuthor != nil {
+			c.BanAuthor = banAuthor
 		}
 	}
 }

@@ -190,26 +190,26 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine bool, changed bool) Option {
+func WithMine(mine *bool) Option {
 	return func(s *subscription) {
-		if changed {
-			s.Mine = &mine
+		if mine != nil {
+			s.Mine = mine
 		}
 	}
 }
 
-func WithMyRecentSubscribers(myRecentSubscribers bool, changed bool) Option {
+func WithMyRecentSubscribers(myRecentSubscribers *bool) Option {
 	return func(s *subscription) {
-		if changed {
-			s.MyRecentSubscribers = &myRecentSubscribers
+		if myRecentSubscribers != nil {
+			s.MyRecentSubscribers = myRecentSubscribers
 		}
 	}
 }
 
-func WithMySubscribers(mySubscribers bool, changed bool) Option {
+func WithMySubscribers(mySubscribers *bool) Option {
 	return func(s *subscription) {
-		if changed {
-			s.MySubscribers = &mySubscribers
+		if mySubscribers != nil {
+			s.MySubscribers = mySubscribers
 		}
 	}
 }

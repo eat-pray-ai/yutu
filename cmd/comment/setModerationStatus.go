@@ -13,7 +13,7 @@ var setModerationStatusCmd = &cobra.Command{
 		c := comment.NewComment(
 			comment.WithIDs(ids),
 			comment.WithModerationStatus(moderationStatus),
-			comment.WithBanAuthor(banAuthor, true),
+			comment.WithBanAuthor(banAuthor),
 		)
 		c.SetModerationStatus(output)
 	},
@@ -22,10 +22,17 @@ var setModerationStatusCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(setModerationStatusCmd)
 
-	setModerationStatusCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
-	setModerationStatusCmd.Flags().StringVarP(
-		&moderationStatus, "moderationStatus", "s", "", "heldForReview, published or rejected",
+	setModerationStatusCmd.Flags().StringSliceVarP(
+		&ids, "ids", "i", []string{}, "Comma separated ids of comments",
 	)
-	setModerationStatusCmd.Flags().BoolVarP(&banAuthor, "banAuthor", "A", false, "true or false")
-	setModerationStatusCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	setModerationStatusCmd.Flags().StringVarP(
+		&moderationStatus, "moderationStatus", "s", "",
+		"heldForReview, published or rejected",
+	)
+	setModerationStatusCmd.Flags().BoolVarP(
+		banAuthor, "banAuthor", "A", false, "true or false",
+	)
+	setModerationStatusCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 }

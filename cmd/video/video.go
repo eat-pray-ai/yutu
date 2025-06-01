@@ -2,13 +2,15 @@ package video
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/spf13/pflag"
 
 	"github.com/spf13/cobra"
 )
 
 var (
 	id                string
-	autoLevels        bool
+	autoLevels        = utils.BoolPtr("")
 	file              string
 	title             string
 	description       string
@@ -25,21 +27,21 @@ var (
 	playListId        string
 	categoryId        string
 	privacy           string
-	forKids           bool
-	embeddable        bool
+	forKids           = utils.BoolPtr("")
+	embeddable        = utils.BoolPtr("")
 	output            string
 	parts             []string
 	publishAt         string
 	regionCode        string
 	reasonId          string
 	secondaryReasonId string
-	stabilize         bool
+	stabilize         = utils.BoolPtr("")
 	maxHeight         int64
 	maxWidth          int64
 	maxResults        int64
 
-	notifySubscribers             bool
-	publicStatsViewable           bool
+	notifySubscribers             = utils.BoolPtr("")
+	publicStatsViewable           = utils.BoolPtr("")
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 )
@@ -49,6 +51,9 @@ var videoCmd = &cobra.Command{
 	Use:   "video",
 	Short: "Manipulate YouTube videos",
 	Long:  "List, insert, update, rate, get rating, report abuse, or delete YouTube videos",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		resetFlags(cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -56,14 +61,17 @@ var videoCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(videoCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func resetFlags(flagSet *pflag.FlagSet) {
+	boolMap := map[string]*bool{
+		"autoLevels":          autoLevels,
+		"forKids":             forKids,
+		"embeddable":          embeddable,
+		"stabilize":           stabilize,
+		"notifySubscribers":   notifySubscribers,
+		"publicStatsViewable": publicStatsViewable,
+	}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// videoCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// videoCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	utils.ResetBool(boolMap, flagSet)
 }

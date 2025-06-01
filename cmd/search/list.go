@@ -14,9 +14,9 @@ var listCmd = &cobra.Command{
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),
 			search.WithEventType(eventType),
-			search.WithForContentOwner(forContentOwner, true),
-			search.WithForDeveloper(forDeveloper, true),
-			search.WithForMine(forMine, true),
+			search.WithForContentOwner(forContentOwner),
+			search.WithForDeveloper(forDeveloper),
+			search.WithForMine(forMine),
 			search.WithLocation(location),
 			search.WithLocationRadius(locationRadius),
 			search.WithMaxResults(maxResults),
@@ -61,23 +61,26 @@ func init() {
 		&eventType, "eventType", "", "none(default), upcoming, live or completed",
 	)
 	listCmd.Flags().BoolVar(
-		&forContentOwner, "forContentOwner", false, "Search owned by content owner",
+		forContentOwner, "forContentOwner", false, "Search owned by content owner",
 	)
 	listCmd.Flags().BoolVar(
-		&forDeveloper, "forDeveloper", false,
+		forDeveloper, "forDeveloper", false,
 		"Only retrieve videos uploaded using the project id of the authenticated user",
 	)
 	listCmd.Flags().BoolVar(
-		&forMine, "forMine", false, "Search for the private videos of the authenticated user",
+		forMine, "forMine", false,
+		"Search for the private videos of the authenticated user",
 	)
 	listCmd.Flags().StringVar(
 		&location, "location", "", "Filter on location of the video",
 	)
 	listCmd.Flags().StringVar(
-		&locationRadius, "locationRadius", "", "Filter on distance from the location",
+		&locationRadius, "locationRadius", "",
+		"Filter on distance from the location",
 	)
 	listCmd.Flags().Int64Var(
-		&maxResults, "maxResults", 5, "The maximum number of items that should be returned",
+		&maxResults, "maxResults", 5,
+		"The maximum number of items that should be returned",
 	)
 	listCmd.Flags().StringVar(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", "",

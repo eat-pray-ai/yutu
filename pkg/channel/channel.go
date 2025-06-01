@@ -179,10 +179,10 @@ func WithID(id string) Option {
 	}
 }
 
-func WithChannelManagedByMe(managedByMe bool, changed bool) Option {
+func WithChannelManagedByMe(managedByMe *bool) Option {
 	return func(c *channel) {
-		if changed {
-			c.ManagedByMe = &managedByMe
+		if managedByMe != nil {
+			c.ManagedByMe = managedByMe
 		}
 	}
 }
@@ -193,18 +193,18 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine bool, changed bool) Option {
+func WithMine(mine *bool) Option {
 	return func(c *channel) {
-		if changed {
-			c.Mine = &mine
+		if mine != nil {
+			c.Mine = mine
 		}
 	}
 }
 
-func WithMySubscribers(mySubscribers bool, changed bool) Option {
+func WithMySubscribers(mySubscribers *bool) Option {
 	return func(c *channel) {
-		if changed {
-			c.MySubscribers = &mySubscribers
+		if mySubscribers != nil {
+			c.MySubscribers = mySubscribers
 		}
 	}
 }

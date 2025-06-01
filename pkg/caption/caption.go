@@ -287,42 +287,42 @@ func WithAudioTrackType(audioTrackType string) Option {
 	}
 }
 
-func WithIsAutoSynced(isAutoSynced bool, changed bool) Option {
+func WithIsAutoSynced(isAutoSynced *bool) Option {
 	return func(c *caption) {
-		if changed {
-			c.IsAutoSynced = &isAutoSynced
+		if isAutoSynced != nil {
+			c.IsAutoSynced = isAutoSynced
 		}
 	}
 }
 
-func WithIsCC(isCC bool, changed bool) Option {
+func WithIsCC(isCC *bool) Option {
 	return func(c *caption) {
-		if changed {
-			c.IsCC = &isCC
+		if isCC != nil {
+			c.IsCC = isCC
 		}
 	}
 }
 
-func WithIsDraft(isDraft bool, changed bool) Option {
+func WithIsDraft(isDraft *bool) Option {
 	return func(c *caption) {
-		if changed {
-			c.IsDraft = &isDraft
+		if isDraft != nil {
+			c.IsDraft = isDraft
 		}
 	}
 }
 
-func WithIsEasyReader(isEasyReader bool, changed bool) Option {
+func WithIsEasyReader(isEasyReader *bool) Option {
 	return func(c *caption) {
-		if changed {
-			c.IsEasyReader = &isEasyReader
+		if isEasyReader != nil {
+			c.IsEasyReader = isEasyReader
 		}
 	}
 }
 
-func WithIsLarge(isLarge bool, changed bool) Option {
+func WithIsLarge(isLarge *bool) Option {
 	return func(c *caption) {
-		if changed {
-			c.IsLarge = &isLarge
+		if isLarge != nil {
+			c.IsLarge = isLarge
 		}
 	}
 }

@@ -2,6 +2,8 @@ package channel
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/spf13/pflag"
 
 	"github.com/spf13/cobra"
 )
@@ -12,10 +14,10 @@ var (
 	forUsername            string
 	hl                     string
 	id                     string
-	managedByMe            bool
+	managedByMe            = utils.BoolPtr("")
 	maxResults             int64
-	mine                   bool
-	mySubscribers          bool
+	mine                   = utils.BoolPtr("")
+	mySubscribers          = utils.BoolPtr("")
 	onBehalfOfContentOwner string
 
 	country         string
@@ -31,6 +33,9 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Manipulate YouTube channels",
 	Long:  "List or update YouTube channels",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		resetFlags(cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -48,4 +53,14 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// channelCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func resetFlags(flagSet *pflag.FlagSet) {
+	boolMap := map[string]*bool{
+		"managedByMe":   managedByMe,
+		"mine":          mine,
+		"mySubscribers": mySubscribers,
+	}
+
+	utils.ResetBool(boolMap, flagSet)
 }

@@ -15,7 +15,7 @@ var listCmd = &cobra.Command{
 			playlist.WithChannelId(channelId),
 			playlist.WithHl(hl),
 			playlist.WithMaxResults(maxResults),
-			playlist.WithMine(mine, true),
+			playlist.WithMine(mine),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			playlist.WithService(nil),
@@ -39,9 +39,13 @@ func init() {
 		&hl, "hl", "l", "", "Return content in specified language",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5,
+		"The maximum number of items that should be returned",
 	)
-	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "Return the playlists owned by the authenticated user")
+	listCmd.Flags().BoolVarP(
+		mine, "mine", "M", true,
+		"Return the playlists owned by the authenticated user",
+	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

@@ -44,8 +44,8 @@ type video struct {
 	PlaylistId        string   `yaml:"playlist_id" json:"playlist_id"`
 	CategoryId        string   `yaml:"category_id" json:"category_id"`
 	Privacy           string   `yaml:"privacy" json:"privacy"`
-	ForKids           bool     `yaml:"for_kids" json:"for_kids"`
-	Embeddable        bool     `yaml:"embeddable" json:"embeddable"`
+	ForKids           *bool    `yaml:"for_kids" json:"for_kids"`
+	Embeddable        *bool    `yaml:"embeddable" json:"embeddable"`
 	PublishAt         string   `yaml:"publish_at" json:"publish_at"`
 	RegionCode        string   `yaml:"region_code" json:"region_code"`
 	ReasonId          string   `yaml:"reason_id" json:"reason_id"`
@@ -55,8 +55,8 @@ type video struct {
 	MaxWidth          int64    `yaml:"max_width" json:"max_width"`
 	MaxResults        int64    `yaml:"max_results" json:"max_results"`
 
-	NotifySubscribers             bool   `yaml:"notify_subscribers" json:"notify_subscribers"`
-	PublicStatsViewable           bool   `yaml:"public_stats_viewable" json:"public_stats_viewable"`
+	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers"`
+	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable"`
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
@@ -173,14 +173,21 @@ func (v *video) Insert(output string) {
 			DefaultAudioLanguage: v.Language,
 		},
 		Status: &youtube.VideoStatus{
-			Embeddable:              v.Embeddable,
-			License:                 v.License,
-			SelfDeclaredMadeForKids: v.ForKids,
-			PublishAt:               v.PublishAt,
-			PrivacyStatus:           v.Privacy,
-			PublicStatsViewable:     v.PublicStatsViewable,
-			ForceSendFields:         []string{"SelfDeclaredMadeForKids"},
+			License:         v.License,
+			PublishAt:       v.PublishAt,
+			PrivacyStatus:   v.Privacy,
+			ForceSendFields: []string{"SelfDeclaredMadeForKids"},
 		},
+	}
+
+	if v.Embeddable != nil {
+		video.Status.Embeddable = *v.Embeddable
+	}
+	if v.ForKids != nil {
+		video.Status.SelfDeclaredMadeForKids = *v.ForKids
+	}
+	if v.PublicStatsViewable != nil {
+		video.Status.PublicStatsViewable = *v.PublicStatsViewable
 	}
 
 	call := service.Videos.Insert([]string{"snippet,status"}, video)
@@ -188,7 +195,9 @@ func (v *video) Insert(output string) {
 	if v.AutoLevels != nil {
 		call = call.AutoLevels(*v.AutoLevels)
 	}
-	call = call.NotifySubscribers(v.NotifySubscribers)
+	if v.NotifySubscribers != nil {
+		call = call.NotifySubscribers(*v.NotifySubscribers)
+	}
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
@@ -266,7 +275,9 @@ func (v *video) Update(output string) {
 	if v.Privacy != "" {
 		video.Status.PrivacyStatus = v.Privacy
 	}
-	video.Status.Embeddable = v.Embeddable
+	if v.Embeddable != nil {
+		video.Status.Embeddable = *v.Embeddable
+	}
 
 	call := service.Videos.Update([]string{"snippet,status"}, video)
 	if v.OnBehalfOfContentOwner != "" {
@@ -380,10 +391,10 @@ func WithID(id string) Option {
 	}
 }
 
-func WithAutoLevels(autoLevels bool, changed bool) Option {
+func WithAutoLevels(autoLevels *bool) Option {
 	return func(v *video) {
-		if changed {
-			v.AutoLevels = &autoLevels
+		if autoLevels != nil {
+			v.AutoLevels = autoLevels
 		}
 	}
 }
@@ -454,15 +465,19 @@ func WithChart(chart string) Option {
 	}
 }
 
-func WithForKids(forKids bool) Option {
+func WithForKids(forKids *bool) Option {
 	return func(v *video) {
-		v.ForKids = forKids
+		if forKids != nil {
+			v.ForKids = forKids
+		}
 	}
 }
 
-func WithEmbeddable(embeddable bool) Option {
+func WithEmbeddable(embeddable *bool) Option {
 	return func(v *video) {
-		v.Embeddable = embeddable
+		if embeddable != nil {
+			v.Embeddable = embeddable
+		}
 	}
 }
 
@@ -490,9 +505,11 @@ func WithPlaylistId(playlistId string) Option {
 	}
 }
 
-func WithPublicStatsViewable(publicStatsViewable bool) Option {
+func WithPublicStatsViewable(publicStatsViewable *bool) Option {
 	return func(v *video) {
-		v.PublicStatsViewable = publicStatsViewable
+		if publicStatsViewable != nil {
+			v.PublicStatsViewable = publicStatsViewable
+		}
 	}
 }
 
@@ -508,10 +525,10 @@ func WithRegionCode(regionCode string) Option {
 	}
 }
 
-func WithStabilize(stabilize bool, changed bool) Option {
+func WithStabilize(stabilize *bool) Option {
 	return func(v *video) {
-		if changed {
-			v.Stabilize = &stabilize
+		if stabilize != nil {
+			v.Stabilize = stabilize
 		}
 	}
 }
@@ -534,9 +551,11 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithNotifySubscribers(notifySubscribers bool) Option {
+func WithNotifySubscribers(notifySubscribers *bool) Option {
 	return func(v *video) {
-		v.NotifySubscribers = notifySubscribers
+		if notifySubscribers != nil {
+			v.NotifySubscribers = notifySubscribers
+		}
 	}
 }
 

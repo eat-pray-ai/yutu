@@ -2,6 +2,7 @@ package playlist
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,7 @@ var (
 	description string
 	hl          string
 	maxResults  int64
-	mine        bool
+	mine        = utils.BoolPtr("")
 	tags        []string
 	language    string
 	channelId   string
@@ -28,6 +29,9 @@ var playlistCmd = &cobra.Command{
 	Use:   "playlist",
 	Short: "Manipulate YouTube playlists",
 	Long:  "List, insert, update, or delete YouTube playlists",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		utils.ResetBool(map[string]*bool{"mine": mine}, cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

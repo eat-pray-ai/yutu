@@ -59,9 +59,11 @@ func init() {
 		"Privacy status of the video: public, private or unlisted",
 	)
 	updateCmd.Flags().BoolVarP(
-		&embeddable, "embeddable", "E", true, "Whether the video is embeddable",
+		embeddable, "embeddable", "E", true, "Whether the video is embeddable",
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	updateCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 
 	updateCmd.MarkFlagRequired("id")
 }

@@ -13,7 +13,7 @@ var insertCmd = &cobra.Command{
 		c := comment.NewComment(
 			comment.WithAuthorChannelId(authorChannelId),
 			comment.WithChannelId(channelId),
-			comment.WithCanRate(canRate, true),
+			comment.WithCanRate(canRate),
 			comment.WithParentId(parentId),
 			comment.WithTextOriginal(textOriginal),
 			comment.WithVideoId(videoId),
@@ -26,11 +26,24 @@ var insertCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&authorChannelId, "authorChannelId", "a", "", "Channel ID of the comment author")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the video owner")
-	insertCmd.Flags().BoolVarP(&canRate, "canRate", "R", false, "Whether the viewer can rate the comment")
-	insertCmd.Flags().StringVarP(&parentId, "parentId", "P", "", "ID of the parent comment")
-	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
+	insertCmd.Flags().StringVarP(
+		&authorChannelId, "authorChannelId", "a", "",
+		"Channel ID of the comment author",
+	)
+	insertCmd.Flags().StringVarP(
+		&channelId, "channelId", "c", "", "Channel ID of the video owner",
+	)
+	insertCmd.Flags().BoolVarP(
+		canRate, "canRate", "R", false, "Whether the viewer can rate the comment",
+	)
+	insertCmd.Flags().StringVarP(
+		&parentId, "parentId", "P", "", "ID of the parent comment",
+	)
+	insertCmd.Flags().StringVarP(
+		&textOriginal, "textOriginal", "t", "", "Text of the comment",
+	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 }

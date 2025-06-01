@@ -16,10 +16,10 @@ var listCmd = &cobra.Command{
 			channel.WithForUsername(forUsername),
 			channel.WithHl(hl),
 			channel.WithID(id),
-			channel.WithChannelManagedByMe(managedByMe, true),
+			channel.WithChannelManagedByMe(managedByMe),
 			channel.WithMaxResults(maxResults),
-			channel.WithMine(mine, true),
-			channel.WithMySubscribers(mySubscribers, true),
+			channel.WithMine(mine),
+			channel.WithMySubscribers(mySubscribers),
 			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channel.WithService(nil),
 		)
@@ -49,18 +49,19 @@ func init() {
 		&id, "id", "i", "", "Return the channels with the specified IDs",
 	)
 	listCmd.Flags().BoolVarP(
-		&managedByMe, "managedByMe", "E", false,
+		managedByMe, "managedByMe", "E", false,
 		"Specify the maximum number of items that should be returned",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5,
+		"The maximum number of items that should be returned",
 	)
 	listCmd.Flags().BoolVarP(
-		&mine, "mine", "M", true,
+		mine, "mine", "M", true,
 		"Return the ids of channels owned by the authenticated user",
 	)
 	listCmd.Flags().BoolVarP(
-		&mySubscribers, "mySubscribers", "S", false,
+		mySubscribers, "mySubscribers", "S", false,
 		"Return the channels subscribed to the authenticated user",
 	)
 	listCmd.Flags().StringVarP(

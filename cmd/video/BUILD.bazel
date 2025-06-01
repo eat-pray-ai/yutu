@@ -16,7 +16,9 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//cmd",
+        "//pkg/utils",
         "//pkg/video",
         "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_pflag//:pflag",
     ],
 )

@@ -12,7 +12,7 @@ var updateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithIDs(ids),
-			comment.WithCanRate(canRate, cmd.Flags().Lookup("canRate").Changed),
+			comment.WithCanRate(canRate),
 			comment.WithTextOriginal(textOriginal),
 			comment.WithViewerRating(viewerRating),
 			comment.WithService(nil),
@@ -24,9 +24,19 @@ var updateCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, "ID of the comment")
-	updateCmd.Flags().BoolVarP(&canRate, "canRate", "R", false, "Whether the viewer can rate the comment")
-	updateCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
-	updateCmd.Flags().StringVarP(&viewerRating, "viewerRating", "r", "", "none, like or dislike")
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	updateCmd.Flags().StringSliceVarP(
+		&ids, "id", "i", []string{}, "ID of the comment",
+	)
+	updateCmd.Flags().BoolVarP(
+		canRate, "canRate", "R", false, "Whether the viewer can rate the comment",
+	)
+	updateCmd.Flags().StringVarP(
+		&textOriginal, "textOriginal", "t", "", "Text of the comment",
+	)
+	updateCmd.Flags().StringVarP(
+		&viewerRating, "viewerRating", "r", "", "none, like or dislike",
+	)
+	updateCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 }

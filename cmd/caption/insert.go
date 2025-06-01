@@ -13,11 +13,11 @@ var insertCmd = &cobra.Command{
 		c := caption.NewCation(
 			caption.WithFile(file),
 			caption.WithAudioTrackType(audioTrackType),
-			caption.WithIsAutoSynced(isAutoSynced, true),
-			caption.WithIsCC(isCC, true),
-			caption.WithIsDraft(isDraft, true),
-			caption.WithIsEasyReader(isEasyReader, true),
-			caption.WithIsLarge(isLarge, true),
+			caption.WithIsAutoSynced(isAutoSynced),
+			caption.WithIsCC(isCC),
+			caption.WithIsDraft(isDraft),
+			caption.WithIsEasyReader(isEasyReader),
+			caption.WithIsLarge(isLarge),
 			caption.WithLanguage(language),
 			caption.WithName(name),
 			caption.WithTrackKind(trackKind),
@@ -33,31 +33,47 @@ var insertCmd = &cobra.Command{
 func init() {
 	captionCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the caption file")
 	insertCmd.Flags().StringVarP(
-		&audioTrackType, "audioTrackType", "a", "unknown", "unknown, primary, commentary or descriptive",
+		&file, "file", "f", "", "Path to the caption file",
+	)
+	insertCmd.Flags().StringVarP(
+		&audioTrackType, "audioTrackType", "a", "unknown",
+		"unknown, primary, commentary or descriptive",
 	)
 	insertCmd.Flags().BoolVarP(
-		&isAutoSynced, "isAutoSynced", "A", true,
+		isAutoSynced, "isAutoSynced", "A", true,
 		"Whether YouTube synchronized the caption track to the audio track in the video",
 	)
 	insertCmd.Flags().BoolVarP(
-		&isCC, "isCC", "C", false,
+		isCC, "isCC", "C", false,
 		"Whether the track contains closed captions for the deaf and hard of hearing",
 	)
-	insertCmd.Flags().BoolVarP(&isDraft, "isDraft", "D", false, "whether the caption track is a draft")
 	insertCmd.Flags().BoolVarP(
-		&isEasyReader, "isEasyReader", "E", false, "Whether caption track is formatted for 'easy reader'",
+		isDraft, "isDraft", "D", false, "whether the caption track is a draft",
 	)
 	insertCmd.Flags().BoolVarP(
-		&isLarge, "isLarge", "L", false,
+		isEasyReader, "isEasyReader", "E", false,
+		"Whether caption track is formatted for 'easy reader'",
+	)
+	insertCmd.Flags().BoolVarP(
+		isLarge, "isLarge", "L", false,
 		"Whether the caption track uses large text for the vision-impaired",
 	)
-	insertCmd.Flags().StringVarP(&language, "language", "l", "", "Language of the caption track")
-	insertCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the caption track")
-	insertCmd.Flags().StringVarP(&trackKind, "trackKind", "t", "standard", "standard, ASR or forced")
+	insertCmd.Flags().StringVarP(
+		&language, "language", "l", "", "Language of the caption track",
+	)
+	insertCmd.Flags().StringVarP(
+		&name, "name", "n", "", "Name of the caption track",
+	)
+	insertCmd.Flags().StringVarP(
+		&trackKind, "trackKind", "t", "standard", "standard, ASR or forced",
+	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	insertCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
-	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+	)
+	insertCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 }

@@ -6,11 +6,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	shortUsage           = "List YouTube activities"
+	longUsage            = "List YouTube activities"
+	channelIdUsage       = "ID of the channel"
+	homeUsage            = "true or false or empty"
+	maxResultsUsage      = "The maximum number of items that should be returned"
+	mineUsage            = "true or false or empty"
+	publishedAfterUsage  = "Filter on activities published after this date"
+	publishedBeforeUsage = "Filter on activities published before this date"
+	regionCodeUsage      = ""
+	partsUsage           = "Comma separated parts"
+	outputUsage          = "json or yaml"
+)
+
 var (
 	channelId       string
-	home            = utils.BoolPtr("false")
+	home            = utils.BoolPtr("")
 	maxResults      int64
-	mine            = utils.BoolPtr("true")
+	mine            = utils.BoolPtr("")
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string
@@ -20,8 +34,15 @@ var (
 
 var activityCmd = &cobra.Command{
 	Use:   "activity",
-	Short: "List YouTube activities",
-	Long:  "List YouTube activities",
+	Short: shortUsage,
+	Long:  longUsage,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		boolMap := map[string]*bool{
+			"home": home,
+			"mine": mine,
+		}
+		utils.ResetBool(boolMap, cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

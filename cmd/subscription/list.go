@@ -15,9 +15,9 @@ var listCmd = &cobra.Command{
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),
-			subscription.WithMine(mine, true),
-			subscription.WithMyRecentSubscribers(myRecentSubscribers, true),
-			subscription.WithMySubscribers(mySubscribers, true),
+			subscription.WithMine(mine),
+			subscription.WithMyRecentSubscribers(myRecentSubscribers),
+			subscription.WithMySubscribers(mySubscribers),
 			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			subscription.WithOrder(order),
@@ -43,14 +43,19 @@ func init() {
 		"Return the subscriptions to the subset of these channels that the authenticated user is subscribed to",
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
-	)
-	listCmd.Flags().BoolVarP(&mine, "mine", "M", true, "Return the subscriptions of the authenticated user")
-	listCmd.Flags().BoolVarP(
-		&myRecentSubscribers, "myRecentSubscribers", "R", false, "true  or false",
+		&maxResults, "maxResults", "n", 5,
+		"The maximum number of items that should be returned",
 	)
 	listCmd.Flags().BoolVarP(
-		&mySubscribers, "mySubscribers", "S", false, "Return the subscribers of the given channel owner",
+		mine, "mine", "M", true,
+		"Return the subscriptions of the authenticated user",
+	)
+	listCmd.Flags().BoolVarP(
+		myRecentSubscribers, "myRecentSubscribers", "R", false, "true  or false",
+	)
+	listCmd.Flags().BoolVarP(
+		mySubscribers, "mySubscribers", "S", false,
+		"Return the subscribers of the given channel owner",
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",

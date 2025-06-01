@@ -19,6 +19,7 @@ use_repo(
     "com_github_mark3labs_mcp_go",
     "com_github_savioxavier_termlink",
     "com_github_spf13_cobra",
+    "com_github_spf13_pflag",
     "com_github_spf13_viper",
     "in_gopkg_yaml_v3",
     "org_golang_google_api",

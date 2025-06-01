@@ -25,5 +25,7 @@ func init() {
 
 	deleteCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
 	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
-	deleteCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")
+	deleteCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+	)
 }

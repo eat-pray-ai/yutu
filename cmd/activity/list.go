@@ -12,51 +12,44 @@ import (
 )
 
 const (
-	shortDesc           = "List YouTube activities"
-	longDesc            = "List YouTube activities, such as likes, favorites, uploads, etc."
-	channelIdDesc       = "ID of the channel"
-	homeDesc            = "true or false"
-	maxResultsDesc      = "The maximum number of items that should be returned"
-	mineDesc            = "true or false"
-	publishedAfterDesc  = "Filter on activities published after this date"
-	publishedBeforeDesc = "Filter on activities published before this date"
-	regionCodeDesc      = ""
-	partsDesc           = "Comma separated parts"
-	outputDesc          = "json or yaml"
+	listShortUsage = "List YouTube activities"
+	listLongUsage  = "List YouTube activities, such as likes, favorites, uploads, etc."
 )
+
+var defaultParts = []string{"id", "snippet", "contentDetails"}
 
 var listTool = mcp.NewTool(
 	"activity.list",
-	mcp.WithDescription(longDesc),
+	mcp.WithDescription(listLongUsage),
 	mcp.WithString(
-		"channelId", mcp.DefaultString(""), mcp.Description(channelIdDesc),
+		"channelId", mcp.DefaultString(""), mcp.Description(channelIdUsage),
 	),
 	mcp.WithString(
 		"home", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(homeDesc),
+		mcp.DefaultString(""), mcp.Description(homeUsage),
 	),
 	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5), mcp.Description(maxResultsDesc),
+		"maxResults", mcp.DefaultNumber(5), mcp.Description(maxResultsUsage),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(mineDesc),
+		mcp.DefaultString("true"), mcp.Description(mineUsage),
 	),
 	mcp.WithString(
-		"publishedAfter", mcp.DefaultString(""), mcp.Description(publishedAfterDesc),
+		"publishedAfter", mcp.DefaultString(""),
+		mcp.Description(publishedAfterUsage),
 	),
 	mcp.WithString(
 		"publishedBefore", mcp.DefaultString(""),
-		mcp.Description(publishedBeforeDesc),
+		mcp.Description(publishedBeforeUsage),
 	),
 	mcp.WithString(
-		"regionCode", mcp.DefaultString(""), mcp.Description(regionCodeDesc),
+		"regionCode", mcp.DefaultString(""), mcp.Description(regionCodeUsage),
 	),
 	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id", "snippet", "contentDetails"}),
-		mcp.Description(partsDesc),
+		"parts", mcp.DefaultArray(defaultParts), mcp.Description(partsUsage),
 	),
-	mcp.WithString("output", mcp.DefaultString(""), mcp.Description(outputDesc)),
+	mcp.WithString("output", mcp.DefaultString(""), mcp.Description(outputUsage)),
 )
 
 func run(writer io.Writer) error {
@@ -76,16 +69,8 @@ func run(writer io.Writer) error {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: shortDesc,
-	Long:  longDesc,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if !cmd.Flags().Lookup("home").Changed {
-			home = nil
-		}
-		if !cmd.Flags().Lookup("mine").Changed {
-			mine = nil
-		}
-	},
+	Short: listShortUsage,
+	Long:  listLongUsage,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := run(cmd.OutOrStdout())
 		if err != nil {
@@ -99,25 +84,25 @@ func init() {
 	cmd.MCP.AddTool(listTool, listHandler)
 	activityCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", channelIdDesc,
+		&channelId, "channelId", "c", "", channelIdUsage,
 	)
-	listCmd.Flags().BoolVarP(home, "home", "H", true, homeDesc)
+	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, maxResultsDesc,
+		&maxResults, "maxResults", "n", 5, maxResultsUsage,
 	)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineDesc)
+	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
-		&publishedAfter, "publishedAfter", "a", "", publishedAfterDesc,
+		&publishedAfter, "publishedAfter", "a", "", publishedAfterUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&publishedBefore, "publishedBefore", "b", "", publishedBeforeDesc,
+		&publishedBefore, "publishedBefore", "b", "", publishedBeforeUsage,
 	)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", regionCodeDesc)
+	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", regionCodeUsage)
 
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "contentDetails"}, partsDesc,
+		&parts, "parts", "p", defaultParts, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", outputDesc)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }
 
 func listHandler(ctx context.Context, request mcp.CallToolRequest) (

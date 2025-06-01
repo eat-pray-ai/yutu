@@ -11,7 +11,7 @@ var insertCmd = &cobra.Command{
 	Long:  "Upload a video to YouTube, with the specified title, description, tags, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithAutoLevels(autoLevels, true),
+			video.WithAutoLevels(autoLevels),
 			video.WithFile(file),
 			video.WithTitle(title),
 			video.WithDescription(description),
@@ -26,7 +26,7 @@ var insertCmd = &cobra.Command{
 			video.WithForKids(forKids),
 			video.WithEmbeddable(embeddable),
 			video.WithPublishAt(publishAt),
-			video.WithStabilize(stabilize, true),
+			video.WithStabilize(stabilize),
 			video.WithNotifySubscribers(notifySubscribers),
 			video.WithPublicStatsViewable(publicStatsViewable),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
@@ -41,7 +41,8 @@ func init() {
 	videoCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().BoolVarP(
-		&autoLevels, "autoLevels", "A", true, "Should auto-levels be applied to the upload",
+		autoLevels, "autoLevels", "A", true,
+		"Should auto-levels be applied to the upload",
 	)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
@@ -74,22 +75,25 @@ func init() {
 		"Privacy status of the video: public, private, or unlisted",
 	)
 	insertCmd.Flags().BoolVarP(
-		&forKids, "forKids", "K", false, "Whether the video is for kids",
+		forKids, "forKids", "K", false, "Whether the video is for kids",
 	)
 	insertCmd.Flags().BoolVarP(
-		&embeddable, "embeddable", "E", true, "Whether the video is embeddable",
+		embeddable, "embeddable", "E", true, "Whether the video is embeddable",
 	)
 	insertCmd.Flags().StringVarP(
 		&publishAt, "publishAt", "U", "",
 		"Datetime when the video is scheduled to publish",
 	)
-	insertCmd.Flags().BoolVarP(&stabilize, "stabilize", "S", true, "Should stabilize be applied to the upload")
 	insertCmd.Flags().BoolVarP(
-		&notifySubscribers, "notifySubscribers", "N", true,
+		stabilize, "stabilize", "S", true,
+		"Should stabilize be applied to the upload",
+	)
+	insertCmd.Flags().BoolVarP(
+		notifySubscribers, "notifySubscribers", "N", true,
 		"Notify the channel subscribers about the new video",
 	)
 	insertCmd.Flags().BoolVarP(
-		&publicStatsViewable, "publicStatsViewable", "P", false,
+		publicStatsViewable, "publicStatsViewable", "P", false,
 		"Whether the extended video statistics can be viewed by everyone",
 	)
 	insertCmd.Flags().StringVarP(
@@ -98,7 +102,9 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(
+		&output, "output", "o", "", "json, yaml or silent",
+	)
 
 	insertCmd.MarkFlagRequired("file")
 	insertCmd.MarkFlagRequired("categoryId")

@@ -27,7 +27,11 @@ func init() {
 	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
 	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
 	listCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
-	listCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "")
-	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
+	listCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+	)
+	listCmd.Flags().StringArrayVarP(
+		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", "json or yaml")
 }

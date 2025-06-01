@@ -13,6 +13,7 @@ go_library(
     deps = [
         "//cmd",
         "//pkg/subscription",
+        "//pkg/utils",
         "@com_github_spf13_cobra//:cobra",
     ],
 )

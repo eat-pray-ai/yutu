@@ -224,26 +224,26 @@ func WithEventType(eventType string) Option {
 	}
 }
 
-func WithForContentOwner(forContentOwner bool, changed bool) Option {
+func WithForContentOwner(forContentOwner *bool) Option {
 	return func(s *search) {
-		if changed {
-			s.ForContentOwner = &forContentOwner
+		if forContentOwner != nil {
+			s.ForContentOwner = forContentOwner
 		}
 	}
 }
 
-func WithForDeveloper(forDeveloper bool, changed bool) Option {
+func WithForDeveloper(forDeveloper *bool) Option {
 	return func(s *search) {
-		if changed {
-			s.ForDeveloper = &forDeveloper
+		if forDeveloper != nil {
+			s.ForDeveloper = forDeveloper
 		}
 	}
 }
 
-func WithForMine(forMine bool, changed bool) Option {
+func WithForMine(forMine *bool) Option {
 	return func(s *search) {
-		if changed {
-			s.ForMine = &forMine
+		if forMine != nil {
+			s.ForMine = forMine
 		}
 	}
 }

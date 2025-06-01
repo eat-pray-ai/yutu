@@ -119,10 +119,10 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithMine(mine bool, changed bool) Option {
+func WithMine(mine *bool) Option {
 	return func(cs *channelSection) {
-		if changed {
-			cs.Mine = &mine
+		if mine != nil {
+			cs.Mine = mine
 		}
 	}
 }

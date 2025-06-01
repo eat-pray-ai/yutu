@@ -237,10 +237,10 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithMine(mine bool, changed bool) Option {
+func WithMine(mine *bool) Option {
 	return func(p *playlist) {
-		if changed {
-			p.Mine = &mine
+		if mine != nil {
+			p.Mine = mine
 		}
 	}
 }
