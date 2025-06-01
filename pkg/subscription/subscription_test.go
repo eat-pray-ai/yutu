@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -24,9 +25,9 @@ func TestNewSubscription(t *testing.T) {
 					WithChannelId("channelId"),
 					WithForChannelId("forChannelId"),
 					WithMaxResults(10),
-					WithMine(true, true),
-					WithMyRecentSubscribers(false, true),
-					WithMySubscribers(false, true),
+					WithMine(utils.BoolPtr("true")),
+					WithMyRecentSubscribers(utils.BoolPtr("false")),
+					WithMySubscribers(utils.BoolPtr("false")),
 					WithOnBehalfOfContentOwner("contentOwner"),
 					WithOnBehalfOfContentOwnerChannel("contentOwnerChannel"),
 					WithOrder("relevance"),
@@ -39,9 +40,9 @@ func TestNewSubscription(t *testing.T) {
 				ChannelId:                     "channelId",
 				ForChannelId:                  "forChannelId",
 				MaxResults:                    10,
-				Mine:                          &[]bool{true}[0],
-				MyRecentSubscribers:           &[]bool{false}[0],
-				MySubscribers:                 &[]bool{false}[0],
+				Mine:                          utils.BoolPtr("true"),
+				MyRecentSubscribers:           utils.BoolPtr("false"),
+				MySubscribers:                 utils.BoolPtr("false"),
 				OnBehalfOfContentOwner:        "contentOwner",
 				OnBehalfOfContentOwnerChannel: "contentOwnerChannel",
 				Order:                         "relevance",

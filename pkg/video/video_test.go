@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -19,7 +20,7 @@ func TestNewVideo(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithID("id"),
-					WithAutoLevels(true, true),
+					WithAutoLevels(utils.BoolPtr("true")),
 					WithFile("file"),
 					WithTitle("title"),
 					WithDescription("description"),
@@ -32,7 +33,7 @@ func TestNewVideo(t *testing.T) {
 			},
 			want: &video{
 				ID:          "id",
-				AutoLevels:  &[]bool{true}[0],
+				AutoLevels:  utils.BoolPtr("true"),
 				File:        "file",
 				Title:       "title",
 				Description: "description",

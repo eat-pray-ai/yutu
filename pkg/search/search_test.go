@@ -1,6 +1,7 @@
 package search
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -21,9 +22,9 @@ func TestNewSearch(t *testing.T) {
 					WithChannelId("channelId"),
 					WithChannelType("show"),
 					WithEventType("live"),
-					WithForContentOwner(true, true),
-					WithForDeveloper(false, true),
-					WithForMine(false, true),
+					WithForContentOwner(utils.BoolPtr("true")),
+					WithForDeveloper(utils.BoolPtr("false")),
+					WithForMine(utils.BoolPtr("false")),
 					WithLocation("location"),
 					WithLocationRadius("radius"),
 					WithMaxResults(10),
@@ -35,9 +36,9 @@ func TestNewSearch(t *testing.T) {
 				ChannelId:              "channelId",
 				ChannelType:            "show",
 				EventType:              "live",
-				ForContentOwner:        &[]bool{true}[0],
-				ForDeveloper:           &[]bool{false}[0],
-				ForMine:                &[]bool{false}[0],
+				ForContentOwner:        utils.BoolPtr("true"),
+				ForDeveloper:           utils.BoolPtr("false"),
+				ForMine:                utils.BoolPtr("false"),
 				Location:               "location",
 				LocationRadius:         "radius",
 				MaxResults:             10,

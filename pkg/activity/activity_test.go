@@ -1,6 +1,7 @@
 package activity
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -19,9 +20,9 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithChannelId("ChannelId"),
-					WithHome(true, true),
+					WithHome(utils.BoolPtr("true")),
 					WithMaxResults(10),
-					WithMine(true, true),
+					WithMine(utils.BoolPtr("true")),
 					WithPublishedAfter("2021-01-01T00:00:00Z"),
 					WithPublishedBefore("2021-01-31T00:00:00Z"),
 					WithRegionCode("US"),
@@ -29,9 +30,9 @@ func TestNewActivity(t *testing.T) {
 			},
 			want: &activity{
 				ChannelId:       "ChannelId",
-				Home:            &[]bool{true}[0],
+				Home:            utils.BoolPtr("true"),
 				MaxResults:      10,
-				Mine:            &[]bool{true}[0],
+				Mine:            utils.BoolPtr("true"),
 				PublishedAfter:  "2021-01-01T00:00:00Z",
 				PublishedBefore: "2021-01-31T00:00:00Z",
 				RegionCode:      "US",
@@ -41,11 +42,11 @@ func TestNewActivity(t *testing.T) {
 			name: "TestNewActivity",
 			args: args{
 				opts: []Option{
-					WithHome(false, true),
+					WithHome(utils.BoolPtr("false")),
 				},
 			},
 			want: &activity{
-				Home: &[]bool{false}[0],
+				Home: utils.BoolPtr("false"),
 			},
 		},
 		{

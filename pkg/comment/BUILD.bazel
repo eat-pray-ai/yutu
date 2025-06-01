@@ -16,4 +16,5 @@ go_test(
     name = "comment_test",
     srcs = ["comment_test.go"],
     embed = [":comment"],
+    deps = ["//pkg/utils"],
 )

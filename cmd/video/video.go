@@ -10,7 +10,7 @@ import (
 
 var (
 	id                string
-	autoLevels        = utils.BoolPtr("")
+	autoLevels        = utils.BoolPtr("false")
 	file              string
 	title             string
 	description       string
@@ -27,21 +27,21 @@ var (
 	playListId        string
 	categoryId        string
 	privacy           string
-	forKids           = utils.BoolPtr("")
-	embeddable        = utils.BoolPtr("")
+	forKids           = utils.BoolPtr("false")
+	embeddable        = utils.BoolPtr("false")
 	output            string
 	parts             []string
 	publishAt         string
 	regionCode        string
 	reasonId          string
 	secondaryReasonId string
-	stabilize         = utils.BoolPtr("")
+	stabilize         = utils.BoolPtr("false")
 	maxHeight         int64
 	maxWidth          int64
 	maxResults        int64
 
-	notifySubscribers             = utils.BoolPtr("")
-	publicStatsViewable           = utils.BoolPtr("")
+	notifySubscribers             = utils.BoolPtr("false")
+	publicStatsViewable           = utils.BoolPtr("false")
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 )

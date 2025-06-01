@@ -14,10 +14,10 @@ var (
 	forUsername            string
 	hl                     string
 	id                     string
-	managedByMe            = utils.BoolPtr("")
+	managedByMe            = utils.BoolPtr("false")
 	maxResults             int64
-	mine                   = utils.BoolPtr("")
-	mySubscribers          = utils.BoolPtr("")
+	mine                   = utils.BoolPtr("false")
+	mySubscribers          = utils.BoolPtr("false")
 	onBehalfOfContentOwner string
 
 	country         string

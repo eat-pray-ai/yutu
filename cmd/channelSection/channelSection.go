@@ -10,7 +10,7 @@ var (
 	id                     string
 	channelId              string
 	hl                     string
-	mine                   = utils.BoolPtr("")
+	mine                   = utils.BoolPtr("false")
 	onBehalfOfContentOwner string
 	parts                  []string
 	output                 string

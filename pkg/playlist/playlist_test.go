@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -23,7 +24,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithDescription("description"),
 					WithHl("hl"),
 					WithMaxResults(5),
-					WithMine(true, true),
+					WithMine(utils.BoolPtr("true")),
 					WithTags([]string{"tag1", "tag2"}),
 					WithLanguage("language"),
 					WithChannelId("channelId"),
@@ -38,7 +39,7 @@ func TestNewPlaylist(t *testing.T) {
 				Description:                   "description",
 				Hl:                            "hl",
 				MaxResults:                    5,
-				Mine:                          &[]bool{true}[0],
+				Mine:                          utils.BoolPtr("true"),
 				Tags:                          []string{"tag1", "tag2"},
 				Language:                      "language",
 				ChannelId:                     "channelId",

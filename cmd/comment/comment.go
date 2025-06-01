@@ -9,14 +9,14 @@ import (
 var (
 	ids              []string
 	authorChannelId  string
-	canRate          = utils.BoolPtr("")
+	canRate          = utils.BoolPtr("false")
 	channelId        string
 	maxResults       int64
 	parentId         string
 	textFormat       string
 	textOriginal     string
 	moderationStatus string
-	banAuthor        = utils.BoolPtr("")
+	banAuthor        = utils.BoolPtr("false")
 	videoId          string
 	viewerRating     string
 	parts            []string

@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -20,14 +21,14 @@ func TestNewComment(t *testing.T) {
 				opts: []Option{
 					WithIDs([]string{"id1", "id2"}),
 					WithAuthorChannelId("authorChannelId"),
-					WithCanRate(true, true),
+					WithCanRate(utils.BoolPtr("true")),
 					WithChannelId("channelId"),
 					WithMaxResults(5),
 					WithParentId("parentId"),
 					WithTextFormat("html"),
 					WithTextOriginal("textOriginal"),
 					WithModerationStatus("heldForReview"),
-					WithBanAuthor(true, true),
+					WithBanAuthor(utils.BoolPtr("true")),
 					WithVideoId("videoId"),
 					WithViewerRating("like"),
 				},
@@ -35,14 +36,14 @@ func TestNewComment(t *testing.T) {
 			want: &comment{
 				IDs:              []string{"id1", "id2"},
 				AuthorChannelId:  "authorChannelId",
-				CanRate:          &[]bool{true}[0],
+				CanRate:          utils.BoolPtr("true"),
 				ChannelId:        "channelId",
 				MaxResults:       5,
 				ParentId:         "parentId",
 				TextFormat:       "html",
 				TextOriginal:     "textOriginal",
 				ModerationStatus: "heldForReview",
-				BanAuthor:        &[]bool{true}[0],
+				BanAuthor:        utils.BoolPtr("true"),
 				VideoId:          "videoId",
 				ViewerRating:     "like",
 			},

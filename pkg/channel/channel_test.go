@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -23,10 +24,10 @@ func TestNewChannel(t *testing.T) {
 					WithForUsername("username"),
 					WithHl("hl"),
 					WithID("id"),
-					WithChannelManagedByMe(true, true),
+					WithChannelManagedByMe(utils.BoolPtr("true")),
 					WithMaxResults(5),
-					WithMine(false, true),
-					WithMySubscribers(true, true),
+					WithMine(utils.BoolPtr("false")),
+					WithMySubscribers(utils.BoolPtr("true")),
 					WithOnBehalfOfContentOwner("contentOwner"),
 				},
 			},
@@ -36,10 +37,10 @@ func TestNewChannel(t *testing.T) {
 				ForUsername:            "username",
 				Hl:                     "hl",
 				ID:                     "id",
-				ManagedByMe:            &[]bool{true}[0],
+				ManagedByMe:            utils.BoolPtr("true"),
 				MaxResults:             5,
-				Mine:                   &[]bool{false}[0],
-				MySubscribers:          &[]bool{true}[0],
+				Mine:                   utils.BoolPtr("false"),
+				MySubscribers:          utils.BoolPtr("true"),
 				OnBehalfOfContentOwner: "contentOwner",
 			},
 		},

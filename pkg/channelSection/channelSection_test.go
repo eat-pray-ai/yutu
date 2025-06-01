@@ -1,6 +1,7 @@
 package channelSection
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -20,14 +21,14 @@ func TestNewChannelSection(t *testing.T) {
 				opts: []Option{
 					WithChannelId("channelId"),
 					WithHl("hl"),
-					WithMine(true, true),
+					WithMine(utils.BoolPtr("true")),
 					WithOnBehalfOfContentOwner("contentOwner"),
 				},
 			},
 			want: &channelSection{
 				ChannelId:              "channelId",
 				Hl:                     "hl",
-				Mine:                   &[]bool{true}[0],
+				Mine:                   utils.BoolPtr("true"),
 				OnBehalfOfContentOwner: "contentOwner",
 			},
 		},
@@ -35,7 +36,9 @@ func TestNewChannelSection(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewChannelSection(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+				if got := NewChannelSection(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
 					t.Errorf("NewChannelSection() = %v, want %v", got, tt.want)
 				}
 			},

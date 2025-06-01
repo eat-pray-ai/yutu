@@ -16,4 +16,5 @@ go_test(
     name = "channelSection_test",
     srcs = ["channelSection_test.go"],
     embed = [":channelSection"],
+    deps = ["//pkg/utils"],
 )

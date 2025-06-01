@@ -16,4 +16,5 @@ go_test(
     name = "activity_test",
     srcs = ["activity_test.go"],
     embed = [":activity"],
+    deps = ["//pkg/utils"],
 )

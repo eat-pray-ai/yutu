@@ -16,4 +16,5 @@ go_test(
     name = "caption_test",
     srcs = ["caption_test.go"],
     embed = [":caption"],
+    deps = ["//pkg/utils"],
 )

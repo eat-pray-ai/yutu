@@ -11,11 +11,11 @@ var (
 	id                     string
 	file                   string
 	audioTrackType         string
-	isAutoSynced           = utils.BoolPtr("")
-	isCC                   = utils.BoolPtr("")
-	isDraft                = utils.BoolPtr("")
-	isEasyReader           = utils.BoolPtr("")
-	isLarge                = utils.BoolPtr("")
+	isAutoSynced           = utils.BoolPtr("false")
+	isCC                   = utils.BoolPtr("false")
+	isDraft                = utils.BoolPtr("false")
+	isEasyReader           = utils.BoolPtr("false")
+	isLarge                = utils.BoolPtr("false")
 	language               string
 	name                   string
 	trackKind              string

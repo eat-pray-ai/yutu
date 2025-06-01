@@ -16,4 +16,5 @@ go_test(
     name = "playlist_test",
     srcs = ["playlist_test.go"],
     embed = [":playlist"],
+    deps = ["//pkg/utils"],
 )

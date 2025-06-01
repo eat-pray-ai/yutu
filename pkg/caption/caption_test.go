@@ -1,6 +1,7 @@
 package caption
 
 import (
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
 )
@@ -21,11 +22,11 @@ func TestNewCation(t *testing.T) {
 					WithID("ID"),
 					WithFile("File"),
 					WithAudioTrackType("AudioTrackType"),
-					WithIsAutoSynced(true, true),
-					WithIsCC(true, true),
-					WithIsDraft(true, true),
-					WithIsEasyReader(true, true),
-					WithIsLarge(true, true),
+					WithIsAutoSynced(utils.BoolPtr("true")),
+					WithIsCC(utils.BoolPtr("true")),
+					WithIsDraft(utils.BoolPtr("true")),
+					WithIsEasyReader(utils.BoolPtr("true")),
+					WithIsLarge(utils.BoolPtr("true")),
 					WithLanguage("Language"),
 					WithName("Name"),
 				},
@@ -34,11 +35,11 @@ func TestNewCation(t *testing.T) {
 				ID:             "ID",
 				File:           "File",
 				AudioTrackType: "AudioTrackType",
-				IsAutoSynced:   &[]bool{true}[0],
-				IsCC:           &[]bool{true}[0],
-				IsDraft:        &[]bool{true}[0],
-				IsEasyReader:   &[]bool{true}[0],
-				IsLarge:        &[]bool{true}[0],
+				IsAutoSynced:   utils.BoolPtr("true"),
+				IsCC:           utils.BoolPtr("true"),
+				IsDraft:        utils.BoolPtr("true"),
+				IsEasyReader:   utils.BoolPtr("true"),
+				IsLarge:        utils.BoolPtr("true"),
 				Language:       "Language",
 				Name:           "Name",
 			},

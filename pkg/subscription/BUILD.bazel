@@ -16,4 +16,5 @@ go_test(
     name = "subscription_test",
     srcs = ["subscription_test.go"],
     embed = [":subscription"],
+    deps = ["//pkg/utils"],
 )
