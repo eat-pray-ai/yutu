@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 MOD="github.com/eat-pray-ai/yutu/cmd"
-Version="${MOD}.Version=$(git describe --tags --always --dirty | cut -c2-)"
+Version="${MOD}.Version=$(git describe --tags --always --dirty)"
 Commit="${MOD}.Commit=$(git rev-parse --short HEAD)"
-CommitDate="${MOD}.CommitDate=$(git log -1 --date='format:%Y-%m-%d/%H.%M.%S' --pretty=%cd)"
-Os="${MOD}.Os=linux"
+CommitDate="${MOD}.CommitDate=$(git log -1 --date='format:%Y-%m-%dT%H:%M:%SZ' --pretty=%cd)"
+Os="${MOD}.Os=$(go env GOOS)"
 Arch="${MOD}.Arch=$(go env GOARCH)"
 ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch}"
 
