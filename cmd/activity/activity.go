@@ -7,17 +7,17 @@ import (
 )
 
 const (
-	shortUsage           = "List YouTube activities"
-	longUsage            = "List YouTube activities"
-	channelIdUsage       = "ID of the channel"
-	homeUsage            = "true or false or empty"
-	maxResultsUsage      = "The maximum number of items that should be returned"
-	mineUsage            = "true or false or empty"
-	publishedAfterUsage  = "Filter on activities published after this date"
-	publishedBeforeUsage = "Filter on activities published before this date"
-	regionCodeUsage      = ""
-	partsUsage           = "Comma separated parts"
-	outputUsage          = "json or yaml"
+	short       = "List YouTube activities"
+	long        = "List YouTube activities, such as likes, favorites, uploads, etc"
+	ciUsage     = "ID of the channel"
+	homeUsage   = "true, false, or empty"
+	mrUsage     = "The maximum number of items that should be returned"
+	mineUsage   = "true, false, or empty"
+	paUsage     = "Filter on activities published after this date"
+	pbUsage     = "Filter on activities published before this date"
+	rcUsage     = ""
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
 )
 
 var (
@@ -34,8 +34,8 @@ var (
 
 var activityCmd = &cobra.Command{
 	Use:   "activity",
-	Short: shortUsage,
-	Long:  longUsage,
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		boolMap := map[string]*bool{
 			"home": home,

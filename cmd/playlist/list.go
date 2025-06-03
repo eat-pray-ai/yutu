@@ -5,10 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort       = "List playlist's info"
+	listLong        = "List playlist's info, such as title, description, etc"
+	listIdUsage     = "Return the playlists with the given IDs for Stubby or Apiary"
+	listCidUsage    = "Return the playlists owned by the specified channel id"
+	listOutputUsage = "json or yaml"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List playlist's info",
-	Long:  "List playlist's info, such as title, description, etc.",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithID(id),
@@ -27,25 +35,11 @@ var listCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(
-		&id, "id", "i", "",
-		"Return the playlists with the given IDs for Stubby or Apiary.",
-	)
-	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "",
-		"Return the playlists owned by the specified channel ID",
-	)
-	listCmd.Flags().StringVarP(
-		&hl, "hl", "l", "", "Return content in specified language",
-	)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"The maximum number of items that should be returned",
-	)
-	listCmd.Flags().BoolVarP(
-		mine, "mine", "M", true,
-		"Return the playlists owned by the authenticated user",
-	)
+	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
@@ -53,10 +47,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"},
-		"Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json or yaml",
-	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
 }

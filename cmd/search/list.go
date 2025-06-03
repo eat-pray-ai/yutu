@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List search results",
-	Long:  "List search results",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := search.NewSearch(
 			search.WithChannelId(channelId),
@@ -49,113 +49,45 @@ var listCmd = &cobra.Command{
 func init() {
 	searchCmd.AddCommand(listCmd)
 
+	listCmd.Flags().StringVar(&channelId, "channelId", "", cidUsage)
 	listCmd.Flags().StringVar(
-		&channelId, "channelId", "",
-		"Filter on resources belonging to this channelId",
+		&channelType, "channelType", "channelTypeUnspecified", ctUsage,
 	)
-	listCmd.Flags().StringVar(
-		&channelType, "channelType", "",
-		"channelTypeUnspecified(default), any or show",
-	)
-	listCmd.Flags().StringVar(
-		&eventType, "eventType", "", "none(default), upcoming, live or completed",
-	)
+	listCmd.Flags().StringVar(&eventType, "eventType", "none", etUsage)
 	listCmd.Flags().BoolVar(
-		forContentOwner, "forContentOwner", false, "Search owned by content owner",
+		forContentOwner, "forContentOwner", false, fcoUsage,
 	)
-	listCmd.Flags().BoolVar(
-		forDeveloper, "forDeveloper", false,
-		"Only retrieve videos uploaded using the project id of the authenticated user",
-	)
-	listCmd.Flags().BoolVar(
-		forMine, "forMine", false,
-		"Search for the private videos of the authenticated user",
-	)
-	listCmd.Flags().StringVar(
-		&location, "location", "", "Filter on location of the video",
-	)
-	listCmd.Flags().StringVar(
-		&locationRadius, "locationRadius", "",
-		"Filter on distance from the location",
-	)
-	listCmd.Flags().Int64Var(
-		&maxResults, "maxResults", 5,
-		"The maximum number of items that should be returned",
-	)
+	listCmd.Flags().BoolVar(forDeveloper, "forDeveloper", false, fdUsage)
+	listCmd.Flags().BoolVar(forMine, "forMine", false, fmUsage)
+	listCmd.Flags().StringVar(&location, "location", "", locationUsage)
+	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", lrUsage)
+	listCmd.Flags().Int64Var(&maxResults, "maxResults", 5, mrUsage)
 	listCmd.Flags().StringVar(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", "",
 	)
+	listCmd.Flags().StringVar(&order, "order", "relevance", orderUsage)
+	listCmd.Flags().StringVar(&publishedAfter, "publishedAfter", "", paUsage)
+	listCmd.Flags().StringVar(&publishedBefore, "publishedBefore", "", pbUsage)
+	listCmd.Flags().StringVar(&q, "q", "", qUsage)
+	listCmd.Flags().StringVar(&regionCode, "regionCode", "", rcUsage)
+	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", rlUsage)
+	listCmd.Flags().StringVar(&safeSearch, "safeSearch", "moderate", ssUsage)
+	listCmd.Flags().StringVar(&topicId, "topicId", "", tidUsage)
+	listCmd.Flags().StringVar(&types, "types", "", typesUsage)
+	listCmd.Flags().StringVar(&videoCaption, "videoCaption", "any", vcUsage)
+	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", vcidUsage)
+	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", vdeUsage)
+	listCmd.Flags().StringVar(&videoDimension, "videoDimension", "any", vdiUsage)
+	listCmd.Flags().StringVar(&videoDuration, "videoDuration", "any", vduUsage)
+	listCmd.Flags().StringVar(&videoEmbeddable, "videoEmbeddable", "", veUsage)
+	listCmd.Flags().StringVar(&videoLicense, "videoLicense", "", vlUsage)
 	listCmd.Flags().StringVar(
-		&order, "order", "",
-		"searchSortUnspecified, date, rating, viewCount, relevance(default), title, videoCount",
+		&videoPaidProductPlacement, "videoPaidProductPlacement", "", vpppUsage,
 	)
-	listCmd.Flags().StringVar(
-		&publishedAfter, "publishedAfter", "",
-		"Filter on resources published after this date",
-	)
-	listCmd.Flags().StringVar(
-		&publishedBefore, "publishedBefore", "",
-		"Filter on resources published before this date",
-	)
-	listCmd.Flags().StringVar(&q, "q", "", "Textual search terms to match")
-	listCmd.Flags().StringVar(
-		&regionCode, "regionCode", "",
-		"Display the content as seen by viewers in this country",
-	)
-	listCmd.Flags().StringVar(
-		&relevanceLanguage, "relevanceLanguage", "",
-		"Return results relevant to this language",
-	)
-	listCmd.Flags().StringVar(
-		&safeSearch, "safeSearch", "",
-		"safeSearchSettingUnspecified, none, moderate(default), strict",
-	)
-	listCmd.Flags().StringVar(
-		&topicId, "topicId", "", "Restrict results to a particular topic",
-	)
-	listCmd.Flags().StringVar(
-		&types, "types", "",
-		"Restrict results to a particular set of resource types from One Platform",
-	)
-	listCmd.Flags().StringVar(
-		&videoCaption, "videoCaption", "",
-		"videoCaptionUnspecified, any(default), closedCaption, none",
-	)
-	listCmd.Flags().StringVar(
-		&videoCategoryId, "videoCategoryId", "",
-		"Filter on videos in a specific category",
-	)
-	listCmd.Flags().StringVar(
-		&videoDefinition, "videoDefinition", "",
-		"Filter on the definition of the videos",
-	)
-	listCmd.Flags().StringVar(
-		&videoDimension, "videoDimension", "", "any(default), 2d or 3d",
-	)
-	listCmd.Flags().StringVar(
-		&videoDuration, "videoDuration", "",
-		"videoDurationUnspecified, any(default), short, medium, long",
-	)
-	listCmd.Flags().StringVar(
-		&videoEmbeddable, "videoEmbeddable", "",
-		"videoEmbeddableUnspecified, any or true",
-	)
-	listCmd.Flags().StringVar(
-		&videoLicense, "videoLicense", "", "any, youtube or creativeCommon",
-	)
-	listCmd.Flags().StringVar(
-		&videoPaidProductPlacement, "videoPaidProductPlacement", "",
-		"videoPaidProductPlacementUnspecified, any or true",
-	)
-	listCmd.Flags().StringVar(
-		&videoSyndicated, "videoSyndicated", "",
-		"videoSyndicatedUnspecified, any or true",
-	)
-	listCmd.Flags().StringVar(
-		&videoType, "videoType", "", "videoTypeUnspecified, any, movie or episode",
-	)
+	listCmd.Flags().StringVar(&videoSyndicated, "videoSyndicated", "", vsUsage)
+	listCmd.Flags().StringVar(&videoType, "videoType", "", vtUsage)
 	listCmd.Flags().StringSliceVar(
-		&parts, "parts", []string{"id", "snippet"}, "Comma separated parts",
+		&parts, "parts", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVar(&output, "output", "", "json or yaml")
+	listCmd.Flags().StringVar(&output, "output", "", outputUsage)
 }

@@ -5,6 +5,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short        = "Manipulate YouTube playlist items"
+	long         = "List, insert, update, or delete YouTube playlist items"
+	titleUsage   = "Title of the playlist item"
+	descUsage    = "Description of the playlist item"
+	kindUsage    = "video, channel, or playlist"
+	kvidUsage    = "ID of the video if kind is video"
+	kcidUsage    = "ID of the channel if kind is channel"
+	kpidUsage    = "ID of the playlist if kind is playlist"
+	vidUsage     = "Return the playlist items associated with the given video id"
+	cidUsage     = "ID that YouTube uses to uniquely identify the user that added the item to the playlist"
+	mrUsage      = "The maximum number of items that should be returned"
+	privacyUsage = "public, private, or unlisted"
+	partsUsage   = "Comma separated parts"
+)
+
 var (
 	id          string
 	title       string
@@ -26,8 +42,8 @@ var (
 
 var playlistItemCmd = &cobra.Command{
 	Use:   "playlistItem",
-	Short: "Manipulate YouTube playlist items",
-	Long:  "List, insert, update, or delete YouTube playlist items",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

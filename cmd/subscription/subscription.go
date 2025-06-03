@@ -6,6 +6,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short      = "Manipulate YouTube subscriptions"
+	long       = "List, insert, or delete YouTube subscriptions"
+	scidUsage  = "Subscriber's channel id"
+	descUsage  = "Description of the subscription"
+	fcidUsage  = "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to"
+	mrUsage    = "The maximum number of items that should be returned"
+	mineUsage  = "Return the subscriptions of the authenticated user"
+	mrsUsage   = "true or false"
+	msUsage    = "Return the subscribers of the given channel owner"
+	orderUsage = "subscriptionOrderUnspecified, relevance, unread, or alphabetical"
+	titleUsage = "Title of the subscription"
+	partsUsage = "Comma separated parts"
+)
+
 var (
 	id                            string
 	subscriberChannelId           string
@@ -26,8 +41,8 @@ var (
 
 var subscriptionCmd = &cobra.Command{
 	Use:   "subscription",
-	Short: "Manipulate YouTube subscriptions",
-	Long:  "List, insert, or delete YouTube subscriptions",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		boolMap := map[string]*bool{
 			"mine":                mine,

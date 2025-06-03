@@ -5,6 +5,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	updateIdUsage     = "ID of the channel"
+	updateOutputUsage = "json, yaml, or silent"
+)
+
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update channel's info",
@@ -26,22 +31,17 @@ var updateCmd = &cobra.Command{
 func init() {
 	channelCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the channel")
+	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringVarP(&country, "country", "c", "", countryUsage)
+	updateCmd.Flags().StringVarP(&customUrl, "customUrl", "u", "", curlUsage)
 	updateCmd.Flags().StringVarP(
-		&country, "country", "c", "", "Country of the channel",
+		&defaultLanguage, "defaultLanguage", "l", "", dlUsage,
 	)
 	updateCmd.Flags().StringVarP(
-		&customUrl, "customUrl", "u", "", "Custom URL of the channel",
+		&description, "description", "d", "", descUsage,
 	)
-	updateCmd.Flags().StringVarP(
-		&defaultLanguage, "defaultLanguage", "l", "",
-		"The language of the channel's default title and description",
-	)
-	updateCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the channel",
-	)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the channel")
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
 	updateCmd.MarkFlagRequired("id")
 }

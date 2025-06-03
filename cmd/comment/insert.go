@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort       = "Insert a comment"
+	insertLong        = "Insert a comment to a YouTube video"
+	insertPidUsage    = "ID of the parent comment"
+	insertOutputUsage = "json, yaml, or silent"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Insert a comment",
-	Long:  "Insert a comment to a YouTube video",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithAuthorChannelId(authorChannelId),
@@ -27,23 +34,18 @@ func init() {
 	commentCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(
-		&authorChannelId, "authorChannelId", "a", "",
-		"Channel ID of the comment author",
+		&authorChannelId, "authorChannelId", "a", "", acidUsage,
 	)
 	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", "Channel ID of the video owner",
+		&channelId, "channelId", "c", "", cidUsage,
 	)
-	insertCmd.Flags().BoolVarP(
-		canRate, "canRate", "R", false, "Whether the viewer can rate the comment",
+	insertCmd.Flags().BoolVarP(canRate, "canRate", "R", false, crUsage)
+	insertCmd.Flags().StringVarP(
+		&parentId, "parentId", "P", "", insertPidUsage,
 	)
 	insertCmd.Flags().StringVarP(
-		&parentId, "parentId", "P", "", "ID of the parent comment",
+		&textOriginal, "textOriginal", "t", "", toUsage,
 	)
-	insertCmd.Flags().StringVarP(
-		&textOriginal, "textOriginal", "t", "", "Text of the comment",
-	)
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
-	insertCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json, yaml or silent",
-	)
+	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 }

@@ -5,10 +5,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	downloadShort = "Download caption"
+	downloadLong  = "Download caption from a video"
+)
+
 var downloadCmd = &cobra.Command{
 	Use:   "download",
-	Short: "Download caption",
-	Long:  "Download caption from a video",
+	Short: downloadShort,
+	Long:  downloadLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithID(id),
@@ -26,14 +31,10 @@ var downloadCmd = &cobra.Command{
 func init() {
 	captionCmd.AddCommand(downloadCmd)
 
-	downloadCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
-	downloadCmd.Flags().StringVarP(
-		&file, "file", "f", "", "Path to save the caption file",
-	)
-	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", "sbv, srt or vtt")
-	downloadCmd.Flags().StringVarP(
-		&tlang, "tlang", "l", "", "Translate the captions into this language",
-	)
+	downloadCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
+	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
+	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
+	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)
 	downloadCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	downloadCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",

@@ -5,6 +5,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "Set thumbnail for a video"
+	long        = "Set thumbnail for a video"
+	fileUsage   = "Path to the thumbnail file"
+	vidUsage    = "ID of the video"
+	outputUsage = "json, yaml, or silent"
+)
+
 var (
 	file    string
 	videoId string
@@ -13,8 +21,8 @@ var (
 
 var thumbnailCmd = &cobra.Command{
 	Use:   "thumbnail",
-	Short: "Set thumbnail for a YouTube video",
-	Long:  "Set thumbnail for a YouTube video",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

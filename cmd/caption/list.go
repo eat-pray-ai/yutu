@@ -5,6 +5,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listOutputUsage = "json or yaml"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List captions",
@@ -24,14 +28,14 @@ var listCmd = &cobra.Command{
 func init() {
 	captionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
-	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
+	listCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
+	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	listCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "json or yaml")
+	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
 }

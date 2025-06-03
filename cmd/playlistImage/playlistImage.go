@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// todo
 var (
 	id         string
 	kind       string

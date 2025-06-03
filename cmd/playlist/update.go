@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	updateShort       = "Update an existing playlist"
+	updateLong        = "Update an existing playlist, with the specified title, description, tags, etc"
+	updateIdUsage     = "ID of the playlist to update"
+	updateOutputUsage = "json, yaml, or silent"
+)
+
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Update an existing playlist",
-	Long:  "Update an existing playlist, with the specified title, description, tags, etc.",
+	Short: updateShort,
+	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithID(id),
@@ -26,21 +33,13 @@ var updateCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist")
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist")
-	updateCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the playlist",
-	)
-	updateCmd.Flags().StringArrayVarP(
-		&tags, "tags", "a", []string{}, "Comma separated tags",
-	)
-	updateCmd.Flags().StringVarP(
-		&language, "language", "l", "", "Language of the playlist",
-	)
-	updateCmd.Flags().StringVarP(
-		&privacy, "privacy", "p", "", "Privacy status of the playlist",
-	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
+	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
 	updateCmd.MarkFlagRequired("id")
 }

@@ -5,10 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	updateShort       = "Update a video on YouTube"
+	updateLong        = "Update a video on YouTube, with the specified title, description, tags, etc"
+	updateIdUsage     = "ID of the video to update"
+	updateLangUsage   = "Language of the video"
+	updateOutputUsage = "json, yaml, or silent"
+)
+
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Update a video on YouTube",
-	Long:  "Update a video on YouTube, with the specified title, description, tags, etc.",
+	Short: updateShort,
+	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithID(id),
@@ -31,39 +39,20 @@ var updateCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
-	updateCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the video",
-	)
-	updateCmd.Flags().StringArrayVarP(
-		&tags, "tags", "a", []string{}, "Comma separated tags",
-	)
-	updateCmd.Flags().StringVarP(
-		&language, "language", "l", "", "Language of the video",
-	)
-	updateCmd.Flags().StringVarP(
-		&license, "license", "L", "youtube", "youtube(default) or creativeCommon",
-	)
-	updateCmd.Flags().StringVarP(
-		&thumbnail, "thumbnail", "u", "", "Path to the thumbnail file",
-	)
-	updateCmd.Flags().StringVarP(
-		&playListId, "playlistId", "y", "", "Playlist ID of the video",
-	)
-	updateCmd.Flags().StringVarP(
-		&categoryId, "categoryId", "g", "", "Category of the video",
-	)
-	updateCmd.Flags().StringVarP(
-		&privacy, "privacy", "p", "",
-		"Privacy status of the video: public, private or unlisted",
-	)
+	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	updateCmd.Flags().StringVarP(&language, "language", "l", "", updateLangUsage)
+	updateCmd.Flags().StringVarP(&license, "license", "L", "youtube", licenseUsage)
+	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
+	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
+	updateCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
+	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().BoolVarP(
-		embeddable, "embeddable", "E", true, "Whether the video is embeddable",
+		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
-	updateCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json, yaml or silent",
-	)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
 	updateCmd.MarkFlagRequired("id")
 }

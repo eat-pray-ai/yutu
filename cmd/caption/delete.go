@@ -5,10 +5,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	deleteShort = "Delete caption"
+	deleteLong  = "Delete caption of a video"
+)
+
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete caption",
-	Long:  "Delete caption of a video",
+	Short: deleteShort,
+	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithID(id),
@@ -23,7 +28,7 @@ var deleteCmd = &cobra.Command{
 func init() {
 	captionCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the caption")
+	deleteCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
 	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",

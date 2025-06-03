@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	deleteShort   = "Delete a item from a playlist"
+	deleteLong    = "Delete a item from a playlist by id"
+	deleteIdUsage = "ID of the playlist item to delete"
+)
+
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a item from a playlist",
-	Long:  "Delete a item from a playlist",
+	Short: deleteShort,
+	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithID(id),
@@ -22,9 +28,7 @@ var deleteCmd = &cobra.Command{
 func init() {
 	playlistItemCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(
-		&id, "id", "i", "", "ID of the playlist item to be deleted",
-	)
+	deleteCmd.Flags().StringVarP(&id, "id", "i", "", deleteIdUsage)
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

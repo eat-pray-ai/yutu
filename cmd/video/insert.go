@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort       = "Upload a video to YouTube"
+	insertLong        = "Upload a video to YouTube, with the specified title, description, tags, etc"
+	insertLangUsage   = "Language of the video"
+	insertOutputUsage = "json, yaml, or silent"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Upload a video to YouTube",
-	Long:  "Upload a video to YouTube, with the specified title, description, tags, etc.",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithAutoLevels(autoLevels),
@@ -41,60 +48,30 @@ func init() {
 	videoCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().BoolVarP(
-		autoLevels, "autoLevels", "A", true,
-		"Should auto-levels be applied to the upload",
+		autoLevels, "autoLevels", "A", true, alUsage,
 	)
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the video file")
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the video")
-	insertCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the video",
+	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
+	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	insertCmd.Flags().StringVarP(&language, "language", "l", "", insertLangUsage)
+	insertCmd.Flags().StringVarP(&license, "license", "L", "youtube", licenseUsage)
+	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", chidUsage)
+	insertCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
+	insertCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
+	insertCmd.Flags().BoolVarP(forKids, "forKids", "K", false, fkUsage)
+	insertCmd.Flags().BoolVarP(
+		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
-	insertCmd.Flags().StringArrayVarP(
-		&tags, "tags", "a", []string{}, "Comma separated tags",
-	)
-	insertCmd.Flags().StringVarP(
-		&language, "language", "l", "", "Language of the video",
-	)
-	insertCmd.Flags().StringVarP(
-		&license, "license", "L", "youtube", "youtube(default) or creativeCommon",
-	)
-	insertCmd.Flags().StringVarP(
-		&thumbnail, "thumbnail", "u", "", "Path to the thumbnail",
-	)
-	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", "Channel ID of the video",
-	)
-	insertCmd.Flags().StringVarP(
-		&playListId, "playlistId", "y", "", "Playlist ID of the video",
-	)
-	insertCmd.Flags().StringVarP(
-		&categoryId, "categoryId", "g", "", "Category of the video",
-	)
-	insertCmd.Flags().StringVarP(
-		&privacy, "privacy", "p", "",
-		"Privacy status of the video: public, private, or unlisted",
+	insertCmd.Flags().StringVarP(&publishAt, "publishAt", "U", "", paUsage)
+	insertCmd.Flags().BoolVarP(stabilize, "stabilize", "S", true, stabilizeUsage)
+	insertCmd.Flags().BoolVarP(
+		notifySubscribers, "notifySubscribers", "N", true, nsUsage,
 	)
 	insertCmd.Flags().BoolVarP(
-		forKids, "forKids", "K", false, "Whether the video is for kids",
-	)
-	insertCmd.Flags().BoolVarP(
-		embeddable, "embeddable", "E", true, "Whether the video is embeddable",
-	)
-	insertCmd.Flags().StringVarP(
-		&publishAt, "publishAt", "U", "",
-		"Datetime when the video is scheduled to publish",
-	)
-	insertCmd.Flags().BoolVarP(
-		stabilize, "stabilize", "S", true,
-		"Should stabilize be applied to the upload",
-	)
-	insertCmd.Flags().BoolVarP(
-		notifySubscribers, "notifySubscribers", "N", true,
-		"Notify the channel subscribers about the new video",
-	)
-	insertCmd.Flags().BoolVarP(
-		publicStatsViewable, "publicStatsViewable", "P", false,
-		"Whether the extended video statistics can be viewed by everyone",
+		publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
 	)
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
@@ -102,9 +79,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
-	insertCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json, yaml or silent",
-	)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
 	insertCmd.MarkFlagRequired("file")
 	insertCmd.MarkFlagRequired("categoryId")

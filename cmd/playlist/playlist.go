@@ -7,6 +7,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short         = "Manipulate YouTube playlists"
+	long          = "List, insert, update, or delete YouTube playlists"
+	titleUsage    = "Title of the playlist"
+	descUsage     = "Description of the playlist"
+	hlUsage       = "Return content in specified language"
+	mrUsage       = "The maximum number of items that should be returned"
+	mineUsage     = "Return the playlists owned by the authenticated user"
+	tagsUsage     = "Comma separated tags"
+	languageUsage = "Language of the playlist"
+	privacyUsage  = "public, private, or unlisted"
+	partsUsage    = "Comma separated parts"
+)
+
 var (
 	id          string
 	title       string
@@ -27,8 +41,8 @@ var (
 
 var playlistCmd = &cobra.Command{
 	Use:   "playlist",
-	Short: "Manipulate YouTube playlists",
-	Long:  "List, insert, update, or delete YouTube playlists",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		utils.ResetBool(map[string]*bool{"mine": mine}, cmd.Flags())
 	},

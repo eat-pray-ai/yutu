@@ -8,6 +8,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short        = "Manipulate YouTube channels"
+	long         = "List or update YouTube channels"
+	cidUsage     = "Return the channels within the specified guide category id"
+	fhUsage      = "Return the channel associated with a YouTube handle"
+	fuUsage      = "Return the channel associated with a YouTube username"
+	hlUsage      = "Specifies the localization language of the metadata"
+	idUsage      = "Return the channels with the specified IDs"
+	mbmUsage     = "Return the channels managed by the authenticated user"
+	mrUsage      = "The maximum number of items that should be returned"
+	mineUsage    = "Return the ids of channels owned by the authenticated user"
+	msUsage      = "Return the channels subscribed to the authenticated user"
+	countryUsage = "Country of the channel"
+	curlUsage    = "Custom URL of the channel"
+	dlUsage      = "The language of the channel's default title and description"
+	descUsage    = "Description of the channel"
+	titleUsage   = "Title of the channel"
+	partsUsage   = "Comma separated parts"
+)
+
 var (
 	categoryId             string
 	forHandle              string
@@ -31,8 +51,8 @@ var (
 
 var channelCmd = &cobra.Command{
 	Use:   "channel",
-	Short: "Manipulate YouTube channels",
-	Long:  "List or update YouTube channels",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		resetFlags(cmd.Flags())
 	},

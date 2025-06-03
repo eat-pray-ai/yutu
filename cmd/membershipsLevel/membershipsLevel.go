@@ -5,6 +5,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "List memberships levels' info"
+	long        = "List memberships levels' info, such as id, displayName, etc"
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
+)
+
 var (
 	parts  []string
 	output string
@@ -12,8 +19,8 @@ var (
 
 var membershipsLevelCmd = &cobra.Command{
 	Use:   "membershipsLevel",
-	Short: "List YouTube memberships levels",
-	Long:  "List YouTube memberships levels",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

@@ -5,10 +5,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	unsetShort = "Unset watermark for channel's video"
+	unsetLong  = "Unset watermark for channel's video by channel id"
+)
+
 var unsetCmd = &cobra.Command{
 	Use:   "unset",
-	Short: "Unset watermark for channel's video",
-	Long:  "Unset watermark for channel's video",
+	Short: unsetShort,
+	Long:  unsetLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		w := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),
@@ -19,8 +24,8 @@ var unsetCmd = &cobra.Command{
 }
 
 func init() {
-	wartermarkCmd.AddCommand(unsetCmd)
+	watermarkCmd.AddCommand(unsetCmd)
 
-	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "ID of the channel to set watermark")
+	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	unsetCmd.MarkFlagRequired("channelId")
 }

@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	rateShort   = "Rate a video on YouTube"
+	rateLong    = "Rate a video on YouTube, with the specified rating"
+	rateIdUsage = "ID of the video to rate"
+	rateRUsage  = "like, dislike, or none"
+)
+
 var rateCmd = &cobra.Command{
 	Use:   "rate",
-	Short: "Rate a video on YouTube",
-	Long:  "Rate a video on YouTube, with the specified rating",
+	Short: rateShort,
+	Long:  rateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithID(id),
@@ -22,10 +29,8 @@ var rateCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(rateCmd)
 
-	rateCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video")
-	rateCmd.Flags().StringVarP(
-		&rating, "rating", "r", "", "Rating of the video: like, dislike or none",
-	)
+	rateCmd.Flags().StringVarP(&id, "id", "i", "", rateIdUsage)
+	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
 
 	rateCmd.MarkFlagRequired("id")
 	rateCmd.MarkFlagRequired("rating")

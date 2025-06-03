@@ -5,6 +5,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "List YouTube i18n regions"
+	long        = "List YouTube i18n regions' id, hl, and name"
+	hlUsage     = "Host language"
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
+)
+
 var (
 	hl     string
 	parts  []string
@@ -13,8 +21,8 @@ var (
 
 var i18nRegionCmd = &cobra.Command{
 	Use:   "i18nRegion",
-	Short: "List YouTube i18n regions",
-	Long:  "List YouTube i18n regions",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

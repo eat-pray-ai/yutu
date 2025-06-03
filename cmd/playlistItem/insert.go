@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort       = "Insert a playlist item into a playlist"
+	insertLong        = "Insert a playlist item into a playlist"
+	insertPidUsage    = "The ID that YouTube uses to uniquely identify the playlist that the item is in"
+	insertOutputUsage = "json, yaml, or silent"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Insert a playlist item into a playlist",
-	Long:  "Insert a playlist item into a playlist",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(title),
@@ -30,36 +37,19 @@ var insertCmd = &cobra.Command{
 func init() {
 	playlistItemCmd.AddCommand(insertCmd)
 
+	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(&kind, "kind", "k", "", kindUsage)
+	insertCmd.Flags().StringVarP(&kVideoId, "kVideoId", "V", "", kvidUsage)
+	insertCmd.Flags().StringVarP(&kChannelId, "kChannelId", "C", "", kcidUsage)
+	insertCmd.Flags().StringVarP(&kPlaylistId, "kPlaylistId", "Y", "", kpidUsage)
 	insertCmd.Flags().StringVarP(
-		&title, "title", "t", "", "Title of the playlist item",
+		&playlistId, "playlistId", "y", "", insertPidUsage,
 	)
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	insertCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the playlist item",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	insertCmd.Flags().StringVarP(
-		&kind, "kind", "k", "", "video, channel, or playlist",
-	)
-	insertCmd.Flags().StringVarP(
-		&kVideoId, "kVideoId", "V", "", "ID of the video if kind is video",
-	)
-	insertCmd.Flags().StringVarP(
-		&kChannelId, "kChannelId", "C", "", "ID of the channel if kind is channel",
-	)
-	insertCmd.Flags().StringVarP(
-		&kPlaylistId, "kPlaylistId", "Y", "",
-		"ID of the playlist if kind is playlist",
-	)
-	insertCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "y", "",
-		"The ID that YouTube uses to uniquely identify the playlist that the playlist item is in",
-	)
-	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "",
-		"The ID that YouTube uses to uniquely identify the user that added the item to the playlist",
-	)
-	insertCmd.Flags().StringVarP(
-		&privacy, "privacy", "p", "", "public, private, or unlisted",
-	)
-	insertCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 }

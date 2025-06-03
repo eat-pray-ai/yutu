@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort       = "Insert a YouTube subscription"
+	insertLong        = "Insert a YouTube subscription"
+	insertCidUsage    = "ID of the channel to be subscribed"
+	insertOutputUsage = "json, yaml, or silent"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Insert a subscription",
-	Long:  "Insert a subscription",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
 			subscription.WithSubscriberChannelId(subscriberChannelId),
@@ -25,17 +32,10 @@ func init() {
 	subscriptionCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(
-		&subscriberChannelId, "subscriberChannelId", "s", "",
-		"Subscriber's channel ID",
+		&subscriberChannelId, "subscriberChannelId", "s", "", scidUsage,
 	)
-	insertCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the subscription",
-	)
-	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", "ID of the channel to be subscribed",
-	)
-	insertCmd.Flags().StringVarP(
-		&title, "title", "t", "", "Title of the subscription",
-	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
+	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 }

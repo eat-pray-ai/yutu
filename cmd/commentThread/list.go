@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort    = "List YouTube comment threads"
+	listLong     = "List YouTube comment threads"
+	listVidUsage = "Returns the comment threads of the specified video"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List YouTube comment threads",
-	Long:  "List YouTube comment threads",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := commentThread.NewCommentThread(
 			commentThread.WithID(id),
@@ -29,24 +35,22 @@ var listCmd = &cobra.Command{
 func init() {
 	commentThreadCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&id, "id", "i", []string{}, "ID of the comment thread")
+	listCmd.Flags().StringSliceVarP(&id, "id", "i", []string{}, idUsage)
 	listCmd.Flags().StringVarP(
 		&allThreadsRelatedToChannelId, "allThreadsRelatedToChannelId", "a", "",
-		"Returns the comment threads of all videos of the channel and the channel comments as well",
+		atrtcidUsage,
 	)
+	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
 	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", "Returns the comment threads for all the channel comments",
+		&moderationStatus, "moderationStatus", "m", "published", msUsage,
 	)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
+	listCmd.Flags().StringVarP(&order, "order", "O", "time", orderUsage)
+	listCmd.Flags().StringVarP(&searchTerms, "searchTerms", "s", "", stUsage)
+	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "html", tfUsage)
+	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", listVidUsage)
+	listCmd.Flags().StringSliceVarP(
+		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&moderationStatus, "moderationStatus", "m", "", "published(default), heldForReview, likelySpam or rejected",
-	)
-	listCmd.Flags().StringVarP(&order, "order", "O", "", "orderUnspecified, time(default) or relevance")
-	listCmd.Flags().StringVarP(&searchTerms, "searchTerms", "s", "", "Search terms")
-	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "", "textFormatUnspecified or html(default)")
-	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "Returns the comment threads of the specified video")
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts")
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }

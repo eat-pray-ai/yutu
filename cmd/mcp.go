@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	modeUsage = "stdio, http or sse"
+	modeUsage = "stdio, http, or sse"
 	portUsage = "Port to listen on for HTTP or SSE mode"
 )
 

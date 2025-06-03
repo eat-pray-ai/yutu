@@ -5,6 +5,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "List Super Chat events for a channel"
+	long        = "List Super Chat events for a channel"
+	hlUsage     = "Return rendered funding amounts in specified language"
+	mrUsage     = "The maximum number of items that should be returned"
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
+)
+
 var (
 	hl         string
 	maxResults int64
@@ -14,8 +23,8 @@ var (
 
 var superChatEventCmd = &cobra.Command{
 	Use:   "superChatEvent",
-	Short: "List Super Chat events for a YouTube channel",
-	Long:  "List Super Chat events for a YouTube channel",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List video categories",
-	Long:  "List video categories' info, such as ID, title, assignable, etc.",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		vc := videoCategory.NewVideoCategory(
 			videoCategory.WithID(id),
@@ -23,13 +23,11 @@ var listCmd = &cobra.Command{
 func init() {
 	videoCategoryCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video category")
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", "Host language")
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", "Region code")
+	listCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
+	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", rcUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json or yaml",
-	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }

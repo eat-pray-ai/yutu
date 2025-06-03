@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	updateShort       = "Update a comment"
+	updateLong        = "Update a comment on a YouTube video"
+	updateIdUsage     = "ID of the comment"
+	updateOutputUsage = "json, yaml, or silent"
+)
+
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Update a comment",
-	Long:  "Update a comment on a YouTube video",
+	Short: updateShort,
+	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithIDs(ids),
@@ -24,19 +31,13 @@ var updateCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(
-		&ids, "id", "i", []string{}, "ID of the comment",
-	)
-	updateCmd.Flags().BoolVarP(
-		canRate, "canRate", "R", false, "Whether the viewer can rate the comment",
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
+	updateCmd.Flags().BoolVarP(canRate, "canRate", "R", false, crUsage)
+	updateCmd.Flags().StringVarP(
+		&textOriginal, "textOriginal", "t", "", toUsage,
 	)
 	updateCmd.Flags().StringVarP(
-		&textOriginal, "textOriginal", "t", "", "Text of the comment",
+		&viewerRating, "viewerRating", "r", "", vrUsage,
 	)
-	updateCmd.Flags().StringVarP(
-		&viewerRating, "viewerRating", "r", "", "none, like or dislike",
-	)
-	updateCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json, yaml or silent",
-	)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 }

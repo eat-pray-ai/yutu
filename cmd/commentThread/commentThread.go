@@ -5,6 +5,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short        = "Manipulate YouTube comment threads"
+	long         = "List or insert YouTube comment threads"
+	idUsage      = "ID of the comment thread"
+	atrtcidUsage = "Returns the comment threads of all videos of the channel and the channel comments as well"
+	acidUsage    = "Channel id of the comment author"
+	cidUsage     = "Channel id of the video owner"
+	mrUsage      = "The maximum number of items that should be returned"
+	msUsage      = "published, heldForReview, likelySpam, or rejected"
+	orderUsage   = "orderUnspecified, time, or relevance"
+	stUsage      = "Search terms"
+	tfUsage      = "textFormatUnspecified or html"
+	toUsage      = "Text of the comment"
+	partsUsage   = "Comma separated parts"
+	outputUsage  = "json, yaml, or silent"
+)
+
 var (
 	id                           []string
 	allThreadsRelatedToChannelId string
@@ -23,8 +40,8 @@ var (
 
 var commentThreadCmd = &cobra.Command{
 	Use:   "commentThread",
-	Short: "Manipulate YouTube comment threads",
-	Long:  "List or insert YouTube comment threads",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

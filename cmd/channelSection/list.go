@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort   = "List channel sections"
+	listLong    = "List channel sections"
+	listIdUsage = "Return the channel sections with the given id"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List channel sections",
-	Long:  "List channel sections",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
 			channelSection.WithID(id),
@@ -25,25 +31,15 @@ var listCmd = &cobra.Command{
 func init() {
 	channelSectionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(
-		&id, "id", "i", "", "Return the ChannelSections with the given ID",
-	)
-	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "",
-		" Return the ChannelSections owned by the specified channel ID",
-	)
-	listCmd.Flags().StringVarP(
-		&hl, "hl", "l", "", "Return content in specified language",
-	)
-	listCmd.Flags().BoolVarP(
-		mine, "mine", "M", false,
-		"Return the ChannelSections owned by the authenticated user",
-	)
+	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
+	listCmd.Flags().BoolVarP(mine, "mine", "M", false, mineUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, "Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "json", "json or yaml")
+	listCmd.Flags().StringVarP(&output, "output", "o", "json", outputUsage)
 }

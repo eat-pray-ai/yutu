@@ -8,6 +8,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short           = "Manipulate YouTube videos"
+	long            = "List, insert, update, rate, get rating, report abuse, or delete YouTube videos"
+	alUsage         = "Should auto-levels be applied to the upload"
+	fileUsage       = "Path to the video file"
+	titleUsage      = "Title of the video"
+	descUsage       = "Description of the video"
+	hlUsage         = "Specifies the localization language"
+	tagsUsage       = "Comma separated tags"
+	localUsage      = ""
+	licenseUsage    = "youtube or creativeCommon"
+	thumbnailUsage  = "Path to the thumbnail file"
+	chartUsage      = "chartUnspecified or mostPopular"
+	chidUsage       = "Channel id of the video"
+	commentsUsage   = "Additional comments regarding the abuse report"
+	pidUsage        = "Playlist id of the video"
+	caidUsage       = "Category of the video"
+	privacyUsage    = "public, private, or unlisted"
+	fkUsage         = "Whether the video is for kids"
+	embeddableUsage = "Whether the video is embeddable"
+	partsUsage      = "Comma separated parts"
+	paUsage         = "Datetime when the video is scheduled to publish"
+	rcUsage         = "Specific to the specified region"
+	ridUsage        = "ID of the reason for reporting abuse"
+	sridUsage       = "ID of the secondary reason for reporting abuse"
+	stabilizeUsage  = "Should stabilize be applied to the upload"
+	mhUsage         = ""
+	mwUsage         = ""
+	mrUsage         = "The maximum number of items that should be returned"
+	nsUsage         = "Notify the channel subscribers about the new video"
+	psvUsage        = "Whether the extended video statistics can be viewed by everyone"
+)
+
 var (
 	id                string
 	autoLevels        = utils.BoolPtr("false")
@@ -49,8 +82,8 @@ var (
 // videoCmd represents the video command
 var videoCmd = &cobra.Command{
 	Use:   "video",
-	Short: "Manipulate YouTube videos",
-	Long:  "List, insert, update, rate, get rating, report abuse, or delete YouTube videos",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		resetFlags(cmd.Flags())
 	},

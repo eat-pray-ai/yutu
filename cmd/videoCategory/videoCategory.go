@@ -5,6 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "List YouTube video categories"
+	long        = "List YouTube video categories' info, such as id, title, assignable, etc."
+	idUsage     = "ID of the video category"
+	hlUsage     = "Host language"
+	rcUsage     = "Region code"
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
+)
+
 var (
 	id         string
 	hl         string
@@ -15,8 +25,8 @@ var (
 
 var videoCategoryCmd = &cobra.Command{
 	Use:   "videoCategory",
-	Short: "List YouTube video categories",
-	Long:  "List YouTube video categories",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

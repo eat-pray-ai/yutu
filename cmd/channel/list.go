@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort       = "List channel's info"
+	listLong        = "List channel's info, such as title, description, etc."
+	listOutputUsage = "json or yaml"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List channel's info",
-	Long:  "List channel's info, such as title, description, etc.",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := channel.NewChannel(
 			channel.WithCategoryId(categoryId),
@@ -31,47 +37,31 @@ func init() {
 	channelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
-		&categoryId, "categoryId", "g", "",
-		"Return the channels within the specified guide category ID",
+		&categoryId, "categoryId", "g", "", cidUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&forHandle, "forHandle", "d", "",
-		"Return the channel associated with a YouTube handle",
+		&forHandle, "forHandle", "d", "", fhUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&forUsername, "forUsername", "u", "",
-		"Return the channel associated with a YouTube username",
+		&forUsername, "forUsername", "u", "", fuUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&hl, "hl", "l", "", "Specifies the localization language of the metadata",
-	)
-	listCmd.Flags().StringVarP(
-		&id, "id", "i", "", "Return the channels with the specified IDs",
-	)
+	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
+	listCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
 	listCmd.Flags().BoolVarP(
-		managedByMe, "managedByMe", "E", false,
-		"Specify the maximum number of items that should be returned",
+		managedByMe, "managedByMe", "E", false, mbmUsage,
 	)
 	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5,
-		"The maximum number of items that should be returned",
+		&maxResults, "maxResults", "n", 5, mrUsage,
 	)
+	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().BoolVarP(
-		mine, "mine", "M", true,
-		"Return the ids of channels owned by the authenticated user",
-	)
-	listCmd.Flags().BoolVarP(
-		mySubscribers, "mySubscribers", "S", false,
-		"Return the channels subscribed to the authenticated user",
+		mySubscribers, "mySubscribers", "S", false, msUsage,
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json or yaml",
-	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"},
-		"Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
 }

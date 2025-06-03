@@ -6,6 +6,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short      = "Manipulate YouTube comments"
+	long       = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments"
+	idsUsage   = "Comma separated ids of comments"
+	acidUsage  = "Channel id of the comment author"
+	crUsage    = "Whether the viewer can rate the comment"
+	cidUsage   = "Channel id of the video owner"
+	mrUsage    = "The maximum number of items that should be returned"
+	tfUsage    = "textFormatUnspecified, html, or plainText"
+	toUsage    = "Text of the comment"
+	msUsage    = "heldForReview, published, or rejected"
+	baUsage    = "true or false"
+	vidUsage   = "ID of the video"
+	vrUsage    = "none, like, or dislike"
+	partsUsage = "Comma separated parts"
+)
+
 var (
 	ids              []string
 	authorChannelId  string
@@ -25,8 +42,8 @@ var (
 
 var commentCmd = &cobra.Command{
 	Use:   "comment",
-	Short: "Manipulate YouTube comments",
-	Long:  "List, insert, update, mark as spam, set moderation status, or delete YouTube comments",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		boolMap := map[string]*bool{"canRate": canRate, "banAuthor": banAuthor}
 		utils.ResetBool(boolMap, cmd.Flags())

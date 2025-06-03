@@ -6,6 +6,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short       = "Manipulate YouTube channel sections"
+	long        = "List or delete YouTube channel sections"
+	cidUsage    = "Return the ChannelSections owned by the specified channel id"
+	hlUsage     = "Return content in specified language"
+	mineUsage   = "Return the ChannelSections owned by the authenticated user"
+	partsUsage  = "Comma separated parts"
+	outputUsage = "json or yaml"
+)
+
 var (
 	id                     string
 	channelId              string
@@ -18,8 +28,8 @@ var (
 
 var channelSectionCmd = &cobra.Command{
 	Use:   "channelSection",
-	Short: "Manipulate YouTube channel sections",
-	Long:  "List or delete YouTube channel sections",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		utils.ResetBool(map[string]*bool{"mine": mine}, cmd.Flags())
 	},

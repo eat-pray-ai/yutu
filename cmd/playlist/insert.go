@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort       = "Create a new playlist"
+	insertLong        = "Create a new playlist, with the specified title, description, tags, etc"
+	insertCidUsage    = "Channel id of the playlist"
+	insertOutputUsage = "json, yaml, or silent"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Create a new playlist",
-	Long:  "Create a new playlist, with the specified title, description, tags, etc.",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithTitle(title),
@@ -26,23 +33,13 @@ var insertCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(insertCmd)
 
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the playlist")
-	insertCmd.Flags().StringVarP(
-		&description, "description", "d", "", "Description of the playlist",
-	)
-	insertCmd.Flags().StringArrayVarP(
-		&tags, "tags", "a", []string{}, "Comma separated tags",
-	)
-	insertCmd.Flags().StringVarP(
-		&language, "language", "l", "", "Language of the playlist",
-	)
-	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", "Channel ID of the playlist",
-	)
-	insertCmd.Flags().StringVarP(
-		&privacy, "privacy", "p", "", "public, private or unlisted",
-	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
+	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
+	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
 	insertCmd.MarkFlagRequired("title")
 	insertCmd.MarkFlagRequired("channel")

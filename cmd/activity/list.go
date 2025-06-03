@@ -11,25 +11,20 @@ import (
 	"io"
 )
 
-const (
-	listShortUsage = "List YouTube activities"
-	listLongUsage  = "List YouTube activities, such as likes, favorites, uploads, etc."
-)
-
 var defaultParts = []string{"id", "snippet", "contentDetails"}
 
 var listTool = mcp.NewTool(
 	"activity.list",
-	mcp.WithDescription(listLongUsage),
+	mcp.WithDescription(long),
 	mcp.WithString(
-		"channelId", mcp.DefaultString(""), mcp.Description(channelIdUsage),
+		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage),
 	),
 	mcp.WithString(
 		"home", mcp.Enum("true", "false", ""),
 		mcp.DefaultString(""), mcp.Description(homeUsage),
 	),
 	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5), mcp.Description(maxResultsUsage),
+		"maxResults", mcp.DefaultNumber(5), mcp.Description(mrUsage),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
@@ -37,14 +32,14 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"publishedAfter", mcp.DefaultString(""),
-		mcp.Description(publishedAfterUsage),
+		mcp.Description(paUsage),
 	),
 	mcp.WithString(
 		"publishedBefore", mcp.DefaultString(""),
-		mcp.Description(publishedBeforeUsage),
+		mcp.Description(pbUsage),
 	),
 	mcp.WithString(
-		"regionCode", mcp.DefaultString(""), mcp.Description(regionCodeUsage),
+		"regionCode", mcp.DefaultString(""), mcp.Description(rcUsage),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray(defaultParts), mcp.Description(partsUsage),
@@ -69,8 +64,8 @@ func run(writer io.Writer) error {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: listShortUsage,
-	Long:  listLongUsage,
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := run(cmd.OutOrStdout())
 		if err != nil {
@@ -83,25 +78,18 @@ var listCmd = &cobra.Command{
 func init() {
 	cmd.MCP.AddTool(listTool, listHandler)
 	activityCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", channelIdUsage,
-	)
+	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
 	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, maxResultsUsage,
-	)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
-		&publishedAfter, "publishedAfter", "a", "", publishedAfterUsage,
+		&publishedAfter, "publishedAfter", "a", "", paUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&publishedBefore, "publishedBefore", "b", "", publishedBeforeUsage,
+		&publishedBefore, "publishedBefore", "b", "", pbUsage,
 	)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", regionCodeUsage)
-
-	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", defaultParts, partsUsage,
-	)
+	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
+	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", defaultParts, partsUsage)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }
 

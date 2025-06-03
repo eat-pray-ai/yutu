@@ -7,6 +7,26 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const (
+	short         = "Manipulate YouTube captions"
+	long          = "List, insert, update, download, or delete YouTube captions"
+	idUsage       = "ID of the caption"
+	fileUsage     = "Path to save the caption file"
+	attUsage      = "unknown, primary, commentary, or descriptive"
+	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"
+	iscUsage      = "Whether the track contains closed captions for the deaf and hard of hearing"
+	isdUsage      = "whether the caption track is a draft"
+	iserUsage     = "Whether caption track is formatted for 'easy reader'"
+	islUsage      = "Whether the caption track uses large text for the vision-impaired"
+	languageUsage = "Language of the caption track"
+	nameUsage     = "Name of the caption track"
+	tkUsage       = "standard, ASR, or forced"
+	vidUsage      = "ID of the video"
+	partsUsage    = "Comma separated parts"
+	tfmtUsage     = "sbv, srt, or vtt"
+	tlangUsage    = "Translate the captions into this language"
+)
+
 var (
 	id                     string
 	file                   string
@@ -30,8 +50,8 @@ var (
 
 var captionCmd = &cobra.Command{
 	Use:   "caption",
-	Short: "Manipulate YouTube captions",
-	Long:  "List, insert, update, download, or delete YouTube captions",
+	Short: short,
+	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		resetFlags(cmd.Flags())
 	},

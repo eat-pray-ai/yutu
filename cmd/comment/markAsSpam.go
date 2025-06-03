@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	masShort       = "Mark YouTube comments as spam"
+	masLong        = "Mark YouTube comments as spam by ids"
+	masOutputUsage = "json, yaml, or silent"
+)
+
 var markAsSpamCmd = &cobra.Command{
 	Use:   "markAsSpam",
-	Short: "Mark YouTube comments as spam",
-	Long:  "Mark YouTube comments as spam by ids",
+	Short: masShort,
+	Long:  masLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithIDs(ids),
@@ -21,6 +27,6 @@ var markAsSpamCmd = &cobra.Command{
 func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
-	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, "Comma separated ids of comments")
-	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", masOutputUsage)
 }

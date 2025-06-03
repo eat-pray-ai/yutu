@@ -7,8 +7,8 @@ import (
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List channel's members",
-	Long:  "List channel's members' info, such as channelId, displayName, etc.",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		m := member.NewMember(
 			member.WithMemberChannelId(memberChannelId),
@@ -25,24 +25,15 @@ func init() {
 	memberCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
-		&memberChannelId, "memberChannelId", "c", "",
-		"Comma separated list of channel IDs. Only data about members that are part of this list will be included",
+		&memberChannelId, "memberChannelId", "c", "", mcidUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&hasAccessToLevel, "hasAccessToLevel", "a", "",
-		"Filter members in the results set to the ones that have access to a level",
+		&hasAccessToLevel, "hasAccessToLevel", "a", "", hatlUsage,
 	)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
-	)
-	listCmd.Flags().StringVarP(
-		&mode, "mode", "m", "",
-		"listMembersModeUnknown, updates or all_current(default)",
-	)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().StringVarP(&mode, "mode", "m", "all_current", mmUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, "Comma separated parts",
+		&parts, "parts", "p", []string{"snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json or yaml",
-	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }

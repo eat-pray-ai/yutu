@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	deleteShort   = "Delete channel section"
+	deleteLong    = "Delete channel section"
+	deleteIdUsage = "Delete the channel section with the given id"
+)
+
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete channel section",
-	Long:  "Delete channel section",
+	Short: deleteShort,
+	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
 			channelSection.WithID(id),
@@ -22,6 +28,8 @@ var deleteCmd = &cobra.Command{
 func init() {
 	channelSectionCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", "Delete the ChannelSections with the given ID")
-	deleteCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
+	deleteCmd.Flags().StringVarP(&id, "id", "i", "", deleteIdUsage)
+	deleteCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
 }

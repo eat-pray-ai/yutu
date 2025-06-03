@@ -5,10 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	reportAbuseShort = "Report abuse on a video"
+	reportAbuseLong  = "Report abuse on a video"
+	raIdUsage        = "ID of the video to report abuse on"
+	raLangUsage      = "Language that the content was viewed in"
+)
+
 var reportAbuseCmd = &cobra.Command{
 	Use:   "reportAbuse",
-	Short: "Report abuse on a video",
-	Long:  "Report abuse on a video",
+	Short: reportAbuseShort,
+	Long:  reportAbuseLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
 			video.WithID(id),
@@ -26,12 +33,16 @@ var reportAbuseCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(reportAbuseCmd)
 
-	reportAbuseCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the video to report abuse on")
-	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", "ID of the reason for reporting abuse")
+	reportAbuseCmd.Flags().StringVarP(&id, "id", "i", "", raIdUsage)
+	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", ridUsage)
 	reportAbuseCmd.Flags().StringVarP(
-		&secondaryReasonId, "secondaryReasonId", "s", "", "ID of the secondary reason for reporting abuse",
+		&secondaryReasonId, "secondaryReasonId", "s", "", sridUsage,
 	)
-	reportAbuseCmd.Flags().StringVarP(&comments, "comments", "c", "", "Additional comments regarding the abuse report")
-	reportAbuseCmd.Flags().StringVarP(&language, "language", "l", "", "The language that the content was viewed in")
-	reportAbuseCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
+	reportAbuseCmd.Flags().StringVarP(
+		&comments, "comments", "c", "", commentsUsage,
+	)
+	reportAbuseCmd.Flags().StringVarP(&language, "language", "l", "", raLangUsage)
+	reportAbuseCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
 }

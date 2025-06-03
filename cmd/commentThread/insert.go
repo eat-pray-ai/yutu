@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	insertShort    = "Insert a new comment thread"
+	insertLong     = "Insert a new comment thread"
+	insertVidUsage = "ID of the video"
+)
+
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: "Insert a new comment thread",
-	Long:  "Insert a new comment thread",
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := commentThread.NewCommentThread(
 			commentThread.WithAuthorChannelId(authorChannelId),
@@ -23,9 +29,9 @@ var insertCmd = &cobra.Command{
 
 func init() {
 	commentThreadCmd.AddCommand(insertCmd)
-	insertCmd.Flags().StringVarP(&authorChannelId, "authorChannelId", "a", "", "Channel ID of the comment author")
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", "Channel ID of the video owner")
-	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", "Text of the comment")
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	insertCmd.Flags().StringVarP(&authorChannelId, "authorChannelId", "a", "", acidUsage)
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
+	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }

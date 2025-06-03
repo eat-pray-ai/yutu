@@ -5,10 +5,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort       = "List playlist items"
+	listLong        = "List playlist items' info, such as title, description, etc"
+	listIdUsage     = "ID of the playlist item to list"
+	listPidUsage    = "Return the playlist items within the given playlist"
+	listOutputUsage = "json or yaml"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List playlist items",
-	Long:  "List playlist items' info, such as title, description, etc.",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithID(id),
@@ -25,26 +33,15 @@ var listCmd = &cobra.Command{
 func init() {
 	playlistItemCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", "ID of the playlist item")
-	listCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "y", "",
-		"Return the playlist items within the given playlist",
-	)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned",
-	)
-	listCmd.Flags().StringVarP(
-		&videoId, "videoId", "v", "",
-		"Return the playlist items associated with the given video ID",
-	)
+	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringVarP(&playlistId, "playlistId", "y", "", listPidUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json or yaml",
-	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
 	listCmd.Flags().StringArrayVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"},
-		"Comma separated parts",
+		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
 }

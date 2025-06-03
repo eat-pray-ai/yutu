@@ -7,8 +7,8 @@ import (
 
 var setCmd = &cobra.Command{
 	Use:   "set",
-	Short: "Set thumbnail for a video",
-	Long:  "Set thumbnail for a video",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),
@@ -22,7 +22,7 @@ var setCmd = &cobra.Command{
 func init() {
 	thumbnailCmd.AddCommand(setCmd)
 
-	setCmd.Flags().StringVarP(&file, "file", "f", "", "Path to the thumbnail file")
-	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", "ID of the video")
-	setCmd.Flags().StringVarP(&output, "output", "o", "", "json, yaml or silent")
+	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
+	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
+	setCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }

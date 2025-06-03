@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	smsShort       = "Set YouTube comments moderation status"
+	smsLong        = "Set YouTube comments moderation status by ids"
+	smsOutputUsage = "json, yaml, or silent"
+)
+
 var setModerationStatusCmd = &cobra.Command{
 	Use:   "setModerationStatus",
-	Short: "Set YouTube comments moderation status",
-	Long:  "Set YouTube comments moderation status by ids",
+	Short: smsShort,
+	Long:  smsLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := comment.NewComment(
 			comment.WithIDs(ids),
@@ -23,16 +29,15 @@ func init() {
 	commentCmd.AddCommand(setModerationStatusCmd)
 
 	setModerationStatusCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, "Comma separated ids of comments",
+		&ids, "ids", "i", []string{}, idsUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&moderationStatus, "moderationStatus", "s", "",
-		"heldForReview, published or rejected",
+		&moderationStatus, "moderationStatus", "s", "", msUsage,
 	)
 	setModerationStatusCmd.Flags().BoolVarP(
-		banAuthor, "banAuthor", "A", false, "true or false",
+		banAuthor, "banAuthor", "A", false, baUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&output, "output", "o", "", "json, yaml or silent",
+		&output, "output", "o", "", smsOutputUsage,
 	)
 }

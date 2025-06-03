@@ -5,6 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	short     = "Manipulate YouTube watermarks"
+	long      = "Set or unset YouTube watermarks"
+	cidUsage  = "ID of the channel"
+	fileUsage = "Path to the watermark file"
+	ivpUsage  = "topLeft, topRight, bottomLeft, or bottomRight"
+	dmUsage   = "Duration in milliseconds for which the watermark should be displayed"
+	omUsage   = "Defines the time at which the watermark will appear"
+	otUsage   = "offsetFromStart or offsetFromEnd"
+)
+
 var (
 	channelId              string
 	file                   string
@@ -15,15 +26,15 @@ var (
 	onBehalfOfContentOwner string
 )
 
-var wartermarkCmd = &cobra.Command{
+var watermarkCmd = &cobra.Command{
 	Use:   "watermark",
-	Short: "Manipulate YouTube watermarks",
-	Long:  "Set or unset YouTube watermarks",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(wartermarkCmd)
+	cmd.RootCmd.AddCommand(watermarkCmd)
 }
