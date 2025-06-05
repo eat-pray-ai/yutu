@@ -18,16 +18,16 @@ var (
 )
 
 type channel struct {
-	CategoryId             string `yaml:"category_id" json:"category_id"`
-	ForHandle              string `yaml:"for_handle" json:"for_handle"`
-	ForUsername            string `yaml:"for_username" json:"for_username"`
-	Hl                     string `yaml:"hl" json:"hl"`
-	ID                     string `yaml:"id" json:"id"`
-	ManagedByMe            *bool  `yaml:"managed_by_me" json:"managed_by_me"`
-	MaxResults             int64  `yaml:"max_results" json:"max_results"`
-	Mine                   *bool  `yaml:"mine" json:"mine"`
-	MySubscribers          *bool  `yaml:"my_subscribers" json:"my_subscribers"`
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	CategoryId             string   `yaml:"category_id" json:"category_id"`
+	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
+	ForUsername            string   `yaml:"for_username" json:"for_username"`
+	Hl                     string   `yaml:"hl" json:"hl"`
+	IDs                    []string `yaml:"ids" json:"ids"`
+	ManagedByMe            *bool    `yaml:"managed_by_me" json:"managed_by_me"`
+	MaxResults             int64    `yaml:"max_results" json:"max_results"`
+	Mine                   *bool    `yaml:"mine" json:"mine"`
+	MySubscribers          *bool    `yaml:"my_subscribers" json:"my_subscribers"`
+	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 
 	Country         string `yaml:"country" json:"country"`
 	CustomUrl       string `yaml:"custom_url" json:"custom_url"`
@@ -72,8 +72,8 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 		call = call.Hl(c.Hl)
 	}
 
-	if c.ID != "" {
-		call = call.Id(c.ID)
+	if len(c.IDs) > 0 {
+		call = call.Id(c.IDs...)
 	}
 
 	if c.ManagedByMe != nil {
@@ -123,15 +123,16 @@ func (c *channel) List(parts []string, output string) {
 
 func (c *channel) Update(output string) {
 	parts := []string{"snippet"}
-	channel := c.get(parts)[0]
+	cha := c.get(parts)[0]
 	if c.Title != "" {
-		channel.Snippet.Title = c.Title
+		cha.Snippet.Title = c.Title
 	}
 	if c.Description != "" {
-		channel.Snippet.Description = c.Description
+		cha.Snippet.Description = c.Description
 	}
+	// todo: support other fields like country, customUrl, defaultLanguage, etc.
 
-	call := service.Channels.Update(parts, channel)
+	call := service.Channels.Update(parts, cha)
 	res, err := call.Do()
 	if err != nil {
 		utils.PrintJSON(c, nil)
@@ -173,9 +174,9 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(c *channel) {
-		c.ID = id
+		c.IDs = ids
 	}
 }
 

@@ -26,7 +26,7 @@ var (
 )
 
 type video struct {
-	ID                string   `yaml:"id" json:"id"`
+	IDs               []string `yaml:"ids" json:"ids"`
 	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
 	File              string   `yaml:"file" json:"file"`
 	Title             string   `yaml:"title" json:"title"`
@@ -66,7 +66,7 @@ type Video interface {
 	Insert(string)
 	Update(string)
 	Rate()
-	GetRating()
+	GetRating(string)
 	Delete()
 	ReportAbuse()
 	get([]string) []*youtube.Video
@@ -86,8 +86,8 @@ func NewVideo(opts ...Option) Video {
 
 func (v *video) get(parts []string) []*youtube.Video {
 	call := service.Videos.List(parts)
-	if v.ID != "" {
-		call = call.Id(v.ID)
+	if len(v.IDs) > 0 {
+		call = call.Id(v.IDs...)
 	}
 	if v.Chart != "" {
 		call = call.Chart(v.Chart)
@@ -325,17 +325,19 @@ func (v *video) Update(output string) {
 }
 
 func (v *video) Rate() {
-	call := service.Videos.Rate(v.ID, v.Rating)
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errRating, err))
+	for _, id := range v.IDs {
+		call := service.Videos.Rate(id, v.Rating)
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(v, nil)
+			log.Fatalln(errors.Join(errRating, err))
+		}
+		fmt.Printf("Video %s rated %s\n", id, v.Rating)
 	}
-	fmt.Printf("Video %s rated %s\n", v.ID, v.Rating)
 }
 
-func (v *video) GetRating() {
-	call := service.Videos.GetRating([]string{v.ID})
+func (v *video) GetRating(output string) {
+	call := service.Videos.GetRating(v.IDs)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
 	}
@@ -345,49 +347,63 @@ func (v *video) GetRating() {
 		log.Fatalln(errors.Join(errGetRating, err))
 	}
 
-	utils.PrintYAML(res, nil)
+	switch output {
+	case "json":
+		utils.PrintJSON(res.Items, nil)
+	case "yaml":
+		utils.PrintYAML(res.Items, nil)
+	default:
+		fmt.Println("ID\tRating")
+		for _, item := range res.Items {
+			fmt.Printf("%s\t%s\n", item.VideoId, item.Rating)
+		}
+	}
 }
 
 func (v *video) Delete() {
-	call := service.Videos.Delete(v.ID)
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
-	}
+	for _, id := range v.IDs {
+		call := service.Videos.Delete(id)
+		if v.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errDeleteVideo, err))
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(v, nil)
+			log.Fatalln(errors.Join(errDeleteVideo, err))
+		}
+		fmt.Printf("Video %s deleted", id)
 	}
-	fmt.Printf("Video %s deleted", v.ID)
 }
 
 func (v *video) ReportAbuse() {
-	videoAbuseReport := &youtube.VideoAbuseReport{
-		Comments:          v.Comments,
-		Language:          v.Language,
-		ReasonId:          v.ReasonId,
-		SecondaryReasonId: v.SecondaryReasonId,
-		VideoId:           v.ID,
-	}
+	for _, id := range v.IDs {
+		videoAbuseReport := &youtube.VideoAbuseReport{
+			Comments:          v.Comments,
+			Language:          v.Language,
+			ReasonId:          v.ReasonId,
+			SecondaryReasonId: v.SecondaryReasonId,
+			VideoId:           id,
+		}
 
-	call := service.Videos.ReportAbuse(videoAbuseReport)
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
-	}
+		call := service.Videos.ReportAbuse(videoAbuseReport)
+		if v.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errReportAbuse, err))
-	}
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(v, nil)
+			log.Fatalln(errors.Join(errReportAbuse, err))
+		}
 
-	fmt.Printf("Video %s reported for abuse", v.ID)
+		fmt.Printf("Video %s reported for abuse", id)
+	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(v *video) {
-		v.ID = id
+		v.IDs = ids
 	}
 }
 

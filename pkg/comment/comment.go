@@ -58,36 +58,31 @@ func NewComment(opts ...Option) Comment {
 
 func (c *comment) get(parts []string) []*youtube.Comment {
 	call := service.Comments.List(parts)
-	var result []*youtube.Comment
 
-	for _, id := range c.IDs {
-		if c.IDs[0] != "" {
-			call = call.Id(id)
-		}
-
-		if c.MaxResults <= 0 {
-			c.MaxResults = 1
-		}
-		call = call.MaxResults(c.MaxResults)
-
-		if c.ParentId != "" {
-			call = call.ParentId(c.ParentId)
-		}
-
-		if c.TextFormat != "" {
-			call = call.TextFormat(c.TextFormat)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			utils.PrintJSON(c, nil)
-			log.Fatalln(errors.Join(errGetComment, err))
-		}
-
-		result = append(result, res.Items...)
+	if c.IDs[0] != "" {
+		call = call.Id(c.IDs...)
 	}
 
-	return result
+	if c.MaxResults <= 0 {
+		c.MaxResults = 1
+	}
+	call = call.MaxResults(c.MaxResults)
+
+	if c.ParentId != "" {
+		call = call.ParentId(c.ParentId)
+	}
+
+	if c.TextFormat != "" {
+		call = call.TextFormat(c.TextFormat)
+	}
+
+	res, err := call.Do()
+	if err != nil {
+		utils.PrintJSON(c, nil)
+		log.Fatalln(errors.Join(errGetComment, err))
+	}
+
+	return res.Items
 }
 
 func (c *comment) List(parts []string, output string) {

@@ -8,7 +8,7 @@ import (
 const (
 	updateShort       = "Update a video on YouTube"
 	updateLong        = "Update a video on YouTube, with the specified title, description, tags, etc"
-	updateIdUsage     = "ID of the video to update"
+	updateIdsUsage    = "ID of the video to update"
 	updateLangUsage   = "Language of the video"
 	updateOutputUsage = "json, yaml, or silent"
 )
@@ -19,7 +19,7 @@ var updateCmd = &cobra.Command{
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithID(id),
+			video.WithIDs(ids),
 			video.WithTitle(title),
 			video.WithDescription(description),
 			video.WithTags(tags),
@@ -39,7 +39,7 @@ var updateCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringArrayVarP(&ids, "id", "i", []string{}, updateIdsUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
@@ -54,5 +54,5 @@ func init() {
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
-	updateCmd.MarkFlagRequired("id")
+	updateCmd.MarkFlagRequired("ids")
 }

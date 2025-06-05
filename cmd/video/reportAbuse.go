@@ -8,7 +8,7 @@ import (
 const (
 	reportAbuseShort = "Report abuse on a video"
 	reportAbuseLong  = "Report abuse on a video"
-	raIdUsage        = "ID of the video to report abuse on"
+	raIdsUsage       = "IDs of the videos to report abuse on"
 	raLangUsage      = "Language that the content was viewed in"
 )
 
@@ -18,7 +18,7 @@ var reportAbuseCmd = &cobra.Command{
 	Long:  reportAbuseLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithID(id),
+			video.WithIDs(ids),
 			video.WithReasonId(reasonId),
 			video.WithSecondaryReasonId(secondaryReasonId),
 			video.WithComments(comments),
@@ -33,7 +33,9 @@ var reportAbuseCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(reportAbuseCmd)
 
-	reportAbuseCmd.Flags().StringVarP(&id, "id", "i", "", raIdUsage)
+	reportAbuseCmd.Flags().StringArrayVarP(
+		&ids, "ids", "i", []string{}, raIdsUsage,
+	)
 	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", ridUsage)
 	reportAbuseCmd.Flags().StringVarP(
 		&secondaryReasonId, "secondaryReasonId", "s", "", sridUsage,

@@ -6,13 +6,15 @@ import (
 )
 
 const (
+	listShort       = "List captions"
+	listLong        = "List captions of a video"
 	listOutputUsage = "json or yaml"
 )
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List captions",
-	Long:  "List captions of a video",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
 			caption.WithID(id),

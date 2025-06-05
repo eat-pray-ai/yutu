@@ -42,7 +42,7 @@ const (
 )
 
 var (
-	id                string
+	ids               []string
 	autoLevels        = utils.BoolPtr("false")
 	file              string
 	title             string

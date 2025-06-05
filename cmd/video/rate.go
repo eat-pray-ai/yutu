@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	rateShort   = "Rate a video on YouTube"
-	rateLong    = "Rate a video on YouTube, with the specified rating"
-	rateIdUsage = "ID of the video to rate"
-	rateRUsage  = "like, dislike, or none"
+	rateShort    = "Rate a video on YouTube"
+	rateLong     = "Rate a video on YouTube, with the specified rating"
+	rateIdsUsage = "IDs of the videos to rate"
+	rateRUsage   = "like, dislike, or none"
 )
 
 var rateCmd = &cobra.Command{
@@ -18,7 +18,7 @@ var rateCmd = &cobra.Command{
 	Long:  rateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithID(id),
+			video.WithIDs(ids),
 			video.WithRating(rating),
 			video.WithService(nil),
 		)
@@ -29,9 +29,9 @@ var rateCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(rateCmd)
 
-	rateCmd.Flags().StringVarP(&id, "id", "i", "", rateIdUsage)
+	rateCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
 	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
 
-	rateCmd.MarkFlagRequired("id")
+	rateCmd.MarkFlagRequired("ids")
 	rateCmd.MarkFlagRequired("rating")
 }

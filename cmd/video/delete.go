@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	deleteShort   = "Delete a video on YouTube"
-	deleteLong    = "Delete a video on YouTube by id"
-	deleteIdUsage = "ID of the video to delete"
+	deleteShort    = "Delete a video on YouTube"
+	deleteLong     = "Delete a video on YouTube by ids"
+	deleteIdsUsage = "IDs of the videos to delete"
 )
 
 var deleteCmd = &cobra.Command{
@@ -16,7 +16,7 @@ var deleteCmd = &cobra.Command{
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(video.WithID(id))
+		v := video.NewVideo(video.WithIDs(ids))
 		v.Delete()
 	},
 }
@@ -24,6 +24,6 @@ var deleteCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", deleteIdUsage)
-	deleteCmd.MarkFlagRequired("id")
+	deleteCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.MarkFlagRequired("ids")
 }

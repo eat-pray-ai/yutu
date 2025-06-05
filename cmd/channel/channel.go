@@ -15,7 +15,6 @@ const (
 	fhUsage      = "Return the channel associated with a YouTube handle"
 	fuUsage      = "Return the channel associated with a YouTube username"
 	hlUsage      = "Specifies the localization language of the metadata"
-	idUsage      = "Return the channels with the specified IDs"
 	mbmUsage     = "Return the channels managed by the authenticated user"
 	mrUsage      = "The maximum number of items that should be returned"
 	mineUsage    = "Return the ids of channels owned by the authenticated user"
@@ -29,17 +28,15 @@ const (
 )
 
 var (
-	categoryId             string
-	forHandle              string
-	forUsername            string
-	hl                     string
-	id                     string
-	managedByMe            = utils.BoolPtr("false")
-	maxResults             int64
-	mine                   = utils.BoolPtr("false")
-	mySubscribers          = utils.BoolPtr("false")
-	onBehalfOfContentOwner string
-
+	categoryId      string
+	forHandle       string
+	forUsername     string
+	hl              string
+	ids             []string
+	managedByMe     = utils.BoolPtr("false")
+	maxResults      int64
+	mine            = utils.BoolPtr("false")
+	mySubscribers   = utils.BoolPtr("false")
 	country         string
 	customUrl       string
 	defaultLanguage string
@@ -47,6 +44,8 @@ var (
 	title           string
 	output          string
 	parts           []string
+
+	onBehalfOfContentOwner string
 )
 
 var channelCmd = &cobra.Command{

@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	getRatingShort = "Get the rating of a video"
-	getRatingLong  = "Get the rating of a video by id"
-	grIdUsage      = "ID of the video"
+	getRatingShort = "Get the rating of videos"
+	getRatingLong  = "Get the rating of videos by ids"
+	grIdsUsage     = "IDs of the videos to get the rating for"
+	grOutputUsage  = "json or yaml"
 )
 
 var getRatingCmd = &cobra.Command{
@@ -17,20 +18,21 @@ var getRatingCmd = &cobra.Command{
 	Long:  getRatingLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(
-			video.WithID(id),
+			video.WithIDs(ids),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithService(nil),
 		)
-		v.GetRating()
+		v.GetRating(output)
 	},
 }
 
 func init() {
 	videoCmd.AddCommand(getRatingCmd)
 
-	getRatingCmd.Flags().StringVarP(&id, "id", "i", "", grIdUsage)
+	getRatingCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, grIdsUsage)
 	getRatingCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
+	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", grOutputUsage)
 	getRatingCmd.MarkFlagRequired("id")
 }

@@ -8,6 +8,7 @@ import (
 const (
 	listShort       = "List channel's info"
 	listLong        = "List channel's info, such as title, description, etc."
+	listIdsUsage    = "Return the channels with the specified IDs"
 	listOutputUsage = "json or yaml"
 )
 
@@ -21,7 +22,7 @@ var listCmd = &cobra.Command{
 			channel.WithForHandle(forHandle),
 			channel.WithForUsername(forUsername),
 			channel.WithHl(hl),
-			channel.WithID(id),
+			channel.WithIDs(ids),
 			channel.WithChannelManagedByMe(managedByMe),
 			channel.WithMaxResults(maxResults),
 			channel.WithMine(mine),
@@ -46,7 +47,7 @@ func init() {
 		&forUsername, "forUsername", "u", "", fuUsage,
 	)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
+	listCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().BoolVarP(
 		managedByMe, "managedByMe", "E", false, mbmUsage,
 	)
