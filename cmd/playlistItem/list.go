@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithID(id),
+			playlistItem.WithID(id), // todo: id -> ids
 			playlistItem.WithPlaylistId(playlistId),
 			playlistItem.WithMaxResults(maxResults),
 			playlistItem.WithVideoId(videoId),

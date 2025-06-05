@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
-			caption.WithID(id),
+			caption.WithID(id), // todo: id -> ids
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),

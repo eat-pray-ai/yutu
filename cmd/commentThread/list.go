@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := commentThread.NewCommentThread(
-			commentThread.WithID(id),
+			commentThread.WithID(id), // todo: id -> ids
 			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
 			commentThread.WithChannelId(channelId),
 			commentThread.WithMaxResults(maxResults),

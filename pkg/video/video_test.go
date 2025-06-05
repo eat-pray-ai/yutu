@@ -19,7 +19,7 @@ func TestNewVideo(t *testing.T) {
 			name: "TestNewVideo",
 			args: args{
 				opts: []Option{
-					WithID("id"),
+					WithIDs([]string{"id1", "id2"}),
 					WithAutoLevels(utils.BoolPtr("true")),
 					WithFile("file"),
 					WithTitle("title"),
@@ -32,7 +32,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &video{
-				ID:          "id",
+				IDs:         []string{"id1", "id2"},
 				AutoLevels:  utils.BoolPtr("true"),
 				File:        "file",
 				Title:       "title",

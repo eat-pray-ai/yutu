@@ -11,7 +11,7 @@ var listCmd = &cobra.Command{
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		vc := videoCategory.NewVideoCategory(
-			videoCategory.WithID(id),
+			videoCategory.WithID(id), // todo: id -> ids
 			videoCategory.WithHl(hl),
 			videoCategory.WithRegionCode(regionCode),
 			videoCategory.WithService(nil),

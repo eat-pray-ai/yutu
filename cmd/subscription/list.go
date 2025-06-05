@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
-			subscription.WithID(id),
+			subscription.WithID(id), // todo: id -> ids
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),

@@ -40,7 +40,7 @@ type caption struct {
 }
 
 type Caption interface {
-	get(parts []string) []*youtube.Caption
+	get(parts []string) []*youtube.Caption // todo: return error
 	List(parts []string, output string)
 	Insert(output string)
 	Update(output string)

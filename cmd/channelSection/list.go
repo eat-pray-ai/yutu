@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
-			channelSection.WithID(id),
+			channelSection.WithID(id), // todo: id -> ids
 			channelSection.WithChannelId(channelId),
 			channelSection.WithHl(hl),
 			channelSection.WithMine(mine),

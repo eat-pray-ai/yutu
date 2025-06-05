@@ -29,7 +29,7 @@ var listCmd = &cobra.Command{
 			search.WithRelevanceLanguage(relevanceLanguage),
 			search.WithSafeSearch(safeSearch),
 			search.WithTopicId(topicId),
-			search.WithTypes(types),
+			search.WithTypes(types), // todo: types string -> []string
 			search.WithVideoCaption(videoCaption),
 			search.WithVideoCategoryId(videoCategoryId),
 			search.WithVideoDefinition(videoDefinition),

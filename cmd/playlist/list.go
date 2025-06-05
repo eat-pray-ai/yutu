@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
-			playlist.WithID(id),
+			playlist.WithID(id), // todo: id -> ids
 			playlist.WithChannelId(channelId),
 			playlist.WithHl(hl),
 			playlist.WithMaxResults(maxResults),

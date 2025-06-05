@@ -16,7 +16,7 @@ import (
 )
 
 func PrintJSON(data interface{}, writer io.Writer) {
-	if writer == nil {
+	if writer == nil { // todo: remove fallback to stdout
 		writer = os.Stdout
 	}
 	marshalled, _ := json.MarshalIndent(data, "", "  ")
@@ -24,7 +24,7 @@ func PrintJSON(data interface{}, writer io.Writer) {
 }
 
 func PrintYAML(data interface{}, writer io.Writer) {
-	if writer == nil {
+	if writer == nil { // todo: remove fallback to stdout
 		writer = os.Stdout
 	}
 	marshalled, _ := yaml.Marshal(data)
