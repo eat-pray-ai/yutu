@@ -24,6 +24,6 @@ var deleteCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
 	deleteCmd.MarkFlagRequired("ids")
 }

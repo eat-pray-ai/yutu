@@ -19,7 +19,7 @@ var (
 )
 
 type playlist struct {
-	ID          string   `yaml:"id" json:"id"`
+	IDs         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
 	Hl          string   `yaml:"hl" json:"hl"`
@@ -57,8 +57,8 @@ func NewPlaylist(opts ...Option) Playlist {
 func (p *playlist) get(parts []string) []*youtube.Playlist {
 	call := service.Playlists.List(parts)
 
-	if p.ID != "" {
-		call = call.Id(p.ID)
+	if len(p.IDs) > 0 {
+		call = call.Id(p.IDs...)
 	}
 	if p.Hl != "" {
 		call = call.Hl(p.Hl)
@@ -170,22 +170,24 @@ func (p *playlist) Update(output string) {
 }
 
 func (p *playlist) Delete() {
-	call := service.Playlists.Delete(p.ID)
-	if p.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
-	}
+	for _, id := range p.IDs {
+		call := service.Playlists.Delete(id)
+		if p.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(p, nil)
-		log.Fatalln(errors.Join(errDeletePlaylist, err))
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(p, nil)
+			log.Fatalln(errors.Join(errDeletePlaylist, err))
+		}
+		fmt.Printf("Playlist %s deleted", id)
 	}
-	fmt.Printf("Playlist %s deleted", p.ID)
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(p *playlist) {
-		p.ID = id
+		p.IDs = ids
 	}
 }
 

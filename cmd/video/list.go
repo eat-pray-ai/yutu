@@ -39,7 +39,7 @@ var listCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&chart, "chart", "c", "", chartUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringVarP(&locale, "locale", "L", "", localUsage)
@@ -53,7 +53,7 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
-	listCmd.Flags().StringArrayVarP(
+	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
 }

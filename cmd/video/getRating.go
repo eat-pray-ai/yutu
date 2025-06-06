@@ -29,7 +29,7 @@ var getRatingCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(getRatingCmd)
 
-	getRatingCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, grIdsUsage)
+	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, grIdsUsage)
 	getRatingCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

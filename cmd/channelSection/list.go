@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	listShort   = "List channel sections"
-	listLong    = "List channel sections"
-	listIdUsage = "Return the channel sections with the given id"
+	listShort    = "List channel sections"
+	listLong     = "List channel sections"
+	listIdsUsage = "Return the channel sections with the given ids"
 )
 
 var listCmd = &cobra.Command{
@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
-			channelSection.WithID(id), // todo: id -> ids
+			channelSection.WithIDs(ids),
 			channelSection.WithChannelId(channelId),
 			channelSection.WithHl(hl),
 			channelSection.WithMine(mine),
@@ -31,14 +31,14 @@ var listCmd = &cobra.Command{
 func init() {
 	channelSectionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", false, mineUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringArrayVarP(
+	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "json", outputUsage)

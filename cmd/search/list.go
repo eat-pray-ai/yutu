@@ -29,7 +29,7 @@ var listCmd = &cobra.Command{
 			search.WithRelevanceLanguage(relevanceLanguage),
 			search.WithSafeSearch(safeSearch),
 			search.WithTopicId(topicId),
-			search.WithTypes(types), // todo: types string -> []string
+			search.WithTypes(types),
 			search.WithVideoCaption(videoCaption),
 			search.WithVideoCategoryId(videoCategoryId),
 			search.WithVideoDefinition(videoDefinition),
@@ -73,7 +73,7 @@ func init() {
 	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", rlUsage)
 	listCmd.Flags().StringVar(&safeSearch, "safeSearch", "moderate", ssUsage)
 	listCmd.Flags().StringVar(&topicId, "topicId", "", tidUsage)
-	listCmd.Flags().StringVar(&types, "types", "", typesUsage)
+	listCmd.Flags().StringSliceVar(&types, "types", []string{}, typesUsage)
 	listCmd.Flags().StringVar(&videoCaption, "videoCaption", "any", vcUsage)
 	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", vcidUsage)
 	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", vdeUsage)

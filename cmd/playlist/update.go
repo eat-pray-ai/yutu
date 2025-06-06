@@ -18,7 +18,7 @@ var updateCmd = &cobra.Command{
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
-			playlist.WithID(id),
+			playlist.WithIDs(ids),
 			playlist.WithTitle(title),
 			playlist.WithDescription(description),
 			playlist.WithTags(tags),
@@ -33,10 +33,10 @@ var updateCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)

@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	downloadShort = "Download caption"
-	downloadLong  = "Download caption from a video"
+	downloadShort   = "Download caption"
+	downloadLong    = "Download caption from a video"
+	downloadIdUsage = "ID of the caption to download"
 )
 
 var downloadCmd = &cobra.Command{
@@ -16,7 +17,7 @@ var downloadCmd = &cobra.Command{
 	Long:  downloadLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := caption.NewCation(
-			caption.WithID(id),
+			caption.WithIDs(ids),
 			caption.WithFile(file),
 			caption.WithTfmt(tfmt),
 			caption.WithTlang(tlang),
@@ -31,7 +32,9 @@ var downloadCmd = &cobra.Command{
 func init() {
 	captionCmd.AddCommand(downloadCmd)
 
-	downloadCmd.Flags().StringVarP(&id, "id", "i", "", idUsage)
+	downloadCmd.Flags().StringSliceVarP(
+		&ids, "id", "i", []string{}, downloadIdUsage,
+	)
 	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
 	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)

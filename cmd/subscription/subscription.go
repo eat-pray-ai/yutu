@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	id                            string
+	ids                           []string
 	subscriberChannelId           string
 	description                   string
 	channelId                     string

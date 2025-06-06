@@ -8,7 +8,7 @@ import (
 const (
 	short       = "List YouTube video categories"
 	long        = "List YouTube video categories' info, such as id, title, assignable, etc."
-	idUsage     = "ID of the video category"
+	idsUsage    = "IDs of the video categories"
 	hlUsage     = "Host language"
 	rcUsage     = "Region code"
 	partsUsage  = "Comma separated parts"
@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	id         string
+	ids        []string
 	hl         string
 	regionCode string
 	parts      []string

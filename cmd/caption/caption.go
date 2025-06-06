@@ -10,7 +10,6 @@ import (
 const (
 	short         = "Manipulate YouTube captions"
 	long          = "List, insert, update, download, or delete YouTube captions"
-	idUsage       = "ID of the caption"
 	fileUsage     = "Path to save the caption file"
 	attUsage      = "unknown, primary, commentary, or descriptive"
 	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"
@@ -28,7 +27,7 @@ const (
 )
 
 var (
-	id                     string
+	ids                    []string
 	file                   string
 	audioTrackType         string
 	isAutoSynced           = utils.BoolPtr("false")

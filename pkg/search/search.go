@@ -15,35 +15,35 @@ var (
 )
 
 type search struct {
-	ChannelId                 string `yaml:"channel_id" json:"channel_id"`
-	ChannelType               string `yaml:"channel_type" json:"channel_type"`
-	EventType                 string `yaml:"event_type" json:"event_type"`
-	ForContentOwner           *bool  `yaml:"for_content_owner" json:"for_content_owner"`
-	ForDeveloper              *bool  `yaml:"for_developer" json:"for_developer"`
-	ForMine                   *bool  `yaml:"for_mine" json:"for_mine"`
-	Location                  string `yaml:"location" json:"location"`
-	LocationRadius            string `yaml:"location_radius" json:"location_radius"`
-	MaxResults                int64  `yaml:"max_results" json:"max_results"`
-	OnBehalfOfContentOwner    string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	Order                     string `yaml:"order" json:"order"`
-	PublishedAfter            string `yaml:"published_after" json:"published_after"`
-	PublishedBefore           string `yaml:"published_before" json:"published_before"`
-	Q                         string `yaml:"q" json:"q"`
-	RegionCode                string `yaml:"region_code" json:"region_code"`
-	RelevanceLanguage         string `yaml:"relevance_language" json:"relevance_language"`
-	SafeSearch                string `yaml:"safe_search" json:"safe_search"`
-	TopicId                   string `yaml:"topic_id" json:"topic_id"`
-	Types                     string `yaml:"types" json:"types"`
-	VideoCaption              string `yaml:"video_caption" json:"video_caption"`
-	VideoCategoryId           string `yaml:"video_category_id" json:"video_category_id"`
-	VideoDefinition           string `yaml:"video_definition" json:"video_definition"`
-	VideoDimension            string `yaml:"video_dimension" json:"video_dimension"`
-	VideoDuration             string `yaml:"video_duration" json:"video_duration"`
-	VideoEmbeddable           string `yaml:"video_embeddable" json:"video_embeddable"`
-	VideoLicense              string `yaml:"video_license" json:"video_license"`
-	VideoPaidProductPlacement string `yaml:"video_paid_product_placement" json:"video_paid_product_placement"`
-	VideoSyndicated           string `yaml:"video_syndicated" json:"video_syndicated"`
-	VideoType                 string `yaml:"video_type" json:"video_type"`
+	ChannelId                 string   `yaml:"channel_id" json:"channel_id"`
+	ChannelType               string   `yaml:"channel_type" json:"channel_type"`
+	EventType                 string   `yaml:"event_type" json:"event_type"`
+	ForContentOwner           *bool    `yaml:"for_content_owner" json:"for_content_owner"`
+	ForDeveloper              *bool    `yaml:"for_developer" json:"for_developer"`
+	ForMine                   *bool    `yaml:"for_mine" json:"for_mine"`
+	Location                  string   `yaml:"location" json:"location"`
+	LocationRadius            string   `yaml:"location_radius" json:"location_radius"`
+	MaxResults                int64    `yaml:"max_results" json:"max_results"`
+	OnBehalfOfContentOwner    string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	Order                     string   `yaml:"order" json:"order"`
+	PublishedAfter            string   `yaml:"published_after" json:"published_after"`
+	PublishedBefore           string   `yaml:"published_before" json:"published_before"`
+	Q                         string   `yaml:"q" json:"q"`
+	RegionCode                string   `yaml:"region_code" json:"region_code"`
+	RelevanceLanguage         string   `yaml:"relevance_language" json:"relevance_language"`
+	SafeSearch                string   `yaml:"safe_search" json:"safe_search"`
+	TopicId                   string   `yaml:"topic_id" json:"topic_id"`
+	Types                     []string `yaml:"types" json:"types"`
+	VideoCaption              string   `yaml:"video_caption" json:"video_caption"`
+	VideoCategoryId           string   `yaml:"video_category_id" json:"video_category_id"`
+	VideoDefinition           string   `yaml:"video_definition" json:"video_definition"`
+	VideoDimension            string   `yaml:"video_dimension" json:"video_dimension"`
+	VideoDuration             string   `yaml:"video_duration" json:"video_duration"`
+	VideoEmbeddable           string   `yaml:"video_embeddable" json:"video_embeddable"`
+	VideoLicense              string   `yaml:"video_license" json:"video_license"`
+	VideoPaidProductPlacement string   `yaml:"video_paid_product_placement" json:"video_paid_product_placement"`
+	VideoSyndicated           string   `yaml:"video_syndicated" json:"video_syndicated"`
+	VideoType                 string   `yaml:"video_type" json:"video_type"`
 }
 
 type Search interface {
@@ -138,8 +138,8 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 		call.TopicId(s.TopicId)
 	}
 
-	if s.Types != "" {
-		call.Type(s.Types)
+	if len(s.Types) > 0 {
+		call.Type(s.Types...)
 	}
 
 	if s.VideoCaption != "" {
@@ -320,7 +320,7 @@ func WithTopicId(topicId string) Option {
 	}
 }
 
-func WithTypes(types string) Option {
+func WithTypes(types []string) Option {
 	return func(s *search) {
 		s.Types = types
 	}

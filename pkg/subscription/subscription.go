@@ -17,19 +17,19 @@ var (
 )
 
 type subscription struct {
-	ID                            string `yaml:"id" json:"id"`
-	SubscriberChannelId           string `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
-	Description                   string `yaml:"description" json:"description"`
-	ChannelId                     string `yaml:"channel_id" json:"channel_id"`
-	ForChannelId                  string `yaml:"for_channel_id" json:"for_channel_id"`
-	MaxResults                    int64  `yaml:"max_results" json:"max_results"`
-	Mine                          *bool  `yaml:"mine" json:"mine"`
-	MyRecentSubscribers           *bool  `yaml:"my_recent_subscribers" json:"my_recent_subscribers"`
-	MySubscribers                 *bool  `yaml:"my_subscribers" json:"my_subscribers"`
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
-	Order                         string `yaml:"order" json:"order"`
-	Title                         string `yaml:"title" json:"title"`
+	IDs                           []string `yaml:"ids" json:"ids"`
+	SubscriberChannelId           string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
+	Description                   string   `yaml:"description" json:"description"`
+	ChannelId                     string   `yaml:"channel_id" json:"channel_id"`
+	ForChannelId                  string   `yaml:"for_channel_id" json:"for_channel_id"`
+	MaxResults                    int64    `yaml:"max_results" json:"max_results"`
+	Mine                          *bool    `yaml:"mine" json:"mine"`
+	MyRecentSubscribers           *bool    `yaml:"my_recent_subscribers" json:"my_recent_subscribers"`
+	MySubscribers                 *bool    `yaml:"my_subscribers" json:"my_subscribers"`
+	OnBehalfOfContentOwner        string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	OnBehalfOfContentOwnerChannel string   `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	Order                         string   `yaml:"order" json:"order"`
+	Title                         string   `yaml:"title" json:"title"`
 }
 
 type Subscription interface {
@@ -53,8 +53,8 @@ func NewSubscription(opts ...Option) Subscription {
 
 func (s *subscription) get(parts []string) []*youtube.Subscription {
 	call := service.Subscriptions.List(parts)
-	if s.ID != "" {
-		call = call.Id(s.ID)
+	if len(s.IDs) > 0 {
+		call = call.Id(s.IDs...)
 	}
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
@@ -144,19 +144,21 @@ func (s *subscription) Insert(output string) {
 }
 
 func (s *subscription) Delete() {
-	call := service.Subscriptions.Delete(s.ID)
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(s, nil)
-		log.Fatalln(errors.Join(errDeleteSubscription, err))
-	}
+	for _, id := range s.IDs {
+		call := service.Subscriptions.Delete(id)
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(s, nil)
+			log.Fatalln(errors.Join(errDeleteSubscription, err))
+		}
 
-	fmt.Printf("Subscription %s deleted", s.ID)
+		fmt.Printf("Subscription %s deleted", id)
+	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(s *subscription) {
-		s.ID = id
+		s.IDs = ids
 	}
 }
 

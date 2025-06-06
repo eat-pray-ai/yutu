@@ -18,7 +18,7 @@ var updateCmd = &cobra.Command{
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithID(id),
+			playlistItem.WithIDs(ids),
 			playlistItem.WithTitle(title),
 			playlistItem.WithDescription(description),
 			playlistItem.WithPrivacy(privacy),
@@ -32,7 +32,7 @@ var updateCmd = &cobra.Command{
 func init() {
 	playlistItemCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringVarP(&id, "id", "i", "", updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)

@@ -8,7 +8,7 @@ import (
 const (
 	listShort       = "List subscriptions' info"
 	listLong        = "List subscriptions' info, such as id, title, etc"
-	listIdUsage     = "Return the subscriptions with the given id for Stubby or Apiary"
+	listIdsUsage    = "Return the subscriptions with the given ids for Stubby or Apiary"
 	listCidUsage    = "Return the subscriptions of the given channel owner"
 	listOutputUsage = "json or yaml"
 )
@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
-			subscription.WithID(id), // todo: id -> ids
+			subscription.WithIDs(ids),
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),
@@ -38,7 +38,7 @@ var listCmd = &cobra.Command{
 func init() {
 	subscriptionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&forChannelId, "forChannelId", "C", "", fcidUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
@@ -55,7 +55,7 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
-	listCmd.Flags().StringArrayVarP(
+	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
 }

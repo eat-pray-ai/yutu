@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	deleteShort   = "Delete channel section"
-	deleteLong    = "Delete channel section"
-	deleteIdUsage = "Delete the channel section with the given id"
+	deleteShort    = "Delete channel sections"
+	deleteLong     = "Delete channel sections by ids"
+	deleteIdsUsage = "Delete the channel sections with the given ids"
 )
 
 var deleteCmd = &cobra.Command{
@@ -17,7 +17,7 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cs := channelSection.NewChannelSection(
-			channelSection.WithID(id),
+			channelSection.WithIDs(ids),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelSection.WithService(nil),
 		)
@@ -28,7 +28,7 @@ var deleteCmd = &cobra.Command{
 func init() {
 	channelSectionCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", deleteIdUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

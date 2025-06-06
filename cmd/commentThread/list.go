@@ -17,7 +17,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		ct := commentThread.NewCommentThread(
-			commentThread.WithID(id), // todo: id -> ids
+			commentThread.WithIDs(ids),
 			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
 			commentThread.WithChannelId(channelId),
 			commentThread.WithMaxResults(maxResults),
@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 func init() {
 	commentThreadCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&id, "id", "i", []string{}, idUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	listCmd.Flags().StringVarP(
 		&allThreadsRelatedToChannelId, "allThreadsRelatedToChannelId", "a", "",
 		atrtcidUsage,

@@ -16,9 +16,9 @@ var (
 )
 
 type videoCategory struct {
-	ID         string `yaml:"id" json:"id"`
-	Hl         string `yaml:"hl" json:"hl"`
-	RegionCode string `yaml:"region_code" json:"region_code"`
+	IDs        []string `yaml:"ids" json:"ids"`
+	Hl         string   `yaml:"hl" json:"hl"`
+	RegionCode string   `yaml:"region_code" json:"region_code"`
 }
 
 type VideoCategory interface {
@@ -38,8 +38,8 @@ func NewVideoCategory(opt ...Option) VideoCategory {
 
 func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 	call := service.VideoCategories.List(parts)
-	if vc.ID != "" {
-		call = call.Id(vc.ID)
+	if len(vc.IDs) > 0 {
+		call = call.Id(vc.IDs...)
 	}
 	if vc.Hl != "" {
 		call = call.Hl(vc.Hl)
@@ -75,9 +75,9 @@ func (vc *videoCategory) List(parts []string, output string) {
 	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(vc *videoCategory) {
-		vc.ID = id
+		vc.IDs = ids
 	}
 }
 

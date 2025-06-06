@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	deleteShort   = "Delete a YouTube subscription"
-	deleteLong    = "Delete a YouTube subscription by id"
-	deleteIdUsage = "ID of the subscription to delete"
+	deleteShort    = "Delete a YouTube subscriptions"
+	deleteLong     = "Delete a YouTube subscriptions by ids"
+	deleteIdsUsage = "IDs of the subscriptions to delete"
 )
 
 var deleteCmd = &cobra.Command{
@@ -17,7 +17,7 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := subscription.NewSubscription(
-			subscription.WithID(id), subscription.WithService(nil),
+			subscription.WithIDs(ids), subscription.WithService(nil),
 		)
 		s.Delete()
 	},
@@ -26,5 +26,5 @@ var deleteCmd = &cobra.Command{
 func init() {
 	subscriptionCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringVarP(&id, "id", "i", "", deleteIdUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
 }

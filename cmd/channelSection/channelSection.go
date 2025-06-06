@@ -17,7 +17,7 @@ const (
 )
 
 var (
-	id                     string
+	ids                    []string
 	channelId              string
 	hl                     string
 	mine                   = utils.BoolPtr("false")

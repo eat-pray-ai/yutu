@@ -47,7 +47,7 @@ func init() {
 		&forUsername, "forUsername", "u", "", fuUsage,
 	)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().BoolVarP(
 		managedByMe, "managedByMe", "E", false, mbmUsage,
 	)
@@ -62,7 +62,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
-	listCmd.Flags().StringArrayVarP(
+	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
 }

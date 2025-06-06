@@ -53,7 +53,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	insertCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", insertLangUsage)
 	insertCmd.Flags().StringVarP(&license, "license", "L", "youtube", licenseUsage)
 	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)

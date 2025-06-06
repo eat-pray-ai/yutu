@@ -33,7 +33,7 @@ var reportAbuseCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(reportAbuseCmd)
 
-	reportAbuseCmd.Flags().StringArrayVarP(
+	reportAbuseCmd.Flags().StringSliceVarP(
 		&ids, "ids", "i", []string{}, raIdsUsage,
 	)
 	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", ridUsage)

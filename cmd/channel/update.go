@@ -8,7 +8,7 @@ import (
 const (
 	updateShort       = "Update channel's info"
 	updateLong        = "Update channel's info, such as title, description, etc"
-	updateIdsUsage    = "ID of the channel to update"
+	updateIdUsage     = "ID of the channel to update"
 	updateOutputUsage = "json, yaml, or silent"
 )
 
@@ -33,7 +33,7 @@ var updateCmd = &cobra.Command{
 func init() {
 	channelCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringArrayVarP(&ids, "id", "i", []string{}, updateIdsUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
 	updateCmd.Flags().StringVarP(&country, "country", "c", "", countryUsage)
 	updateCmd.Flags().StringVarP(&customUrl, "customUrl", "u", "", curlUsage)
 	updateCmd.Flags().StringVarP(

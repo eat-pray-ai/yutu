@@ -89,7 +89,7 @@ func init() {
 		&publishedBefore, "publishedBefore", "b", "", pbUsage,
 	)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
-	listCmd.Flags().StringArrayVarP(&parts, "parts", "p", defaultParts, partsUsage)
+	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 }
 

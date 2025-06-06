@@ -8,7 +8,7 @@ import (
 const (
 	listShort       = "List playlist's info"
 	listLong        = "List playlist's info, such as title, description, etc"
-	listIdUsage     = "Return the playlists with the given IDs for Stubby or Apiary"
+	listIdsUsage    = "Return the playlists with the given IDs for Stubby or Apiary"
 	listCidUsage    = "Return the playlists owned by the specified channel id"
 	listOutputUsage = "json or yaml"
 )
@@ -19,7 +19,7 @@ var listCmd = &cobra.Command{
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
-			playlist.WithID(id), // todo: id -> ids
+			playlist.WithIDs(ids),
 			playlist.WithChannelId(channelId),
 			playlist.WithHl(hl),
 			playlist.WithMaxResults(maxResults),
@@ -35,7 +35,7 @@ var listCmd = &cobra.Command{
 func init() {
 	playlistCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&id, "id", "i", "", listIdUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
@@ -46,7 +46,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
-	listCmd.Flags().StringArrayVarP(
+	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)

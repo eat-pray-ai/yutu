@@ -19,18 +19,18 @@ var (
 )
 
 type playlistItem struct {
-	ID          string `yaml:"id" json:"id"`
-	Title       string `yaml:"title" json:"title"`
-	Description string `yaml:"description" json:"description"`
-	Kind        string `yaml:"kind" json:"kind"`
-	KVideoId    string `yaml:"k_video_id" json:"k_video_id"`
-	KChannelId  string `yaml:"k_channel_id" json:"k_channel_id"`
-	KPlaylistId string `yaml:"k_playlist_id" json:"k_playlist_id"`
-	VideoId     string `yaml:"video_id" json:"video_id"`
-	PlaylistId  string `yaml:"playlist_id" json:"playlist_id"`
-	ChannelId   string `yaml:"channel_id" json:"channel_id"`
-	Privacy     string `yaml:"privacy" json:"privacy"`
-	MaxResults  int64  `yaml:"max_results" json:"max_results"`
+	IDs         []string `yaml:"ids" json:"ids"`
+	Title       string   `yaml:"title" json:"title"`
+	Description string   `yaml:"description" json:"description"`
+	Kind        string   `yaml:"kind" json:"kind"`
+	KVideoId    string   `yaml:"k_video_id" json:"k_video_id"`
+	KChannelId  string   `yaml:"k_channel_id" json:"k_channel_id"`
+	KPlaylistId string   `yaml:"k_playlist_id" json:"k_playlist_id"`
+	VideoId     string   `yaml:"video_id" json:"video_id"`
+	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id"`
+	ChannelId   string   `yaml:"channel_id" json:"channel_id"`
+	Privacy     string   `yaml:"privacy" json:"privacy"`
+	MaxResults  int64    `yaml:"max_results" json:"max_results"`
 
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
@@ -57,8 +57,8 @@ func NewPlaylistItem(opts ...Option) PlaylistItem {
 
 func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call := service.PlaylistItems.List(parts)
-	if pi.ID != "" {
-		call = call.Id(pi.ID)
+	if len(pi.IDs) > 0 {
+		call = call.Id(pi.IDs...)
 	}
 	if pi.PlaylistId != "" {
 		call = call.PlaylistId(pi.PlaylistId)
@@ -191,23 +191,25 @@ func (pi *playlistItem) Update(output string) {
 }
 
 func (pi *playlistItem) Delete() {
-	call := service.PlaylistItems.Delete(pi.ID)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
-	}
+	for _, id := range pi.IDs {
+		call := service.PlaylistItems.Delete(id)
+		if pi.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errDeletePlaylistItem, err))
-	}
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(pi, nil)
+			log.Fatalln(errors.Join(errDeletePlaylistItem, err))
+		}
 
-	fmt.Printf("Playlsit Item %s deleted", pi.ID)
+		fmt.Printf("Playlsit Item %s deleted", id)
+	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(p *playlistItem) {
-		p.ID = id
+		p.IDs = ids
 	}
 }
 

@@ -35,7 +35,7 @@ func init() {
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringArrayVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	insertCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)

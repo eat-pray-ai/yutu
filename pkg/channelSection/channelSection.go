@@ -16,11 +16,11 @@ var (
 )
 
 type channelSection struct {
-	ID                     string `yaml:"id" json:"id"`
-	ChannelId              string `yaml:"channel_id" json:"channel_id"`
-	Hl                     string `yaml:"hl" json:"hl"`
-	Mine                   *bool  `yaml:"mine" json:"mine"`
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	IDs                    []string `yaml:"ids" json:"ids"`
+	ChannelId              string   `yaml:"channel_id" json:"channel_id"`
+	Hl                     string   `yaml:"hl" json:"hl"`
+	Mine                   *bool    `yaml:"mine" json:"mine"`
+	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
 type ChannelSection interface {
@@ -44,8 +44,8 @@ func NewChannelSection(opts ...Option) ChannelSection {
 
 func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
 	call := service.ChannelSections.List(parts)
-	if cs.ID != "" {
-		call = call.Id(cs.ID)
+	if len(cs.IDs) > 0 {
+		call = call.Id(cs.IDs...)
 	}
 	if cs.ChannelId != "" {
 		call = call.ChannelId(cs.ChannelId)
@@ -87,23 +87,25 @@ func (cs *channelSection) List(parts []string, output string) {
 }
 
 func (cs *channelSection) Delete() {
-	call := service.ChannelSections.Delete(cs.ID)
-	if cs.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
-	}
+	for _, id := range cs.IDs {
+		call := service.ChannelSections.Delete(id)
+		if cs.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(cs, nil)
-		log.Fatalln(errors.Join(errDeleteChannelSection, err))
-	}
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(cs, nil)
+			log.Fatalln(errors.Join(errDeleteChannelSection, err))
+		}
 
-	fmt.Printf("Channel section %s deleted\n", cs.ID)
+		fmt.Printf("Channel section %s deleted\n", id)
+	}
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(cs *channelSection) {
-		cs.ID = id
+		cs.IDs = ids
 	}
 }
 

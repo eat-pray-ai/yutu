@@ -21,22 +21,22 @@ var (
 )
 
 type caption struct {
-	ID                     string `yaml:"id" json:"id"`
-	File                   string `yaml:"file" json:"file"`
-	AudioTrackType         string `yaml:"audio_track_type" json:"audio_track_type"`
-	IsAutoSynced           *bool  `yaml:"is_auto_synced" json:"is_auto_synced"`
-	IsCC                   *bool  `yaml:"is_cc" json:"is_cc"`
-	IsDraft                *bool  `yaml:"is_draft" json:"is_draft"`
-	IsEasyReader           *bool  `yaml:"is_easy_reader" json:"is_easy_reader"`
-	IsLarge                *bool  `yaml:"is_large" json:"is_large"`
-	Language               string `yaml:"language" json:"language"`
-	Name                   string `yaml:"name" json:"name"`
-	TrackKind              string `yaml:"track_kind" json:"track_kind"`
-	OnBehalfOf             string `yaml:"on_behalf_of" json:"on_behalf_of"`
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	VideoId                string `yaml:"video_id" json:"video_id"`
-	Tfmt                   string `yaml:"tfmt" json:"tfmt"`
-	Tlang                  string `yaml:"tlang" json:"tlang"`
+	IDs                    []string `yaml:"ids" json:"ids"`
+	File                   string   `yaml:"file" json:"file"`
+	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
+	IsAutoSynced           *bool    `yaml:"is_auto_synced" json:"is_auto_synced"`
+	IsCC                   *bool    `yaml:"is_cc" json:"is_cc"`
+	IsDraft                *bool    `yaml:"is_draft" json:"is_draft"`
+	IsEasyReader           *bool    `yaml:"is_easy_reader" json:"is_easy_reader"`
+	IsLarge                *bool    `yaml:"is_large" json:"is_large"`
+	Language               string   `yaml:"language" json:"language"`
+	Name                   string   `yaml:"name" json:"name"`
+	TrackKind              string   `yaml:"track_kind" json:"track_kind"`
+	OnBehalfOf             string   `yaml:"on_behalf_of" json:"on_behalf_of"`
+	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	VideoId                string   `yaml:"video_id" json:"video_id"`
+	Tfmt                   string   `yaml:"tfmt" json:"tfmt"`
+	Tlang                  string   `yaml:"tlang" json:"tlang"`
 }
 
 type Caption interface {
@@ -60,8 +60,8 @@ func NewCation(opts ...Option) Caption {
 
 func (c *caption) get(parts []string) []*youtube.Caption {
 	call := service.Captions.List(parts, c.VideoId)
-	if c.ID != "" {
-		call = call.Id(c.ID)
+	if len(c.IDs) > 0 {
+		call = call.Id(c.IDs...)
 	}
 	if c.OnBehalfOf != "" {
 		call = call.OnBehalfOf(c.OnBehalfOf)
@@ -210,25 +210,27 @@ func (c *caption) Update(output string) {
 }
 
 func (c *caption) Delete() {
-	call := service.Captions.Delete(c.ID)
-	if c.OnBehalfOf != "" {
-		call = call.OnBehalfOf(c.OnBehalfOf)
-	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
-	}
+	for _, id := range c.IDs {
+		call := service.Captions.Delete(id)
+		if c.OnBehalfOf != "" {
+			call = call.OnBehalfOf(c.OnBehalfOf)
+		}
+		if c.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errDeleteCaption, err))
-	}
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(c, nil)
+			log.Fatalln(errors.Join(errDeleteCaption, err))
+		}
 
-	fmt.Printf("Caption %s deleted\n", c.ID)
+		fmt.Printf("Caption %s deleted\n", id)
+	}
 }
 
 func (c *caption) Download() {
-	call := service.Captions.Download(c.ID)
+	call := service.Captions.Download(c.IDs[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
 	}
@@ -266,12 +268,12 @@ func (c *caption) Download() {
 		log.Fatalln(errors.Join(errDownloadCaption, err))
 	}
 
-	fmt.Printf("Caption %s downloaded to %s\n", c.ID, c.File)
+	fmt.Printf("Caption %s downloaded to %s\n", c.IDs[0], c.File)
 }
 
-func WithID(id string) Option {
+func WithIDs(ids []string) Option {
 	return func(c *caption) {
-		c.ID = id
+		c.IDs = ids
 	}
 }
 

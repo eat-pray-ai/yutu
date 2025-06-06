@@ -60,7 +60,7 @@ var (
 	relevanceLanguage         string
 	safeSearch                string
 	topicId                   string
-	types                     string
+	types                     []string
 	videoCaption              string
 	videoCategoryId           string
 	videoDefinition           string

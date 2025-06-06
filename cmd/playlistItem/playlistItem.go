@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	id          string
+	ids         []string
 	title       string
 	description string
 	kind        string

@@ -8,7 +8,7 @@ import (
 const (
 	short        = "Manipulate YouTube comment threads"
 	long         = "List or insert YouTube comment threads"
-	idUsage      = "ID of the comment thread"
+	idsUsage     = "IDs of the comment threads"
 	atrtcidUsage = "Returns the comment threads of all videos of the channel and the channel comments as well"
 	acidUsage    = "Channel id of the comment author"
 	cidUsage     = "Channel id of the video owner"
@@ -23,7 +23,7 @@ const (
 )
 
 var (
-	id                           []string
+	ids                          []string
 	allThreadsRelatedToChannelId string
 	authorChannelId              string
 	channelId                    string

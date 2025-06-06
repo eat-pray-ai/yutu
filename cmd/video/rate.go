@@ -29,7 +29,7 @@ var rateCmd = &cobra.Command{
 func init() {
 	videoCmd.AddCommand(rateCmd)
 
-	rateCmd.Flags().StringArrayVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
+	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
 	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
 
 	rateCmd.MarkFlagRequired("ids")
