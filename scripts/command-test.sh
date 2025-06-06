@@ -144,7 +144,15 @@ echo "------- update -------"
 ./yutu playlistItem update --help
 
 echo "======= playlistImage ======="
-echo "pending implementation"
+./yutu playlistImage --help
+echo "------- delete -------"
+./yutu playlistImage delete --help
+echo "------- insert -------"
+./yutu playlistImage insert --help
+echo "------- list -------"
+./yutu playlistImage list --help
+echo "------- update -------"
+./yutu playlistImage update --help
 
 echo "======= search ======="
 ./yutu search --help
