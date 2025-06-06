@@ -19,7 +19,7 @@ func TestNewCation(t *testing.T) {
 			name: "TestNewCaption",
 			args: args{
 				opts: []Option{
-					WithID("ID"),
+					WithIDs([]string{"id1", "id2"}),
 					WithFile("File"),
 					WithAudioTrackType("AudioTrackType"),
 					WithIsAutoSynced(utils.BoolPtr("true")),
@@ -32,7 +32,7 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &caption{
-				ID:             "ID",
+				IDs:            []string{"id1", "id2"},
 				File:           "File",
 				AudioTrackType: "AudioTrackType",
 				IsAutoSynced:   utils.BoolPtr("true"),

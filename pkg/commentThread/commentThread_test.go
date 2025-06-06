@@ -18,7 +18,7 @@ func TestNewCommentThread(t *testing.T) {
 			name: "TestNewCommentThread",
 			args: args{
 				opts: []Option{
-					WithID([]string{"id"}),
+					WithIDs([]string{"id"}),
 					WithAllThreadsRelatedToChannelId("allThreadsRelatedToChannelId"),
 					WithAuthorChannelId("authorChannelId"),
 					WithChannelId("channelId"),
@@ -32,7 +32,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &commentThread{
-				ID:                           []string{"id"},
+				IDs:                          []string{"id"},
 				AllThreadsRelatedToChannelId: "allThreadsRelatedToChannelId",
 				AuthorChannelId:              "authorChannelId",
 				ChannelId:                    "channelId",
@@ -49,7 +49,9 @@ func TestNewCommentThread(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewCommentThread(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+				if got := NewCommentThread(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
 					t.Errorf("NewCommentThread() = %v, want %v", got, tt.want)
 				}
 			},

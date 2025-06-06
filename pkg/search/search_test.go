@@ -30,6 +30,7 @@ func TestNewSearch(t *testing.T) {
 					WithMaxResults(10),
 					WithOnBehalfOfContentOwner("contentOwner"),
 					WithOrder("rating"),
+					WithTypes([]string{"video", "channel", "playlist"}),
 				},
 			},
 			want: &search{
@@ -44,6 +45,7 @@ func TestNewSearch(t *testing.T) {
 				MaxResults:             10,
 				OnBehalfOfContentOwner: "contentOwner",
 				Order:                  "rating",
+				Types:                  []string{"video", "channel", "playlist"},
 			},
 		},
 	}

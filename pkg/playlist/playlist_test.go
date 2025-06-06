@@ -19,7 +19,7 @@ func TestNewPlaylist(t *testing.T) {
 			name: "TestNewPlaylist",
 			args: args{
 				opts: []Option{
-					WithID("id"),
+					WithIDs([]string{"id1", "id2"}),
 					WithTitle("title"),
 					WithDescription("description"),
 					WithHl("hl"),
@@ -34,7 +34,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &playlist{
-				ID:                            "id",
+				IDs:                           []string{"id1", "id2"},
 				Title:                         "title",
 				Description:                   "description",
 				Hl:                            "hl",

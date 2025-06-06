@@ -18,7 +18,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			name: "TestNewPlaylistItem",
 			args: args{
 				opts: []Option{
-					WithID("id"),
+					WithIDs([]string{"id1", "id2"}),
 					WithTitle("title"),
 					WithDescription("description"),
 					WithKind("video"),
@@ -29,7 +29,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &playlistItem{
-				ID:          "id",
+				IDs:         []string{"id1", "id2"},
 				Title:       "title",
 				Description: "description",
 				Kind:        "video",
@@ -43,7 +43,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			name: "TestNewPlaylistItem",
 			args: args{
 				opts: []Option{
-					WithID("id"),
+					WithIDs([]string{"id"}),
 					WithTitle("title"),
 					WithDescription("description"),
 					WithKind("channel"),
@@ -54,7 +54,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &playlistItem{
-				ID:          "id",
+				IDs:         []string{"id"},
 				Title:       "title",
 				Description: "description",
 				Kind:        "channel",

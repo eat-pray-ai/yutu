@@ -19,7 +19,7 @@ func TestNewSubscription(t *testing.T) {
 			name: "TestNewSubscription",
 			args: args{
 				opts: []Option{
-					WithID("id"),
+					WithIDs([]string{"id1", "id2"}),
 					WithSubscriberChannelId("subscriberChannelId"),
 					WithDescription("description"),
 					WithChannelId("channelId"),
@@ -34,7 +34,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &subscription{
-				ID:                            "id",
+				IDs:                           []string{"id1", "id2"},
 				SubscriberChannelId:           "subscriberChannelId",
 				Description:                   "description",
 				ChannelId:                     "channelId",
