@@ -16,7 +16,8 @@ var (
 )
 
 type channelBanner struct {
-	File string `yaml:"file" json:"file"`
+	ChannelId string `yaml:"channel_id" json:"channel_id"`
+	File      string `yaml:"file" json:"file"`
 
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
@@ -47,7 +48,7 @@ func (cb *channelBanner) Insert(output string) {
 	defer file.Close()
 	cbr := &youtube.ChannelBannerResource{}
 
-	call := service.ChannelBanners.Insert(cbr).Media(file)
+	call := service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
 	if cb.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(cb.OnBehalfOfContentOwner)
 	}
@@ -69,6 +70,12 @@ func (cb *channelBanner) Insert(output string) {
 	case "silent":
 	default:
 		fmt.Printf("ChannelBanner inserted: %s\n", res.Url)
+	}
+}
+
+func WithChannelId(channelId string) Option {
+	return func(cb *channelBanner) {
+		cb.ChannelId = channelId
 	}
 }
 

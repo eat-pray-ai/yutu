@@ -8,13 +8,15 @@ import (
 const (
 	short       = "Insert Youtube channel banner"
 	long        = "Insert Youtube channel banner"
+	cidUsage    = "ID of the channel to insert the banner for"
 	fileUsage   = "Path to the banner image"
 	outputUsage = "json, yaml, or silent"
 )
 
 var (
-	file   string
-	output string
+	channelId string
+	file      string
+	output    string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

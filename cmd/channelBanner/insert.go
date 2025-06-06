@@ -11,6 +11,7 @@ var insertCmd = &cobra.Command{
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		cb := channelBanner.NewChannelBanner(
+			channelBanner.WithChannelId(channelId),
 			channelBanner.WithFile(file),
 			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
@@ -23,6 +24,7 @@ var insertCmd = &cobra.Command{
 func init() {
 	channelBannerCmd.AddCommand(insertCmd)
 
+	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
@@ -32,5 +34,6 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 
+	insertCmd.MarkFlagRequired("channelId")
 	insertCmd.MarkFlagRequired("file")
 }

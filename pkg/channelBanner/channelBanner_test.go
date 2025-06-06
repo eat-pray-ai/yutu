@@ -18,12 +18,14 @@ func TestNewChannelBanner(t *testing.T) {
 			name: "TestNewChannelBanner",
 			args: args{
 				opts: []Option{
+					WithChannelId("channelId"),
 					WithFile("file"),
 					WithOnBehalfOfContentOwner("contentOwner"),
 					WithOnBehalfOfContentOwnerChannel("contentOwnerChannel"),
 				},
 			},
 			want: &channelBanner{
+				ChannelId:                     "channelId",
 				File:                          "file",
 				OnBehalfOfContentOwner:        "contentOwner",
 				OnBehalfOfContentOwnerChannel: "contentOwnerChannel",
