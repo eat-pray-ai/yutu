@@ -19,13 +19,12 @@ var (
 )
 
 type playlistImage struct {
-	ID         string `yaml:"id" json:"id"`
-	Kind       string `yaml:"kind" json:"kind"`
-	Height     int64  `yaml:"height" json:"height"`
-	PlaylistID string `yaml:"playlistId" json:"playlistId"`
-	Type       string `yaml:"type" json:"type"`
-	Width      int64  `yaml:"width" json:"width"`
-	File       string `yaml:"file" json:"file"`
+	IDs        []string `yaml:"ids" json:"ids"`
+	Height     int64    `yaml:"height" json:"height"`
+	PlaylistID string   `yaml:"playlistId" json:"playlistId"`
+	Type       string   `yaml:"type" json:"type"`
+	Width      int64    `yaml:"width" json:"width"`
+	File       string   `yaml:"file" json:"file"`
 
 	Parent     string `yaml:"parent" json:"parent"`
 	MaxResults int64  `yaml:"max_results" json:"max_results"`
@@ -106,7 +105,7 @@ func (pi *playlistImage) Insert(output string) {
 	defer file.Close()
 
 	playlistImage := &youtube.PlaylistImage{
-		Kind: pi.Kind,
+		Kind: "youtube#playlistImages",
 		Snippet: &youtube.PlaylistImageSnippet{
 			PlaylistId: pi.PlaylistID,
 			Type:       pi.Type,
@@ -135,6 +134,7 @@ func (pi *playlistImage) Insert(output string) {
 		utils.PrintJSON(res, nil)
 	case "yaml":
 		utils.PrintYAML(res, nil)
+	case "silent":
 	default:
 		fmt.Printf("PlaylistImage inserted: %s\n", res.Id)
 	}
@@ -142,9 +142,6 @@ func (pi *playlistImage) Insert(output string) {
 
 func (pi *playlistImage) Update(output string) {
 	playlistImage := pi.get([]string{"id", "kind", "snippet"})[0]
-	if pi.Kind != "" {
-		playlistImage.Kind = pi.Kind
-	}
 	if pi.PlaylistID != "" {
 		playlistImage.Snippet.PlaylistId = pi.PlaylistID
 	}
@@ -184,35 +181,32 @@ func (pi *playlistImage) Update(output string) {
 		utils.PrintJSON(res, nil)
 	case "yaml":
 		utils.PrintYAML(res, nil)
+	case "silent":
 	default:
 		fmt.Printf("PlaylistImage updated: %s\n", res.Id)
 	}
 }
 
 func (pi *playlistImage) Delete() {
-	call := service.PlaylistImages.Delete()
-	call = call.Id(pi.ID)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
-	}
+	for _, id := range pi.IDs {
+		call := service.PlaylistImages.Delete()
+		call = call.Id(id)
+		if pi.OnBehalfOfContentOwner != "" {
+			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+		}
 
-	err := call.Do()
-	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errDeletePlaylistImage, err))
-	}
-	fmt.Printf("PlaylistImage %s deleted\n", pi.ID)
-}
-
-func WithID(id string) Option {
-	return func(pi *playlistImage) {
-		pi.ID = id
+		err := call.Do()
+		if err != nil {
+			utils.PrintJSON(pi, nil)
+			log.Fatalln(errors.Join(errDeletePlaylistImage, err))
+		}
+		fmt.Printf("PlaylistImage %s deleted\n", id)
 	}
 }
 
-func WithKind(kind string) Option {
+func WithIDs(ids []string) Option {
 	return func(pi *playlistImage) {
-		pi.Kind = kind
+		pi.IDs = ids
 	}
 }
 

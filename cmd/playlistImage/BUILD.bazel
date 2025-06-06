@@ -3,8 +3,11 @@ load("@rules_go//go:def.bzl", "go_library")
 go_library(
     name = "playlistImage",
     srcs = [
+        "delete.go",
+        "insert.go",
         "list.go",
         "playlistImage.go",
+        "update.go",
     ],
     importpath = "github.com/eat-pray-ai/yutu/cmd/playlistImage",
     visibility = ["//visibility:public"],

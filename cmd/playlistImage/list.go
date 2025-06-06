@@ -5,10 +5,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort       = "List YouTube playlist images"
+	listLong        = "List YouTube playlist images' info"
+	listOutputUsage = "json or yaml"
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List YouTube playlist images",
-	Long:  "List YouTube playlist images' info",
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		pi := playlistImage.NewPlaylistImage(
 			playlistImage.WithParent(parent),
@@ -24,10 +30,16 @@ var listCmd = &cobra.Command{
 func init() {
 	playlistImageCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringVarP(&parent, "parent", "p", "", "Return PlaylistImages for this playlist id")
-	listCmd.Flags().StringVarP(&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "")
-	listCmd.Flags().StringVarP(&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "")
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, "The maximum number of items that should be returned")
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", []string{"id", "kind", "snippet"}, "Comma separated parts")
-	listCmd.Flags().StringVarP(&output, "output", "o", "", "json or yaml")
+	listCmd.Flags().StringVarP(&parent, "parent", "P", "", parentUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().StringSliceVarP(
+		&parts, "parts", "p", []string{"id", "kind", "snippet"}, partsUsage,
+	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
+	listCmd.Flags().StringVarP(
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+	)
 }

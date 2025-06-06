@@ -124,13 +124,21 @@ func (c *channel) List(parts []string, output string) {
 func (c *channel) Update(output string) {
 	parts := []string{"snippet"}
 	cha := c.get(parts)[0]
-	if c.Title != "" {
-		cha.Snippet.Title = c.Title
+	if c.Country != "" {
+		cha.Snippet.Country = c.Country
+	}
+	if c.CustomUrl != "" {
+		cha.Snippet.CustomUrl = c.CustomUrl
+	}
+	if c.DefaultLanguage != "" {
+		cha.Snippet.DefaultLanguage = c.DefaultLanguage
 	}
 	if c.Description != "" {
 		cha.Snippet.Description = c.Description
 	}
-	// todo: support other fields like country, customUrl, defaultLanguage, etc.
+	if c.Title != "" {
+		cha.Snippet.Title = c.Title
+	}
 
 	call := service.Channels.Update(parts, cha)
 	res, err := call.Do()

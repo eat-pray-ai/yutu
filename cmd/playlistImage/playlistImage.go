@@ -5,10 +5,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// todo
+const (
+	short       = "Manipulate YouTube playlist images"
+	long        = "List, insert, update, or delete YouTube playlist images"
+	idsUsage    = "IDs of the playlist images to delete"
+	heightUsage = "The image height"
+	pidUsage    = "ID of the playlist this image is associated with"
+	typeUsage   = "The image type (e.g., 'hero')"
+	widthUsage  = "The image width"
+	fileUsage   = "Path to the image file"
+	parentUsage = "Return PlaylistImages for this playlist id"
+	mrUsage     = "The maximum number of items that should be returned"
+	partsUsage  = "Comma separated parts"
+)
+
 var (
-	id         string
-	kind       string
+	ids        []string
 	height     int64
 	playlistId string
 	type_      string
@@ -25,8 +37,8 @@ var (
 
 var playlistImageCmd = &cobra.Command{
 	Use:   "playlistImage",
-	Short: "Manipulate YouTube playlist images",
-	Long:  "List, insert, update, or delete YouTube playlist images",
+	Short: short,
+	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

@@ -18,8 +18,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			name: "TestNewPlaylistImage",
 			args: args{
 				opts: []Option{
-					WithID("id"),
-					WithKind("kind"),
+					WithIDs([]string{"id1", "id2"}),
 					WithHeight(100),
 					WithPlaylistID("playlistID"),
 					WithType("type"),
@@ -32,8 +31,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &playlistImage{
-				ID:                            "id",
-				Kind:                          "kind",
+				IDs:                           []string{"id1", "id2"},
 				Height:                        100,
 				PlaylistID:                    "playlistID",
 				Type:                          "type",
@@ -47,10 +45,14 @@ func TestNewPlaylistImage(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewPlaylistImage(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewPlaylistImage() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := NewPlaylistImage(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
+					t.Errorf("NewPlaylistImage() = %v, want %v", got, tt.want)
+				}
+			},
+		)
 	}
 }
