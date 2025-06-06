@@ -29,4 +29,6 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", masOutputUsage)
+
+	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }

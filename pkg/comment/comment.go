@@ -221,6 +221,7 @@ func (c *comment) Delete() {
 			utils.PrintJSON(c, nil)
 			log.Fatalln(errors.Join(errDeleteComment, err))
 		}
+		fmt.Printf("Comment %s deleted\n", id)
 	}
 }
 

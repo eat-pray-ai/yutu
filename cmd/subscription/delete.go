@@ -27,4 +27,5 @@ func init() {
 	subscriptionCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	_ = deleteCmd.MarkFlagRequired("ids")
 }

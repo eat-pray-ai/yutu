@@ -38,4 +38,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+
+	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
+	_ = insertCmd.MarkFlagRequired("channelId")
 }

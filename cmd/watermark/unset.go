@@ -27,5 +27,5 @@ func init() {
 	watermarkCmd.AddCommand(unsetCmd)
 
 	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	unsetCmd.MarkFlagRequired("channelId")
+	_ = unsetCmd.MarkFlagRequired("channelId")
 }

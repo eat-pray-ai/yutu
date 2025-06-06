@@ -7,7 +7,7 @@ import (
 
 const (
 	insertShort       = "Insert a comment"
-	insertLong        = "Insert a comment to a YouTube video"
+	insertLong        = "Insert a comment to a video"
 	insertPidUsage    = "ID of the parent comment"
 	insertOutputUsage = "json, yaml, or silent"
 )
@@ -48,4 +48,10 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+
+	_ = insertCmd.MarkFlagRequired("authorChannelId")
+	_ = insertCmd.MarkFlagRequired("channelId")
+	_ = insertCmd.MarkFlagRequired("parentId")
+	_ = insertCmd.MarkFlagRequired("textOriginal")
+	_ = insertCmd.MarkFlagRequired("videoId")
 }

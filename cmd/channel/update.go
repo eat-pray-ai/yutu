@@ -45,5 +45,5 @@ func init() {
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
-	updateCmd.MarkFlagRequired("id")
+	_ = updateCmd.MarkFlagRequired("id")
 }

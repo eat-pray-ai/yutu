@@ -32,6 +32,6 @@ func init() {
 	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
 	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
 
-	rateCmd.MarkFlagRequired("ids")
-	rateCmd.MarkFlagRequired("rating")
+	_ = rateCmd.MarkFlagRequired("ids")
+	_ = rateCmd.MarkFlagRequired("rating")
 }

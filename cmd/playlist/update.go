@@ -41,5 +41,5 @@ func init() {
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
-	updateCmd.MarkFlagRequired("id")
+	_ = updateCmd.MarkFlagRequired("id")
 }

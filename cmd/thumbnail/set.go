@@ -25,4 +25,7 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+
+	_ = setCmd.MarkFlagRequired("file")
+	_ = setCmd.MarkFlagRequired("videoId")
 }

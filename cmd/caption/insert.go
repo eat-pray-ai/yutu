@@ -63,4 +63,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+
+	_ = insertCmd.MarkFlagRequired("file")
+	_ = insertCmd.MarkFlagRequired("videoId")
 }

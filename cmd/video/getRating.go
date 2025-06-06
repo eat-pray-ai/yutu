@@ -34,5 +34,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", grOutputUsage)
-	getRatingCmd.MarkFlagRequired("id")
+
+	_ = getRatingCmd.MarkFlagRequired("ids")
 }

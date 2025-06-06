@@ -40,4 +40,7 @@ func init() {
 	setModerationStatusCmd.Flags().StringVarP(
 		&output, "output", "o", "", smsOutputUsage,
 	)
+
+	_ = setModerationStatusCmd.MarkFlagRequired("ids")
+	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
 }

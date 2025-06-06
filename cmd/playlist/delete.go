@@ -32,4 +32,6 @@ func init() {
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
+
+	_ = deleteCmd.MarkFlagRequired("ids")
 }

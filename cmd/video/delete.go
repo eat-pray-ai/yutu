@@ -25,5 +25,5 @@ func init() {
 	videoCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
-	deleteCmd.MarkFlagRequired("ids")
+	_ = deleteCmd.MarkFlagRequired("ids")
 }

@@ -81,7 +81,7 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
-	insertCmd.MarkFlagRequired("file")
-	insertCmd.MarkFlagRequired("categoryId")
-	insertCmd.MarkFlagRequired("privacy")
+	_ = insertCmd.MarkFlagRequired("file")
+	_ = insertCmd.MarkFlagRequired("categoryId")
+	_ = insertCmd.MarkFlagRequired("privacy")
 }

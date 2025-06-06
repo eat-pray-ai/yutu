@@ -36,5 +36,5 @@ func init() {
 	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
 
-	updateCmd.MarkFlagRequired("playlistId")
+	_ = updateCmd.MarkFlagRequired("playlistId")
 }

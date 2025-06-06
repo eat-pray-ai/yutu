@@ -47,4 +47,7 @@ func init() {
 	reportAbuseCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
+
+	_ = reportAbuseCmd.MarkFlagRequired("ids")
+	_ = reportAbuseCmd.MarkFlagRequired("reasonId")
 }

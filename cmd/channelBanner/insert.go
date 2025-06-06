@@ -34,6 +34,6 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
 
-	insertCmd.MarkFlagRequired("channelId")
-	insertCmd.MarkFlagRequired("file")
+	_ = insertCmd.MarkFlagRequired("channelId")
+	_ = insertCmd.MarkFlagRequired("file")
 }

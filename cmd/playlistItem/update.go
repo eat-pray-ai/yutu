@@ -40,4 +40,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+
+	_ = updateCmd.MarkFlagRequired("id")
 }

@@ -63,4 +63,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+
+	_ = updateCmd.MarkFlagRequired("videoId")
 }

@@ -38,6 +38,6 @@ func init() {
 	insertCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
-	insertCmd.MarkFlagRequired("file")
-	insertCmd.MarkFlagRequired("playlistId")
+	_ = insertCmd.MarkFlagRequired("file")
+	_ = insertCmd.MarkFlagRequired("playlistId")
 }

@@ -43,6 +43,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 
-	downloadCmd.MarkFlagRequired("id")
-	downloadCmd.MarkFlagRequired("file")
+	_ = downloadCmd.MarkFlagRequired("id")
+	_ = downloadCmd.MarkFlagRequired("file")
 }

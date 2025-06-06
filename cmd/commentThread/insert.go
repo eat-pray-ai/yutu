@@ -29,9 +29,16 @@ var insertCmd = &cobra.Command{
 
 func init() {
 	commentThreadCmd.AddCommand(insertCmd)
-	insertCmd.Flags().StringVarP(&authorChannelId, "authorChannelId", "a", "", acidUsage)
+	insertCmd.Flags().StringVarP(
+		&authorChannelId, "authorChannelId", "a", "", acidUsage,
+	)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+
+	_ = insertCmd.MarkFlagRequired("authorChannelId")
+	_ = insertCmd.MarkFlagRequired("channelId")
+	_ = insertCmd.MarkFlagRequired("textOriginal")
+	_ = insertCmd.MarkFlagRequired("videoId")
 }

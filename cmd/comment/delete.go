@@ -27,4 +27,5 @@ func init() {
 	commentCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	_ = deleteCmd.MarkFlagRequired("ids")
 }

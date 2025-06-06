@@ -41,7 +41,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
-	insertCmd.MarkFlagRequired("title")
-	insertCmd.MarkFlagRequired("channel")
-	insertCmd.MarkFlagRequired("privacy")
+	_ = insertCmd.MarkFlagRequired("title")
+	_ = insertCmd.MarkFlagRequired("channel")
+	_ = insertCmd.MarkFlagRequired("privacy")
 }

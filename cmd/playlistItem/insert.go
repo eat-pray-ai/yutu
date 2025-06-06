@@ -8,7 +8,7 @@ import (
 const (
 	insertShort       = "Insert a playlist item into a playlist"
 	insertLong        = "Insert a playlist item into a playlist"
-	insertPidUsage    = "The ID that YouTube uses to uniquely identify the playlist that the item is in"
+	insertPidUsage    = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 	insertOutputUsage = "json, yaml, or silent"
 )
 
@@ -52,4 +52,8 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+
+	_ = insertCmd.MarkFlagRequired("kind")
+	_ = insertCmd.MarkFlagRequired("playlistId")
+	_ = insertCmd.MarkFlagRequired("channelId")
 }

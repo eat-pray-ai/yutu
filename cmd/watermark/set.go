@@ -44,6 +44,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 
-	setCmd.MarkFlagRequired("channelId")
-	setCmd.MarkFlagRequired("file")
+	_ = setCmd.MarkFlagRequired("channelId")
+	_ = setCmd.MarkFlagRequired("file")
 }

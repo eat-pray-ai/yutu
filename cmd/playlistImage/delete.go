@@ -32,5 +32,5 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 
-	deleteCmd.MarkFlagRequired("ids")
+	_ = deleteCmd.MarkFlagRequired("ids")
 }

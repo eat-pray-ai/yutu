@@ -7,7 +7,7 @@ import (
 
 const (
 	updateShort       = "Update a comment"
-	updateLong        = "Update a comment on a YouTube video"
+	updateLong        = "Update a comment on a video"
 	updateIdUsage     = "ID of the comment"
 	updateOutputUsage = "json, yaml, or silent"
 )
@@ -40,4 +40,6 @@ func init() {
 		&viewerRating, "viewerRating", "r", "", vrUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+
+	_ = updateCmd.MarkFlagRequired("id")
 }

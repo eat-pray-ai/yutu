@@ -9,7 +9,7 @@ import (
 const (
 	short      = "Manipulate YouTube comments"
 	long       = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments"
-	idsUsage   = "Comma separated ids of comments"
+	idsUsage   = "IDs of comments"
 	acidUsage  = "Channel id of the comment author"
 	crUsage    = "Whether the viewer can rate the comment"
 	cidUsage   = "Channel id of the video owner"
