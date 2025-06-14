@@ -63,7 +63,8 @@ func InitClient(
 		tokenSource := config.TokenSource(ctx, authedToken)
 		authedToken, err = tokenSource.Token()
 		if err != nil && cacheable {
-			client, authedToken := newClient(ctx, config)
+			var client *http.Client
+			client, authedToken = newClient(ctx, config)
 			saveToken(cacheTokenFile, authedToken)
 			return client
 		} else if err != nil {

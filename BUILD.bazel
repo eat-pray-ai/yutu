@@ -1,7 +1,13 @@
 load("@gazelle//:def.bzl", "gazelle")
-load("@rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
+load("@rules_go//go:def.bzl", "TOOLS_NOGO", "go_binary", "go_cross_binary", "go_library", "nogo")
 
 gazelle(name = "gazelle")
+
+nogo(
+    name = "yutu_nogo",
+    visibility = ["//visibility:public"],
+    deps = TOOLS_NOGO,
+)
 
 go_library(
     name = "yutu_lib",

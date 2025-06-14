@@ -5,6 +5,7 @@ bazel_dep(name = "gazelle", version = "0.43.0")
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.from_file(go_mod = "//:go.mod")
+go_sdk.nogo(nogo = "//:yutu_nogo")
 
 go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
 go_deps.from_file(go_mod = "//:go.mod")
