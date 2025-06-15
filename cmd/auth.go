@@ -5,6 +5,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	authShort  = "Authenticate with YouTube API"
+	authLong   = "Authenticate with YouTube API to access and manage YouTube resources."
+	credUsage  = "Path to client secret file, or base64 encoded string, or json string"
+	cacheUsage = "Path to token cache file, or base64 encoded string, or json string"
+)
+
 var (
 	credential string
 	cacheToken string
@@ -12,8 +19,8 @@ var (
 
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "Authenticate with YouTube API",
-	Long:  "Authenticate with YouTube API",
+	Short: authShort,
+	Long:  authLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		auth.NewY2BService(
 			auth.WithCredential(credential),
@@ -27,11 +34,9 @@ func init() {
 	RootCmd.AddCommand(authCmd)
 
 	authCmd.Flags().StringVarP(
-		&credential, "credential", "c", "client_secret.json",
-		"Path to client secret file, or base64 encoded string, or json string",
+		&credential, "credential", "c", "client_secret.json", credUsage,
 	)
 	authCmd.Flags().StringVarP(
-		&cacheToken, "cacheToken", "t", "youtube.token.json",
-		"Path to token cache file, or base64 encoded string, or json string",
+		&cacheToken, "cacheToken", "t", "youtube.token.json", cacheUsage,
 	)
 }

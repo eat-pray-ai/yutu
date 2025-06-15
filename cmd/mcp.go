@@ -9,6 +9,8 @@ import (
 )
 
 const (
+	mcpShort  = "Start MCP server"
+	mcpLong   = "Start MCP server to handle requests from clients"
 	modeUsage = "stdio, http, or sse"
 	portUsage = "Port to listen on for HTTP or SSE mode"
 )
@@ -21,19 +23,20 @@ var (
 var MCP = server.NewMCPServer(
 	"yutu", Version,
 	server.WithToolCapabilities(true),
+	server.WithLogging(),
 	server.WithRecovery(),
 )
 
 var mcpCmd = &cobra.Command{
 	Use:   "mcp",
-	Short: "Start mcp server",
-	Long:  "Start mcp server to handle requests from clients",
+	Short: mcpShort,
+	Long:  mcpLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 		interval := 13 * time.Second
 		addr := fmt.Sprintf(":%d", port)
 		baseURL := fmt.Sprintf("http://localhost:%d", port)
-		message := fmt.Sprintf("Starting MCP server: %s", baseURL)
+		message := fmt.Sprintf("%s server listening on %s", mode, addr)
 
 		switch mode {
 		case "stdio":
@@ -56,7 +59,7 @@ var mcpCmd = &cobra.Command{
 		}
 
 		if err != nil {
-			fmt.Printf("Server error: %v\n", err)
+			log.Fatalf("Server error: %v\n", err)
 		}
 	},
 }

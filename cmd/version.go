@@ -5,6 +5,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	versionShort = "Show the version of yutu"
+	versionLong  = "Show the version of yutu"
+)
+
 var (
 	Version    = ""
 	Commit     = ""
@@ -16,8 +21,8 @@ var (
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show the version of yutu",
-	Long:  "Show the version of yutu",
+	Short: versionShort,
+	Long:  versionLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Printf("yutu🐰 version %s %s/%s", Version, Os, Arch)
 		if Commit != "" && CommitDate != "" {
