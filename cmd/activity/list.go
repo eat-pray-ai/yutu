@@ -15,6 +15,8 @@ var defaultParts = []string{"id", "snippet", "contentDetails"}
 
 var listTool = mcp.NewTool(
 	"activity.list",
+	mcp.WithTitleAnnotation("List Activities"),
+	mcp.WithOpenWorldHintAnnotation(true),
 	mcp.WithDescription(long),
 	mcp.WithString(
 		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage),
@@ -70,7 +72,7 @@ var listCmd = &cobra.Command{
 		err := run(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
+			cmd.PrintErrf("Error: %s\n", err.Error())
 		}
 	},
 }

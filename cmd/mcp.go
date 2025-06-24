@@ -11,7 +11,7 @@ import (
 const (
 	mcpShort  = "Start MCP server"
 	mcpLong   = "Start MCP server to handle requests from clients"
-	modeUsage = "stdio, http, or sse"
+	modeUsage = "stdio, or http"
 	portUsage = "Port to listen on for HTTP or SSE mode"
 )
 
@@ -35,7 +35,6 @@ var mcpCmd = &cobra.Command{
 		var err error
 		interval := 13 * time.Second
 		addr := fmt.Sprintf(":%d", port)
-		baseURL := fmt.Sprintf("http://localhost:%d", port)
 		message := fmt.Sprintf("%s server listening on %s", mode, addr)
 
 		switch mode {
@@ -48,14 +47,6 @@ var mcpCmd = &cobra.Command{
 			)
 			log.Printf("%s/%s\n", message, "mcp")
 			err = httpServer.Start(addr)
-		case "sse":
-			sse := server.NewSSEServer(
-				MCP, server.WithBaseURL(baseURL),
-				server.WithKeepAlive(true),
-				server.WithKeepAliveInterval(interval),
-			)
-			log.Printf("%s/%s\n", message, "sse")
-			err = sse.Start(addr)
 		}
 
 		if err != nil {

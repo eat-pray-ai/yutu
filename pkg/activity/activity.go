@@ -102,7 +102,6 @@ func (a *activity) List(
 			)
 		}
 	}
-
 	return nil
 }
 
