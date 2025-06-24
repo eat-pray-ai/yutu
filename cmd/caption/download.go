@@ -25,7 +25,12 @@ var downloadCmd = &cobra.Command{
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithService(nil),
 		)
-		c.Download()
+
+		err := c.Download(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %s\n", err.Error())
+		}
 	},
 }
 

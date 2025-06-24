@@ -5,8 +5,9 @@ gazelle(name = "gazelle")
 
 nogo(
     name = "yutu_nogo",
+    vet = True,
     visibility = ["//visibility:public"],
-    deps = TOOLS_NOGO,
+    #    deps = TOOLS_NOGO,
 )
 
 go_library(

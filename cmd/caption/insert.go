@@ -32,7 +32,12 @@ var insertCmd = &cobra.Command{
 			caption.WithVideoId(videoId),
 			caption.WithService(nil),
 		)
-		c.Insert(output)
+
+		err := c.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %s\n", err.Error())
+		}
 	},
 }
 

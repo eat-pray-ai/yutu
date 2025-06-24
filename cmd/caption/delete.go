@@ -22,7 +22,12 @@ var deleteCmd = &cobra.Command{
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithService(nil),
 		)
-		c.Delete()
+
+		err := c.Delete(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

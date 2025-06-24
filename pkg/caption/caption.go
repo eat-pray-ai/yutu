@@ -7,7 +7,6 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 	"io"
-	"log"
 	"os"
 )
 
@@ -40,12 +39,12 @@ type caption struct {
 }
 
 type Caption interface {
-	get(parts []string) []*youtube.Caption // todo: return error
-	List(parts []string, output string)
-	Insert(output string)
-	Update(output string)
-	Delete()
-	Download()
+	get(parts []string) ([]*youtube.Caption, error) // todo: return error
+	List(parts []string, output string, writer io.Writer) error
+	Insert(output string, writer io.Writer) error
+	Update(output string, writer io.Writer) error
+	Delete(writer io.Writer) error
+	Download(writer io.Writer) error
 }
 
 type Option func(*caption)
@@ -58,7 +57,7 @@ func NewCation(opts ...Option) Caption {
 	return c
 }
 
-func (c *caption) get(parts []string) []*youtube.Caption {
+func (c *caption) get(parts []string) ([]*youtube.Caption, error) {
 	call := service.Captions.List(parts, c.VideoId)
 	if len(c.IDs) > 0 {
 		call = call.Id(c.IDs...)
@@ -72,33 +71,36 @@ func (c *caption) get(parts []string) []*youtube.Caption {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errGetCaption, err))
+		return nil, errors.Join(errGetCaption, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (c *caption) List(parts []string, output string) {
-	captions := c.get(parts)
+func (c *caption) List(parts []string, output string, writer io.Writer) error {
+	captions, err := c.get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(captions, nil)
+		utils.PrintJSON(captions, writer)
 	case "yaml":
-		utils.PrintYAML(captions, nil)
+		utils.PrintYAML(captions, writer)
 	default:
-		fmt.Println("ID\tName")
+		_, _ = fmt.Fprintln(writer, "ID\tName")
 		for _, caption := range captions {
-			fmt.Printf("%s\t%s\n", caption.Id, caption.Snippet.Name)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\n", caption.Id, caption.Snippet.Name)
 		}
 	}
+	return nil
 }
 
-func (c *caption) Insert(output string) {
+func (c *caption) Insert(output string, writer io.Writer) error {
 	file, err := os.Open(c.File)
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errInsertCaption, err))
+		return errors.Join(errInsertCaption, err)
 	}
 	defer file.Close()
 
@@ -127,23 +129,31 @@ func (c *caption) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errInsertCaption, err))
+		return errors.Join(errInsertCaption, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Caption inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (c *caption) Update(output string) {
-	caption := c.get([]string{"snippet"})[0]
+func (c *caption) Update(output string, writer io.Writer) error {
+	captions, err := c.get([]string{"snippet"})
+	if err != nil {
+		return errors.Join(errUpdateCaption, err)
+	}
+	if len(captions) == 0 {
+		return errGetCaption
+	}
+
+	caption := captions[0]
 	if c.AudioTrackType != "" {
 		caption.Snippet.AudioTrackType = c.AudioTrackType
 	}
@@ -179,8 +189,7 @@ func (c *caption) Update(output string) {
 	if c.File != "" {
 		file, err := os.Open(c.File)
 		if err != nil {
-			utils.PrintJSON(c, nil)
-			log.Fatalln(errors.Join(errUpdateCaption, err))
+			return errors.Join(errUpdateCaption, err)
 		}
 		defer file.Close()
 		call = call.Media(file)
@@ -194,22 +203,22 @@ func (c *caption) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errUpdateCaption, err))
+		return errors.Join(errUpdateCaption, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Caption updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (c *caption) Delete() {
+func (c *caption) Delete(writer io.Writer) error {
 	for _, id := range c.IDs {
 		call := service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
@@ -221,15 +230,15 @@ func (c *caption) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(c, nil)
-			log.Fatalln(errors.Join(errDeleteCaption, err))
+			return errors.Join(errDeleteCaption, err)
 		}
 
-		fmt.Printf("Caption %s deleted\n", id)
+		_, _ = fmt.Fprintf(writer, "Caption %s deleted\n", id)
 	}
+	return nil
 }
 
-func (c *caption) Download() {
+func (c *caption) Download(writer io.Writer) error {
 	call := service.Captions.Download(c.IDs[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
@@ -246,29 +255,28 @@ func (c *caption) Download() {
 
 	res, err := call.Download()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errDownloadCaption, err))
+		return errors.Join(errDownloadCaption, err)
 	}
 	defer res.Body.Close()
+
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errDownloadCaption, err))
+		return errors.Join(errDownloadCaption, err)
 	}
 
 	file, err := os.Create(c.File)
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errDownloadCaption, err))
+		return errors.Join(errDownloadCaption, err)
 	}
 	defer file.Close()
+
 	_, err = file.Write(body)
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errDownloadCaption, err))
+		return errors.Join(errDownloadCaption, err)
 	}
 
 	fmt.Printf("Caption %s downloaded to %s\n", c.IDs[0], c.File)
+	return nil
 }
 
 func WithIDs(ids []string) Option {
