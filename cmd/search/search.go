@@ -80,10 +80,10 @@ var searchCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]*bool{
-			"forContentOwner": forContentOwner,
-			"forDeveloper":    forDeveloper,
-			"forMine":         forMine,
+		boolMap := map[string]**bool{
+			"forContentOwner": &forContentOwner,
+			"forDeveloper":    &forDeveloper,
+			"forMine":         &forMine,
 		}
 		utils.ResetBool(boolMap, cmd.Flags())
 	},

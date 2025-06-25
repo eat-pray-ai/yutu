@@ -97,13 +97,13 @@ func init() {
 }
 
 func resetFlags(flagSet *pflag.FlagSet) {
-	boolMap := map[string]*bool{
-		"autoLevels":          autoLevels,
-		"forKids":             forKids,
-		"embeddable":          embeddable,
-		"stabilize":           stabilize,
-		"notifySubscribers":   notifySubscribers,
-		"publicStatsViewable": publicStatsViewable,
+	boolMap := map[string]**bool{
+		"autoLevels":          &autoLevels,
+		"forKids":             &forKids,
+		"embeddable":          &embeddable,
+		"stabilize":           &stabilize,
+		"notifySubscribers":   &notifySubscribers,
+		"publicStatsViewable": &publicStatsViewable,
 	}
 
 	utils.ResetBool(boolMap, flagSet)

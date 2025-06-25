@@ -44,10 +44,10 @@ var subscriptionCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]*bool{
-			"mine":                mine,
-			"myRecentSubscribers": myRecentSubscribers,
-			"mySubscribers":       mySubscribers,
+		boolMap := map[string]**bool{
+			"mine":                &mine,
+			"myRecentSubscribers": &myRecentSubscribers,
+			"mySubscribers":       &mySubscribers,
 		}
 		utils.ResetBool(boolMap, cmd.Flags())
 	},

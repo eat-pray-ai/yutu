@@ -64,12 +64,12 @@ func init() {
 }
 
 func resetFlags(flagSet *pflag.FlagSet) {
-	boolMap := map[string]*bool{
-		"isAutoSynced": isAutoSynced,
-		"isCC":         isCC,
-		"isDraft":      isDraft,
-		"isEasyReader": isEasyReader,
-		"isLarge":      isLarge,
+	boolMap := map[string]**bool{
+		"isAutoSynced": &isAutoSynced,
+		"isCC":         &isCC,
+		"isDraft":      &isDraft,
+		"isEasyReader": &isEasyReader,
+		"isLarge":      &isLarge,
 	}
 
 	utils.ResetBool(boolMap, flagSet)

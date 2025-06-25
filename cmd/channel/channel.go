@@ -75,10 +75,10 @@ func init() {
 }
 
 func resetFlags(flagSet *pflag.FlagSet) {
-	boolMap := map[string]*bool{
-		"managedByMe":   managedByMe,
-		"mine":          mine,
-		"mySubscribers": mySubscribers,
+	boolMap := map[string]**bool{
+		"managedByMe":   &managedByMe,
+		"mine":          &mine,
+		"mySubscribers": &mySubscribers,
 	}
 
 	utils.ResetBool(boolMap, flagSet)

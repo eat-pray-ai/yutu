@@ -37,11 +37,17 @@ var activityCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]*bool{
-			"home": home,
-			"mine": mine,
+		boolMap := map[string]**bool{
+			"home": &home,
+			"mine": &mine,
 		}
 		utils.ResetBool(boolMap, cmd.Flags())
+		// if !cmd.Flags().Changed("home") {
+		// 	home = nil
+		// }
+		// if !cmd.Flags().Changed("mine") {
+		// 	mine = nil
+		// }
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
