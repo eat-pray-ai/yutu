@@ -26,7 +26,7 @@ type activity struct {
 
 type Activity interface {
 	List([]string, string, io.Writer) error
-	get([]string) ([]*youtube.Activity, error)
+	Get([]string) ([]*youtube.Activity, error)
 }
 
 type Option func(*activity)
@@ -41,7 +41,7 @@ func NewActivity(opts ...Option) Activity {
 	return a
 }
 
-func (a *activity) get(parts []string) ([]*youtube.Activity, error) {
+func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 	call := service.Activities.List(parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
@@ -83,7 +83,7 @@ func (a *activity) get(parts []string) ([]*youtube.Activity, error) {
 func (a *activity) List(
 	parts []string, output string, writer io.Writer,
 ) error {
-	activities, err := a.get(parts)
+	activities, err := a.Get(parts)
 	if err != nil {
 		return err
 	}

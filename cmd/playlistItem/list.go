@@ -26,7 +26,12 @@ var listCmd = &cobra.Command{
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
-		pi.List(parts, output)
+
+		err := pi.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

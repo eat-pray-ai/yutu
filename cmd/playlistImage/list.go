@@ -23,7 +23,12 @@ var listCmd = &cobra.Command{
 			playlistImage.WithMaxResults(maxResults),
 			playlistImage.WithService(nil),
 		)
-		pi.List(parts, output)
+
+		err := pi.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
-	"log"
+	"io"
 	"os"
 	"slices"
 
@@ -62,14 +62,14 @@ type video struct {
 }
 
 type Video interface {
-	List([]string, string)
-	Insert(string)
-	Update(string)
-	Rate()
-	GetRating(string)
-	Delete()
-	ReportAbuse()
-	get([]string) []*youtube.Video
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Update(string, io.Writer) error
+	Rate(io.Writer) error
+	GetRating(string, io.Writer) error
+	Delete(io.Writer) error
+	ReportAbuse(io.Writer) error
+	Get([]string) ([]*youtube.Video, error)
 }
 
 type Option func(*video)
@@ -84,7 +84,7 @@ func NewVideo(opts ...Option) Video {
 	return v
 }
 
-func (v *video) get(parts []string) []*youtube.Video {
+func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 	call := service.Videos.List(parts)
 	if len(v.IDs) > 0 {
 		call = call.Id(v.IDs...)
@@ -124,33 +124,36 @@ func (v *video) get(parts []string) []*youtube.Video {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errGetVideo, err))
+		return nil, errors.Join(errGetVideo, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (v *video) List(parts []string, output string) {
-	videos := v.get(parts)
+func (v *video) List(parts []string, output string, writer io.Writer) error {
+	videos, err := v.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(videos, nil)
+		utils.PrintJSON(videos, writer)
 	case "yaml":
-		utils.PrintYAML(videos, nil)
+		utils.PrintYAML(videos, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, video := range videos {
-			fmt.Printf("%s\t%s\n", video.Id, video.Snippet.Title)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\n", video.Id, video.Snippet.Title)
 		}
 	}
+	return nil
 }
 
-func (v *video) Insert(output string) {
+func (v *video) Insert(output string, writer io.Writer) error {
 	file, err := os.Open(v.File)
 	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errInsertVideo, err))
+		return errors.Join(errInsertVideo, err)
 	}
 	defer file.Close()
 
@@ -210,8 +213,7 @@ func (v *video) Insert(output string) {
 
 	res, err := call.Media(file).Do()
 	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errInsertVideo, err))
+		return errors.Join(errInsertVideo, err)
 	}
 
 	if v.Thumbnail != "" {
@@ -220,7 +222,7 @@ func (v *video) Insert(output string) {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set("silent")
+		t.Set("silent", nil)
 	}
 
 	if v.PlaylistId != "" {
@@ -234,22 +236,32 @@ func (v *video) Insert(output string) {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
-		pi.Insert("silent")
+
+		_ = pi.Insert("silent", writer)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Video inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Video inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (v *video) Update(output string) {
-	video := v.get([]string{"id", "snippet", "status"})[0]
+func (v *video) Update(output string, writer io.Writer) error {
+	videos, err := v.Get([]string{"id", "snippet", "status"})
+	if err != nil {
+		return errors.Join(errUpdateVideo, err)
+	}
+	if len(videos) == 0 {
+		return errGetVideo
+	}
+
+	video := videos[0]
 	if v.Title != "" {
 		video.Snippet.Title = v.Title
 	}
@@ -286,8 +298,7 @@ func (v *video) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errUpdateVideo, err))
+		return errors.Join(errUpdateVideo, err)
 	}
 
 	if v.Thumbnail != "" {
@@ -296,7 +307,7 @@ func (v *video) Update(output string) {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set("silent")
+		t.Set("silent", nil)
 	}
 
 	if v.PlaylistId != "" {
@@ -310,57 +321,59 @@ func (v *video) Update(output string) {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
 		)
-		pi.Insert("silent")
+
+		_ = pi.Insert("silent", writer)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Video updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Video updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (v *video) Rate() {
+func (v *video) Rate(writer io.Writer) error {
 	for _, id := range v.IDs {
 		call := service.Videos.Rate(id, v.Rating)
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(v, nil)
-			log.Fatalln(errors.Join(errRating, err))
+			return errors.Join(errRating, err)
 		}
-		fmt.Printf("Video %s rated %s\n", id, v.Rating)
+		_, _ = fmt.Fprintf(writer, "Video %s rated %s\n", id, v.Rating)
 	}
+	return nil
 }
 
-func (v *video) GetRating(output string) {
+func (v *video) GetRating(output string, writer io.Writer) error {
 	call := service.Videos.GetRating(v.IDs)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
 	}
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(v, nil)
-		log.Fatalln(errors.Join(errGetRating, err))
+		return errors.Join(errGetRating, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res.Items, nil)
+		utils.PrintJSON(res.Items, writer)
 	case "yaml":
-		utils.PrintYAML(res.Items, nil)
+		utils.PrintYAML(res.Items, writer)
 	default:
-		fmt.Println("ID\tRating")
+		_, _ = fmt.Fprintln(writer, "ID\tRating")
 		for _, item := range res.Items {
-			fmt.Printf("%s\t%s\n", item.VideoId, item.Rating)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\n", item.VideoId, item.Rating)
 		}
 	}
+	return nil
 }
 
-func (v *video) Delete() {
+func (v *video) Delete(writer io.Writer) error {
 	for _, id := range v.IDs {
 		call := service.Videos.Delete(id)
 		if v.OnBehalfOfContentOwner != "" {
@@ -369,14 +382,14 @@ func (v *video) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(v, nil)
-			log.Fatalln(errors.Join(errDeleteVideo, err))
+			return errors.Join(errDeleteVideo, err)
 		}
-		fmt.Printf("Video %s deleted", id)
+		_, _ = fmt.Fprintf(writer, "Video %s deleted", id)
 	}
+	return nil
 }
 
-func (v *video) ReportAbuse() {
+func (v *video) ReportAbuse(writer io.Writer) error {
 	for _, id := range v.IDs {
 		videoAbuseReport := &youtube.VideoAbuseReport{
 			Comments:          v.Comments,
@@ -393,12 +406,12 @@ func (v *video) ReportAbuse() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(v, nil)
-			log.Fatalln(errors.Join(errReportAbuse, err))
+			return errors.Join(errReportAbuse, err)
 		}
 
-		fmt.Printf("Video %s reported for abuse", id)
+		_, _ = fmt.Fprintf(writer, "Video %s reported for abuse", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

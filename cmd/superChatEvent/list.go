@@ -15,7 +15,12 @@ var listCmd = &cobra.Command{
 			superChatEvent.WithMaxResults(maxResults),
 			superChatEvent.WithService(nil),
 		)
-		sc.List(parts, output)
+
+		err := sc.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

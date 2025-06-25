@@ -17,7 +17,12 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		v := video.NewVideo(video.WithIDs(ids))
-		v.Delete()
+
+		err := v.Delete(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

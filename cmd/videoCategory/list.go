@@ -16,7 +16,12 @@ var listCmd = &cobra.Command{
 			videoCategory.WithRegionCode(regionCode),
 			videoCategory.WithService(nil),
 		)
-		vc.List(parts, output)
+
+		err := vc.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

@@ -24,7 +24,12 @@ var insertCmd = &cobra.Command{
 			playlistImage.WithWidth(width),
 			playlistImage.WithService(nil),
 		)
-		pi.Insert(output)
+
+		err := pi.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

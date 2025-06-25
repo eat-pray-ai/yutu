@@ -15,7 +15,12 @@ var setCmd = &cobra.Command{
 			thumbnail.WithVideoId(videoId),
 			thumbnail.WithService(nil),
 		)
-		t.Set(output)
+
+		err := t.Set(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

@@ -39,7 +39,7 @@ type caption struct {
 }
 
 type Caption interface {
-	get(parts []string) ([]*youtube.Caption, error) // todo: return error
+	Get(parts []string) ([]*youtube.Caption, error) // todo: return error
 	List(parts []string, output string, writer io.Writer) error
 	Insert(output string, writer io.Writer) error
 	Update(output string, writer io.Writer) error
@@ -57,7 +57,7 @@ func NewCation(opts ...Option) Caption {
 	return c
 }
 
-func (c *caption) get(parts []string) ([]*youtube.Caption, error) {
+func (c *caption) Get(parts []string) ([]*youtube.Caption, error) {
 	call := service.Captions.List(parts, c.VideoId)
 	if len(c.IDs) > 0 {
 		call = call.Id(c.IDs...)
@@ -78,7 +78,7 @@ func (c *caption) get(parts []string) ([]*youtube.Caption, error) {
 }
 
 func (c *caption) List(parts []string, output string, writer io.Writer) error {
-	captions, err := c.get(parts)
+	captions, err := c.Get(parts)
 	if err != nil {
 		return err
 	}
@@ -145,7 +145,7 @@ func (c *caption) Insert(output string, writer io.Writer) error {
 }
 
 func (c *caption) Update(output string, writer io.Writer) error {
-	captions, err := c.get([]string{"snippet"})
+	captions, err := c.Get([]string{"snippet"})
 	if err != nil {
 		return errors.Join(errUpdateCaption, err)
 	}
@@ -275,7 +275,7 @@ func (c *caption) Download(writer io.Writer) error {
 		return errors.Join(errDownloadCaption, err)
 	}
 
-	fmt.Printf("Caption %s downloaded to %s\n", c.IDs[0], c.File)
+	_, _ = fmt.Fprintf(writer, "Caption %s downloaded to %s\n", c.IDs[0], c.File)
 	return nil
 }
 

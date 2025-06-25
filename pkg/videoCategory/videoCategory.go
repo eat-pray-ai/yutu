@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"log"
-
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
+	"io"
 )
 
 var (
@@ -22,8 +21,8 @@ type videoCategory struct {
 }
 
 type VideoCategory interface {
-	get([]string) []*youtube.VideoCategory
-	List([]string, string)
+	Get([]string) ([]*youtube.VideoCategory, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*videoCategory)
@@ -36,7 +35,7 @@ func NewVideoCategory(opt ...Option) VideoCategory {
 	return vc
 }
 
-func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
+func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
 	call := service.VideoCategories.List(parts)
 	if len(vc.IDs) > 0 {
 		call = call.Id(vc.IDs...)
@@ -50,29 +49,35 @@ func (vc *videoCategory) get(parts []string) []*youtube.VideoCategory {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(vc, nil)
-		log.Fatalln(errors.Join(errGetVideoCategory, err))
+		return nil, errors.Join(errGetVideoCategory, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (vc *videoCategory) List(parts []string, output string) {
-	videoCategories := vc.get(parts)
+func (vc *videoCategory) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	videoCategories, err := vc.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(videoCategories, nil)
+		utils.PrintJSON(videoCategories, writer)
 	case "yaml":
-		utils.PrintYAML(videoCategories, nil)
+		utils.PrintYAML(videoCategories, writer)
 	default:
-		fmt.Println("ID\tTitle\tAssignable")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle\tAssignable")
 		for _, videoCategory := range videoCategories {
-			fmt.Printf(
-				"%s\t%s\t%t\n", videoCategory.Id,
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\t%t\n", videoCategory.Id,
 				videoCategory.Snippet.Title, videoCategory.Snippet.Assignable,
 			)
 		}
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

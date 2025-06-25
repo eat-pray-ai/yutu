@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 	"os"
 )
 
@@ -27,8 +26,8 @@ type watermark struct {
 }
 
 type Watermark interface {
-	Set()
-	Unset()
+	Set(io.Writer) error
+	Unset(io.Writer) error
 }
 
 type Option func(*watermark)
@@ -43,12 +42,12 @@ func NewWatermark(opts ...Option) Watermark {
 	return w
 }
 
-func (w *watermark) Set() {
+func (w *watermark) Set(writer io.Writer) error {
 	file, err := os.Open(w.File)
 	if err != nil {
-		utils.PrintJSON(w, nil)
-		log.Fatalln(errors.Join(errSetWatermark, err))
+		return errors.Join(errSetWatermark, err)
 	}
+
 	defer file.Close()
 	inVideoBranding := &youtube.InvideoBranding{
 		Position: &youtube.InvideoPosition{},
@@ -75,14 +74,14 @@ func (w *watermark) Set() {
 
 	err = call.Do()
 	if err != nil {
-		utils.PrintJSON(w, nil)
-		log.Fatalln(errors.Join(errSetWatermark, err))
+		return errors.Join(errSetWatermark, err)
 	}
 
-	fmt.Printf("Watermark set for channel %s\n", w.ChannelId)
+	_, _ = fmt.Fprintf(writer, "Watermark set for channel %s\n", w.ChannelId)
+	return nil
 }
 
-func (w *watermark) Unset() {
+func (w *watermark) Unset(writer io.Writer) error {
 	call := service.Watermarks.Unset(w.ChannelId)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
@@ -90,11 +89,11 @@ func (w *watermark) Unset() {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(w, nil)
-		log.Fatalln(errors.Join(errUnsetWatermark, err))
+		return errors.Join(errUnsetWatermark, err)
 	}
 
-	fmt.Printf("Watermark unset for channel %s\n", w.ChannelId)
+	_, _ = fmt.Fprintf(writer, "Watermark unset for channel %s\n", w.ChannelId)
+	return nil
 }
 
 func WithChannelId(channelId string) Option {

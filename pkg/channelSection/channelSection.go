@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -24,11 +24,11 @@ type channelSection struct {
 }
 
 type ChannelSection interface {
-	get(parts []string) []*youtube.ChannelSection
-	List(parts []string, output string)
+	Get([]string) ([]*youtube.ChannelSection, error)
+	List([]string, string, io.Writer) error
+	Delete(writer io.Writer) error
 	// Update()
 	// Insert()
-	Delete()
 }
 
 type Option func(*channelSection)
@@ -42,7 +42,9 @@ func NewChannelSection(opts ...Option) ChannelSection {
 	return cs
 }
 
-func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
+func (cs *channelSection) Get(parts []string) (
+	[]*youtube.ChannelSection, error,
+) {
 	call := service.ChannelSections.List(parts)
 	if len(cs.IDs) > 0 {
 		call = call.Id(cs.IDs...)
@@ -62,31 +64,37 @@ func (cs *channelSection) get(parts []string) []*youtube.ChannelSection {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(cs, nil)
-		log.Fatalln(errors.Join(errGetChannelSection, err))
+		return nil, errors.Join(errGetChannelSection, err)
 	}
-	return res.Items
+	return res.Items, nil
 }
 
-func (cs *channelSection) List(parts []string, output string) {
-	channelSections := cs.get(parts)
+func (cs *channelSection) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	channelSections, err := cs.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(channelSections, nil)
+		utils.PrintJSON(channelSections, writer)
 	case "yaml":
-		utils.PrintYAML(channelSections, nil)
+		utils.PrintYAML(channelSections, writer)
 	default:
-		fmt.Println("ID\tChannelID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tChannelID\tTitle")
 		for _, channelSection := range channelSections {
-			fmt.Printf(
-				"%s\t%s\t%s\n", channelSection.Id,
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\t%s\n", channelSection.Id,
 				channelSection.Snippet.ChannelId, channelSection.Snippet.Title,
 			)
 		}
 	}
+	return nil
 }
 
-func (cs *channelSection) Delete() {
+func (cs *channelSection) Delete(writer io.Writer) error {
 	for _, id := range cs.IDs {
 		call := service.ChannelSections.Delete(id)
 		if cs.OnBehalfOfContentOwner != "" {
@@ -95,12 +103,12 @@ func (cs *channelSection) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(cs, nil)
-			log.Fatalln(errors.Join(errDeleteChannelSection, err))
+			return errors.Join(errDeleteChannelSection, err)
 		}
 
-		fmt.Printf("Channel section %s deleted\n", id)
+		_, _ = fmt.Fprintf(writer, "Channel section %s deleted\n", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

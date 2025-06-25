@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -30,9 +30,9 @@ type commentThread struct {
 }
 
 type CommentThread interface {
-	get([]string) []*youtube.CommentThread
-	List([]string, string)
-	Insert(output string)
+	Get([]string) ([]*youtube.CommentThread, error)
+	List([]string, string, io.Writer) error
+	Insert(output string, writer io.Writer) error
 }
 
 type Option func(*commentThread)
@@ -47,7 +47,7 @@ func NewCommentThread(opts ...Option) CommentThread {
 	return c
 }
 
-func (c *commentThread) get(parts []string) []*youtube.CommentThread {
+func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 	call := service.CommentThreads.List(parts)
 
 	if len(c.IDs) > 0 {
@@ -89,31 +89,38 @@ func (c *commentThread) get(parts []string) []*youtube.CommentThread {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errGetCommentThread, err))
+		return nil, errors.Join(errGetCommentThread, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (c *commentThread) List(parts []string, output string) {
-	commentThreads := c.get(parts)
+func (c *commentThread) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	commentThreads, err := c.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(commentThreads, nil)
+		utils.PrintJSON(commentThreads, writer)
 	case "yaml":
-		utils.PrintYAML(commentThreads, nil)
+		utils.PrintYAML(commentThreads, writer)
 	default:
-		fmt.Println("ID\tTopLevelCommentID")
+		_, _ = fmt.Fprintln(writer, "ID\tTopLevelCommentID")
 		for _, commentThread := range commentThreads {
-			fmt.Printf(
-				"%s\t%s\n", commentThread.Id, commentThread.Snippet.TopLevelComment.Id,
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\n",
+				commentThread.Id, commentThread.Snippet.TopLevelComment.Id,
 			)
 		}
 	}
+	return nil
 }
 
-func (c *commentThread) Insert(output string) {
+func (c *commentThread) Insert(output string, writer io.Writer) error {
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
 			ChannelId: c.ChannelId,
@@ -132,19 +139,19 @@ func (c *commentThread) Insert(output string) {
 
 	res, err := service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
 	if err != nil {
-		utils.PrintJSON(ct, nil)
-		log.Fatalln(errors.Join(errInsertCommentThread, err))
+		return errors.Join(errInsertCommentThread, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("CommentThread inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "CommentThread inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
 func WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId string) Option {

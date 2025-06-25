@@ -28,7 +28,12 @@ var listCmd = &cobra.Command{
 			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			playlist.WithService(nil),
 		)
-		p.List(parts, output)
+
+		err := p.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

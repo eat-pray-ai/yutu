@@ -26,7 +26,12 @@ var updateCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithService(nil),
 		)
-		p.Update(output)
+
+		err := p.Update(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

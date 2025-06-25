@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -19,8 +19,8 @@ type videoAbuseReportReason struct {
 }
 
 type VideoAbuseReportReason interface {
-	get([]string) []*youtube.VideoAbuseReportReason
-	List([]string, string)
+	Get([]string) ([]*youtube.VideoAbuseReportReason, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*videoAbuseReportReason)
@@ -33,7 +33,9 @@ func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason {
 	return va
 }
 
-func (va *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseReportReason {
+func (va *videoAbuseReportReason) Get(parts []string) (
+	[]*youtube.VideoAbuseReportReason, error,
+) {
 	call := service.VideoAbuseReportReasons.List(parts)
 	if va.Hl != "" {
 		call = call.Hl(va.Hl)
@@ -41,29 +43,35 @@ func (va *videoAbuseReportReason) get(parts []string) []*youtube.VideoAbuseRepor
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(va, nil)
-		log.Fatalln(errors.Join(errGetVideoAbuseReportReason, err))
+		return nil, errors.Join(errGetVideoAbuseReportReason, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (va *videoAbuseReportReason) List(parts []string, output string) {
-	videoAbuseReportReasons := va.get(parts)
+func (va *videoAbuseReportReason) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	videoAbuseReportReasons, err := va.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons, nil)
+		utils.PrintJSON(videoAbuseReportReasons, writer)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons, nil)
+		utils.PrintYAML(videoAbuseReportReasons, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, videoAbuseReportReason := range videoAbuseReportReasons {
-			fmt.Printf(
-				"%s\t%s\n", videoAbuseReportReason.Id,
-				videoAbuseReportReason.Snippet.Label,
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\n",
+				videoAbuseReportReason.Id, videoAbuseReportReason.Snippet.Label,
 			)
 		}
 	}
+	return nil
 }
 
 func WithHL(hl string) Option {

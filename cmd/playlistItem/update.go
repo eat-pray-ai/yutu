@@ -25,7 +25,12 @@ var updateCmd = &cobra.Command{
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
-		pi.Update(output)
+
+		err := pi.Update(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

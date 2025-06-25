@@ -28,7 +28,7 @@ var listCmd = &cobra.Command{
 		err := c.List(parts, output, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
-			cmd.PrintErrf("Error: %s\n", err.Error())
+			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
 }

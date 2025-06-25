@@ -3,10 +3,9 @@ package channel
 import (
 	"errors"
 	"fmt"
-	"log"
-
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"io"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -37,9 +36,9 @@ type channel struct {
 }
 
 type Channel interface {
-	List([]string, string)
-	Update(output string)
-	get([]string) []*youtube.Channel
+	List([]string, string, io.Writer) error
+	Update(string, io.Writer) error
+	Get([]string) ([]*youtube.Channel, error)
 }
 
 type Option func(*channel)
@@ -54,7 +53,7 @@ func NewChannel(opts ...Option) Channel {
 	return c
 }
 
-func (c *channel) get(parts []string) []*youtube.Channel {
+func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 	call := service.Channels.List(parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
@@ -99,31 +98,43 @@ func (c *channel) get(parts []string) []*youtube.Channel {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errGetChannel, err))
+		return nil, errors.Join(errGetChannel, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (c *channel) List(parts []string, output string) {
-	channels := c.get(parts)
+func (c *channel) List(parts []string, output string, writer io.Writer) error {
+	channels, err := c.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(channels, nil)
+		utils.PrintJSON(channels, writer)
 	case "yaml":
-		utils.PrintYAML(channels, nil)
+		utils.PrintYAML(channels, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, channel := range channels {
-			fmt.Printf("%s\t%s\n", channel.Id, channel.Snippet.Title)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\n", channel.Id, channel.Snippet.Title)
 		}
 	}
+	return nil
 }
 
-func (c *channel) Update(output string) {
+func (c *channel) Update(output string, writer io.Writer) error {
 	parts := []string{"snippet"}
-	cha := c.get(parts)[0]
+	channels, err := c.Get(parts)
+	if err != nil {
+		return errors.Join(errUpdateChannel, err)
+	}
+	if len(channels) == 0 {
+		return errGetChannel
+	}
+
+	cha := channels[0]
 	if c.Country != "" {
 		cha.Snippet.Country = c.Country
 	}
@@ -143,19 +154,19 @@ func (c *channel) Update(output string) {
 	call := service.Channels.Update(parts, cha)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errUpdateChannel, err))
+		return errors.Join(errUpdateChannel, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Channel updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)
 	}
+	return nil
 }
 
 func WithCategoryId(categoryId string) Option {

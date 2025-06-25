@@ -21,7 +21,12 @@ var setModerationStatusCmd = &cobra.Command{
 			comment.WithModerationStatus(moderationStatus),
 			comment.WithBanAuthor(banAuthor),
 		)
-		c.SetModerationStatus(output)
+
+		err := c.SetModerationStatus(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

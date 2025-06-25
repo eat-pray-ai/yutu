@@ -32,7 +32,12 @@ var listCmd = &cobra.Command{
 			video.WithRating(rating),
 			video.WithService(nil),
 		)
-		v.List(parts, output)
+
+		err := v.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

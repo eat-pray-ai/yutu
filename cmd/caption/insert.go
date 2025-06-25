@@ -36,7 +36,7 @@ var insertCmd = &cobra.Command{
 		err := c.Insert(output, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
-			cmd.PrintErrf("Error: %s\n", err.Error())
+			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
 }

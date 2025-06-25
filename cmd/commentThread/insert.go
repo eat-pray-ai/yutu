@@ -23,7 +23,12 @@ var insertCmd = &cobra.Command{
 			commentThread.WithVideoId(videoId),
 			commentThread.WithService(nil),
 		)
-		ct.Insert(output)
+
+		err := ct.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

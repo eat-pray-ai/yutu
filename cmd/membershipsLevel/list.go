@@ -11,7 +11,12 @@ var listCmd = &cobra.Command{
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
 		m := membershipsLevel.NewMembershipsLevel(membershipsLevel.WithService(nil))
-		m.List(parts, output)
+
+		err := m.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

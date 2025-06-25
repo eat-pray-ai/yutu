@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"log"
-
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
+	"io"
 )
 
 var (
@@ -36,11 +35,11 @@ type playlistItem struct {
 }
 
 type PlaylistItem interface {
-	List([]string, string)
-	Insert(output string)
-	Update(output string)
-	Delete()
-	get([]string) []*youtube.PlaylistItem
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Update(string, io.Writer) error
+	Delete(io.Writer) error
+	Get([]string) ([]*youtube.PlaylistItem, error)
 }
 
 type Option func(*playlistItem)
@@ -55,7 +54,7 @@ func NewPlaylistItem(opts ...Option) PlaylistItem {
 	return p
 }
 
-func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
+func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 	call := service.PlaylistItems.List(parts)
 	if len(pi.IDs) > 0 {
 		call = call.Id(pi.IDs...)
@@ -75,29 +74,38 @@ func (pi *playlistItem) get(parts []string) []*youtube.PlaylistItem {
 	call = call.MaxResults(pi.MaxResults)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errGetPlaylistItem, err))
+		return nil, errors.Join(errGetPlaylistItem, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (pi *playlistItem) List(parts []string, output string) {
-	playlistItems := pi.get(parts)
+func (pi *playlistItem) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	playlistItems, err := pi.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistItems, nil)
+		utils.PrintJSON(playlistItems, writer)
 	case "yaml":
-		utils.PrintYAML(playlistItems, nil)
+		utils.PrintYAML(playlistItems, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, playlistItem := range playlistItems {
-			fmt.Printf("%s\t%s\n", playlistItem.Id, playlistItem.Snippet.Title)
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\n",
+				playlistItem.Id, playlistItem.Snippet.Title,
+			)
 		}
 	}
+	return nil
 }
 
-func (pi *playlistItem) Insert(output string) {
+func (pi *playlistItem) Insert(output string, writer io.Writer) error {
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
 	case "video":
@@ -139,23 +147,31 @@ func (pi *playlistItem) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errInsertPlaylistItem, err))
+		return errors.Join(errInsertPlaylistItem, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Playlist Item inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Playlist Item inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (pi *playlistItem) Update(output string) {
-	playlistItem := pi.get([]string{"id", "snippet", "status"})[0]
+func (pi *playlistItem) Update(output string, writer io.Writer) error {
+	playlistItems, err := pi.Get([]string{"id", "snippet", "status"})
+	if err != nil {
+		return errors.Join(errUpdatePlaylistItem, err)
+	}
+	if len(playlistItems) == 0 {
+		return errGetPlaylistItem
+	}
+
+	playlistItem := playlistItems[0]
 	if pi.Title != "" {
 		playlistItem.Snippet.Title = pi.Title
 	}
@@ -175,22 +191,22 @@ func (pi *playlistItem) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errUpdatePlaylistItem, err))
+		return errors.Join(errUpdatePlaylistItem, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Playlist Item updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Playlist Item updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (pi *playlistItem) Delete() {
+func (pi *playlistItem) Delete(writer io.Writer) error {
 	for _, id := range pi.IDs {
 		call := service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {
@@ -199,12 +215,12 @@ func (pi *playlistItem) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(pi, nil)
-			log.Fatalln(errors.Join(errDeletePlaylistItem, err))
+			return errors.Join(errDeletePlaylistItem, err)
 		}
 
-		fmt.Printf("Playlsit Item %s deleted", id)
+		_, _ = fmt.Fprintf(writer, "Playlsit Item %s deleted", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 	"os"
 )
 
@@ -34,11 +34,11 @@ type playlistImage struct {
 }
 
 type PlaylistImage interface {
-	get([]string) []*youtube.PlaylistImage
-	List([]string, string)
-	Insert(string)
-	Update(string)
-	Delete()
+	Get([]string) ([]*youtube.PlaylistImage, error)
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Update(string, io.Writer) error
+	Delete(io.Writer) error
 }
 
 type Option func(*playlistImage)
@@ -51,7 +51,7 @@ func NewPlaylistImage(opts ...Option) PlaylistImage {
 	return pi
 }
 
-func (pi *playlistImage) get(parts []string) []*youtube.PlaylistImage {
+func (pi *playlistImage) Get(parts []string) ([]*youtube.PlaylistImage, error) {
 	call := service.PlaylistImages.List()
 	call = call.Part(parts...)
 
@@ -71,36 +71,42 @@ func (pi *playlistImage) get(parts []string) []*youtube.PlaylistImage {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errGetPlaylistImage, err))
+		return nil, errors.Join(errGetPlaylistImage, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (pi *playlistImage) List(parts []string, output string) {
-	playlistImages := pi.get(parts)
+func (pi *playlistImage) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	playlistImages, err := pi.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistImages, nil)
+		utils.PrintJSON(playlistImages, writer)
 	case "yaml":
-		utils.PrintYAML(playlistImages, nil)
+		utils.PrintYAML(playlistImages, writer)
 	default:
-		fmt.Println("ID\tKind\tPlaylistID\tType")
+		_, _ = fmt.Fprintln(writer, "ID\tKind\tPlaylistID\tType")
 		for _, image := range playlistImages {
-			fmt.Printf(
+			_, _ = fmt.Fprintf(
+				writer,
 				"%s\t%s\t%s\t%s\n",
 				image.Id, image.Kind, image.Snippet.PlaylistId, image.Snippet.Type,
 			)
 		}
 	}
+	return nil
 }
 
-func (pi *playlistImage) Insert(output string) {
+func (pi *playlistImage) Insert(output string, writer io.Writer) error {
 	file, err := os.Open(pi.File)
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errInsertPlaylistImage, err))
+		return errors.Join(errInsertPlaylistImage, err)
 	}
 	defer file.Close()
 
@@ -125,23 +131,31 @@ func (pi *playlistImage) Insert(output string) {
 	call = call.Part("kind", "snippet")
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errInsertPlaylistImage, err))
+		return errors.Join(errInsertPlaylistImage, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("PlaylistImage inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "PlaylistImage inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (pi *playlistImage) Update(output string) {
-	playlistImage := pi.get([]string{"id", "kind", "snippet"})[0]
+func (pi *playlistImage) Update(output string, writer io.Writer) error {
+	playlistImages, err := pi.Get([]string{"id", "kind", "snippet"})
+	if err != nil {
+		return errors.Join(errUpdatePlaylistImage, err)
+	}
+	if len(playlistImages) == 0 {
+		return errGetPlaylistImage
+	}
+
+	playlistImage := playlistImages[0]
 	if pi.PlaylistID != "" {
 		playlistImage.Snippet.PlaylistId = pi.PlaylistID
 	}
@@ -162,8 +176,7 @@ func (pi *playlistImage) Update(output string) {
 	if pi.File != "" {
 		file, err := os.Open(pi.File)
 		if err != nil {
-			utils.PrintJSON(pi, nil)
-			log.Fatalln(errors.Join(errUpdatePlaylistImage, err))
+			return errors.Join(errUpdatePlaylistImage, err)
 		}
 		defer file.Close()
 		call = call.Media(file)
@@ -172,22 +185,22 @@ func (pi *playlistImage) Update(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(pi, nil)
-		log.Fatalln(errors.Join(errUpdatePlaylistImage, err))
+		return errors.Join(errUpdatePlaylistImage, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("PlaylistImage updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "PlaylistImage updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (pi *playlistImage) Delete() {
+func (pi *playlistImage) Delete(writer io.Writer) error {
 	for _, id := range pi.IDs {
 		call := service.PlaylistImages.Delete()
 		call = call.Id(id)
@@ -197,11 +210,11 @@ func (pi *playlistImage) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(pi, nil)
-			log.Fatalln(errors.Join(errDeletePlaylistImage, err))
+			return errors.Join(errDeletePlaylistImage, err)
 		}
-		fmt.Printf("PlaylistImage %s deleted\n", id)
+		_, _ = fmt.Fprintf(writer, "PlaylistImage %s deleted\n", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

@@ -26,7 +26,12 @@ var updateCmd = &cobra.Command{
 			channel.WithTitle(title),
 			channel.WithService(nil),
 		)
-		c.Update(output)
+
+		err := c.Update(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

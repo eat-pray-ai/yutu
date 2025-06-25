@@ -28,7 +28,12 @@ var listCmd = &cobra.Command{
 			commentThread.WithVideoId(videoId),
 			commentThread.WithService(nil),
 		)
-		ct.List(parts, output)
+
+		err := ct.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 	"os"
 )
 
@@ -24,7 +24,7 @@ type channelBanner struct {
 }
 
 type ChannelBanner interface {
-	Insert(output string)
+	Insert(string, io.Writer) error
 }
 
 type Option func(banner *channelBanner)
@@ -39,11 +39,10 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 	return cb
 }
 
-func (cb *channelBanner) Insert(output string) {
+func (cb *channelBanner) Insert(output string, writer io.Writer) error {
 	file, err := os.Open(cb.File)
 	if err != nil {
-		utils.PrintJSON(cb, nil)
-		log.Fatalln(errors.Join(errInsertChannelBanner, err))
+		return errors.Join(errInsertChannelBanner, err)
 	}
 	defer file.Close()
 	cbr := &youtube.ChannelBannerResource{}
@@ -58,19 +57,19 @@ func (cb *channelBanner) Insert(output string) {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(cb, nil)
-		log.Fatalln(errors.Join(errInsertChannelBanner, err))
+		return errors.Join(errInsertChannelBanner, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("ChannelBanner inserted: %s\n", res.Url)
+		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)
 	}
+	return nil
 }
 
 func WithChannelId(channelId string) Option {

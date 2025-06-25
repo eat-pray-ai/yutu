@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -33,10 +33,10 @@ type subscription struct {
 }
 
 type Subscription interface {
-	get([]string) []*youtube.Subscription
-	List([]string, string)
-	Insert(output string)
-	Delete()
+	Get([]string) ([]*youtube.Subscription, error)
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Delete(io.Writer) error
 }
 
 type Option func(*subscription)
@@ -51,7 +51,7 @@ func NewSubscription(opts ...Option) Subscription {
 	return s
 }
 
-func (s *subscription) get(parts []string) []*youtube.Subscription {
+func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 	call := service.Subscriptions.List(parts)
 	if len(s.IDs) > 0 {
 		call = call.Id(s.IDs...)
@@ -89,32 +89,38 @@ func (s *subscription) get(parts []string) []*youtube.Subscription {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s, nil)
-		log.Fatalln(errors.Join(errGetSubscription, err))
+		return nil, errors.Join(errGetSubscription, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (s *subscription) List(parts []string, output string) {
-	subscriptions := s.get(parts)
+func (s *subscription) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	subscriptions, err := s.Get(parts)
+	if err != nil {
+		return errors.Join(errGetSubscription, err)
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(subscriptions, nil)
+		utils.PrintJSON(subscriptions, writer)
 	case "yaml":
-		utils.PrintYAML(subscriptions, nil)
+		utils.PrintYAML(subscriptions, writer)
 	default:
-		fmt.Println("ID\tChannel ID\tChannel Title")
+		_, _ = fmt.Fprintln(writer, "ID\tChannel ID\tChannel Title")
 		for _, subscription := range subscriptions {
-			fmt.Printf(
-				"%s\t%s\t%s\n", subscription.Id,
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\t%s\n", subscription.Id,
 				subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title,
 			)
 		}
 	}
+	return nil
 }
 
-func (s *subscription) Insert(output string) {
+func (s *subscription) Insert(output string, writer io.Writer) error {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.SubscriberChannelId,
@@ -129,31 +135,31 @@ func (s *subscription) Insert(output string) {
 	call := service.Subscriptions.Insert([]string{"snippet"}, subscription)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s, nil)
-		log.Fatalln(errors.Join(errInsertSubscription, err))
+		return errors.Join(errInsertSubscription, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	default:
-		fmt.Printf("Subscription inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Subscription inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (s *subscription) Delete() {
+func (s *subscription) Delete(writer io.Writer) error {
 	for _, id := range s.IDs {
 		call := service.Subscriptions.Delete(id)
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(s, nil)
-			log.Fatalln(errors.Join(errDeleteSubscription, err))
+			return errors.Join(errDeleteSubscription, err)
 		}
 
-		fmt.Printf("Subscription %s deleted", id)
+		_, _ = fmt.Fprintf(writer, "Subscription %s deleted", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

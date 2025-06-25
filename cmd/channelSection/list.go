@@ -24,7 +24,12 @@ var listCmd = &cobra.Command{
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelSection.WithService(nil),
 		)
-		cs.List(parts, output)
+
+		err := cs.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

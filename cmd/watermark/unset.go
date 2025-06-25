@@ -19,7 +19,12 @@ var unsetCmd = &cobra.Command{
 			watermark.WithChannelId(channelId),
 			watermark.WithService(nil),
 		)
-		w.Unset()
+
+		err := w.Unset(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

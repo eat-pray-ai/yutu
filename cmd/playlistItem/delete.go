@@ -21,7 +21,12 @@ var deleteCmd = &cobra.Command{
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithService(nil),
 		)
-		pi.Delete()
+
+		err := pi.Delete(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

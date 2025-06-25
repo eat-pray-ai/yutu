@@ -20,7 +20,12 @@ var markAsSpamCmd = &cobra.Command{
 			comment.WithIDs(ids),
 			comment.WithService(nil),
 		)
-		c.MarkAsSpam(output)
+
+		err := c.MarkAsSpam(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

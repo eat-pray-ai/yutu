@@ -25,7 +25,12 @@ var setCmd = &cobra.Command{
 			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			watermark.WithService(nil),
 		)
-		w.Set()
+
+		err := w.Set(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

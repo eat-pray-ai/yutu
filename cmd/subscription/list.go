@@ -31,7 +31,12 @@ var listCmd = &cobra.Command{
 			subscription.WithOrder(order),
 			subscription.WithService(nil),
 		)
-		s.List(parts, output)
+
+		err := s.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

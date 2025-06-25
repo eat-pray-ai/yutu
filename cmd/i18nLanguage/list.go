@@ -13,7 +13,12 @@ var listCmd = &cobra.Command{
 		i := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithHl(hl), i18nLanguage.WithService(nil),
 		)
-		i.List(parts, output)
+
+		err := i.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

@@ -14,7 +14,12 @@ var listCmd = &cobra.Command{
 			videoAbuseReportReason.WithHL(hl),
 			videoAbuseReportReason.WithService(nil),
 		)
-		va.List(parts, output)
+
+		err := va.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

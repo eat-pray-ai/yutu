@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -20,8 +20,8 @@ type superChatEvent struct {
 }
 
 type SuperChatEvent interface {
-	get([]string) []*youtube.SuperChatEvent
-	List([]string, string)
+	Get([]string) ([]*youtube.SuperChatEvent, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*superChatEvent)
@@ -36,7 +36,7 @@ func NewSuperChatEvent(opts ...Option) SuperChatEvent {
 	return s
 }
 
-func (s *superChatEvent) get(parts []string) []*youtube.SuperChatEvent {
+func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) {
 	call := service.SuperChatEvents.List(parts)
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
@@ -48,26 +48,34 @@ func (s *superChatEvent) get(parts []string) []*youtube.SuperChatEvent {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s, nil)
-		log.Fatalln(errors.Join(errGetSuperChatEvent, err))
+		return nil, errors.Join(errGetSuperChatEvent, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (s *superChatEvent) List(parts []string, output string) {
-	events := s.get(parts)
+func (s *superChatEvent) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	events, err := s.Get(parts)
+	if err != nil {
+		return errors.Join(errGetSuperChatEvent, err)
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(events, nil)
+		utils.PrintJSON(events, writer)
 	case "yaml":
-		utils.PrintYAML(events, nil)
+		utils.PrintYAML(events, writer)
 	default:
-		fmt.Println("ID\tAmount")
+		_, _ = fmt.Fprintln(writer, "ID\tAmount")
 		for _, event := range events {
-			fmt.Printf("%v\t%v\n", event.Id, event.Snippet.AmountMicros)
+			_, _ = fmt.Fprintf(
+				writer, "%v\t%v\n", event.Id, event.Snippet.AmountMicros,
+			)
 		}
 	}
+	return nil
 }
 
 func WithHl(hl string) Option {

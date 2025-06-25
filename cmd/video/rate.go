@@ -22,7 +22,12 @@ var rateCmd = &cobra.Command{
 			video.WithRating(rating),
 			video.WithService(nil),
 		)
-		v.Rate()
+
+		err := v.Rate(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

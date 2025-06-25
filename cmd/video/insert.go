@@ -40,7 +40,12 @@ var insertCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			video.WithService(nil),
 		)
-		v.Insert(output)
+
+		err := v.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

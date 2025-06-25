@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 	"os"
 )
 
@@ -21,7 +21,7 @@ type thumbnail struct {
 }
 
 type Thumbnail interface {
-	Set(output string)
+	Set(string, io.Writer) error
 }
 
 type Option func(*thumbnail)
@@ -34,28 +34,28 @@ func NewThumbnail(opts ...Option) Thumbnail {
 	return t
 }
 
-func (t *thumbnail) Set(output string) {
+func (t *thumbnail) Set(output string, writer io.Writer) error {
 	file, err := os.Open(t.File)
 	if err != nil {
-		utils.PrintJSON(t, nil)
-		log.Fatalln(errors.Join(errSetThumbnail, err))
+		return errors.Join(errSetThumbnail, err)
 	}
+
 	call := service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(t, nil)
-		log.Fatalln(errors.Join(errSetThumbnail, err))
+		return errors.Join(errSetThumbnail, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Println("Thumbnail set done")
+		_, _ = fmt.Fprintf(writer, "Thumbnail set for video %s", t.VideoId)
 	}
+	return nil
 }
 
 func WithVideoId(videoId string) Option {

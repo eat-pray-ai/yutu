@@ -22,7 +22,12 @@ var getRatingCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithService(nil),
 		)
-		v.GetRating(output)
+
+		err := v.GetRating(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

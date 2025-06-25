@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -47,8 +47,8 @@ type search struct {
 }
 
 type Search interface {
-	get([]string) []*youtube.SearchResult
-	List([]string, string)
+	Get([]string) ([]*youtube.SearchResult, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*search)
@@ -63,7 +63,7 @@ func NewSearch(opts ...Option) Search {
 	return s
 }
 
-func (s *search) get(parts []string) []*youtube.SearchResult {
+func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 	call := service.Search.List(parts)
 	if s.ChannelId != "" {
 		call.ChannelId(s.ChannelId)
@@ -184,26 +184,32 @@ func (s *search) get(parts []string) []*youtube.SearchResult {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(s, nil)
-		log.Fatalln(errors.Join(errGetSearch, err))
+		return nil, errors.Join(errGetSearch, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (s *search) List(parts []string, output string) {
-	results := s.get(parts)
+func (s *search) List(parts []string, output string, writer io.Writer) error {
+	results, err := s.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(results, nil)
+		utils.PrintJSON(results, writer)
 	case "yaml":
-		utils.PrintYAML(results, nil)
+		utils.PrintYAML(results, writer)
 	default:
-		fmt.Println("Kind\tTitle")
+		_, _ = fmt.Fprintln(writer, "Kind\tTitle")
 		for _, result := range results {
-			fmt.Printf("%v\t%v\n", result.Id.Kind, result.Snippet.Title)
+			_, _ = fmt.Fprintf(
+				writer, "%v\t%v\n", result.Id.Kind, result.Snippet.Title,
+			)
 		}
 	}
+	return nil
 }
 
 func WithChannelId(channelId string) Option {

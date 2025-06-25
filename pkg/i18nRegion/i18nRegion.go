@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -19,8 +19,8 @@ type i18nRegion struct {
 }
 
 type I18nRegion interface {
-	get(parts []string) []*youtube.I18nRegion
-	List(parts []string, output string)
+	Get([]string) ([]*youtube.I18nRegion, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*i18nRegion)
@@ -35,7 +35,7 @@ func NewI18nRegion(opts ...Option) I18nRegion {
 	return i
 }
 
-func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
+func (i *i18nRegion) Get(parts []string) ([]*youtube.I18nRegion, error) {
 	call := service.I18nRegions.List(parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
@@ -43,29 +43,35 @@ func (i *i18nRegion) get(parts []string) []*youtube.I18nRegion {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(i, nil)
-		log.Fatalln(errors.Join(errGetI18nRegion, err))
+		return nil, errors.Join(errGetI18nRegion, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (i *i18nRegion) List(parts []string, output string) {
-	i18nRegions := i.get(parts)
+func (i *i18nRegion) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	i18nRegions, err := i.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nRegions, nil)
+		utils.PrintJSON(i18nRegions, writer)
 	case "yaml":
-		utils.PrintYAML(i18nRegions, nil)
+		utils.PrintYAML(i18nRegions, writer)
 	default:
-		fmt.Println("ID\tgl\tname")
+		_, _ = fmt.Fprintln(writer, "ID\tgl\tname")
 		for _, i18nRegion := range i18nRegions {
-			fmt.Printf(
-				"%v\t%v\t%v\n",
+			_, _ = fmt.Fprintf(
+				writer, "%v\t%v\t%v\n",
 				i18nRegion.Id, i18nRegion.Snippet.Gl, i18nRegion.Snippet.Name,
 			)
 		}
 	}
+	return nil
 }
 
 func WithHl(hl string) Option {

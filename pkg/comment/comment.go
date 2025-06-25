@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -35,13 +35,13 @@ type comment struct {
 }
 
 type Comment interface {
-	get([]string) []*youtube.Comment
-	List([]string, string)
-	Insert(output string)
-	Update(output string)
-	Delete()
-	MarkAsSpam(output string)
-	SetModerationStatus(output string)
+	Get([]string) ([]*youtube.Comment, error)
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Update(string, io.Writer) error
+	Delete(io.Writer) error
+	MarkAsSpam(string, io.Writer) error
+	SetModerationStatus(string, io.Writer) error
 }
 
 type Option func(*comment)
@@ -56,7 +56,7 @@ func NewComment(opts ...Option) Comment {
 	return c
 }
 
-func (c *comment) get(parts []string) []*youtube.Comment {
+func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 	call := service.Comments.List(parts)
 
 	if c.IDs[0] != "" {
@@ -78,29 +78,35 @@ func (c *comment) get(parts []string) []*youtube.Comment {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errGetComment, err))
+		return nil, errors.Join(errGetComment, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (c *comment) List(parts []string, output string) {
-	comments := c.get(parts)
+func (c *comment) List(parts []string, output string, writer io.Writer) error {
+	comments, err := c.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(comments, nil)
+		utils.PrintJSON(comments, writer)
 	case "yaml":
-		utils.PrintYAML(comments, nil)
+		utils.PrintYAML(comments, writer)
 	default:
-		fmt.Println("ID\tTextDisplay")
+		_, _ = fmt.Fprintln(writer, "ID\tTextDisplay")
 		for _, comment := range comments {
-			fmt.Printf("%s\t%s\n", comment.Id, comment.Snippet.TextDisplay)
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\n", comment.Id, comment.Snippet.TextDisplay,
+			)
 		}
 	}
+	return nil
 }
 
-func (c *comment) Insert(output string) {
+func (c *comment) Insert(output string, writer io.Writer) error {
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -120,24 +126,31 @@ func (c *comment) Insert(output string) {
 	call := service.Comments.Insert([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errInsertComment, err))
+		return errors.Join(errInsertComment, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Comment inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Comment inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (c *comment) Update(output string) {
-	comment := c.get([]string{"id", "snippet"})[0]
+func (c *comment) Update(output string, writer io.Writer) error {
+	comments, err := c.Get([]string{"id", "snippet"})
+	if err != nil {
+		return errors.Join(errUpdateComment, err)
+	}
+	if len(comments) == 0 {
+		return errGetComment
+	}
 
+	comment := comments[0]
 	if c.CanRate != nil {
 		comment.Snippet.CanRate = *c.CanRate
 	}
@@ -153,41 +166,41 @@ func (c *comment) Update(output string) {
 	call := service.Comments.Update([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errUpdateComment, err))
+		return errors.Join(errUpdateComment, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Comment updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Comment updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (c *comment) MarkAsSpam(output string) {
+func (c *comment) MarkAsSpam(output string, writer io.Writer) error {
 	call := service.Comments.MarkAsSpam(c.IDs)
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errMarkAsSpam, err))
+		return errors.Join(errMarkAsSpam, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c, nil)
+		utils.PrintJSON(c, writer)
 	case "yaml":
-		utils.PrintYAML(c, nil)
+		utils.PrintYAML(c, writer)
 	case "silent":
 	default:
-		fmt.Printf("Comment marked as spam: %s\n", c.IDs)
+		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.IDs)
 	}
+	return nil
 }
 
-func (c *comment) SetModerationStatus(output string) {
+func (c *comment) SetModerationStatus(output string, writer io.Writer) error {
 	call := service.Comments.SetModerationStatus(c.IDs, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
@@ -196,33 +209,34 @@ func (c *comment) SetModerationStatus(output string) {
 
 	err := call.Do()
 	if err != nil {
-		utils.PrintJSON(c, nil)
-		log.Fatalln(errors.Join(errSetModerationStatus, err))
+		return errors.Join(errSetModerationStatus, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c, nil)
+		utils.PrintJSON(c, writer)
 	case "yaml":
-		utils.PrintYAML(c, nil)
+		utils.PrintYAML(c, writer)
 	case "silent":
 	default:
-		fmt.Printf(
-			"Comment moderation status set to %s: %s\n", c.ModerationStatus, c.IDs,
+		_, _ = fmt.Fprintf(
+			writer, "Comment moderation status set to %s: %s\n",
+			c.ModerationStatus, c.IDs,
 		)
 	}
+	return nil
 }
 
-func (c *comment) Delete() {
+func (c *comment) Delete(writer io.Writer) error {
 	for _, id := range c.IDs {
 		call := service.Comments.Delete(id)
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(c, nil)
-			log.Fatalln(errors.Join(errDeleteComment, err))
+			return errors.Join(errDeleteComment, err)
 		}
-		fmt.Printf("Comment %s deleted\n", id)
+		_, _ = fmt.Fprintf(writer, "Comment %s deleted\n", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

@@ -26,7 +26,12 @@ var reportAbuseCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithService(nil),
 		)
-		v.ReportAbuse()
+
+		err := v.ReportAbuse(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

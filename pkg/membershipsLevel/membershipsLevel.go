@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -17,8 +17,8 @@ var (
 type membershipsLevel struct{}
 
 type MembershipsLevel interface {
-	List([]string, string)
-	get([]string) []*youtube.MembershipsLevel
+	List([]string, string, io.Writer) error
+	Get([]string) ([]*youtube.MembershipsLevel, error)
 }
 
 type Option func(*membershipsLevel)
@@ -33,33 +33,41 @@ func NewMembershipsLevel(opts ...Option) MembershipsLevel {
 	return m
 }
 
-func (m *membershipsLevel) get(parts []string) []*youtube.MembershipsLevel {
+func (m *membershipsLevel) Get(parts []string) (
+	[]*youtube.MembershipsLevel, error,
+) {
 	call := service.MembershipsLevels.List(parts)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(m, nil)
-		log.Fatalln(errors.Join(errGetMembershipsLevel, err))
+		return nil, errors.Join(errGetMembershipsLevel, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (m *membershipsLevel) List(parts []string, output string) {
-	membershipsLevels := m.get(parts)
+func (m *membershipsLevel) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	membershipsLevels, err := m.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(membershipsLevels, nil)
+		utils.PrintJSON(membershipsLevels, writer)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels, nil)
+		utils.PrintYAML(membershipsLevels, writer)
 	default:
-		fmt.Println("id\tdisplayName")
+		_, _ = fmt.Fprintln(writer, "id\tdisplayName")
 		for _, membershipsLevel := range membershipsLevels {
-			fmt.Printf(
-				"%v\t%v\n", membershipsLevel.Id,
+			_, _ = fmt.Fprintf(
+				writer, "%v\t%v\n", membershipsLevel.Id,
 				membershipsLevel.Snippet.LevelDetails.DisplayName,
 			)
 		}
 	}
+	return nil
 }
 
 func WithService(svc *youtube.Service) Option {

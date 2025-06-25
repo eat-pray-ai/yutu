@@ -21,7 +21,12 @@ var deleteCmd = &cobra.Command{
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channelSection.WithService(nil),
 		)
-		cs.Delete()
+
+		err := cs.Delete(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

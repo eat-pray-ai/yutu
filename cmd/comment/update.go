@@ -24,7 +24,12 @@ var updateCmd = &cobra.Command{
 			comment.WithViewerRating(viewerRating),
 			comment.WithService(nil),
 		)
-		c.Update(output)
+
+		err := c.Update(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

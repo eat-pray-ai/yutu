@@ -26,7 +26,12 @@ var insertCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithService(nil),
 		)
-		p.Insert(output)
+
+		err := p.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

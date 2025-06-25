@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -19,8 +19,8 @@ type i18nLanguage struct {
 }
 
 type I18nLanguage interface {
-	get(parts []string) []*youtube.I18nLanguage
-	List(parts []string, output string)
+	Get([]string) ([]*youtube.I18nLanguage, error)
+	List([]string, string, io.Writer) error
 }
 
 type Option func(*i18nLanguage)
@@ -35,7 +35,7 @@ func NewI18nLanguage(opts ...Option) I18nLanguage {
 	return i
 }
 
-func (i *i18nLanguage) get(parts []string) []*youtube.I18nLanguage {
+func (i *i18nLanguage) Get(parts []string) ([]*youtube.I18nLanguage, error) {
 	call := service.I18nLanguages.List(parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
@@ -43,29 +43,35 @@ func (i *i18nLanguage) get(parts []string) []*youtube.I18nLanguage {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(i, nil)
-		log.Fatalln(errors.Join(errGetI18nLanguage, err))
+		return nil, errors.Join(errGetI18nLanguage, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (i *i18nLanguage) List(parts []string, output string) {
-	i18nLanguages := i.get(parts)
+func (i *i18nLanguage) List(
+	parts []string, output string, writer io.Writer,
+) error {
+	i18nLanguages, err := i.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nLanguages, nil)
+		utils.PrintJSON(i18nLanguages, writer)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages, nil)
+		utils.PrintYAML(i18nLanguages, writer)
 	default:
-		fmt.Println("id\thl\tname")
+		_, _ = fmt.Fprintln(writer, "id\thl\tname")
 		for _, i18nLanguage := range i18nLanguages {
-			fmt.Printf(
-				"%v\t%v\t%v\n",
+			_, _ = fmt.Fprintf(
+				writer, "%v\t%v\t%v\n",
 				i18nLanguage.Id, i18nLanguage.Snippet.Hl, i18nLanguage.Snippet.Name,
 			)
 		}
 	}
+	return nil
 }
 
 func WithHl(hl string) Option {

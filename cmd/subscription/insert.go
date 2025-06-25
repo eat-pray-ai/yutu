@@ -24,7 +24,12 @@ var insertCmd = &cobra.Command{
 			subscription.WithTitle(title),
 			subscription.WithService(nil),
 		)
-		s.Insert(output)
+
+		err := s.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

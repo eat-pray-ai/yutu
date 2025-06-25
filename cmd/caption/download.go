@@ -29,7 +29,7 @@ var downloadCmd = &cobra.Command{
 		err := c.Download(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
-			cmd.PrintErrf("Error: %s\n", err.Error())
+			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
 }

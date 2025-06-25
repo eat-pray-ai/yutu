@@ -19,7 +19,12 @@ var deleteCmd = &cobra.Command{
 		s := subscription.NewSubscription(
 			subscription.WithIDs(ids), subscription.WithService(nil),
 		)
-		s.Delete()
+
+		err := s.Delete(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

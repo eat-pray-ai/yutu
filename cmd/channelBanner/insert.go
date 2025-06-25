@@ -17,7 +17,12 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			channelBanner.WithService(nil),
 		)
-		cb.Insert(output)
+
+		err := cb.Insert(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

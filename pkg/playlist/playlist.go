@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"log"
-
 	"google.golang.org/api/youtube/v3"
+	"io"
 )
 
 var (
@@ -35,11 +34,11 @@ type playlist struct {
 }
 
 type Playlist interface {
-	List([]string, string)
-	Insert(output string)
-	Update(output string)
-	Delete()
-	get([]string) []*youtube.Playlist
+	List([]string, string, io.Writer) error
+	Insert(string, io.Writer) error
+	Update(string, io.Writer) error
+	Delete(io.Writer) error
+	Get([]string) ([]*youtube.Playlist, error)
 }
 
 type Option func(*playlist)
@@ -54,7 +53,7 @@ func NewPlaylist(opts ...Option) Playlist {
 	return p
 }
 
-func (p *playlist) get(parts []string) []*youtube.Playlist {
+func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 	call := service.Playlists.List(parts)
 
 	if len(p.IDs) > 0 {
@@ -79,29 +78,33 @@ func (p *playlist) get(parts []string) []*youtube.Playlist {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p, nil)
-		log.Fatalln(errors.Join(errGetPlaylist, err))
+		return nil, errors.Join(errGetPlaylist, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (p *playlist) List(parts []string, output string) {
-	playlists := p.get(parts)
+func (p *playlist) List(parts []string, output string, writer io.Writer) error {
+	playlists, err := p.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(playlists, nil)
+		utils.PrintJSON(playlists, writer)
 	case "yaml":
-		utils.PrintYAML(playlists, nil)
+		utils.PrintYAML(playlists, writer)
 	default:
-		fmt.Println("ID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, playlist := range playlists {
-			fmt.Printf("%s\t%s\n", playlist.Id, playlist.Snippet.Title)
+			_, _ = fmt.Fprintf(writer, "%s\t%s\n", playlist.Id, playlist.Snippet.Title)
 		}
 	}
+	return nil
 }
 
-func (p *playlist) Insert(output string) {
+func (p *playlist) Insert(output string, writer io.Writer) error {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -118,23 +121,31 @@ func (p *playlist) Insert(output string) {
 	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p, nil)
-		log.Fatalln(errors.Join(errInsertPlaylist, err))
+		return errors.Join(errInsertPlaylist, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Playlist inserted: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (p *playlist) Update(output string) {
-	playlist := p.get([]string{"id", "snippet", "status"})[0]
+func (p *playlist) Update(output string, writer io.Writer) error {
+	playlists, err := p.Get([]string{"id", "snippet", "status"})
+	if err != nil {
+		return errors.Join(errUpdatePlaylist, err)
+	}
+	if len(playlists) == 0 {
+		return errGetPlaylist
+	}
+
+	playlist := playlists[0]
 	if p.Title != "" {
 		playlist.Snippet.Title = p.Title
 	}
@@ -154,22 +165,22 @@ func (p *playlist) Update(output string) {
 	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(p, nil)
-		log.Fatalln(errors.Join(errUpdatePlaylist, err))
+		return errors.Join(errUpdatePlaylist, err)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, nil)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, nil)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
-		fmt.Printf("Playlist updated: %s\n", res.Id)
+		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)
 	}
+	return nil
 }
 
-func (p *playlist) Delete() {
+func (p *playlist) Delete(writer io.Writer) error {
 	for _, id := range p.IDs {
 		call := service.Playlists.Delete(id)
 		if p.OnBehalfOfContentOwner != "" {
@@ -178,11 +189,11 @@ func (p *playlist) Delete() {
 
 		err := call.Do()
 		if err != nil {
-			utils.PrintJSON(p, nil)
-			log.Fatalln(errors.Join(errDeletePlaylist, err))
+			return errors.Join(errDeletePlaylist, err)
 		}
-		fmt.Printf("Playlist %s deleted", id)
+		_, _ = fmt.Fprintf(writer, "Playlist %s deleted", id)
 	}
+	return nil
 }
 
 func WithIDs(ids []string) Option {

@@ -6,7 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
-	"log"
+	"io"
 )
 
 var (
@@ -22,8 +22,8 @@ type member struct {
 }
 
 type Member interface {
-	List([]string, string)
-	get([]string) []*youtube.Member
+	List([]string, string, io.Writer) error
+	Get([]string) ([]*youtube.Member, error)
 }
 
 type Option func(*member)
@@ -38,7 +38,7 @@ func NewMember(opts ...Option) Member {
 	return m
 }
 
-func (m *member) get(parts []string) []*youtube.Member {
+func (m *member) Get(parts []string) ([]*youtube.Member, error) {
 	call := service.Members.List(parts)
 	if m.MemberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.MemberChannelId)
@@ -56,30 +56,34 @@ func (m *member) get(parts []string) []*youtube.Member {
 
 	res, err := call.Do()
 	if err != nil {
-		utils.PrintJSON(m, nil)
-		log.Fatalln(errors.Join(errGetMember, err))
+		return nil, errors.Join(errGetMember, err)
 	}
 
-	return res.Items
+	return res.Items, nil
 }
 
-func (m *member) List(parts []string, output string) {
-	members := m.get(parts)
+func (m *member) List(parts []string, output string, writer io.Writer) error {
+	members, err := m.Get(parts)
+	if err != nil {
+		return err
+	}
+
 	switch output {
 	case "json":
-		utils.PrintJSON(members, nil)
+		utils.PrintJSON(members, writer)
 	case "yaml":
-		utils.PrintYAML(members, nil)
+		utils.PrintYAML(members, writer)
 	default:
-		fmt.Println("channelId\tdisplayName")
+		_, _ = fmt.Fprintln(writer, "channelId\tdisplayName")
 		for _, member := range members {
-			fmt.Printf(
-				"%s\t%s\n",
+			_, _ = fmt.Fprintf(
+				writer, "%s\t%s\n",
 				member.Snippet.MemberDetails.ChannelId,
 				member.Snippet.MemberDetails.DisplayName,
 			)
 		}
 	}
+	return nil
 }
 
 func WithMemberChannelId(channelId string) Option {

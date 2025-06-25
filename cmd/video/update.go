@@ -32,7 +32,12 @@ var updateCmd = &cobra.Command{
 			video.WithEmbeddable(embeddable),
 			video.WithService(nil),
 		)
-		v.Update(output)
+
+		err := v.Update(output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

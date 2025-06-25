@@ -13,7 +13,12 @@ var listCmd = &cobra.Command{
 		i := i18nRegion.NewI18nRegion(
 			i18nRegion.WithHl(hl), i18nRegion.WithService(nil),
 		)
-		i.List(parts, output)
+
+		err := i.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

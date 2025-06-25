@@ -17,7 +17,12 @@ var listCmd = &cobra.Command{
 			member.WithMode(mode),
 			member.WithService(nil),
 		)
-		m.List(parts, output)
+
+		err := m.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 

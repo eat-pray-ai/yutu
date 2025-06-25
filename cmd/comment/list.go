@@ -24,7 +24,12 @@ var listCmd = &cobra.Command{
 			comment.WithTextFormat(textFormat),
 			comment.WithService(nil),
 		)
-		c.List(parts, output)
+
+		err := c.List(parts, output, cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
 	},
 }
 
