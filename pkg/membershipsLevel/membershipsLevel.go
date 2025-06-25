@@ -59,7 +59,7 @@ func (m *membershipsLevel) List(
 	case "yaml":
 		utils.PrintYAML(membershipsLevels, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "id\tdisplayName")
+		_, _ = fmt.Fprintln(writer, "ID\tDisplayName")
 		for _, membershipsLevel := range membershipsLevels {
 			_, _ = fmt.Fprintf(
 				writer, "%v\t%v\n", membershipsLevel.Id,

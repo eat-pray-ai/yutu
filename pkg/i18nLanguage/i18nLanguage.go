@@ -63,10 +63,10 @@ func (i *i18nLanguage) List(
 	case "yaml":
 		utils.PrintYAML(i18nLanguages, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "id\thl\tname")
+		_, _ = fmt.Fprintln(writer, "ID\tHl\tName")
 		for _, i18nLanguage := range i18nLanguages {
 			_, _ = fmt.Fprintf(
-				writer, "%v\t%v\t%v\n",
+				writer, "%s\t%s\t%s\n",
 				i18nLanguage.Id, i18nLanguage.Snippet.Hl, i18nLanguage.Snippet.Name,
 			)
 		}

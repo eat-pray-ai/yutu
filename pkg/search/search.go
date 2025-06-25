@@ -205,7 +205,7 @@ func (s *search) List(parts []string, output string, writer io.Writer) error {
 		_, _ = fmt.Fprintln(writer, "Kind\tTitle")
 		for _, result := range results {
 			_, _ = fmt.Fprintf(
-				writer, "%v\t%v\n", result.Id.Kind, result.Snippet.Title,
+				writer, "%s\t%s\n", result.Id.Kind, result.Snippet.Title,
 			)
 		}
 	}

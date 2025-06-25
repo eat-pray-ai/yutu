@@ -83,7 +83,7 @@ func (cs *channelSection) List(
 	case "yaml":
 		utils.PrintYAML(channelSections, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tChannelID\tTitle")
+		_, _ = fmt.Fprintln(writer, "ID\tChannelId\tTitle")
 		for _, channelSection := range channelSections {
 			_, _ = fmt.Fprintf(
 				writer, "%s\t%s\t%s\n", channelSection.Id,

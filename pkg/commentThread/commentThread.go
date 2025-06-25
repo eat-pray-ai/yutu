@@ -109,7 +109,7 @@ func (c *commentThread) List(
 	case "yaml":
 		utils.PrintYAML(commentThreads, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTopLevelCommentID")
+		_, _ = fmt.Fprintln(writer, "ID\tTopLevelCommentId")
 		for _, commentThread := range commentThreads {
 			_, _ = fmt.Fprintf(
 				writer, "%s\t%s\n",

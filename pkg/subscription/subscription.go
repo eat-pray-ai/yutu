@@ -109,7 +109,7 @@ func (s *subscription) List(
 	case "yaml":
 		utils.PrintYAML(subscriptions, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tChannel ID\tChannel Title")
+		_, _ = fmt.Fprintln(writer, "ID\tChannelId\tChannelTitle")
 		for _, subscription := range subscriptions {
 			_, _ = fmt.Fprintf(
 				writer, "%s\t%s\t%s\n", subscription.Id,

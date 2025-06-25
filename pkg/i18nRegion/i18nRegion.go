@@ -63,10 +63,10 @@ func (i *i18nRegion) List(
 	case "yaml":
 		utils.PrintYAML(i18nRegions, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tgl\tname")
+		_, _ = fmt.Fprintln(writer, "ID\tGl\tName")
 		for _, i18nRegion := range i18nRegions {
 			_, _ = fmt.Fprintf(
-				writer, "%v\t%v\t%v\n",
+				writer, "%s\t%s\t%s\n",
 				i18nRegion.Id, i18nRegion.Snippet.Gl, i18nRegion.Snippet.Name,
 			)
 		}

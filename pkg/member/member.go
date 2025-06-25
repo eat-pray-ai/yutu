@@ -74,7 +74,7 @@ func (m *member) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(members, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "channelId\tdisplayName")
+		_, _ = fmt.Fprintln(writer, "ChannelId\tDisplayName")
 		for _, member := range members {
 			_, _ = fmt.Fprintf(
 				writer, "%s\t%s\n",

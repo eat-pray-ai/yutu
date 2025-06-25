@@ -126,7 +126,7 @@ func startWebServer(redirectURL string) chan string {
 				_ = listener.Close()
 				w.Header().Set("Content-Type", "text/plain")
 				_, _ = fmt.Fprintf(
-					w, "Received code: %v\r\nYou can now safely close this window.", code,
+					w, "Received code: %s\r\nYou can now safely close this window.", code,
 				)
 			},
 		),
@@ -138,7 +138,7 @@ func startWebServer(redirectURL string) chan string {
 func getCodeFromPrompt(authURL string) (code string) {
 	fmt.Printf(
 		"It seems that your browser is not open. Go to the following "+
-			"link in your browser:\n%v\n", authURL,
+			"link in your browser:\n%s\n", authURL,
 	)
 	fmt.Print(manualInputHint)
 	_, err := fmt.Scan(&code)
@@ -159,7 +159,7 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 	if err := utils.OpenURL(authURL); err == nil {
 		fmt.Printf(
 			"Your browser has been opened to an authorization URL. This "+
-				"program will resume once authorization has been provided.\n%v\n",
+				"program will resume once authorization has been provided.\n%s\n",
 			authURL,
 		)
 		code = <-codeCh
@@ -169,7 +169,7 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 		code = getCodeFromPrompt(authURL)
 	}
 
-	fmt.Printf("Authorization code generated: %v\n", code)
+	fmt.Printf("Authorization code generated: %s\n", code)
 	token, err := config.Exchange(context.TODO(), code)
 	if err != nil {
 		log.Fatalln(errors.Join(errExchange, err))

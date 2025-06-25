@@ -91,7 +91,7 @@ func (pi *playlistImage) List(
 	case "yaml":
 		utils.PrintYAML(playlistImages, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tKind\tPlaylistID\tType")
+		_, _ = fmt.Fprintln(writer, "ID\tKind\tPlaylistId\tType")
 		for _, image := range playlistImages {
 			_, _ = fmt.Fprintf(
 				writer,

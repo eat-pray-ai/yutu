@@ -71,7 +71,7 @@ func (s *superChatEvent) List(
 		_, _ = fmt.Fprintln(writer, "ID\tAmount")
 		for _, event := range events {
 			_, _ = fmt.Fprintf(
-				writer, "%v\t%v\n", event.Id, event.Snippet.AmountMicros,
+				writer, "%s\t%d\n", event.Id, event.Snippet.AmountMicros,
 			)
 		}
 	}
