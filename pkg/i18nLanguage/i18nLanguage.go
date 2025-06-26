@@ -2,9 +2,9 @@ package i18nLanguage
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -63,12 +63,14 @@ func (i *i18nLanguage) List(
 	case "yaml":
 		utils.PrintYAML(i18nLanguages, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tHl\tName")
-		for _, i18nLanguage := range i18nLanguages {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\t%s\n",
-				i18nLanguage.Id, i18nLanguage.Snippet.Hl, i18nLanguage.Snippet.Name,
-			)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Hl", "Name"})
+		for _, lang := range i18nLanguages {
+			tb.AppendRow(table.Row{lang.Id, lang.Snippet.Hl, lang.Snippet.Name})
 		}
 	}
 	return nil

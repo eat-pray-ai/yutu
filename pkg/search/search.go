@@ -2,9 +2,9 @@ package search
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -202,10 +202,24 @@ func (s *search) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(results, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "Kind\tTitle")
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"Kind", "Title", "Resource ID"})
 		for _, result := range results {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\n", result.Id.Kind, result.Snippet.Title,
+			var resourceId string
+			switch result.Id.Kind {
+			case "youtube#video":
+				resourceId = result.Id.VideoId
+			case "youtube#channel":
+				resourceId = result.Id.ChannelId
+			case "youtube#playlist":
+				resourceId = result.Id.PlaylistId
+			}
+			tb.AppendRow(
+				table.Row{result.Id.Kind, result.Snippet.Title, resourceId},
 			)
 		}
 	}

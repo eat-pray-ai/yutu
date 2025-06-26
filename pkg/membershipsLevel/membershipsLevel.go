@@ -2,9 +2,9 @@ package membershipsLevel
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -59,12 +59,14 @@ func (m *membershipsLevel) List(
 	case "yaml":
 		utils.PrintYAML(membershipsLevels, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tDisplayName")
-		for _, membershipsLevel := range membershipsLevels {
-			_, _ = fmt.Fprintf(
-				writer, "%v\t%v\n", membershipsLevel.Id,
-				membershipsLevel.Snippet.LevelDetails.DisplayName,
-			)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Display Name"})
+		for _, ml := range membershipsLevels {
+			tb.AppendRow(table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName})
 		}
 	}
 	return nil

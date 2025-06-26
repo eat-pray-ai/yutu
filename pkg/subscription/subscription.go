@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -109,11 +110,26 @@ func (s *subscription) List(
 	case "yaml":
 		utils.PrintYAML(subscriptions, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tChannelId\tChannelTitle")
-		for _, subscription := range subscriptions {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\t%s\n", subscription.Id,
-				subscription.Snippet.ResourceId.ChannelId, subscription.Snippet.Title,
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Kind", "Resource ID", "Channel Title"})
+		for _, sub := range subscriptions {
+			var resourceId string
+			switch sub.Snippet.ResourceId.Kind {
+			case "youtube#video":
+				resourceId = sub.Snippet.ResourceId.VideoId
+			case "youtube#channel":
+				resourceId = sub.Snippet.ResourceId.ChannelId
+			case "youtube#playlist":
+				resourceId = sub.Snippet.ResourceId.PlaylistId
+			}
+			tb.AppendRow(
+				table.Row{
+					sub.Id, sub.Snippet.ResourceId.Kind, resourceId, sub.Snippet.Title,
+				},
 			)
 		}
 	}

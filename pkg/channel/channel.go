@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"io"
 
 	"google.golang.org/api/youtube/v3"
@@ -119,6 +120,17 @@ func (c *channel) List(parts []string, output string, writer io.Writer) error {
 		_, _ = fmt.Fprintln(writer, "ID\tTitle")
 		for _, channel := range channels {
 			_, _ = fmt.Fprintf(writer, "%s\t%s\n", channel.Id, channel.Snippet.Title)
+		}
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Title", "Country"})
+		for _, channel := range channels {
+			tb.AppendRow(
+				table.Row{channel.Id, channel.Snippet.Title, channel.Snippet.Country},
+			)
 		}
 	}
 	return nil

@@ -2,9 +2,9 @@ package activity
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -94,11 +94,15 @@ func (a *activity) List(
 	case "yaml":
 		utils.PrintYAML(activities, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle\tType")
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Title", "Type"})
 		for _, activity := range activities {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\t%s\n",
-				activity.Id, activity.Snippet.Title, activity.Snippet.Type,
+			tb.AppendRow(
+				table.Row{activity.Id, activity.Snippet.Title, activity.Snippet.Type},
 			)
 		}
 	}

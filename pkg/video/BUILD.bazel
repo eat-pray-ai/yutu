@@ -10,6 +10,7 @@ go_library(
         "//pkg/playlistItem",
         "//pkg/thumbnail",
         "//pkg/utils",
+        "@com_github_jedib0t_go_pretty_v6//table",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

@@ -2,9 +2,9 @@ package videoCategory
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -69,12 +69,14 @@ func (vc *videoCategory) List(
 	case "yaml":
 		utils.PrintYAML(videoCategories, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle\tAssignable")
-		for _, videoCategory := range videoCategories {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\t%t\n", videoCategory.Id,
-				videoCategory.Snippet.Title, videoCategory.Snippet.Assignable,
-			)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Title", "Assignable"})
+		for _, cat := range videoCategories {
+			tb.AppendRow(table.Row{cat.Id, cat.Snippet.Title, cat.Snippet.Assignable})
 		}
 	}
 	return nil

@@ -2,9 +2,9 @@ package member
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -74,12 +74,18 @@ func (m *member) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(members, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ChannelId\tDisplayName")
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"Channel ID", "Display Name"})
 		for _, member := range members {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\n",
-				member.Snippet.MemberDetails.ChannelId,
-				member.Snippet.MemberDetails.DisplayName,
+			tb.AppendRow(
+				table.Row{
+					member.Snippet.MemberDetails.ChannelId,
+					member.Snippet.MemberDetails.DisplayName,
+				},
 			)
 		}
 	}

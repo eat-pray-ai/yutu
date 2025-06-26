@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 	"os"
@@ -89,9 +90,19 @@ func (c *caption) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(captions, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tName")
+		tb := table.NewWriter()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Video ID", "Name", "Language"})
+		defer tb.Render()
 		for _, caption := range captions {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\n", caption.Id, caption.Snippet.Name)
+			tb.AppendRow(
+				table.Row{
+					caption.Id, caption.Snippet.VideoId,
+					caption.Snippet.Name, caption.Snippet.Language,
+				},
+			)
 		}
 	}
 	return nil

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -72,6 +73,20 @@ func (s *superChatEvent) List(
 		for _, event := range events {
 			_, _ = fmt.Fprintf(
 				writer, "%s\t%d\n", event.Id, event.Snippet.AmountMicros,
+			)
+		}
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Amount", "Comment", "Supporter"})
+		for _, event := range events {
+			tb.AppendRow(
+				table.Row{
+					event.Id, event.Snippet.DisplayString, event.Snippet.CommentText,
+					event.Snippet.SupporterDetails.DisplayName,
+				},
 			)
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -83,12 +84,14 @@ func (cs *channelSection) List(
 	case "yaml":
 		utils.PrintYAML(channelSections, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tChannelId\tTitle")
-		for _, channelSection := range channelSections {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\t%s\n", channelSection.Id,
-				channelSection.Snippet.ChannelId, channelSection.Snippet.Title,
-			)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
+		for _, chs := range channelSections {
+			tb.AppendRow(table.Row{chs.Id, chs.Snippet.ChannelId, chs.Snippet.Title})
 		}
 	}
 	return nil

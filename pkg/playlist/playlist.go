@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -96,9 +97,14 @@ func (p *playlist) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(playlists, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle")
-		for _, playlist := range playlists {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\n", playlist.Id, playlist.Snippet.Title)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
+		for _, pl := range playlists {
+			tb.AppendRow(table.Row{pl.Id, pl.Snippet.ChannelId, pl.Snippet.Title})
 		}
 	}
 	return nil

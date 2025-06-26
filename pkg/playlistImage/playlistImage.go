@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 	"os"
@@ -91,12 +92,15 @@ func (pi *playlistImage) List(
 	case "yaml":
 		utils.PrintYAML(playlistImages, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tKind\tPlaylistId\tType")
-		for _, image := range playlistImages {
-			_, _ = fmt.Fprintf(
-				writer,
-				"%s\t%s\t%s\t%s\n",
-				image.Id, image.Kind, image.Snippet.PlaylistId, image.Snippet.Type,
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Kind", "Playlist ID", "Type"})
+		for _, img := range playlistImages {
+			tb.AppendRow(
+				table.Row{img.Id, img.Kind, img.Snippet.PlaylistId, img.Snippet.Type},
 			)
 		}
 	}

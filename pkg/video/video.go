@@ -6,6 +6,7 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"io"
 	"os"
 	"slices"
@@ -142,9 +143,20 @@ func (v *video) List(parts []string, output string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(videos, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle")
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Title", "Channel ID", "Views"})
 		for _, video := range videos {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\n", video.Id, video.Snippet.Title)
+			tb.AppendRow(
+				table.Row{
+					video.Id, video.Snippet.Title,
+					video.Snippet.ChannelId,
+					video.Statistics.ViewCount,
+				},
+			)
 		}
 	}
 	return nil

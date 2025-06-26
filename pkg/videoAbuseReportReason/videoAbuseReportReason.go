@@ -2,9 +2,9 @@ package videoAbuseReportReason
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 	"io"
 )
@@ -63,12 +63,14 @@ func (va *videoAbuseReportReason) List(
 	case "yaml":
 		utils.PrintYAML(videoAbuseReportReasons, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle")
-		for _, videoAbuseReportReason := range videoAbuseReportReasons {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\n",
-				videoAbuseReportReason.Id, videoAbuseReportReason.Snippet.Label,
-			)
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Label"})
+		for _, reason := range videoAbuseReportReasons {
+			tb.AppendRow(table.Row{reason.Id, reason.Snippet.Label})
 		}
 	}
 	return nil
