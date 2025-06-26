@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "utils",
@@ -8,5 +8,15 @@ go_library(
     deps = [
         "@com_github_spf13_pflag//:pflag",
         "@in_gopkg_yaml_v3//:yaml_v3",
+    ],
+)
+
+go_test(
+    name = "utils_test",
+    srcs = ["utils_test.go"],
+    embed = [":utils"],
+    deps = [
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_pflag//:pflag",
     ],
 )
