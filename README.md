@@ -7,11 +7,15 @@
 [![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)](https://github.com/eat-pray-ai/yutu?tab=MIT-1-ov-file)
 [![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu/pkg/yutuber?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu/pkg/yutuber)
 
-[![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)](https://github.com/eat-pray-ai/yutu/releases/latest)
+[![GitHub Repo stars](https://img.shields.io/github/stars/eat-pray-ai/yutu?style=flat-square&logo=github)](https://github.com/eat-pray-ai/yutu/stargazers)
 [![GitHub Downloads](https://img.shields.io/github/downloads/eat-pray-ai/yutu/total?style=flat-square)](https://github.com/eat-pray-ai/yutu/releases/latest)
 [![GitHub Actions build Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/publish.yml?style=flat-square&logo=githubactions)](https://github.com/eat-pray-ai/yutu/actions/workflows/publish.yml)
 [![GitHub Actions CodeQL Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)](https://github.com/eat-pray-ai/yutu/actions/workflows/codeql.yml)
 [![GitHub Actions test Status](https://img.shields.io/github/actions/workflow/status/eat-pray-ai/yutu/test.yml?style=flat-square&logo=githubactions&label=test)](https://github.com/eat-pray-ai/yutu/actions/workflows/test.yml)
+
+[![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)](https://github.com/eat-pray-ai/yutu/releases/latest)
+[![Homebrew Formula Version](https://img.shields.io/homebrew/v/yutu?style=flat-square&logo=homebrew)](https://formulae.brew.sh/formula/yutu)
+[![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square)](https://winstall.app/apps/eat-pray-ai.yutu)
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=490920&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
@@ -136,7 +140,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ```shell
 ❯ yutu help
-yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc.
+yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc
 
 Usage:
   yutu [flags]
@@ -147,26 +151,28 @@ Available Commands:
   auth                   Authenticate with YouTube API
   caption                Manipulate YouTube captions
   channel                Manipulate YouTube channels
-  channelBanner          Insert Youtube channelBanner
-  channelSection         Manipulate channel section
+  channelBanner          Insert Youtube channel banner
+  channelSection         Manipulate YouTube channel sections
   comment                Manipulate YouTube comments
   commentThread          Manipulate YouTube comment threads
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
-  i18nLanguage           List YouTube i18nLanguages
-  i18nRegion             List YouTube i18nRegions
-  member                 List YouTube members
-  membershipsLevel       List YouTube memberships levels
+  i18nLanguage           List YouTube i18n languages
+  i18nRegion             List YouTube i18n regions
+  member                 List channel's members' info
+  membershipsLevel       List memberships levels' info
   playlist               Manipulate YouTube playlists
+  playlistImage          Manipulate YouTube playlist images
   playlistItem           Manipulate YouTube playlist items
-  search                 Search for Youtube resources
+  search                 Search for YouTube resources
   subscription           Manipulate YouTube subscriptions
+  superChatEvent         List Super Chat events for a channel
   thumbnail              Set thumbnail for a video
   version                Show the version of yutu
   video                  Manipulate YouTube videos
   videoAbuseReportReason List YouTube video abuse report reasons
   videoCategory          List YouTube video categories
-  watermark              Manipulate Youtube watermarks
+  watermark              Manipulate YouTube watermarks
 
 Flags:
   -h, --help   help for yutu

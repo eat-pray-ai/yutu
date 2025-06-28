@@ -77,10 +77,10 @@ Here are the features that are currently supported by yutu, and the ones that ar
   - [x] update, 50
   - [x] delete, 50
 - playlistImages
-  - [ ] list, ?
-  - [ ] insert, ?
-  - [ ] upload, ?
-  - [ ] delete, ?
+  - [x] list, ?
+  - [x] insert, ?
+  - [x] upload, ?
+  - [x] delete, ?
 - search
   - [x] list, 100
 - subscriptions
