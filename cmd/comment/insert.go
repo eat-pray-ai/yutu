@@ -1,15 +1,15 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Insert a comment"
-	insertLong        = "Insert a comment to a video"
-	insertPidUsage    = "ID of the parent comment"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort    = "Insert a comment"
+	insertLong     = "Insert a comment to a video"
+	insertPidUsage = "ID of the parent comment"
 )
 
 var insertCmd = &cobra.Command{
@@ -52,7 +52,7 @@ func init() {
 		&textOriginal, "textOriginal", "t", "", toUsage,
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

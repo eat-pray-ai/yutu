@@ -1,16 +1,16 @@
 package playlistItem
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List playlist items"
-	listLong        = "List playlist items' info, such as title, description, etc"
-	listIdsUsage    = "IDs of the playlist items to list"
-	listPidUsage    = "Return the playlist items within the given playlist"
-	listOutputUsage = "json, yaml, or table"
+	listShort    = "List playlist items"
+	listLong     = "List playlist items' info, such as title, description, etc"
+	listIdsUsage = "IDs of the playlist items to list"
+	listPidUsage = "Return the playlist items within the given playlist"
 )
 
 var listCmd = &cobra.Command{
@@ -45,7 +45,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)

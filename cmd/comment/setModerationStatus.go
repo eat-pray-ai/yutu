@@ -1,14 +1,14 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
 
 const (
-	smsShort       = "Set YouTube comments moderation status"
-	smsLong        = "Set YouTube comments moderation status by ids"
-	smsOutputUsage = "json, yaml, or silent"
+	smsShort = "Set YouTube comments moderation status"
+	smsLong  = "Set YouTube comments moderation status by ids"
 )
 
 var setModerationStatusCmd = &cobra.Command{
@@ -43,7 +43,7 @@ func init() {
 		banAuthor, "banAuthor", "A", false, baUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&output, "output", "o", "", smsOutputUsage,
+		&output, "output", "o", "", cmd.SilentUsage,
 	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")

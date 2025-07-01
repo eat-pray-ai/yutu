@@ -1,15 +1,15 @@
 package playlistItem
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Insert a playlist item into a playlist"
-	insertLong        = "Insert a playlist item into a playlist"
-	insertPidUsage    = "The id that YouTube uses to uniquely identify the playlist that the item is in"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort    = "Insert a playlist item into a playlist"
+	insertLong     = "Insert a playlist item into a playlist"
+	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 )
 
 var insertCmd = &cobra.Command{
@@ -56,7 +56,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("kind")
 	_ = insertCmd.MarkFlagRequired("playlistId")

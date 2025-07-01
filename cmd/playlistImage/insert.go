@@ -1,14 +1,14 @@
 package playlistImage
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Insert a YouTube playlist image"
-	insertLong        = "Insert a YouTube playlist image for a given playlist id"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort = "Insert a YouTube playlist image"
+	insertLong  = "Insert a YouTube playlist image for a given playlist id"
 )
 
 var insertCmd = &cobra.Command{
@@ -41,7 +41,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
 	insertCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	insertCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("playlistId")

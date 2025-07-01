@@ -1,16 +1,16 @@
 package subscription
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List subscriptions' info"
-	listLong        = "List subscriptions' info, such as id, title, etc"
-	listIdsUsage    = "Return the subscriptions with the given ids for Stubby or Apiary"
-	listCidUsage    = "Return the subscriptions of the given channel owner"
-	listOutputUsage = "json, yaml, or table"
+	listShort    = "List subscriptions' info"
+	listLong     = "List subscriptions' info, such as id, title, etc"
+	listIdsUsage = "Return the subscriptions with the given ids for Stubby or Apiary"
+	listCidUsage = "Return the subscriptions of the given channel owner"
 )
 
 var listCmd = &cobra.Command{
@@ -59,7 +59,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)

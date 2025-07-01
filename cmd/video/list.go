@@ -1,16 +1,16 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List video's info"
-	listLong        = "List video's info, such as title, description, etc"
-	listIdsUsage    = "Return videos with the given ids"
-	listMrUsage     = "Return videos liked/disliked by the authenticated user"
-	listOutputUsage = "json, yaml, or table"
+	listShort    = "List video's info"
+	listLong     = "List video's info, such as title, description, etc"
+	listIdsUsage = "Return videos with the given ids"
+	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 )
 
 var listCmd = &cobra.Command{
@@ -57,7 +57,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)

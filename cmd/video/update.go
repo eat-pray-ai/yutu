@@ -1,16 +1,16 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update a video on YouTube"
-	updateLong        = "Update a video on YouTube, with the specified title, description, tags, etc"
-	updateIdUsage     = "ID of the video to update"
-	updateLangUsage   = "Language of the video"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort     = "Update a video on YouTube"
+	updateLong      = "Update a video on YouTube, with the specified title, description, tags, etc"
+	updateIdUsage   = "ID of the video to update"
+	updateLangUsage = "Language of the video"
 )
 
 var updateCmd = &cobra.Command{
@@ -57,7 +57,7 @@ func init() {
 	updateCmd.Flags().BoolVarP(
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("ids")
 }

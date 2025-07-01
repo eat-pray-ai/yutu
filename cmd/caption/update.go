@@ -1,14 +1,14 @@
 package caption
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update caption"
-	updateLong        = "Update caption of a video"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort = "Update caption"
+	updateLong  = "Update caption of a video"
 )
 
 var updateCmd = &cobra.Command{
@@ -67,7 +67,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("videoId")
 }

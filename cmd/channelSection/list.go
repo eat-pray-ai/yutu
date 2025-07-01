@@ -1,6 +1,7 @@
 package channelSection
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/spf13/cobra"
 )
@@ -46,5 +47,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 }

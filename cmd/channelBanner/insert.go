@@ -1,6 +1,7 @@
 package channelBanner
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channelBanner"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +38,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("file")

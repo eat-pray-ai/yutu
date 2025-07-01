@@ -1,15 +1,15 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Create a new playlist"
-	insertLong        = "Create a new playlist, with the specified title, description, tags, etc"
-	insertCidUsage    = "Channel id of the playlist"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort    = "Create a new playlist"
+	insertLong     = "Create a new playlist, with the specified title, description, tags, etc"
+	insertCidUsage = "Channel id of the playlist"
 )
 
 var insertCmd = &cobra.Command{
@@ -44,7 +44,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("title")
 	_ = insertCmd.MarkFlagRequired("channel")

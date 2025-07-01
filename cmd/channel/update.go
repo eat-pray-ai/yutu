@@ -1,15 +1,15 @@
 package channel
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update channel's info"
-	updateLong        = "Update channel's info, such as title, description, etc"
-	updateIdUsage     = "ID of the channel to update"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort   = "Update channel's info"
+	updateLong    = "Update channel's info, such as title, description, etc"
+	updateIdUsage = "ID of the channel to update"
 )
 
 var updateCmd = &cobra.Command{
@@ -48,7 +48,7 @@ func init() {
 		&description, "description", "d", "", descUsage,
 	)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

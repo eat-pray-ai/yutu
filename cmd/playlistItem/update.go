@@ -1,15 +1,15 @@
 package playlistItem
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update a playlist item"
-	updateLong        = "Update a playlist item's info, such as title, description, etc"
-	updateIdUsage     = "ID of the playlist item to update"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort   = "Update a playlist item"
+	updateLong    = "Update a playlist item's info, such as title, description, etc"
+	updateIdUsage = "ID of the playlist item to update"
 )
 
 var updateCmd = &cobra.Command{
@@ -44,7 +44,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

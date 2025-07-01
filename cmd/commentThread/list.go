@@ -1,15 +1,15 @@
 package commentThread
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List YouTube comment threads"
-	listLong        = "List YouTube comment threads"
-	listVidUsage    = "Returns the comment threads of the specified video"
-	listOutputUsage = "json, yaml, or table"
+	listShort    = "List YouTube comment threads"
+	listLong     = "List YouTube comment threads"
+	listVidUsage = "Returns the comment threads of the specified video"
 )
 
 var listCmd = &cobra.Command{
@@ -58,5 +58,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 }

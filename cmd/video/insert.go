@@ -1,15 +1,15 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Upload a video to YouTube"
-	insertLong        = "Upload a video to YouTube, with the specified title, description, tags, etc"
-	insertLangUsage   = "Language of the video"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort     = "Upload a video to YouTube"
+	insertLong      = "Upload a video to YouTube, with the specified title, description, tags, etc"
+	insertLangUsage = "Language of the video"
 )
 
 var insertCmd = &cobra.Command{
@@ -84,7 +84,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")

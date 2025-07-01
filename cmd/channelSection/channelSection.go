@@ -7,13 +7,12 @@ import (
 )
 
 const (
-	short       = "Manipulate YouTube channel sections"
-	long        = "List or delete YouTube channel sections"
-	cidUsage    = "Return the ChannelSections owned by the specified channel id"
-	hlUsage     = "Return content in specified language"
-	mineUsage   = "Return the ChannelSections owned by the authenticated user"
-	partsUsage  = "Comma separated parts"
-	outputUsage = "json, yaml, or table"
+	short      = "Manipulate YouTube channel sections"
+	long       = "List or delete YouTube channel sections"
+	cidUsage   = "Return the ChannelSections owned by the specified channel id"
+	hlUsage    = "Return content in specified language"
+	mineUsage  = "Return the ChannelSections owned by the authenticated user"
+	partsUsage = "Comma separated parts"
 )
 
 var (

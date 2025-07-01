@@ -1,15 +1,15 @@
 package commentThread
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Insert a new comment thread"
-	insertLong        = "Insert a new comment thread"
-	insertVidUsage    = "ID of the video"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort    = "Insert a new comment thread"
+	insertLong     = "Insert a new comment thread"
+	insertVidUsage = "ID of the video"
 )
 
 var insertCmd = &cobra.Command{
@@ -41,7 +41,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

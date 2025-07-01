@@ -1,15 +1,15 @@
 package playlist
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update an existing playlist"
-	updateLong        = "Update an existing playlist, with the specified title, description, tags, etc"
-	updateIdUsage     = "ID of the playlist to update"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort   = "Update an existing playlist"
+	updateLong    = "Update an existing playlist, with the specified title, description, tags, etc"
+	updateIdUsage = "ID of the playlist to update"
 )
 
 var updateCmd = &cobra.Command{
@@ -44,7 +44,7 @@ func init() {
 	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

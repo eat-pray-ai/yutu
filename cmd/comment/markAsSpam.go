@@ -1,14 +1,14 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
 
 const (
-	masShort       = "Mark YouTube comments as spam"
-	masLong        = "Mark YouTube comments as spam by ids"
-	masOutputUsage = "json, yaml, or silent"
+	masShort = "Mark YouTube comments as spam"
+	masLong  = "Mark YouTube comments as spam by ids"
 )
 
 var markAsSpamCmd = &cobra.Command{
@@ -33,7 +33,7 @@ func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
-	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", masOutputUsage)
+	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }

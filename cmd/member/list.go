@@ -1,6 +1,7 @@
 package member
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/member"
 	"github.com/spf13/cobra"
 )
@@ -40,5 +41,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 }

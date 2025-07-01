@@ -1,15 +1,15 @@
 package subscription
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
 )
 
 const (
-	insertShort       = "Insert a YouTube subscription"
-	insertLong        = "Insert a YouTube subscription"
-	insertCidUsage    = "ID of the channel to be subscribed"
-	insertOutputUsage = "json, yaml, or silent"
+	insertShort    = "Insert a YouTube subscription"
+	insertLong     = "Insert a YouTube subscription"
+	insertCidUsage = "ID of the channel to be subscribed"
 )
 
 var insertCmd = &cobra.Command{
@@ -42,7 +42,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

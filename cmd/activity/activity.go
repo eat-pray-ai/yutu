@@ -7,17 +7,16 @@ import (
 )
 
 const (
-	short       = "List YouTube activities"
-	long        = "List YouTube activities, such as likes, favorites, uploads, etc"
-	ciUsage     = "ID of the channel"
-	homeUsage   = "true, false, or empty"
-	mrUsage     = "The maximum number of items that should be returned"
-	mineUsage   = "true, false, or empty"
-	paUsage     = "Filter on activities published after this date"
-	pbUsage     = "Filter on activities published before this date"
-	rcUsage     = ""
-	partsUsage  = "Comma separated parts"
-	outputUsage = "json, yaml, or table"
+	short      = "List YouTube activities"
+	long       = "List YouTube activities, such as likes, favorites, uploads, etc"
+	ciUsage    = "ID of the channel"
+	homeUsage  = "true, false, or empty"
+	mrUsage    = "The maximum number of items that should be returned"
+	mineUsage  = "true, false, or empty"
+	paUsage    = "Filter on activities published after this date"
+	pbUsage    = "Filter on activities published before this date"
+	rcUsage    = ""
+	partsUsage = "Comma separated parts"
 )
 
 var (
@@ -42,12 +41,6 @@ var activityCmd = &cobra.Command{
 			"mine": &mine,
 		}
 		utils.ResetBool(boolMap, cmd.Flags())
-		// if !cmd.Flags().Changed("home") {
-		// 	home = nil
-		// }
-		// if !cmd.Flags().Changed("mine") {
-		// 	mine = nil
-		// }
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()

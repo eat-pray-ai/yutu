@@ -1,15 +1,15 @@
 package channel
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List channel's info"
-	listLong        = "List channel's info, such as title, description, etc."
-	listIdsUsage    = "Return the channels with the specified IDs"
-	listOutputUsage = "json, yaml, or table"
+	listShort    = "List channel's info"
+	listLong     = "List channel's info, such as title, description, etc."
+	listIdsUsage = "Return the channels with the specified IDs"
 )
 
 var listCmd = &cobra.Command{
@@ -66,7 +66,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)

@@ -1,14 +1,14 @@
 package playlistImage
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/spf13/cobra"
 )
 
 const (
-	listShort       = "List YouTube playlist images"
-	listLong        = "List YouTube playlist images' info"
-	listOutputUsage = "json, yaml, or table"
+	listShort = "List YouTube playlist images"
+	listLong  = "List YouTube playlist images' info"
 )
 
 var listCmd = &cobra.Command{
@@ -40,7 +40,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "kind", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

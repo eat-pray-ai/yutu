@@ -6,11 +6,10 @@ import (
 )
 
 const (
-	short       = "List YouTube i18n regions"
-	long        = "List YouTube i18n regions' id, hl, and name"
-	hlUsage     = "Host language"
-	partsUsage  = "Comma separated parts"
-	outputUsage = "json, yaml, or table"
+	short      = "List YouTube i18n regions"
+	long       = "List YouTube i18n regions' id, hl, and name"
+	hlUsage    = "Host language"
+	partsUsage = "Comma separated parts"
 )
 
 var (

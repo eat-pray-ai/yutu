@@ -1,15 +1,15 @@
 package comment
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update a comment"
-	updateLong        = "Update a comment on a video"
-	updateIdUsage     = "ID of the comment"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort   = "Update a comment"
+	updateLong    = "Update a comment on a video"
+	updateIdUsage = "ID of the comment"
 )
 
 var updateCmd = &cobra.Command{
@@ -44,7 +44,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&viewerRating, "viewerRating", "r", "", vrUsage,
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

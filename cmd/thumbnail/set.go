@@ -1,6 +1,7 @@
 package thumbnail
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,7 @@ func init() {
 
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	setCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+	setCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")

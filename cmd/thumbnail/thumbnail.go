@@ -6,11 +6,10 @@ import (
 )
 
 const (
-	short       = "Set thumbnail for a video"
-	long        = "Set thumbnail for a video"
-	fileUsage   = "Path to the thumbnail file"
-	vidUsage    = "ID of the video"
-	outputUsage = "json, yaml, or silent"
+	short     = "Set thumbnail for a video"
+	long      = "Set thumbnail for a video"
+	fileUsage = "Path to the thumbnail file"
+	vidUsage  = "ID of the video"
 )
 
 var (

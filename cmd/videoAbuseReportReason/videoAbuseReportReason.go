@@ -6,11 +6,10 @@ import (
 )
 
 const (
-	short       = "List YouTube video abuse report reasons"
-	long        = "List YouTube video abuse report reasons"
-	hlUsage     = "Host language"
-	partsUsage  = "Comma separated parts"
-	outputUsage = "json, yaml, or table"
+	short      = "List YouTube video abuse report reasons"
+	long       = "List YouTube video abuse report reasons"
+	hlUsage    = "Host language"
+	partsUsage = "Comma separated parts"
 )
 
 var (

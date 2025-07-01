@@ -1,6 +1,7 @@
 package search
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/search"
 	"github.com/spf13/cobra"
 )
@@ -94,5 +95,5 @@ func init() {
 	listCmd.Flags().StringSliceVar(
 		&parts, "parts", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVar(&output, "output", "table", outputUsage)
+	listCmd.Flags().StringVar(&output, "output", "table", cmd.TableUsage)
 }

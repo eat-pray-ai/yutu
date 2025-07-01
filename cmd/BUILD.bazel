@@ -4,6 +4,7 @@ go_library(
     name = "cmd",
     srcs = [
         "auth.go",
+        "constants.go",
         "mcp.go",
         "root.go",
         "version.go",

@@ -1,14 +1,14 @@
 package playlistImage
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/spf13/cobra"
 )
 
 const (
-	updateShort       = "Update a playlist image"
-	updateLong        = "Update a playlist image for a given playlist id"
-	updateOutputUsage = "json, yaml, or silent"
+	updateShort = "Update a playlist image"
+	updateLong  = "Update a playlist image for a given playlist id"
 )
 
 var updateCmd = &cobra.Command{
@@ -39,7 +39,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
 	updateCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", updateOutputUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("playlistId")
 }
