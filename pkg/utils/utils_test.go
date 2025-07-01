@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"reflect"
@@ -115,7 +114,8 @@ func TestIsJson(t *testing.T) {
 
 func TestPrintJSON(t *testing.T) {
 	type args struct {
-		data interface{}
+		data  interface{}
+		jpath string
 	}
 	tests := []struct {
 		name       string
@@ -123,16 +123,67 @@ func TestPrintJSON(t *testing.T) {
 		wantWriter string
 	}{
 		{
+			name:       "empty jsonpath",
+			args:       args{data: map[string]string{"key": "value"}, jpath: ""},
+			wantWriter: "{\n  \"key\": \"value\"\n}\n",
+		},
+		{
 			name:       "simple json",
-			args:       args{data: map[string]string{"key": "value"}},
-			wantWriter: fmt.Sprint("{\n  \"key\": \"value\"\n}\n"),
+			args:       args{data: map[string]string{"key": "value"}, jpath: "$"},
+			wantWriter: "[\n  {\n    \"key\": \"value\"\n  }\n]\n",
+		},
+		{
+			name: "invalid jsonpath",
+			args: args{
+				data: map[string]string{"key": "value"}, jpath: "//",
+			},
+			wantWriter: "Invalid JSONPath: //\n",
+		},
+		{
+			name: "extract specific field",
+			args: args{
+				data: map[string]interface{}{
+					"key":     "value",
+					"another": "field",
+				}, jpath: "$.key",
+			},
+			wantWriter: "[\n  \"value\"\n]\n",
+		},
+		{
+			name: "nested jsonpath",
+			args: args{
+				data: map[string]interface{}{
+					"item1": map[string]string{"key1": "value1"},
+					"item2": map[string]string{"key2": "value2"},
+					"count": 2,
+				},
+				jpath: "$.*.key1",
+			},
+			wantWriter: "[\n  \"value1\"\n]\n",
+		},
+		{
+			name: "array jsonpath",
+			args: args{
+				data: []map[string]string{
+					{"key1": "value1"},
+					{"key2": "value2"},
+					{"key1": "value3"},
+				},
+				jpath: "$[*].key1",
+			},
+			wantWriter: "[\n  \"value1\",\n  \"value3\"\n]\n",
+		},
+		{
+			name:       "nil data",
+			args:       args{data: nil, jpath: "$"},
+			wantWriter: "[\n  null\n]\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintJSON(tt.args.data, writer)
+				PrintJSON(tt.args.data, tt.args.jpath, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintJSON() = %v, want %v", gotWriter, tt.wantWriter)
 				}
@@ -143,7 +194,8 @@ func TestPrintJSON(t *testing.T) {
 
 func TestPrintYAML(t *testing.T) {
 	type args struct {
-		data interface{}
+		data  interface{}
+		jpath string
 	}
 	tests := []struct {
 		name       string
@@ -151,16 +203,67 @@ func TestPrintYAML(t *testing.T) {
 		wantWriter string
 	}{
 		{
-			name:       "simple yaml",
-			args:       args{data: map[string]string{"key": "value"}},
+			name:       "empty jsonpath",
+			args:       args{data: map[string]string{"key": "value"}, jpath: ""},
 			wantWriter: "key: value\n\n",
+		},
+		{
+			name:       "simple yaml",
+			args:       args{data: map[string]string{"key": "value"}, jpath: "$"},
+			wantWriter: "- key: value\n\n",
+		},
+		{
+			name: "invalid jsonpath",
+			args: args{
+				data: map[string]string{"key": "value"}, jpath: "//",
+			},
+			wantWriter: "Invalid JSONPath: //\n",
+		},
+		{
+			name: "extract specific field",
+			args: args{
+				data: map[string]interface{}{
+					"key":     "value",
+					"another": "field",
+				}, jpath: "$.key",
+			},
+			wantWriter: "- value\n\n",
+		},
+		{
+			name: "nested jsonpath",
+			args: args{
+				data: map[string]interface{}{
+					"item1": map[string]string{"key1": "value1"},
+					"item2": map[string]string{"key2": "value2"},
+					"count": 2,
+				},
+				jpath: "$.*.key1",
+			},
+			wantWriter: "- value1\n\n",
+		},
+		{
+			name: "array jsonpath",
+			args: args{
+				data: []map[string]string{
+					{"key1": "value1"},
+					{"key2": "value2"},
+					{"key1": "value3"},
+				},
+				jpath: "$[*].key1",
+			},
+			wantWriter: "- value1\n- value3\n\n",
+		},
+		{
+			name:       "nil data",
+			args:       args{data: nil, jpath: "$"},
+			wantWriter: "- null\n\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintYAML(tt.args.data, writer)
+				PrintYAML(tt.args.data, tt.args.jpath, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintYAML() = %v, want %v", gotWriter, tt.wantWriter)
 				}

@@ -5,9 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/ohler55/ojg/jp"
 	"github.com/spf13/pflag"
 	"io"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -15,17 +15,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func PrintJSON(data interface{}, writer io.Writer) {
-	if writer == nil { // todo: remove fallback to stdout
-		writer = os.Stdout
+func PrintJSON(data interface{}, jpath string, writer io.Writer) {
+	j, err := jp.ParseString(jpath)
+	if err != nil && jpath != "" {
+		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jpath)
+		return
+	} else if jpath != "" {
+		data = j.Get(data)
 	}
 	marshalled, _ := json.MarshalIndent(data, "", "  ")
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
-func PrintYAML(data interface{}, writer io.Writer) {
-	if writer == nil { // todo: remove fallback to stdout
-		writer = os.Stdout
+func PrintYAML(data interface{}, jpath string, writer io.Writer) {
+	j, err := jp.ParseString(jpath)
+	if err != nil && jpath != "" {
+		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jpath)
+		return
+	} else if jpath != "" {
+		data = j.Get(data)
 	}
 	marshalled, _ := yaml.Marshal(data)
 	_, _ = fmt.Fprintln(writer, string(marshalled))
