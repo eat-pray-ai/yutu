@@ -26,7 +26,7 @@ type channelSection struct {
 
 type ChannelSection interface {
 	Get([]string) ([]*youtube.ChannelSection, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 	Delete(writer io.Writer) error
 	// Update()
 	// Insert()
@@ -71,7 +71,7 @@ func (cs *channelSection) Get(parts []string) (
 }
 
 func (cs *channelSection) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	channelSections, err := cs.Get(parts)
 	if err != nil {
@@ -80,9 +80,9 @@ func (cs *channelSection) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(channelSections, writer)
+		utils.PrintJSON(channelSections, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(channelSections, writer)
+		utils.PrintYAML(channelSections, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

@@ -33,7 +33,7 @@ var updateCmd = &cobra.Command{
 			video.WithService(nil),
 		)
 
-		err := v.Update(output, cmd.OutOrStdout())
+		err := v.Update(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -58,6 +58,7 @@ func init() {
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("ids")
 }

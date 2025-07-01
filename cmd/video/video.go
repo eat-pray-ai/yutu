@@ -62,8 +62,6 @@ var (
 	privacy           string
 	forKids           = utils.BoolPtr("false")
 	embeddable        = utils.BoolPtr("false")
-	output            string
-	parts             []string
 	publishAt         string
 	regionCode        string
 	reasonId          string
@@ -72,6 +70,9 @@ var (
 	maxHeight         int64
 	maxWidth          int64
 	maxResults        int64
+	parts             []string
+	output            string
+	jpath             string
 
 	notifySubscribers             = utils.BoolPtr("false")
 	publicStatsViewable           = utils.BoolPtr("false")

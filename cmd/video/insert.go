@@ -41,7 +41,7 @@ var insertCmd = &cobra.Command{
 			video.WithService(nil),
 		)
 
-		err := v.Insert(output, cmd.OutOrStdout())
+		err := v.Insert(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -85,6 +85,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")

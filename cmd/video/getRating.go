@@ -1,6 +1,7 @@
 package video
 
 import (
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
 )
@@ -23,7 +24,7 @@ var getRatingCmd = &cobra.Command{
 			video.WithService(nil),
 		)
 
-		err := v.GetRating(output, cmd.OutOrStdout())
+		err := v.GetRating(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -39,6 +40,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", grOutputUsage)
+	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }

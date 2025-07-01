@@ -35,8 +35,8 @@ type subscription struct {
 
 type Subscription interface {
 	Get([]string) ([]*youtube.Subscription, error)
-	List([]string, string, io.Writer) error
-	Insert(string, io.Writer) error
+	List([]string, string, string, io.Writer) error
+	Insert(string, string, io.Writer) error
 	Delete(io.Writer) error
 }
 
@@ -97,7 +97,7 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 }
 
 func (s *subscription) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	subscriptions, err := s.Get(parts)
 	if err != nil {
@@ -106,9 +106,9 @@ func (s *subscription) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(subscriptions, writer)
+		utils.PrintJSON(subscriptions, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(subscriptions, writer)
+		utils.PrintYAML(subscriptions, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -136,7 +136,9 @@ func (s *subscription) List(
 	return nil
 }
 
-func (s *subscription) Insert(output string, writer io.Writer) error {
+func (s *subscription) Insert(
+	output string, jpath string, writer io.Writer,
+) error {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.SubscriberChannelId,
@@ -156,9 +158,9 @@ func (s *subscription) Insert(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	default:
 		_, _ = fmt.Fprintf(writer, "Subscription inserted: %s\n", res.Id)
 	}

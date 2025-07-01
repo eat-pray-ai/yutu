@@ -22,7 +22,7 @@ type videoCategory struct {
 
 type VideoCategory interface {
 	Get([]string) ([]*youtube.VideoCategory, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*videoCategory)
@@ -56,7 +56,7 @@ func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
 }
 
 func (vc *videoCategory) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	videoCategories, err := vc.Get(parts)
 	if err != nil {
@@ -65,9 +65,9 @@ func (vc *videoCategory) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videoCategories, writer)
+		utils.PrintJSON(videoCategories, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoCategories, writer)
+		utils.PrintYAML(videoCategories, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

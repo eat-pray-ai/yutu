@@ -27,7 +27,7 @@ var insertCmd = &cobra.Command{
 			playlist.WithService(nil),
 		)
 
-		err := p.Insert(output, cmd.OutOrStdout())
+		err := p.Insert(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -45,6 +45,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = insertCmd.MarkFlagRequired("title")
 	_ = insertCmd.MarkFlagRequired("channel")

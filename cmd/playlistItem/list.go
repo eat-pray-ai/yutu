@@ -27,7 +27,7 @@ var listCmd = &cobra.Command{
 			playlistItem.WithService(nil),
 		)
 
-		err := pi.List(parts, output, cmd.OutOrStdout())
+		err := pi.List(parts, output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -45,8 +45,9 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }

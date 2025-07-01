@@ -21,7 +21,7 @@ type superChatEvent struct {
 
 type SuperChatEvent interface {
 	Get([]string) ([]*youtube.SuperChatEvent, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*superChatEvent)
@@ -55,7 +55,7 @@ func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) 
 }
 
 func (s *superChatEvent) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	events, err := s.Get(parts)
 	if err != nil {
@@ -64,9 +64,9 @@ func (s *superChatEvent) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(events, writer)
+		utils.PrintJSON(events, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(events, writer)
+		utils.PrintYAML(events, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

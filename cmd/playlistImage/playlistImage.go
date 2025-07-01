@@ -30,6 +30,7 @@ var (
 	maxResults int64
 	parts      []string
 	output     string
+	jpath      string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

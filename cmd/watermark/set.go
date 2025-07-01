@@ -26,7 +26,7 @@ var setCmd = &cobra.Command{
 			watermark.WithService(nil),
 		)
 
-		err := w.Set(cmd.OutOrStdout())
+		err := w.Set("", cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)

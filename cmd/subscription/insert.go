@@ -25,7 +25,7 @@ var insertCmd = &cobra.Command{
 			subscription.WithService(nil),
 		)
 
-		err := s.Insert(output, cmd.OutOrStdout())
+		err := s.Insert(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -43,6 +43,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

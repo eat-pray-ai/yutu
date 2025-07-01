@@ -35,9 +35,9 @@ type playlist struct {
 }
 
 type Playlist interface {
-	List([]string, string, io.Writer) error
-	Insert(string, io.Writer) error
-	Update(string, io.Writer) error
+	List([]string, string, string, io.Writer) error
+	Insert(string, string, io.Writer) error
+	Update(string, string, io.Writer) error
 	Delete(io.Writer) error
 	Get([]string) ([]*youtube.Playlist, error)
 }
@@ -85,7 +85,9 @@ func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 	return res.Items, nil
 }
 
-func (p *playlist) List(parts []string, output string, writer io.Writer) error {
+func (p *playlist) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	playlists, err := p.Get(parts)
 	if err != nil {
 		return err
@@ -93,9 +95,9 @@ func (p *playlist) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(playlists, writer)
+		utils.PrintJSON(playlists, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlists, writer)
+		utils.PrintYAML(playlists, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -110,7 +112,7 @@ func (p *playlist) List(parts []string, output string, writer io.Writer) error {
 	return nil
 }
 
-func (p *playlist) Insert(output string, writer io.Writer) error {
+func (p *playlist) Insert(output string, jpath string, writer io.Writer) error {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -132,9 +134,9 @@ func (p *playlist) Insert(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
@@ -142,7 +144,7 @@ func (p *playlist) Insert(output string, writer io.Writer) error {
 	return nil
 }
 
-func (p *playlist) Update(output string, writer io.Writer) error {
+func (p *playlist) Update(output string, jpath string, writer io.Writer) error {
 	playlists, err := p.Get([]string{"id", "snippet", "status"})
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
@@ -176,9 +178,9 @@ func (p *playlist) Update(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)

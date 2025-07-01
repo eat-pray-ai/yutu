@@ -32,8 +32,9 @@ var (
 	language    string
 	channelId   string
 	privacy     string
-	output      string
 	parts       []string
+	output      string
+	jpath       string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

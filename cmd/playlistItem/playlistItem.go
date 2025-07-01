@@ -34,8 +34,9 @@ var (
 	channelId   string
 	maxResults  int64
 	privacy     string
-	output      string
 	parts       []string
+	output      string
+	jpath       string
 
 	onBehalfOfContentOwner string
 )

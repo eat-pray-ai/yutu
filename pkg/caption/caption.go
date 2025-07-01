@@ -41,9 +41,9 @@ type caption struct {
 
 type Caption interface {
 	Get(parts []string) ([]*youtube.Caption, error) // todo: return error
-	List(parts []string, output string, writer io.Writer) error
-	Insert(output string, writer io.Writer) error
-	Update(output string, writer io.Writer) error
+	List(parts []string, output string, s string, writer io.Writer) error
+	Insert(output string, s string, writer io.Writer) error
+	Update(output string, s string, writer io.Writer) error
 	Delete(writer io.Writer) error
 	Download(writer io.Writer) error
 }
@@ -78,7 +78,9 @@ func (c *caption) Get(parts []string) ([]*youtube.Caption, error) {
 	return res.Items, nil
 }
 
-func (c *caption) List(parts []string, output string, writer io.Writer) error {
+func (c *caption) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	captions, err := c.Get(parts)
 	if err != nil {
 		return err
@@ -86,9 +88,9 @@ func (c *caption) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(captions, writer)
+		utils.PrintJSON(captions, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(captions, writer)
+		utils.PrintYAML(captions, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
@@ -108,7 +110,7 @@ func (c *caption) List(parts []string, output string, writer io.Writer) error {
 	return nil
 }
 
-func (c *caption) Insert(output string, writer io.Writer) error {
+func (c *caption) Insert(output string, jpath string, writer io.Writer) error {
 	file, err := os.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
@@ -145,9 +147,9 @@ func (c *caption) Insert(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
@@ -155,7 +157,7 @@ func (c *caption) Insert(output string, writer io.Writer) error {
 	return nil
 }
 
-func (c *caption) Update(output string, writer io.Writer) error {
+func (c *caption) Update(output string, jpath string, writer io.Writer) error {
 	captions, err := c.Get([]string{"snippet"})
 	if err != nil {
 		return errors.Join(errUpdateCaption, err)
@@ -219,9 +221,9 @@ func (c *caption) Update(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)

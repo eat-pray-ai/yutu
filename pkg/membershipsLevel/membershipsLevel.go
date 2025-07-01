@@ -17,7 +17,7 @@ var (
 type membershipsLevel struct{}
 
 type MembershipsLevel interface {
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 	Get([]string) ([]*youtube.MembershipsLevel, error)
 }
 
@@ -46,7 +46,7 @@ func (m *membershipsLevel) Get(parts []string) (
 }
 
 func (m *membershipsLevel) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	membershipsLevels, err := m.Get(parts)
 	if err != nil {
@@ -55,9 +55,9 @@ func (m *membershipsLevel) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(membershipsLevels, writer)
+		utils.PrintJSON(membershipsLevels, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels, writer)
+		utils.PrintYAML(membershipsLevels, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

@@ -22,7 +22,7 @@ var setModerationStatusCmd = &cobra.Command{
 			comment.WithBanAuthor(banAuthor),
 		)
 
-		err := c.SetModerationStatus(output, cmd.OutOrStdout())
+		err := c.SetModerationStatus(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -44,6 +44,9 @@ func init() {
 	)
 	setModerationStatusCmd.Flags().StringVarP(
 		&output, "output", "o", "", cmd.SilentUsage,
+	)
+	setModerationStatusCmd.Flags().StringVarP(
+		&jpath, "jsonpath", "j", "", cmd.JpUsage,
 	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")

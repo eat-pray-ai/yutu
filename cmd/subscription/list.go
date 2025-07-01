@@ -32,7 +32,7 @@ var listCmd = &cobra.Command{
 			subscription.WithService(nil),
 		)
 
-		err := s.List(parts, output, cmd.OutOrStdout())
+		err := s.List(parts, output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -59,8 +59,9 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }

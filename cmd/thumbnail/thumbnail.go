@@ -16,6 +16,7 @@ var (
 	file    string
 	videoId string
 	output  string
+	jpath   string
 )
 
 var thumbnailCmd = &cobra.Command{

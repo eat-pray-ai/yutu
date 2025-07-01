@@ -21,7 +21,7 @@ var markAsSpamCmd = &cobra.Command{
 			comment.WithService(nil),
 		)
 
-		err := c.MarkAsSpam(output, cmd.OutOrStdout())
+		err := c.MarkAsSpam(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -34,6 +34,7 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }

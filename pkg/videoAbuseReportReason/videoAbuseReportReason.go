@@ -20,7 +20,7 @@ type videoAbuseReportReason struct {
 
 type VideoAbuseReportReason interface {
 	Get([]string) ([]*youtube.VideoAbuseReportReason, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*videoAbuseReportReason)
@@ -50,7 +50,7 @@ func (va *videoAbuseReportReason) Get(parts []string) (
 }
 
 func (va *videoAbuseReportReason) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	videoAbuseReportReasons, err := va.Get(parts)
 	if err != nil {
@@ -59,9 +59,9 @@ func (va *videoAbuseReportReason) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons, writer)
+		utils.PrintJSON(videoAbuseReportReasons, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons, writer)
+		utils.PrintYAML(videoAbuseReportReasons, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

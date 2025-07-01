@@ -17,7 +17,7 @@ var setCmd = &cobra.Command{
 			thumbnail.WithService(nil),
 		)
 
-		err := t.Set(output, cmd.OutOrStdout())
+		err := t.Set(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -31,6 +31,7 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	setCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")

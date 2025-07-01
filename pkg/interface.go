@@ -5,11 +5,11 @@ import (
 )
 
 type Lister interface {
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Inserter interface {
-	Insert(string, io.Writer) error
+	Insert(string, string, io.Writer) error
 }
 
 type Deleter interface {
@@ -17,13 +17,13 @@ type Deleter interface {
 }
 
 type Updater interface {
-	Update(string, io.Writer) error
+	Update(string, string, io.Writer) error
 }
 
 type Setter interface {
-	Set(writer io.Writer) error
+	Set(string, io.Writer) error
 }
 
 type Unsetter interface {
-	Unset(writer io.Writer) error
+	Unset(io.Writer) error
 }

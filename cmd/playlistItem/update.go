@@ -26,7 +26,7 @@ var updateCmd = &cobra.Command{
 			playlistItem.WithService(nil),
 		)
 
-		err := pi.Update(output, cmd.OutOrStdout())
+		err := pi.Update(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -45,6 +45,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

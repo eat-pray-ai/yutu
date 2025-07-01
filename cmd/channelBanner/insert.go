@@ -19,7 +19,7 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithService(nil),
 		)
 
-		err := cb.Insert(output, cmd.OutOrStdout())
+		err := cb.Insert(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -39,6 +39,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("file")

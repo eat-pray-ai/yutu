@@ -63,11 +63,11 @@ type video struct {
 }
 
 type Video interface {
-	List([]string, string, io.Writer) error
-	Insert(string, io.Writer) error
-	Update(string, io.Writer) error
+	List([]string, string, string, io.Writer) error
+	Insert(string, string, io.Writer) error
+	Update(string, string, io.Writer) error
 	Rate(io.Writer) error
-	GetRating(string, io.Writer) error
+	GetRating(string, string, io.Writer) error
 	Delete(io.Writer) error
 	ReportAbuse(io.Writer) error
 	Get([]string) ([]*youtube.Video, error)
@@ -131,7 +131,9 @@ func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 	return res.Items, nil
 }
 
-func (v *video) List(parts []string, output string, writer io.Writer) error {
+func (v *video) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	videos, err := v.Get(parts)
 	if err != nil {
 		return err
@@ -139,9 +141,9 @@ func (v *video) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videos, writer)
+		utils.PrintJSON(videos, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(videos, writer)
+		utils.PrintYAML(videos, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -162,7 +164,7 @@ func (v *video) List(parts []string, output string, writer io.Writer) error {
 	return nil
 }
 
-func (v *video) Insert(output string, writer io.Writer) error {
+func (v *video) Insert(output string, jpath string, writer io.Writer) error {
 	file, err := os.Open(v.File)
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
@@ -234,7 +236,7 @@ func (v *video) Insert(output string, writer io.Writer) error {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set("silent", nil)
+		_ = t.Set("silent", "", nil)
 	}
 
 	if v.PlaylistId != "" {
@@ -249,14 +251,14 @@ func (v *video) Insert(output string, writer io.Writer) error {
 			playlistItem.WithService(service),
 		)
 
-		_ = pi.Insert("silent", writer)
+		_ = pi.Insert("silent", "", writer)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video inserted: %s\n", res.Id)
@@ -264,7 +266,7 @@ func (v *video) Insert(output string, writer io.Writer) error {
 	return nil
 }
 
-func (v *video) Update(output string, writer io.Writer) error {
+func (v *video) Update(output string, jpath string, writer io.Writer) error {
 	videos, err := v.Get([]string{"id", "snippet", "status"})
 	if err != nil {
 		return errors.Join(errUpdateVideo, err)
@@ -319,7 +321,7 @@ func (v *video) Update(output string, writer io.Writer) error {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
 		)
-		t.Set("silent", nil)
+		_ = t.Set("silent", "", nil)
 	}
 
 	if v.PlaylistId != "" {
@@ -334,14 +336,14 @@ func (v *video) Update(output string, writer io.Writer) error {
 			playlistItem.WithService(service),
 		)
 
-		_ = pi.Insert("silent", writer)
+		_ = pi.Insert("silent", "", writer)
 	}
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video updated: %s\n", res.Id)
@@ -361,7 +363,7 @@ func (v *video) Rate(writer io.Writer) error {
 	return nil
 }
 
-func (v *video) GetRating(output string, writer io.Writer) error {
+func (v *video) GetRating(output string, jpath string, writer io.Writer) error {
 	call := service.Videos.GetRating(v.IDs)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
@@ -373,9 +375,9 @@ func (v *video) GetRating(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res.Items, writer)
+		utils.PrintJSON(res.Items, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res.Items, writer)
+		utils.PrintYAML(res.Items, jpath, writer)
 	default:
 		_, _ = fmt.Fprintln(writer, "ID\tRating")
 		for _, item := range res.Items {

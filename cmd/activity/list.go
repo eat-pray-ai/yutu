@@ -53,6 +53,10 @@ var listTool = mcp.NewTool(
 		"output", mcp.DefaultString("table"),
 		mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
 )
 
 func run(writer io.Writer) error {
@@ -67,7 +71,7 @@ func run(writer io.Writer) error {
 		activity.WithService(nil),
 	)
 
-	return a.List(parts, output, writer)
+	return a.List(parts, output, jpath, writer)
 }
 
 var listCmd = &cobra.Command{
@@ -99,6 +103,7 @@ func init() {
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
 	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }
 
 func listHandler(ctx context.Context, request mcp.CallToolRequest) (
@@ -124,6 +129,7 @@ func listHandler(ctx context.Context, request mcp.CallToolRequest) (
 		parts[i] = part.(string)
 	}
 	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
 
 	var writer bytes.Buffer
 	err := run(&writer)

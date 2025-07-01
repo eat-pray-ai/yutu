@@ -48,7 +48,7 @@ type search struct {
 
 type Search interface {
 	Get([]string) ([]*youtube.SearchResult, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*search)
@@ -190,7 +190,9 @@ func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 	return res.Items, nil
 }
 
-func (s *search) List(parts []string, output string, writer io.Writer) error {
+func (s *search) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	results, err := s.Get(parts)
 	if err != nil {
 		return err
@@ -198,9 +200,9 @@ func (s *search) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(results, writer)
+		utils.PrintJSON(results, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(results, writer)
+		utils.PrintYAML(results, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

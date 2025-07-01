@@ -38,6 +38,7 @@ var (
 	viewerRating     string
 	parts            []string
 	output           string
+	jpath            string
 )
 
 var commentCmd = &cobra.Command{

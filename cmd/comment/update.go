@@ -25,7 +25,7 @@ var updateCmd = &cobra.Command{
 			comment.WithService(nil),
 		)
 
-		err := c.Update(output, cmd.OutOrStdout())
+		err := c.Update(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -45,6 +45,7 @@ func init() {
 		&viewerRating, "viewerRating", "r", "", vrUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }

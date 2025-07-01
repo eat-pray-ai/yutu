@@ -20,7 +20,7 @@ type i18nLanguage struct {
 
 type I18nLanguage interface {
 	Get([]string) ([]*youtube.I18nLanguage, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*i18nLanguage)
@@ -50,7 +50,7 @@ func (i *i18nLanguage) Get(parts []string) ([]*youtube.I18nLanguage, error) {
 }
 
 func (i *i18nLanguage) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	i18nLanguages, err := i.Get(parts)
 	if err != nil {
@@ -59,9 +59,9 @@ func (i *i18nLanguage) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nLanguages, writer)
+		utils.PrintJSON(i18nLanguages, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages, writer)
+		utils.PrintYAML(i18nLanguages, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

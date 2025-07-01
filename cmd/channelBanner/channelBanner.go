@@ -16,6 +16,7 @@ var (
 	channelId string
 	file      string
 	output    string
+	jpath     string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

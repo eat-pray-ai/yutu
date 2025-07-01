@@ -15,7 +15,7 @@ var listCmd = &cobra.Command{
 			i18nRegion.WithHl(hl), i18nRegion.WithService(nil),
 		)
 
-		err := i.List(parts, output, cmd.OutOrStdout())
+		err := i.List(parts, output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -30,4 +30,5 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }

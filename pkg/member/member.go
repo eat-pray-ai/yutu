@@ -22,7 +22,7 @@ type member struct {
 }
 
 type Member interface {
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 	Get([]string) ([]*youtube.Member, error)
 }
 
@@ -62,7 +62,9 @@ func (m *member) Get(parts []string) ([]*youtube.Member, error) {
 	return res.Items, nil
 }
 
-func (m *member) List(parts []string, output string, writer io.Writer) error {
+func (m *member) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	members, err := m.Get(parts)
 	if err != nil {
 		return err
@@ -70,9 +72,9 @@ func (m *member) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(members, writer)
+		utils.PrintJSON(members, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(members, writer)
+		utils.PrintYAML(members, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

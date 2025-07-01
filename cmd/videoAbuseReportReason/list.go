@@ -16,7 +16,7 @@ var listCmd = &cobra.Command{
 			videoAbuseReportReason.WithService(nil),
 		)
 
-		err := va.List(parts, output, cmd.OutOrStdout())
+		err := va.List(parts, output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -32,4 +32,5 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }

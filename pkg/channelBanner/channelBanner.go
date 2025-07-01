@@ -24,7 +24,7 @@ type channelBanner struct {
 }
 
 type ChannelBanner interface {
-	Insert(string, io.Writer) error
+	Insert(string, string, io.Writer) error
 }
 
 type Option func(banner *channelBanner)
@@ -39,7 +39,9 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 	return cb
 }
 
-func (cb *channelBanner) Insert(output string, writer io.Writer) error {
+func (cb *channelBanner) Insert(
+	output string, jpath string, writer io.Writer,
+) error {
 	file, err := os.Open(cb.File)
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)
@@ -62,9 +64,9 @@ func (cb *channelBanner) Insert(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)

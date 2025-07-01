@@ -26,7 +26,7 @@ type watermark struct {
 }
 
 type Watermark interface {
-	Set(io.Writer) error
+	Set(string, io.Writer) error
 	Unset(io.Writer) error
 }
 
@@ -42,7 +42,7 @@ func NewWatermark(opts ...Option) Watermark {
 	return w
 }
 
-func (w *watermark) Set(writer io.Writer) error {
+func (w *watermark) Set(s string, writer io.Writer) error {
 	file, err := os.Open(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)

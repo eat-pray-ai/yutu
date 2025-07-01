@@ -27,7 +27,7 @@ var insertCmd = &cobra.Command{
 			comment.WithService(nil),
 		)
 
-		err := c.Insert(output, cmd.OutOrStdout())
+		err := c.Insert(output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -53,6 +53,7 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

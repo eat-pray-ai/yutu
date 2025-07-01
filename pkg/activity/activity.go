@@ -25,7 +25,7 @@ type activity struct {
 }
 
 type Activity interface {
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 	Get([]string) ([]*youtube.Activity, error)
 }
 
@@ -81,7 +81,7 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 }
 
 func (a *activity) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	activities, err := a.Get(parts)
 	if err != nil {
@@ -90,9 +90,9 @@ func (a *activity) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(activities, writer)
+		utils.PrintJSON(activities, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(activities, writer)
+		utils.PrintYAML(activities, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

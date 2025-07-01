@@ -44,7 +44,7 @@ var listCmd = &cobra.Command{
 			search.WithService(nil),
 		)
 
-		err := s.List(parts, output, cmd.OutOrStdout())
+		err := s.List(parts, output, jpath, cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -96,4 +96,5 @@ func init() {
 		&parts, "parts", []string{"id", "snippet"}, partsUsage,
 	)
 	listCmd.Flags().StringVar(&output, "output", "table", cmd.TableUsage)
+	listCmd.Flags().StringVar(&jpath, "jsonpath", "", cmd.JpUsage)
 }

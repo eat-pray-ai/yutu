@@ -36,9 +36,9 @@ type playlistImage struct {
 
 type PlaylistImage interface {
 	Get([]string) ([]*youtube.PlaylistImage, error)
-	List([]string, string, io.Writer) error
-	Insert(string, io.Writer) error
-	Update(string, io.Writer) error
+	List([]string, string, string, io.Writer) error
+	Insert(string, string, io.Writer) error
+	Update(string, string, io.Writer) error
 	Delete(io.Writer) error
 }
 
@@ -79,7 +79,7 @@ func (pi *playlistImage) Get(parts []string) ([]*youtube.PlaylistImage, error) {
 }
 
 func (pi *playlistImage) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	playlistImages, err := pi.Get(parts)
 	if err != nil {
@@ -88,9 +88,9 @@ func (pi *playlistImage) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistImages, writer)
+		utils.PrintJSON(playlistImages, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlistImages, writer)
+		utils.PrintYAML(playlistImages, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -107,7 +107,9 @@ func (pi *playlistImage) List(
 	return nil
 }
 
-func (pi *playlistImage) Insert(output string, writer io.Writer) error {
+func (pi *playlistImage) Insert(
+	output string, jpath string, writer io.Writer,
+) error {
 	file, err := os.Open(pi.File)
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
@@ -140,9 +142,9 @@ func (pi *playlistImage) Insert(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "PlaylistImage inserted: %s\n", res.Id)
@@ -150,7 +152,9 @@ func (pi *playlistImage) Insert(output string, writer io.Writer) error {
 	return nil
 }
 
-func (pi *playlistImage) Update(output string, writer io.Writer) error {
+func (pi *playlistImage) Update(
+	output string, jpath string, writer io.Writer,
+) error {
 	playlistImages, err := pi.Get([]string{"id", "kind", "snippet"})
 	if err != nil {
 		return errors.Join(errUpdatePlaylistImage, err)
@@ -194,9 +198,9 @@ func (pi *playlistImage) Update(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "PlaylistImage updated: %s\n", res.Id)

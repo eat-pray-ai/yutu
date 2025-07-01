@@ -42,8 +42,9 @@ var (
 	defaultLanguage string
 	description     string
 	title           string
-	output          string
 	parts           []string
+	output          string
+	jpath           string
 
 	onBehalfOfContentOwner string
 )

@@ -16,6 +16,7 @@ var (
 	hl     string
 	parts  []string
 	output string
+	jpath  string
 )
 
 var i18nLanguageCmd = &cobra.Command{

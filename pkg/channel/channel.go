@@ -37,8 +37,8 @@ type channel struct {
 }
 
 type Channel interface {
-	List([]string, string, io.Writer) error
-	Update(string, io.Writer) error
+	List([]string, string, string, io.Writer) error
+	Update(string, string, io.Writer) error
 	Get([]string) ([]*youtube.Channel, error)
 }
 
@@ -105,7 +105,9 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 	return res.Items, nil
 }
 
-func (c *channel) List(parts []string, output string, writer io.Writer) error {
+func (c *channel) List(
+	parts []string, output string, jpath string, writer io.Writer,
+) error {
 	channels, err := c.Get(parts)
 	if err != nil {
 		return err
@@ -113,9 +115,9 @@ func (c *channel) List(parts []string, output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(channels, writer)
+		utils.PrintJSON(channels, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(channels, writer)
+		utils.PrintYAML(channels, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -132,7 +134,7 @@ func (c *channel) List(parts []string, output string, writer io.Writer) error {
 	return nil
 }
 
-func (c *channel) Update(output string, writer io.Writer) error {
+func (c *channel) Update(output string, jpath string, writer io.Writer) error {
 	parts := []string{"snippet"}
 	channels, err := c.Get(parts)
 	if err != nil {
@@ -167,9 +169,9 @@ func (c *channel) Update(output string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, writer)
+		utils.PrintJSON(res, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, writer)
+		utils.PrintYAML(res, jpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)

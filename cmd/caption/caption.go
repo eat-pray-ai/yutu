@@ -42,9 +42,10 @@ var (
 	onBehalfOfContentOwner string
 	videoId                string
 	parts                  []string
-	output                 string
 	tfmt                   string
 	tlang                  string
+	output                 string
+	jpath                  string
 )
 
 var captionCmd = &cobra.Command{

@@ -20,7 +20,7 @@ type i18nRegion struct {
 
 type I18nRegion interface {
 	Get([]string) ([]*youtube.I18nRegion, error)
-	List([]string, string, io.Writer) error
+	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*i18nRegion)
@@ -50,7 +50,7 @@ func (i *i18nRegion) Get(parts []string) ([]*youtube.I18nRegion, error) {
 }
 
 func (i *i18nRegion) List(
-	parts []string, output string, writer io.Writer,
+	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	i18nRegions, err := i.Get(parts)
 	if err != nil {
@@ -59,9 +59,9 @@ func (i *i18nRegion) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nRegions, writer)
+		utils.PrintJSON(i18nRegions, jpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nRegions, writer)
+		utils.PrintYAML(i18nRegions, jpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
