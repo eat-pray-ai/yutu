@@ -83,7 +83,7 @@ func (cs *channelSection) List(
 		utils.PrintJSON(channelSections, writer)
 	case "yaml":
 		utils.PrintYAML(channelSections, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

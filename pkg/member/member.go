@@ -73,7 +73,7 @@ func (m *member) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(members, writer)
 	case "yaml":
 		utils.PrintYAML(members, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

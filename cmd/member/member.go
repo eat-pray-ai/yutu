@@ -13,7 +13,7 @@ const (
 	mrUsage     = "The maximum number of items that should be returned"
 	mmUsage     = "listMembersModeUnknown, updates, or all_current"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

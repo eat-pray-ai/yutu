@@ -116,11 +116,7 @@ func (c *channel) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(channels, writer)
 	case "yaml":
 		utils.PrintYAML(channels, writer)
-	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTitle")
-		for _, channel := range channels {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\n", channel.Id, channel.Snippet.Title)
-		}
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

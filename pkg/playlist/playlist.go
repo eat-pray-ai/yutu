@@ -96,7 +96,7 @@ func (p *playlist) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(playlists, writer)
 	case "yaml":
 		utils.PrintYAML(playlists, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

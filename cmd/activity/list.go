@@ -50,7 +50,7 @@ var listTool = mcp.NewTool(
 		mcp.Description(partsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""), mcp.Description(outputUsage),
+		"output", mcp.DefaultString("table"), mcp.Description(outputUsage),
 		mcp.Required(),
 	),
 )
@@ -98,7 +98,7 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
 	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", outputUsage)
 }
 
 func listHandler(ctx context.Context, request mcp.CallToolRequest) (

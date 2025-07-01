@@ -9,7 +9,7 @@ const (
 	listShort       = "List YouTube comments"
 	listLong        = "List YouTube comments by ids"
 	listPidUsage    = "Returns replies to the specified comment"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -47,5 +47,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 }

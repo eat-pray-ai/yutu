@@ -46,5 +46,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "json", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", outputUsage)
 }

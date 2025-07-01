@@ -19,7 +19,6 @@ const (
 	tfUsage      = "textFormatUnspecified or html"
 	toUsage      = "Text of the comment"
 	partsUsage   = "Comma separated parts"
-	outputUsage  = "json, yaml, or silent"
 )
 
 var (

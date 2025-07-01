@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	insertShort    = "Insert a new comment thread"
-	insertLong     = "Insert a new comment thread"
-	insertVidUsage = "ID of the video"
+	insertShort       = "Insert a new comment thread"
+	insertLong        = "Insert a new comment thread"
+	insertVidUsage    = "ID of the video"
+	insertOutputUsage = "json, yaml, or silent"
 )
 
 var insertCmd = &cobra.Command{
@@ -40,7 +41,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", insertOutputUsage)
 
 	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")

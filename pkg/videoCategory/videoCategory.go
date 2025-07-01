@@ -68,7 +68,7 @@ func (vc *videoCategory) List(
 		utils.PrintJSON(videoCategories, writer)
 	case "yaml":
 		utils.PrintYAML(videoCategories, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

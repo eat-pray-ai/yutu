@@ -38,7 +38,7 @@ const (
 	vsUsage       = "videoSyndicatedUnspecified, any, or true"
 	vtUsage       = "videoTypeUnspecified, any, movie, or episode"
 	partsUsage    = "Comma separated parts"
-	outputUsage   = "json or yaml"
+	outputUsage   = "json, yaml, or table"
 )
 
 var (

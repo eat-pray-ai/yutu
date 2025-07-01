@@ -109,7 +109,7 @@ func (s *subscription) List(
 		utils.PrintJSON(subscriptions, writer)
 	case "yaml":
 		utils.PrintYAML(subscriptions, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

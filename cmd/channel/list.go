@@ -9,7 +9,7 @@ const (
 	listShort       = "List channel's info"
 	listLong        = "List channel's info, such as title, description, etc."
 	listIdsUsage    = "Return the channels with the specified IDs"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -66,7 +66,7 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)

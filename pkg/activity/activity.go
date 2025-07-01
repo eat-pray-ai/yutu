@@ -93,7 +93,7 @@ func (a *activity) List(
 		utils.PrintJSON(activities, writer)
 	case "yaml":
 		utils.PrintYAML(activities, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

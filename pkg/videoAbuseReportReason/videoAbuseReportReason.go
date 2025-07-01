@@ -62,7 +62,7 @@ func (va *videoAbuseReportReason) List(
 		utils.PrintJSON(videoAbuseReportReasons, writer)
 	case "yaml":
 		utils.PrintYAML(videoAbuseReportReasons, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

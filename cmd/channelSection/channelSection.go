@@ -13,7 +13,7 @@ const (
 	hlUsage     = "Return content in specified language"
 	mineUsage   = "Return the ChannelSections owned by the authenticated user"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

@@ -8,7 +8,7 @@ import (
 const (
 	listShort       = "List YouTube playlist images"
 	listLong        = "List YouTube playlist images' info"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -40,7 +40,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "kind", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)

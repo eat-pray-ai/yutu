@@ -62,7 +62,7 @@ func (i *i18nRegion) List(
 		utils.PrintJSON(i18nRegions, writer)
 	case "yaml":
 		utils.PrintYAML(i18nRegions, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

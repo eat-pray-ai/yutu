@@ -62,7 +62,7 @@ func (i *i18nLanguage) List(
 		utils.PrintJSON(i18nLanguages, writer)
 	case "yaml":
 		utils.PrintYAML(i18nLanguages, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

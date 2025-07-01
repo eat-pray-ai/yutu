@@ -89,7 +89,7 @@ func (c *caption) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(captions, writer)
 	case "yaml":
 		utils.PrintYAML(captions, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
 		tb.SetStyle(table.StyleLight)

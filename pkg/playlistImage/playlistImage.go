@@ -91,7 +91,7 @@ func (pi *playlistImage) List(
 		utils.PrintJSON(playlistImages, writer)
 	case "yaml":
 		utils.PrintYAML(playlistImages, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

@@ -58,7 +58,7 @@ func (m *membershipsLevel) List(
 		utils.PrintJSON(membershipsLevels, writer)
 	case "yaml":
 		utils.PrintYAML(membershipsLevels, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

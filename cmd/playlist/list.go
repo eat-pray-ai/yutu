@@ -10,7 +10,7 @@ const (
 	listLong        = "List playlist's info, such as title, description, etc"
 	listIdsUsage    = "Return the playlists with the given IDs for Stubby or Apiary"
 	listCidUsage    = "Return the playlists owned by the specified channel id"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -54,5 +54,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 }

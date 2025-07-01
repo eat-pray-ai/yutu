@@ -9,7 +9,7 @@ const (
 	short       = "List memberships levels' info"
 	long        = "List memberships levels' info, such as id, displayName, etc"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json yaml, or table"
 )
 
 var (

@@ -2,7 +2,6 @@ package superChatEvent
 
 import (
 	"errors"
-	"fmt"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -68,13 +67,7 @@ func (s *superChatEvent) List(
 		utils.PrintJSON(events, writer)
 	case "yaml":
 		utils.PrintYAML(events, writer)
-	default:
-		_, _ = fmt.Fprintln(writer, "ID\tAmount")
-		for _, event := range events {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%d\n", event.Id, event.Snippet.AmountMicros,
-			)
-		}
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

@@ -11,7 +11,7 @@ const (
 	hlUsage     = "Return rendered funding amounts in specified language"
 	mrUsage     = "The maximum number of items that should be returned"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

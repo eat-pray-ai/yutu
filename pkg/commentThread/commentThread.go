@@ -109,14 +109,7 @@ func (c *commentThread) List(
 		utils.PrintJSON(commentThreads, writer)
 	case "yaml":
 		utils.PrintYAML(commentThreads, writer)
-	default:
-		_, _ = fmt.Fprintln(writer, "ID\tTopLevelCommentId")
-		for _, commentThread := range commentThreads {
-			_, _ = fmt.Fprintf(
-				writer, "%s\t%s\n",
-				commentThread.Id, commentThread.Snippet.TopLevelComment.Id,
-			)
-		}
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

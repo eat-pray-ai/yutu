@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	listShort    = "List YouTube comment threads"
-	listLong     = "List YouTube comment threads"
-	listVidUsage = "Returns the comment threads of the specified video"
+	listShort       = "List YouTube comment threads"
+	listLong        = "List YouTube comment threads"
+	listVidUsage    = "Returns the comment threads of the specified video"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -57,5 +58,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 }

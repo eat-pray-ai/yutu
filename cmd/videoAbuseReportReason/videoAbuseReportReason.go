@@ -10,7 +10,7 @@ const (
 	long        = "List YouTube video abuse report reasons"
 	hlUsage     = "Host language"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

@@ -17,7 +17,7 @@ const (
 	pbUsage     = "Filter on activities published before this date"
 	rcUsage     = ""
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

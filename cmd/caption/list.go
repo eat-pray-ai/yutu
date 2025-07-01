@@ -8,7 +8,7 @@ import (
 const (
 	listShort       = "List captions"
 	listLong        = "List captions of a video"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 	listIdsUsage    = "IDs of the captions to list"
 )
 
@@ -45,5 +45,5 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 }

@@ -12,7 +12,7 @@ const (
 	hlUsage     = "Host language"
 	rcUsage     = "Region code"
 	partsUsage  = "Comma separated parts"
-	outputUsage = "json or yaml"
+	outputUsage = "json, yaml, or table"
 )
 
 var (

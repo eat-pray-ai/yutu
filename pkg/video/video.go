@@ -142,7 +142,7 @@ func (v *video) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(videos, writer)
 	case "yaml":
 		utils.PrintYAML(videos, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

@@ -10,7 +10,7 @@ const (
 	listLong        = "List video's info, such as title, description, etc"
 	listIdsUsage    = "Return videos with the given ids"
 	listMrUsage     = "Return videos liked/disliked by the authenticated user"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -57,7 +57,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
 	)

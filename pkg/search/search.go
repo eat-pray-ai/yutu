@@ -201,7 +201,7 @@ func (s *search) List(parts []string, output string, writer io.Writer) error {
 		utils.PrintJSON(results, writer)
 	case "yaml":
 		utils.PrintYAML(results, writer)
-	default:
+	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)

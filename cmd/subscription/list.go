@@ -10,7 +10,7 @@ const (
 	listLong        = "List subscriptions' info, such as id, title, etc"
 	listIdsUsage    = "Return the subscriptions with the given ids for Stubby or Apiary"
 	listCidUsage    = "Return the subscriptions of the given channel owner"
-	listOutputUsage = "json or yaml"
+	listOutputUsage = "json, yaml, or table"
 )
 
 var listCmd = &cobra.Command{
@@ -59,7 +59,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "", listOutputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", listOutputUsage)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, partsUsage,
 	)
