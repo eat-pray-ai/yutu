@@ -99,10 +99,13 @@ func (a *activity) List(
 		tb.SetOutputMirror(writer)
 		tb.SetStyle(table.StyleLight)
 		tb.SetAutoIndex(true)
-		tb.AppendHeader(table.Row{"ID", "Title", "Type"})
+		tb.AppendHeader(table.Row{"ID", "Title", "Type", "Time"})
 		for _, activity := range activities {
 			tb.AppendRow(
-				table.Row{activity.Id, activity.Snippet.Title, activity.Snippet.Type},
+				table.Row{
+					activity.Id, activity.Snippet.Title,
+					activity.Snippet.Type, activity.Snippet.PublishedAt,
+				},
 			)
 		}
 	}

@@ -14,39 +14,45 @@ import (
 var defaultParts = []string{"id", "snippet", "contentDetails"}
 
 var listTool = mcp.NewTool(
-	"activity.list",
+	"activity-list",
 	mcp.WithTitleAnnotation("List Activities"),
 	mcp.WithOpenWorldHintAnnotation(true),
 	mcp.WithDescription(long),
 	mcp.WithString(
-		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage),
+		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"home", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(homeUsage),
+		mcp.DefaultString(""), mcp.Description(homeUsage), mcp.Required(),
 	),
 	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5), mcp.Description(mrUsage),
+		"maxResults", mcp.DefaultNumber(5), mcp.Description(mrUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(mineUsage),
+		mcp.DefaultString("true"), mcp.Description(mineUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"publishedAfter", mcp.DefaultString(""),
-		mcp.Description(paUsage),
+		mcp.Description(paUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"publishedBefore", mcp.DefaultString(""),
-		mcp.Description(pbUsage),
+		mcp.Description(pbUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"regionCode", mcp.DefaultString(""), mcp.Description(rcUsage),
+		"regionCode", mcp.DefaultString(""),
+		mcp.Description(rcUsage), mcp.Required(),
 	),
 	mcp.WithArray(
-		"parts", mcp.DefaultArray(defaultParts), mcp.Description(partsUsage),
+		"parts", mcp.DefaultArray(defaultParts),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(partsUsage), mcp.Required(),
 	),
-	mcp.WithString("output", mcp.DefaultString(""), mcp.Description(outputUsage)),
+	mcp.WithString(
+		"output", mcp.DefaultString(""), mcp.Description(outputUsage),
+		mcp.Required(),
+	),
 )
 
 func run(writer io.Writer) error {
@@ -99,18 +105,25 @@ func listHandler(ctx context.Context, request mcp.CallToolRequest) (
 	*mcp.CallToolResult, error,
 ) {
 	args := request.GetArguments()
-	channelId = args["channelId"].(string)
-	home = utils.BoolPtr(args["home"].(string))
-	maxResults = int64(args["maxResults"].(float64))
-	mine = utils.BoolPtr(args["mine"].(string))
-	publishedAfter = args["publishedAfter"].(string)
-	publishedBefore = args["publishedBefore"].(string)
-	regionCode = args["regionCode"].(string)
-	parts = make([]string, len(args["parts"].([]interface{})))
-	for i, part := range args["parts"].([]interface{}) {
+	channelId, _ = args["channelId"].(string)
+	homeRaw, _ := args["home"].(string)
+	home = utils.BoolPtr(homeRaw)
+	maxResultsRaw, _ := args["maxResults"].(float64)
+	maxResults = int64(maxResultsRaw)
+	mineRaw, ok := args["mine"].(string)
+	if !ok {
+		mineRaw = "true" // Default to true if not provided
+	}
+	mine = utils.BoolPtr(mineRaw)
+	publishedAfter, _ = args["publishedAfter"].(string)
+	publishedBefore, _ = args["publishedBefore"].(string)
+	regionCode, _ = args["regionCode"].(string)
+	partsRaw, _ := args["parts"].([]interface{})
+	parts = make([]string, len(partsRaw))
+	for i, part := range partsRaw {
 		parts[i] = part.(string)
 	}
-	output = args["output"].(string)
+	output, _ = args["output"].(string)
 
 	var writer bytes.Buffer
 	err := run(&writer)

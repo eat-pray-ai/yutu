@@ -59,5 +59,5 @@ func init() {
 	RootCmd.AddCommand(mcpCmd)
 
 	mcpCmd.Flags().StringVarP(&mode, "mode", "m", "stdio", modeUsage)
-	mcpCmd.Flags().IntVarP(&port, "port", "p", 8080, portUsage)
+	mcpCmd.Flags().IntVarP(&port, "port", "p", 8216, portUsage)
 }
