@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,33 +12,6 @@ const (
 	listLong     = "List channel's info, such as title, description, etc."
 	listIdsUsage = "Return the channels with the specified IDs"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := channel.NewChannel(
-			channel.WithCategoryId(categoryId),
-			channel.WithForHandle(forHandle),
-			channel.WithForUsername(forUsername),
-			channel.WithHl(hl),
-			channel.WithIDs(ids),
-			channel.WithChannelManagedByMe(managedByMe),
-			channel.WithMaxResults(maxResults),
-			channel.WithMine(mine),
-			channel.WithMySubscribers(mySubscribers),
-			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channel.WithService(nil),
-		)
-
-		err := c.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	channelCmd.AddCommand(listCmd)
@@ -71,4 +45,35 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	c := channel.NewChannel(
+		channel.WithCategoryId(categoryId),
+		channel.WithForHandle(forHandle),
+		channel.WithForUsername(forUsername),
+		channel.WithHl(hl),
+		channel.WithIDs(ids),
+		channel.WithChannelManagedByMe(managedByMe),
+		channel.WithMaxResults(maxResults),
+		channel.WithMine(mine),
+		channel.WithMySubscribers(mySubscribers),
+		channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		channel.WithService(nil),
+	)
+
+	return c.List(parts, output, jpath, writer)
 }

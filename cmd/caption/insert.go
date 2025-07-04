@@ -4,42 +4,13 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	insertShort = "Insert caption"
 	insertLong  = "Insert caption to a video"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := caption.NewCation(
-			caption.WithFile(file),
-			caption.WithAudioTrackType(audioTrackType),
-			caption.WithIsAutoSynced(isAutoSynced),
-			caption.WithIsCC(isCC),
-			caption.WithIsDraft(isDraft),
-			caption.WithIsEasyReader(isEasyReader),
-			caption.WithIsLarge(isLarge),
-			caption.WithLanguage(language),
-			caption.WithName(name),
-			caption.WithTrackKind(trackKind),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithVideoId(videoId),
-			caption.WithService(nil),
-		)
-
-		err := c.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	captionCmd.AddCommand(insertCmd)
@@ -72,4 +43,38 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("videoId")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: insertShort,
+	Long:  insertLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	c := caption.NewCation(
+		caption.WithFile(file),
+		caption.WithAudioTrackType(audioTrackType),
+		caption.WithIsAutoSynced(isAutoSynced),
+		caption.WithIsCC(isCC),
+		caption.WithIsDraft(isDraft),
+		caption.WithIsEasyReader(isEasyReader),
+		caption.WithIsLarge(isLarge),
+		caption.WithLanguage(language),
+		caption.WithName(name),
+		caption.WithTrackKind(trackKind),
+		caption.WithOnBehalfOf(onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		caption.WithVideoId(videoId),
+		caption.WithService(nil),
+	)
+
+	return c.Insert(output, jpath, writer)
 }

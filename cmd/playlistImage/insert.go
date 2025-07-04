@@ -4,34 +4,13 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	insertShort = "Insert a YouTube playlist image"
 	insertLong  = "Insert a YouTube playlist image for a given playlist id"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		pi := playlistImage.NewPlaylistImage(
-			playlistImage.WithFile(file),
-			playlistImage.WithPlaylistID(playlistId),
-			playlistImage.WithType(type_),
-			playlistImage.WithHeight(height),
-			playlistImage.WithWidth(width),
-			playlistImage.WithService(nil),
-		)
-
-		err := pi.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistImageCmd.AddCommand(insertCmd)
@@ -46,4 +25,30 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("playlistId")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: insertShort,
+	Long:  insertLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	pi := playlistImage.NewPlaylistImage(
+		playlistImage.WithFile(file),
+		playlistImage.WithPlaylistID(playlistId),
+		playlistImage.WithType(type_),
+		playlistImage.WithHeight(height),
+		playlistImage.WithWidth(width),
+		playlistImage.WithService(nil),
+	)
+
+	return pi.Insert(output, jpath, writer)
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,29 +12,6 @@ const (
 	updateLong    = "Update channel's info, such as title, description, etc"
 	updateIdUsage = "ID of the channel to update"
 )
-
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := channel.NewChannel(
-			channel.WithIDs(ids),
-			channel.WithCountry(country),
-			channel.WithCustomUrl(customUrl),
-			channel.WithDefaultLanguage(defaultLanguage),
-			channel.WithDescription(description),
-			channel.WithTitle(title),
-			channel.WithService(nil),
-		)
-
-		err := c.Update(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	channelCmd.AddCommand(updateCmd)
@@ -52,4 +30,31 @@ func init() {
 	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: updateShort,
+	Long:  updateLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := update(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func update(writer io.Writer) error {
+	c := channel.NewChannel(
+		channel.WithIDs(ids),
+		channel.WithCountry(country),
+		channel.WithCustomUrl(customUrl),
+		channel.WithDefaultLanguage(defaultLanguage),
+		channel.WithDescription(description),
+		channel.WithTitle(title),
+		channel.WithService(nil),
+	)
+
+	return c.Update(output, jpath, writer)
 }

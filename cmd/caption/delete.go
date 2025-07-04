@@ -3,6 +3,7 @@ package caption
 import (
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -10,26 +11,6 @@ const (
 	deleteLong     = "Delete captions of a video by ids"
 	deleteIdsUsage = "IDs of the captions to delete"
 )
-
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := caption.NewCation(
-			caption.WithIDs(ids),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithService(nil),
-		)
-
-		err := c.Delete(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	captionCmd.AddCommand(deleteCmd)
@@ -41,4 +22,28 @@ func init() {
 	)
 
 	_ = deleteCmd.MarkFlagRequired("ids")
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: deleteShort,
+	Long:  deleteLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := del(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func del(writer io.Writer) error {
+	c := caption.NewCation(
+		caption.WithIDs(ids),
+		caption.WithOnBehalfOf(onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		caption.WithService(nil),
+	)
+
+	return c.Delete(writer)
 }

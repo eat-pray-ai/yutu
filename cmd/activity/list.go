@@ -13,10 +13,44 @@ import (
 
 var defaultParts = []string{"id", "snippet", "contentDetails"}
 
+func init() {
+	cmd.MCP.AddTool(listTool, listHandler)
+	activityCmd.AddCommand(listCmd)
+	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
+	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
+	listCmd.Flags().StringVarP(
+		&publishedAfter, "publishedAfter", "a", "", paUsage,
+	)
+	listCmd.Flags().StringVarP(
+		&publishedBefore, "publishedBefore", "b", "", pbUsage,
+	)
+	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
+	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: short,
+	Long:  long,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
 var listTool = mcp.NewTool(
 	"activity-list",
 	mcp.WithTitleAnnotation("List Activities"),
+	mcp.WithDestructiveHintAnnotation(false),
 	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(true),
 	mcp.WithDescription(long),
 	mcp.WithString(
 		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage), mcp.Required(),
@@ -59,53 +93,6 @@ var listTool = mcp.NewTool(
 	),
 )
 
-func run(writer io.Writer) error {
-	a := activity.NewActivity(
-		activity.WithChannelId(channelId),
-		activity.WithHome(home),
-		activity.WithMaxResults(maxResults),
-		activity.WithMine(mine),
-		activity.WithPublishedAfter(publishedAfter),
-		activity.WithPublishedBefore(publishedBefore),
-		activity.WithRegionCode(regionCode),
-		activity.WithService(nil),
-	)
-
-	return a.List(parts, output, jpath, writer)
-}
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: short,
-	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
-		err := run(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
-
-func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
-	activityCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
-	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
-	listCmd.Flags().StringVarP(
-		&publishedAfter, "publishedAfter", "a", "", paUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&publishedBefore, "publishedBefore", "b", "", pbUsage,
-	)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
-}
-
 func listHandler(ctx context.Context, request mcp.CallToolRequest) (
 	*mcp.CallToolResult, error,
 ) {
@@ -132,9 +119,24 @@ func listHandler(ctx context.Context, request mcp.CallToolRequest) (
 	jpath, _ = args["jsonpath"].(string)
 
 	var writer bytes.Buffer
-	err := run(&writer)
+	err := list(&writer)
 	if err != nil {
 		return mcp.NewToolResultError(err.Error()), err
 	}
 	return mcp.NewToolResultText(writer.String()), nil
+}
+
+func list(writer io.Writer) error {
+	a := activity.NewActivity(
+		activity.WithChannelId(channelId),
+		activity.WithHome(home),
+		activity.WithMaxResults(maxResults),
+		activity.WithMine(mine),
+		activity.WithPublishedAfter(publishedAfter),
+		activity.WithPublishedBefore(publishedBefore),
+		activity.WithRegionCode(regionCode),
+		activity.WithService(nil),
+	)
+
+	return a.List(parts, output, jpath, writer)
 }

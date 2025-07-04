@@ -4,53 +4,8 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/search"
 	"github.com/spf13/cobra"
+	"io"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: short,
-	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
-		s := search.NewSearch(
-			search.WithChannelId(channelId),
-			search.WithChannelType(channelType),
-			search.WithEventType(eventType),
-			search.WithForContentOwner(forContentOwner),
-			search.WithForDeveloper(forDeveloper),
-			search.WithForMine(forMine),
-			search.WithLocation(location),
-			search.WithLocationRadius(locationRadius),
-			search.WithMaxResults(maxResults),
-			search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			search.WithOrder(order),
-			search.WithPublishedAfter(publishedAfter),
-			search.WithPublishedBefore(publishedBefore),
-			search.WithQ(q),
-			search.WithRegionCode(regionCode),
-			search.WithRelevanceLanguage(relevanceLanguage),
-			search.WithSafeSearch(safeSearch),
-			search.WithTopicId(topicId),
-			search.WithTypes(types),
-			search.WithVideoCaption(videoCaption),
-			search.WithVideoCategoryId(videoCategoryId),
-			search.WithVideoDefinition(videoDefinition),
-			search.WithVideoDimension(videoDimension),
-			search.WithVideoDuration(videoDuration),
-			search.WithVideoEmbeddable(videoEmbeddable),
-			search.WithVideoLicense(videoLicense),
-			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
-			search.WithVideoSyndicated(videoSyndicated),
-			search.WithVideoType(videoType),
-			search.WithService(nil),
-		)
-
-		err := s.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	searchCmd.AddCommand(listCmd)
@@ -97,4 +52,54 @@ func init() {
 	)
 	listCmd.Flags().StringVar(&output, "output", "table", cmd.TableUsage)
 	listCmd.Flags().StringVar(&jpath, "jsonpath", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: short,
+	Long:  long,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	s := search.NewSearch(
+		search.WithChannelId(channelId),
+		search.WithChannelType(channelType),
+		search.WithEventType(eventType),
+		search.WithForContentOwner(forContentOwner),
+		search.WithForDeveloper(forDeveloper),
+		search.WithForMine(forMine),
+		search.WithLocation(location),
+		search.WithLocationRadius(locationRadius),
+		search.WithMaxResults(maxResults),
+		search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		search.WithOrder(order),
+		search.WithPublishedAfter(publishedAfter),
+		search.WithPublishedBefore(publishedBefore),
+		search.WithQ(q),
+		search.WithRegionCode(regionCode),
+		search.WithRelevanceLanguage(relevanceLanguage),
+		search.WithSafeSearch(safeSearch),
+		search.WithTopicId(topicId),
+		search.WithTypes(types),
+		search.WithVideoCaption(videoCaption),
+		search.WithVideoCategoryId(videoCategoryId),
+		search.WithVideoDefinition(videoDefinition),
+		search.WithVideoDimension(videoDimension),
+		search.WithVideoDuration(videoDuration),
+		search.WithVideoEmbeddable(videoEmbeddable),
+		search.WithVideoLicense(videoLicense),
+		search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
+		search.WithVideoSyndicated(videoSyndicated),
+		search.WithVideoType(videoType),
+		search.WithService(nil),
+	)
+
+	return s.List(parts, output, jpath, writer)
 }

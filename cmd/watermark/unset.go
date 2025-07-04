@@ -3,6 +3,7 @@ package watermark
 import (
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -10,17 +11,19 @@ const (
 	unsetLong  = "Unset watermark for channel's video by channel id"
 )
 
+func init() {
+	watermarkCmd.AddCommand(unsetCmd)
+
+	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	_ = unsetCmd.MarkFlagRequired("channelId")
+}
+
 var unsetCmd = &cobra.Command{
 	Use:   "unset",
 	Short: unsetShort,
 	Long:  unsetLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		w := watermark.NewWatermark(
-			watermark.WithChannelId(channelId),
-			watermark.WithService(nil),
-		)
-
-		err := w.Unset(cmd.OutOrStdout())
+		err := unset(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -28,9 +31,11 @@ var unsetCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	watermarkCmd.AddCommand(unsetCmd)
+func unset(writer io.Writer) error {
+	w := watermark.NewWatermark(
+		watermark.WithChannelId(channelId),
+		watermark.WithService(nil),
+	)
 
-	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	_ = unsetCmd.MarkFlagRequired("channelId")
+	return w.Unset(writer)
 }

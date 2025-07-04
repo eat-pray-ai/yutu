@@ -3,6 +3,7 @@ package subscription
 import (
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,16 +12,19 @@ const (
 	deleteIdsUsage = "IDs of the subscriptions to delete"
 )
 
+func init() {
+	subscriptionCmd.AddCommand(deleteCmd)
+
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	_ = deleteCmd.MarkFlagRequired("ids")
+}
+
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		s := subscription.NewSubscription(
-			subscription.WithIDs(ids), subscription.WithService(nil),
-		)
-
-		err := s.Delete(cmd.OutOrStdout())
+		err := del(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -28,9 +32,10 @@ var deleteCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	subscriptionCmd.AddCommand(deleteCmd)
+func del(writer io.Writer) error {
+	s := subscription.NewSubscription(
+		subscription.WithIDs(ids), subscription.WithService(nil),
+	)
 
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
-	_ = deleteCmd.MarkFlagRequired("ids")
+	return s.Delete(writer)
 }

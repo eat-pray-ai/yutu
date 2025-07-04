@@ -4,27 +4,8 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
 	"github.com/spf13/cobra"
+	"io"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: short,
-	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
-		vc := videoCategory.NewVideoCategory(
-			videoCategory.WithIDs(ids),
-			videoCategory.WithHl(hl),
-			videoCategory.WithRegionCode(regionCode),
-			videoCategory.WithService(nil),
-		)
-
-		err := vc.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	videoCategoryCmd.AddCommand(listCmd)
@@ -37,4 +18,28 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: short,
+	Long:  long,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	vc := videoCategory.NewVideoCategory(
+		videoCategory.WithIDs(ids),
+		videoCategory.WithHl(hl),
+		videoCategory.WithRegionCode(regionCode),
+		videoCategory.WithService(nil),
+	)
+
+	return vc.List(parts, output, jpath, writer)
 }

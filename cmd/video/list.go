@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,34 +13,6 @@ const (
 	listIdsUsage = "Return videos with the given ids"
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(
-			video.WithIDs(ids),
-			video.WithChart(chart),
-			video.WithHl(hl),
-			video.WithLocale(locale),
-			video.WithCategory(categoryId),
-			video.WithRegionCode(regionCode),
-			video.WithMaxHeight(maxHeight),
-			video.WithMaxWidth(maxWidth),
-			video.WithMaxResults(maxResults),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithRating(rating),
-			video.WithService(nil),
-		)
-
-		err := v.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	videoCmd.AddCommand(listCmd)
@@ -62,4 +35,36 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	v := video.NewVideo(
+		video.WithIDs(ids),
+		video.WithChart(chart),
+		video.WithHl(hl),
+		video.WithLocale(locale),
+		video.WithCategory(categoryId),
+		video.WithRegionCode(regionCode),
+		video.WithMaxHeight(maxHeight),
+		video.WithMaxWidth(maxWidth),
+		video.WithMaxResults(maxResults),
+		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		video.WithRating(rating),
+		video.WithService(nil),
+	)
+
+	return v.List(parts, output, jpath, writer)
 }

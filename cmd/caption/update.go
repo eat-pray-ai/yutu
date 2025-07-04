@@ -4,42 +4,13 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	updateShort = "Update caption"
 	updateLong  = "Update caption of a video"
 )
-
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := caption.NewCation(
-			caption.WithFile(file),
-			caption.WithAudioTrackType(audioTrackType),
-			caption.WithIsAutoSynced(isAutoSynced),
-			caption.WithIsCC(isCC),
-			caption.WithIsDraft(isDraft),
-			caption.WithIsEasyReader(isEasyReader),
-			caption.WithIsLarge(isLarge),
-			caption.WithLanguage(language),
-			caption.WithName(name),
-			caption.WithTrackKind(trackKind),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithVideoId(videoId),
-			caption.WithService(nil),
-		)
-
-		err := c.Update(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	captionCmd.AddCommand(updateCmd)
@@ -71,4 +42,38 @@ func init() {
 	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("videoId")
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: updateShort,
+	Long:  updateLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := update(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func update(writer io.Writer) error {
+	c := caption.NewCation(
+		caption.WithFile(file),
+		caption.WithAudioTrackType(audioTrackType),
+		caption.WithIsAutoSynced(isAutoSynced),
+		caption.WithIsCC(isCC),
+		caption.WithIsDraft(isDraft),
+		caption.WithIsEasyReader(isEasyReader),
+		caption.WithIsLarge(isLarge),
+		caption.WithLanguage(language),
+		caption.WithName(name),
+		caption.WithTrackKind(trackKind),
+		caption.WithOnBehalfOf(onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		caption.WithVideoId(videoId),
+		caption.WithService(nil),
+	)
+
+	return c.Update(output, jpath, writer)
 }

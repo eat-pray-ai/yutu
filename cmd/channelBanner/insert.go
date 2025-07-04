@@ -4,28 +4,8 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channelBanner"
 	"github.com/spf13/cobra"
+	"io"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: short,
-	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
-		cb := channelBanner.NewChannelBanner(
-			channelBanner.WithChannelId(channelId),
-			channelBanner.WithFile(file),
-			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			channelBanner.WithService(nil),
-		)
-
-		err := cb.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	channelBannerCmd.AddCommand(insertCmd)
@@ -43,4 +23,29 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("file")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: short,
+	Long:  long,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	cb := channelBanner.NewChannelBanner(
+		channelBanner.WithChannelId(channelId),
+		channelBanner.WithFile(file),
+		channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		channelBanner.WithService(nil),
+	)
+
+	return cb.Insert(output, jpath, writer)
 }

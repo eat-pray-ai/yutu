@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,33 +12,6 @@ const (
 	insertLong     = "Insert a playlist item into a playlist"
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithTitle(title),
-			playlistItem.WithDescription(description),
-			playlistItem.WithKind(kind),
-			playlistItem.WithKVideoId(kVideoId),
-			playlistItem.WithKChannelId(kChannelId),
-			playlistItem.WithKPlaylistId(kPlaylistId),
-			playlistItem.WithPlaylistId(playlistId),
-			playlistItem.WithPrivacy(privacy),
-			playlistItem.WithChannelId(channelId),
-			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithService(nil),
-		)
-
-		err := pi.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistItemCmd.AddCommand(insertCmd)
@@ -62,4 +36,35 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("kind")
 	_ = insertCmd.MarkFlagRequired("playlistId")
 	_ = insertCmd.MarkFlagRequired("channelId")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: insertShort,
+	Long:  insertLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	pi := playlistItem.NewPlaylistItem(
+		playlistItem.WithTitle(title),
+		playlistItem.WithDescription(description),
+		playlistItem.WithKind(kind),
+		playlistItem.WithKVideoId(kVideoId),
+		playlistItem.WithKChannelId(kChannelId),
+		playlistItem.WithKPlaylistId(kPlaylistId),
+		playlistItem.WithPlaylistId(playlistId),
+		playlistItem.WithPrivacy(privacy),
+		playlistItem.WithChannelId(channelId),
+		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlistItem.WithService(nil),
+	)
+
+	return pi.Insert(output, jpath, writer)
 }

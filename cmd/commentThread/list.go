@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,32 +12,6 @@ const (
 	listLong     = "List YouTube comment threads"
 	listVidUsage = "Returns the comment threads of the specified video"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		ct := commentThread.NewCommentThread(
-			commentThread.WithIDs(ids),
-			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
-			commentThread.WithChannelId(channelId),
-			commentThread.WithMaxResults(maxResults),
-			commentThread.WithModerationStatus(moderationStatus),
-			commentThread.WithOrder(order),
-			commentThread.WithSearchTerms(searchTerms),
-			commentThread.WithTextFormat(textFormat),
-			commentThread.WithVideoId(videoId),
-			commentThread.WithService(nil),
-		)
-
-		err := ct.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	commentThreadCmd.AddCommand(listCmd)
@@ -60,4 +35,34 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	ct := commentThread.NewCommentThread(
+		commentThread.WithIDs(ids),
+		commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
+		commentThread.WithChannelId(channelId),
+		commentThread.WithMaxResults(maxResults),
+		commentThread.WithModerationStatus(moderationStatus),
+		commentThread.WithOrder(order),
+		commentThread.WithSearchTerms(searchTerms),
+		commentThread.WithTextFormat(textFormat),
+		commentThread.WithVideoId(videoId),
+		commentThread.WithService(nil),
+	)
+
+	return ct.List(parts, output, jpath, writer)
 }

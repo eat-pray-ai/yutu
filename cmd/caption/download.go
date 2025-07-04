@@ -3,6 +3,7 @@ package caption
 import (
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -10,29 +11,6 @@ const (
 	downloadLong    = "Download caption from a video"
 	downloadIdUsage = "ID of the caption to download"
 )
-
-var downloadCmd = &cobra.Command{
-	Use:   "download",
-	Short: downloadShort,
-	Long:  downloadLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := caption.NewCation(
-			caption.WithIDs(ids),
-			caption.WithFile(file),
-			caption.WithTfmt(tfmt),
-			caption.WithTlang(tlang),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithService(nil),
-		)
-
-		err := c.Download(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	captionCmd.AddCommand(downloadCmd)
@@ -50,4 +28,31 @@ func init() {
 
 	_ = downloadCmd.MarkFlagRequired("id")
 	_ = downloadCmd.MarkFlagRequired("file")
+}
+
+var downloadCmd = &cobra.Command{
+	Use:   "download",
+	Short: downloadShort,
+	Long:  downloadLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := download(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func download(writer io.Writer) error {
+	c := caption.NewCation(
+		caption.WithIDs(ids),
+		caption.WithFile(file),
+		caption.WithTfmt(tfmt),
+		caption.WithTlang(tlang),
+		caption.WithOnBehalfOf(onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		caption.WithService(nil),
+	)
+
+	return c.Download(writer)
 }

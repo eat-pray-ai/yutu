@@ -3,6 +3,7 @@ package playlist
 import (
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -10,25 +11,6 @@ const (
 	deleteLong     = "Delete a playlists by ids"
 	deleteIdsUsage = "IDs of the playlists to delete"
 )
-
-var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		p := playlist.NewPlaylist(
-			playlist.WithIDs(ids),
-			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlist.WithService(nil),
-		)
-
-		err := p.Delete(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistCmd.AddCommand(deleteCmd)
@@ -39,4 +21,27 @@ func init() {
 	)
 
 	_ = deleteCmd.MarkFlagRequired("ids")
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: deleteShort,
+	Long:  deleteLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := del(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func del(writer io.Writer) error {
+	p := playlist.NewPlaylist(
+		playlist.WithIDs(ids),
+		playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlist.WithService(nil),
+	)
+
+	return p.Delete(writer)
 }

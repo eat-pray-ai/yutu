@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,28 +12,6 @@ const (
 	updateLong    = "Update a playlist item's info, such as title, description, etc"
 	updateIdUsage = "ID of the playlist item to update"
 )
-
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithIDs(ids),
-			playlistItem.WithTitle(title),
-			playlistItem.WithDescription(description),
-			playlistItem.WithPrivacy(privacy),
-			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithService(nil),
-		)
-
-		err := pi.Update(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistItemCmd.AddCommand(updateCmd)
@@ -48,4 +27,30 @@ func init() {
 	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: updateShort,
+	Long:  updateLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := update(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func update(writer io.Writer) error {
+	pi := playlistItem.NewPlaylistItem(
+		playlistItem.WithIDs(ids),
+		playlistItem.WithTitle(title),
+		playlistItem.WithDescription(description),
+		playlistItem.WithPrivacy(privacy),
+		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlistItem.WithService(nil),
+	)
+
+	return pi.Update(output, jpath, writer)
 }

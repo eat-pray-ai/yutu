@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,33 +13,6 @@ const (
 	listIdsUsage = "Return the subscriptions with the given ids for Stubby or Apiary"
 	listCidUsage = "Return the subscriptions of the given channel owner"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		s := subscription.NewSubscription(
-			subscription.WithIDs(ids),
-			subscription.WithChannelId(channelId),
-			subscription.WithForChannelId(forChannelId),
-			subscription.WithMaxResults(maxResults),
-			subscription.WithMine(mine),
-			subscription.WithMyRecentSubscribers(myRecentSubscribers),
-			subscription.WithMySubscribers(mySubscribers),
-			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			subscription.WithOrder(order),
-			subscription.WithService(nil),
-		)
-
-		err := s.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	subscriptionCmd.AddCommand(listCmd)
@@ -64,4 +38,35 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	s := subscription.NewSubscription(
+		subscription.WithIDs(ids),
+		subscription.WithChannelId(channelId),
+		subscription.WithForChannelId(forChannelId),
+		subscription.WithMaxResults(maxResults),
+		subscription.WithMine(mine),
+		subscription.WithMyRecentSubscribers(myRecentSubscribers),
+		subscription.WithMySubscribers(mySubscribers),
+		subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		subscription.WithOrder(order),
+		subscription.WithService(nil),
+	)
+
+	return s.List(parts, output, jpath, writer)
 }

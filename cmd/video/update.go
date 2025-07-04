@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,34 +13,6 @@ const (
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
 )
-
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(
-			video.WithIDs(ids),
-			video.WithTitle(title),
-			video.WithDescription(description),
-			video.WithTags(tags),
-			video.WithLanguage(language),
-			video.WithLicense(license),
-			video.WithPlaylistId(playListId),
-			video.WithThumbnail(thumbnail),
-			video.WithCategory(categoryId),
-			video.WithPrivacy(privacy),
-			video.WithEmbeddable(embeddable),
-			video.WithService(nil),
-		)
-
-		err := v.Update(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	videoCmd.AddCommand(updateCmd)
@@ -61,4 +34,36 @@ func init() {
 	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
 
 	_ = updateCmd.MarkFlagRequired("ids")
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: updateShort,
+	Long:  updateLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := update(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func update(writer io.Writer) error {
+	v := video.NewVideo(
+		video.WithIDs(ids),
+		video.WithTitle(title),
+		video.WithDescription(description),
+		video.WithTags(tags),
+		video.WithLanguage(language),
+		video.WithLicense(license),
+		video.WithPlaylistId(playListId),
+		video.WithThumbnail(thumbnail),
+		video.WithCategory(categoryId),
+		video.WithPrivacy(privacy),
+		video.WithEmbeddable(embeddable),
+		video.WithService(nil),
+	)
+
+	return v.Update(output, jpath, writer)
 }

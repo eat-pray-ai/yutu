@@ -19,11 +19,3 @@ type Deleter interface {
 type Updater interface {
 	Update(string, string, io.Writer) error
 }
-
-type Setter interface {
-	Set(string, io.Writer) error
-}
-
-type Unsetter interface {
-	Unset(io.Writer) error
-}

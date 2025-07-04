@@ -4,33 +4,13 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	listShort = "List YouTube playlist images"
 	listLong  = "List YouTube playlist images' info"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		pi := playlistImage.NewPlaylistImage(
-			playlistImage.WithParent(parent),
-			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			playlistImage.WithMaxResults(maxResults),
-			playlistImage.WithService(nil),
-		)
-
-		err := pi.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistImageCmd.AddCommand(listCmd)
@@ -48,4 +28,29 @@ func init() {
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	pi := playlistImage.NewPlaylistImage(
+		playlistImage.WithParent(parent),
+		playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		playlistImage.WithMaxResults(maxResults),
+		playlistImage.WithService(nil),
+	)
+
+	return pi.List(parts, output, jpath, writer)
 }

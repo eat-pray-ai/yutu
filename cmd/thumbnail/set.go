@@ -4,26 +4,8 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/spf13/cobra"
+	"io"
 )
-
-var setCmd = &cobra.Command{
-	Use:   "set",
-	Short: short,
-	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
-		t := thumbnail.NewThumbnail(
-			thumbnail.WithFile(file),
-			thumbnail.WithVideoId(videoId),
-			thumbnail.WithService(nil),
-		)
-
-		err := t.Set(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	thumbnailCmd.AddCommand(setCmd)
@@ -35,4 +17,27 @@ func init() {
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
+}
+
+var setCmd = &cobra.Command{
+	Use:   "set",
+	Short: short,
+	Long:  long,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := set(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func set(writer io.Writer) error {
+	t := thumbnail.NewThumbnail(
+		thumbnail.WithFile(file),
+		thumbnail.WithVideoId(videoId),
+		thumbnail.WithService(nil),
+	)
+
+	return t.Set(output, jpath, writer)
 }

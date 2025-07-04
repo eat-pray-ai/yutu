@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,28 +12,6 @@ const (
 	listLong     = "List channel sections"
 	listIdsUsage = "Return the channel sections with the given ids"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		cs := channelSection.NewChannelSection(
-			channelSection.WithIDs(ids),
-			channelSection.WithChannelId(channelId),
-			channelSection.WithHl(hl),
-			channelSection.WithMine(mine),
-			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelSection.WithService(nil),
-		)
-
-		err := cs.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	channelSectionCmd.AddCommand(listCmd)
@@ -49,4 +28,30 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	cs := channelSection.NewChannelSection(
+		channelSection.WithIDs(ids),
+		channelSection.WithChannelId(channelId),
+		channelSection.WithHl(hl),
+		channelSection.WithMine(mine),
+		channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		channelSection.WithService(nil),
+	)
+
+	return cs.List(parts, output, jpath, writer)
 }

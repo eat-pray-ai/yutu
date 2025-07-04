@@ -3,6 +3,7 @@ package video
 import (
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,25 +13,6 @@ const (
 	rateRUsage   = "like, dislike, or none"
 )
 
-var rateCmd = &cobra.Command{
-	Use:   "rate",
-	Short: rateShort,
-	Long:  rateLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(
-			video.WithIDs(ids),
-			video.WithRating(rating),
-			video.WithService(nil),
-		)
-
-		err := v.Rate(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
-
 func init() {
 	videoCmd.AddCommand(rateCmd)
 
@@ -39,4 +21,27 @@ func init() {
 
 	_ = rateCmd.MarkFlagRequired("ids")
 	_ = rateCmd.MarkFlagRequired("rating")
+}
+
+var rateCmd = &cobra.Command{
+	Use:   "rate",
+	Short: rateShort,
+	Long:  rateLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := rate(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func rate(writer io.Writer) error {
+	v := video.NewVideo(
+		video.WithIDs(ids),
+		video.WithRating(rating),
+		video.WithService(nil),
+	)
+
+	return v.Rate(writer)
 }

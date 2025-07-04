@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,27 +12,6 @@ const (
 	insertLong     = "Insert a new comment thread"
 	insertVidUsage = "ID of the video"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		ct := commentThread.NewCommentThread(
-			commentThread.WithAuthorChannelId(authorChannelId),
-			commentThread.WithChannelId(channelId),
-			commentThread.WithTextOriginal(textOriginal),
-			commentThread.WithVideoId(videoId),
-			commentThread.WithService(nil),
-		)
-
-		err := ct.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	commentThreadCmd.AddCommand(insertCmd)
@@ -48,4 +28,29 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
 	_ = insertCmd.MarkFlagRequired("videoId")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: insertShort,
+	Long:  insertLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	ct := commentThread.NewCommentThread(
+		commentThread.WithAuthorChannelId(authorChannelId),
+		commentThread.WithChannelId(channelId),
+		commentThread.WithTextOriginal(textOriginal),
+		commentThread.WithVideoId(videoId),
+		commentThread.WithService(nil),
+	)
+
+	return ct.Insert(output, jpath, writer)
 }

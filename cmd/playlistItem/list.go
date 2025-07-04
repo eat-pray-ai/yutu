@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,28 +13,6 @@ const (
 	listIdsUsage = "IDs of the playlist items to list"
 	listPidUsage = "Return the playlist items within the given playlist"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		pi := playlistItem.NewPlaylistItem(
-			playlistItem.WithIDs(ids),
-			playlistItem.WithPlaylistId(playlistId),
-			playlistItem.WithMaxResults(maxResults),
-			playlistItem.WithVideoId(videoId),
-			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithService(nil),
-		)
-
-		err := pi.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	playlistItemCmd.AddCommand(listCmd)
@@ -50,4 +29,30 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	pi := playlistItem.NewPlaylistItem(
+		playlistItem.WithIDs(ids),
+		playlistItem.WithPlaylistId(playlistId),
+		playlistItem.WithMaxResults(maxResults),
+		playlistItem.WithVideoId(videoId),
+		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlistItem.WithService(nil),
+	)
+
+	return pi.List(parts, output, jpath, writer)
 }

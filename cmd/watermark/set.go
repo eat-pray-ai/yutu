@@ -3,36 +3,13 @@ package watermark
 import (
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	setShort = "Set watermark for channel's video"
 	setLong  = "Set watermark for channel's video by channel id"
 )
-
-var setCmd = &cobra.Command{
-	Use:   "set",
-	Short: setShort,
-	Long:  setLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		w := watermark.NewWatermark(
-			watermark.WithChannelId(channelId),
-			watermark.WithFile(file),
-			watermark.WithInVideoPosition(inVideoPosition),
-			watermark.WithDurationMs(durationMs),
-			watermark.WithOffsetMs(offsetMs),
-			watermark.WithOffsetType(offsetType),
-			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			watermark.WithService(nil),
-		)
-
-		err := w.Set("", cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	watermarkCmd.AddCommand(setCmd)
@@ -51,4 +28,32 @@ func init() {
 
 	_ = setCmd.MarkFlagRequired("channelId")
 	_ = setCmd.MarkFlagRequired("file")
+}
+
+var setCmd = &cobra.Command{
+	Use:   "set",
+	Short: setShort,
+	Long:  setLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := set(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func set(writer io.Writer) error {
+	w := watermark.NewWatermark(
+		watermark.WithChannelId(channelId),
+		watermark.WithFile(file),
+		watermark.WithInVideoPosition(inVideoPosition),
+		watermark.WithDurationMs(durationMs),
+		watermark.WithOffsetMs(offsetMs),
+		watermark.WithOffsetType(offsetType),
+		watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		watermark.WithService(nil),
+	)
+
+	return w.Set(writer)
 }

@@ -4,31 +4,13 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
 	smsShort = "Set YouTube comments moderation status"
 	smsLong  = "Set YouTube comments moderation status by ids"
 )
-
-var setModerationStatusCmd = &cobra.Command{
-	Use:   "setModerationStatus",
-	Short: smsShort,
-	Long:  smsLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := comment.NewComment(
-			comment.WithIDs(ids),
-			comment.WithModerationStatus(moderationStatus),
-			comment.WithBanAuthor(banAuthor),
-		)
-
-		err := c.SetModerationStatus(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	commentCmd.AddCommand(setModerationStatusCmd)
@@ -51,4 +33,27 @@ func init() {
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
 	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
+}
+
+var setModerationStatusCmd = &cobra.Command{
+	Use:   "setModerationStatus",
+	Short: smsShort,
+	Long:  smsLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := setModerationStatus(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func setModerationStatus(writer io.Writer) error {
+	c := comment.NewComment(
+		comment.WithIDs(ids),
+		comment.WithModerationStatus(moderationStatus),
+		comment.WithBanAuthor(banAuthor),
+	)
+
+	return c.SetModerationStatus(output, jpath, writer)
 }

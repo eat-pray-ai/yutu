@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -12,25 +13,6 @@ const (
 	grIdsUsage     = "IDs of the videos to get the rating for"
 	grOutputUsage  = "json or yaml"
 )
-
-var getRatingCmd = &cobra.Command{
-	Use:   "getRating",
-	Short: getRatingShort,
-	Long:  getRatingLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(
-			video.WithIDs(ids),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithService(nil),
-		)
-
-		err := v.GetRating(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	videoCmd.AddCommand(getRatingCmd)
@@ -43,4 +25,27 @@ func init() {
 	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
+}
+
+var getRatingCmd = &cobra.Command{
+	Use:   "getRating",
+	Short: getRatingShort,
+	Long:  getRatingLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := getRating(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func getRating(writer io.Writer) error {
+	v := video.NewVideo(
+		video.WithIDs(ids),
+		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		video.WithService(nil),
+	)
+
+	return v.GetRating(output, jpath, writer)
 }

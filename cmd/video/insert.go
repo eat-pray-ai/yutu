@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,43 +12,6 @@ const (
 	insertLong      = "Upload a video to YouTube, with the specified title, description, tags, etc"
 	insertLangUsage = "Language of the video"
 )
-
-var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		v := video.NewVideo(
-			video.WithAutoLevels(autoLevels),
-			video.WithFile(file),
-			video.WithTitle(title),
-			video.WithDescription(description),
-			video.WithTags(tags),
-			video.WithLanguage(language),
-			video.WithLicense(license),
-			video.WithThumbnail(thumbnail),
-			video.WithChannelId(channelId),
-			video.WithPlaylistId(playListId),
-			video.WithCategory(categoryId),
-			video.WithPrivacy(privacy),
-			video.WithForKids(forKids),
-			video.WithEmbeddable(embeddable),
-			video.WithPublishAt(publishAt),
-			video.WithStabilize(stabilize),
-			video.WithNotifySubscribers(notifySubscribers),
-			video.WithPublicStatsViewable(publicStatsViewable),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			video.WithService(nil),
-		)
-
-		err := v.Insert(output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	videoCmd.AddCommand(insertCmd)
@@ -90,4 +54,45 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")
 	_ = insertCmd.MarkFlagRequired("privacy")
+}
+
+var insertCmd = &cobra.Command{
+	Use:   "insert",
+	Short: insertShort,
+	Long:  insertLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := insert(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func insert(writer io.Writer) error {
+	v := video.NewVideo(
+		video.WithAutoLevels(autoLevels),
+		video.WithFile(file),
+		video.WithTitle(title),
+		video.WithDescription(description),
+		video.WithTags(tags),
+		video.WithLanguage(language),
+		video.WithLicense(license),
+		video.WithThumbnail(thumbnail),
+		video.WithChannelId(channelId),
+		video.WithPlaylistId(playListId),
+		video.WithCategory(categoryId),
+		video.WithPrivacy(privacy),
+		video.WithForKids(forKids),
+		video.WithEmbeddable(embeddable),
+		video.WithPublishAt(publishAt),
+		video.WithStabilize(stabilize),
+		video.WithNotifySubscribers(notifySubscribers),
+		video.WithPublicStatsViewable(publicStatsViewable),
+		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		video.WithService(nil),
+	)
+
+	return v.Insert(output, jpath, writer)
 }

@@ -50,7 +50,7 @@ var mcpCmd = &cobra.Command{
 		}
 
 		if err != nil {
-			log.Fatalf("Server error: %v\n", err)
+			log.Printf("Server error: %v\n", err)
 		}
 	},
 }

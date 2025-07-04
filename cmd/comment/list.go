@@ -4,6 +4,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/spf13/cobra"
+	"io"
 )
 
 const (
@@ -11,27 +12,6 @@ const (
 	listLong     = "List YouTube comments by ids"
 	listPidUsage = "Returns replies to the specified comment"
 )
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	Run: func(cmd *cobra.Command, args []string) {
-		c := comment.NewComment(
-			comment.WithIDs(ids),
-			comment.WithMaxResults(maxResults),
-			comment.WithParentId(parentId),
-			comment.WithTextFormat(textFormat),
-			comment.WithService(nil),
-		)
-
-		err := c.List(parts, output, jpath, cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
-	},
-}
 
 func init() {
 	commentCmd.AddCommand(listCmd)
@@ -49,4 +29,29 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+}
+
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: listShort,
+	Long:  listLong,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := list(cmd.OutOrStdout())
+		if err != nil {
+			_ = cmd.Help()
+			cmd.PrintErrf("Error: %v\n", err)
+		}
+	},
+}
+
+func list(writer io.Writer) error {
+	c := comment.NewComment(
+		comment.WithIDs(ids),
+		comment.WithMaxResults(maxResults),
+		comment.WithParentId(parentId),
+		comment.WithTextFormat(textFormat),
+		comment.WithService(nil),
+	)
+
+	return c.List(parts, output, jpath, writer)
 }
