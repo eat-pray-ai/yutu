@@ -1,6 +1,6 @@
 ![Yutu](./asset/yutu.svg)
 
-# yutu
+# `yutu`
 
 [![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%98%BF%F0%9F%90%B0%F0%9F%90%A7%E2%9D%A4%EF%B8%8F%E2%80%8D%F0%9F%A9%B9-love?style=flat-square&labelColor=%23EDD1CC&color=%23FF919F)](https://gitmoji.dev)
 [![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://goreportcard.com/report/github.com/eat-pray-ai/yutu)
@@ -19,7 +19,7 @@
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=490920&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
-yutu is a fully functional CLI for YouTube.
+`yutu` is a fully functional MCP server and CLI for YouTube.
 
 ## Prerequisites
 
@@ -77,7 +77,7 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 
 ## Installation
 
-You can download yutu from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
+You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
 
 ### GitHub Actions
 
@@ -136,11 +136,37 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
 
+## MCP Server
+
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+
+As a [MCP server](https://modelcontextprotocol.io/introduction), `yutu` can be used in MCP clients like [Claude Desktop](https://modelcontextprotocol.io/quickstart/user), [VS Code](https://code.visualstudio.com/) or [Cursor](https://docs.cursor.com/), which allows you to interact with YouTube resources in a chat-like interface.
+
+Before using `yutu` as an MCP server, make sure `yutu` is installed(see [Installation](#installation) section), and you have a valid `client_secret.json` and `youtube.token.json` files(refer to [Prerequisites](#prerequisites) section).
+
+You can add `yutu` as a MCP server in VS Code or Cursor by clicking corresponding badge above, or add the following configuration manually to your MCP client. Remember to replace the values of `YUTU_CREDENTIAL` and `YUTU_CACHE_TOKEN` with correct paths on your local machine.
+
+```json
+{
+  "yutu": {
+    "type": "stdio",
+    "command": "yutu",
+    "args": [
+      "mcp"
+    ],
+    "env": {
+      "YUTU_CREDENTIAL": "/absolute/path/to/client_secret.json",
+      "YUTU_CACHE_TOKEN": "/absolute/path/to/youtube.token.json"
+    }
+  }
+}
+```
+
 ## Usage
 
 ```shell
-❯ yutu help
-yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc
+❯ yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources
 
 Usage:
   yutu [flags]
@@ -159,6 +185,7 @@ Available Commands:
   help                   Help about any command
   i18nLanguage           List YouTube i18n languages
   i18nRegion             List YouTube i18n regions
+  mcp                    Start MCP server
   member                 List channel's members' info
   membershipsLevel       List memberships levels' info
   playlist               Manipulate YouTube playlists

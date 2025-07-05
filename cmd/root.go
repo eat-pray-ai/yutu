@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	short = "A fully functional CLI for YouTube"
-	long  = "yutu is a fully functional CLI for YouTube, which can be used to manipulate YouTube videos, playlists, channels, etc"
+	short = "A fully functional MCP server and CLI for YouTube"
+	long  = "yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources"
 )
 
 var RootCmd = &cobra.Command{
