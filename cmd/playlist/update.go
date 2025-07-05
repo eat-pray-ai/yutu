@@ -75,8 +75,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(languageUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"privacy", mcp.DefaultString(""),
-		mcp.Description(privacyUsage), mcp.Required(),
+		"privacy", mcp.Enum("public", "private", "unlisted"),
+		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.DefaultString(""),

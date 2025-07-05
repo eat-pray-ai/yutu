@@ -6,10 +6,9 @@ import (
 )
 
 const (
-	short       = "List memberships levels' info"
-	long        = "List memberships levels' info, such as id, displayName, etc"
-	partsUsage  = "Comma separated parts"
-	outputUsage = "json yaml, or table"
+	short      = "List memberships levels' info"
+	long       = "List memberships levels' info, such as id, displayName, etc"
+	partsUsage = "Comma separated parts"
 )
 
 var (

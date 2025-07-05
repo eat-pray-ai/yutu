@@ -66,8 +66,8 @@ var setModerationStatusTool = mcp.NewTool(
 		mcp.Description(idsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"moderationStatus", mcp.DefaultString(""),
-		mcp.Description(msUsage), mcp.Required(),
+		"moderationStatus", mcp.Enum("heldForReview", "published", "rejected"),
+		mcp.DefaultString(""), mcp.Description(msUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"banAuthor", mcp.Enum("true", "false", ""),

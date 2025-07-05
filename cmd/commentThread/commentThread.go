@@ -16,7 +16,7 @@ const (
 	msUsage      = "published, heldForReview, likelySpam, or rejected"
 	orderUsage   = "orderUnspecified, time, or relevance"
 	stUsage      = "Search terms"
-	tfUsage      = "textFormatUnspecified or html"
+	tfUsage      = "textFormatUnspecified, or html"
 	toUsage      = "Text of the comment"
 	partsUsage   = "Comma separated parts"
 )

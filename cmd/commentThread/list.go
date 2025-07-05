@@ -79,20 +79,21 @@ var listTool = mcp.NewTool(
 		mcp.Description(mrUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"moderationStatus", mcp.DefaultString("published"),
-		mcp.Description(msUsage), mcp.Required(),
+		"moderationStatus",
+		mcp.Enum("published", "heldForReview", "likelySpam", "rejected"),
+		mcp.DefaultString("published"), mcp.Description(msUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"order", mcp.DefaultString("time"),
-		mcp.Description(orderUsage), mcp.Required(),
+		"order", mcp.Enum("orderUnspecified", "time", "relevance"),
+		mcp.DefaultString("time"), mcp.Description(orderUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"searchTerms", mcp.DefaultString(""),
 		mcp.Description(stUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"textFormat", mcp.DefaultString("html"),
-		mcp.Description(tfUsage), mcp.Required(),
+		"textFormat", mcp.Enum("textFormatUnspecified", "html"),
+		mcp.DefaultString("html"), mcp.Description(tfUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"videoId", mcp.DefaultString(""),

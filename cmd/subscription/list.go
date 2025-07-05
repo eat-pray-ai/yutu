@@ -103,8 +103,10 @@ var listTool = mcp.NewTool(
 		mcp.Description(""), mcp.Required(),
 	),
 	mcp.WithString(
-		"order", mcp.DefaultString("relevance"),
-		mcp.Description(orderUsage), mcp.Required(),
+		"order", mcp.Enum(
+			"subscriptionOrderUnspecified", "relevance", "unread", "alphabetical",
+		),
+		mcp.DefaultString("relevance"), mcp.Description(orderUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet"}),

@@ -84,8 +84,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(updateLangUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"license", mcp.DefaultString("youtube"),
-		mcp.Description(licenseUsage), mcp.Required(),
+		"license", mcp.Enum("youtube", "creativeCommon"),
+		mcp.DefaultString("youtube"), mcp.Description(licenseUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"thumbnail", mcp.DefaultString(""),
@@ -100,8 +100,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(caidUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"privacy", mcp.DefaultString(""),
-		mcp.Description(privacyUsage), mcp.Required(),
+		"privacy", mcp.Enum("public", "private", "unlisted"),
+		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"embeddable", mcp.Enum("true", "false", ""),

@@ -17,7 +17,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id, snippet"}, partsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", outputUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
 }
 
@@ -48,7 +48,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.DefaultString("table"),
-		mcp.Description(outputUsage), mcp.Required(),
+		mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),

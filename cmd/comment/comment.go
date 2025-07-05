@@ -17,7 +17,7 @@ const (
 	tfUsage    = "textFormatUnspecified, html, or plainText"
 	toUsage    = "Text of the comment"
 	msUsage    = "heldForReview, published, or rejected"
-	baUsage    = "true or false"
+	baUsage    = "If set to true the author of the comment gets added to the ban list"
 	vidUsage   = "ID of the video"
 	vrUsage    = "none, like, or dislike"
 	partsUsage = "Comma separated parts"

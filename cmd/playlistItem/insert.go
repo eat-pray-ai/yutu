@@ -71,8 +71,8 @@ var insertTool = mcp.NewTool(
 		mcp.Description(descUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"kind", mcp.DefaultString(""),
-		mcp.Description(kindUsage), mcp.Required(),
+		"kind", mcp.Enum("video", "channel", "playlist"),
+		mcp.DefaultString(""), mcp.Description(kindUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"kVideoId", mcp.DefaultString(""),
@@ -95,8 +95,8 @@ var insertTool = mcp.NewTool(
 		mcp.Description(cidUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"privacy", mcp.DefaultString(""),
-		mcp.Description(privacyUsage), mcp.Required(),
+		"privacy", mcp.Enum("public", "private", "unlisted"),
+		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

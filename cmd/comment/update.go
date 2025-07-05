@@ -69,8 +69,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(toUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"viewerRating", mcp.DefaultString(""),
-		mcp.Description(vrUsage), mcp.Required(),
+		"viewerRating", mcp.Enum("none", "like", "dislike"),
+		mcp.DefaultString(""), mcp.Description(vrUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.DefaultString(""),

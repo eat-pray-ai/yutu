@@ -70,8 +70,8 @@ var listTool = mcp.NewTool(
 		mcp.Required(),
 	),
 	mcp.WithString(
-		"textFormat", mcp.DefaultString("html"),
-		mcp.Description(tfUsage), mcp.Required(),
+		"textFormat", mcp.Enum("textFormatUnspecified", "html", "plainText"),
+		mcp.DefaultString("html"), mcp.Description(tfUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet"}),

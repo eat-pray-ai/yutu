@@ -64,8 +64,9 @@ var setTool = mcp.NewTool(
 		mcp.Description(fileUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"inVideoPosition", mcp.DefaultString(""),
-		mcp.Description(ivpUsage), mcp.Required(),
+		"inVideoPosition",
+		mcp.Enum("topLeft", "topRight", "bottomLeft", "bottomRight"),
+		mcp.DefaultString(""), mcp.Description(ivpUsage), mcp.Required(),
 	),
 	mcp.WithNumber(
 		"durationMs", mcp.DefaultNumber(0),
@@ -76,8 +77,8 @@ var setTool = mcp.NewTool(
 		mcp.Description(omUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"offsetType", mcp.DefaultString(""),
-		mcp.Description(otUsage), mcp.Required(),
+		"offsetType", mcp.Enum("offsetFromStart", "offsetFromEnd"),
+		mcp.DefaultString(""), mcp.Description(otUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

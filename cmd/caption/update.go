@@ -5,6 +5,7 @@ import (
 	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
@@ -76,25 +77,25 @@ var updateTool = mcp.NewTool(
 		"audioTrackType", mcp.DefaultString("unknown"),
 		mcp.Description(attUsage), mcp.Required(),
 	),
-	mcp.WithBoolean(
-		"isAutoSynced", mcp.DefaultBool(true),
-		mcp.Description(iasUsage), mcp.Required(),
+	mcp.WithString(
+		"isAutoSynced", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("true"), mcp.Description(iasUsage), mcp.Required(),
 	),
-	mcp.WithBoolean(
-		"isCC", mcp.DefaultBool(false),
-		mcp.Description(iscUsage), mcp.Required(),
+	mcp.WithString(
+		"isCC", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(iscUsage), mcp.Required(),
 	),
-	mcp.WithBoolean(
-		"isDraft", mcp.DefaultBool(false),
-		mcp.Description(isdUsage), mcp.Required(),
+	mcp.WithString(
+		"isDraft", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(isdUsage), mcp.Required(),
 	),
-	mcp.WithBoolean(
-		"isEasyReader", mcp.DefaultBool(false),
-		mcp.Description(iserUsage), mcp.Required(),
+	mcp.WithString(
+		"isEasyReader", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(iserUsage), mcp.Required(),
 	),
-	mcp.WithBoolean(
-		"isLarge", mcp.DefaultBool(false),
-		mcp.Description(islUsage), mcp.Required(),
+	mcp.WithString(
+		"isLarge", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(islUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"language", mcp.DefaultString(""),
@@ -105,8 +106,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(nameUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"trackKind", mcp.DefaultString("standard"),
-		mcp.Description(tkUsage), mcp.Required(),
+		"trackKind", mcp.Enum("standard", "ASR", "forced"),
+		mcp.DefaultString("standard"), mcp.Description(tkUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"videoId", mcp.DefaultString(""),
@@ -136,16 +137,16 @@ func updateHandler(
 	args := request.GetArguments()
 	file, _ = args["file"].(string)
 	audioTrackType, _ = args["audioTrackType"].(string)
-	isAutoSyncedRaw, _ := args["isAutoSynced"].(bool)
-	isAutoSynced = &isAutoSyncedRaw
-	isCCRaw, _ := args["isCC"].(bool)
-	isCC = &isCCRaw
-	isDraftRaw, _ := args["isDraft"].(bool)
-	isDraft = &isDraftRaw
-	isEasyReaderRaw, _ := args["isEasyReader"].(bool)
-	isEasyReader = &isEasyReaderRaw
-	isLargeRaw, _ := args["isLarge"].(bool)
-	isLarge = &isLargeRaw
+	isAutoSyncedRaw, _ := args["isAutoSynced"].(string)
+	isAutoSynced = utils.BoolPtr(isAutoSyncedRaw)
+	isCCRaw, _ := args["isCC"].(string)
+	isCC = utils.BoolPtr(isCCRaw)
+	isDraftRaw, _ := args["isDraft"].(string)
+	isDraft = utils.BoolPtr(isDraftRaw)
+	isEasyReaderRaw, _ := args["isEasyReader"].(string)
+	isEasyReader = utils.BoolPtr(isEasyReaderRaw)
+	isLargeRaw, _ := args["isLarge"].(string)
+	isLarge = utils.BoolPtr(isLargeRaw)
 	language, _ = args["language"].(string)
 	name, _ = args["name"].(string)
 	trackKind, _ = args["trackKind"].(string)

@@ -67,8 +67,8 @@ var updateTool = mcp.NewTool(
 		mcp.Description(descUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"privacy", mcp.DefaultString(""),
-		mcp.Description(privacyUsage), mcp.Required(),
+		"privacy", mcp.Enum("public", "private", "unlisted"),
+		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

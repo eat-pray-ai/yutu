@@ -54,8 +54,8 @@ var rateTool = mcp.NewTool(
 		mcp.Description(rateIdsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"rating", mcp.DefaultString(""),
-		mcp.Description(rateRUsage), mcp.Required(),
+		"rating", mcp.Enum("like", "dislike", "none"),
+		mcp.DefaultString(""), mcp.Description(rateRUsage), mcp.Required(),
 	),
 )
 

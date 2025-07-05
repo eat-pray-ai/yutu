@@ -84,12 +84,14 @@ var listTool = mcp.NewTool(
 		mcp.Description(cidUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"channelType", mcp.DefaultString("channelTypeUnspecified"),
+		"channelType",
+		mcp.Enum("channelTypeUnspecified", "any", "show"),
+		mcp.DefaultString("channelTypeUnspecified"),
 		mcp.Description(ctUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"eventType", mcp.DefaultString("none"),
-		mcp.Description(etUsage), mcp.Required(),
+		"eventType", mcp.Enum("none", "upcoming", "live", "completed"),
+		mcp.DefaultString("none"), mcp.Description(etUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"forContentOwner", mcp.Enum("true", "false", ""),
@@ -144,8 +146,9 @@ var listTool = mcp.NewTool(
 		mcp.Description(rlUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"safeSearch", mcp.DefaultString("moderate"),
-		mcp.Description(ssUsage), mcp.Required(),
+		"safeSearch",
+		mcp.Enum("safeSearchSettingUnspecified", "none", "moderate", "strict"),
+		mcp.DefaultString("moderate"), mcp.Description(ssUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"topicId", mcp.DefaultString(""),
@@ -157,8 +160,9 @@ var listTool = mcp.NewTool(
 		mcp.Description(typesUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoCaption", mcp.DefaultString("any"),
-		mcp.Description(vcUsage), mcp.Required(),
+		"videoCaption",
+		mcp.Enum("videoCaptionUnspecified", "any", "closedCaption", "none"),
+		mcp.DefaultString("any"), mcp.Description(vcUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"videoCategoryId", mcp.DefaultString(""),
@@ -169,32 +173,34 @@ var listTool = mcp.NewTool(
 		mcp.Description(vdeUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoDimension", mcp.DefaultString("any"),
-		mcp.Description(vdiUsage), mcp.Required(),
+		"videoDimension", mcp.Enum("any", "2d", "3d"),
+		mcp.DefaultString("any"), mcp.Description(vdiUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoDuration", mcp.DefaultString("any"),
-		mcp.Description(vduUsage), mcp.Required(),
+		"videoDuration",
+		mcp.Enum("videoDurationUnspecified", "any", "short", "medium", "long"),
+		mcp.DefaultString("any"), mcp.Description(vduUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoEmbeddable", mcp.DefaultString(""),
-		mcp.Description(veUsage), mcp.Required(),
+		"videoEmbeddable", mcp.Enum("videoEmbeddableUnspecified", "any", "true"),
+		mcp.DefaultString(""), mcp.Description(veUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoLicense", mcp.DefaultString(""),
-		mcp.Description(vlUsage), mcp.Required(),
+		"videoLicense", mcp.Enum("any", "youtube", "creativeCommon"),
+		mcp.DefaultString(""), mcp.Description(vlUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoPaidProductPlacement", mcp.DefaultString(""),
-		mcp.Description(vpppUsage), mcp.Required(),
+		"videoPaidProductPlacement",
+		mcp.Enum("videoPaidProductPlacementUnspecified", "any", "true"),
+		mcp.DefaultString(""), mcp.Description(vpppUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoSyndicated", mcp.DefaultString(""),
-		mcp.Description(vsUsage), mcp.Required(),
+		"videoSyndicated", mcp.Enum("videoSyndicatedUnspecified", "any", "true"),
+		mcp.DefaultString(""), mcp.Description(vsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"videoType", mcp.DefaultString(""),
-		mcp.Description(vtUsage), mcp.Required(),
+		"videoType", mcp.Enum("videoTypeUnspecified", "any", "movie", "episode"),
+		mcp.DefaultString(""), mcp.Description(vtUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet"}),

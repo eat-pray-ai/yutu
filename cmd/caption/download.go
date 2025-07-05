@@ -65,8 +65,8 @@ var downloadTool = mcp.NewTool(
 		mcp.Description(fileUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"tfmt", mcp.DefaultString(""),
-		mcp.Description(tfmtUsage), mcp.Required(),
+		"tfmt", mcp.Enum("sbv", "srt", "vtt"),
+		mcp.DefaultString(""), mcp.Description(tfmtUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"tlang", mcp.DefaultString(""),

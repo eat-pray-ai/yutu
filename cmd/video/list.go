@@ -67,8 +67,8 @@ var listTool = mcp.NewTool(
 		mcp.Description(listIdsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"chart", mcp.DefaultString(""),
-		mcp.Description(chartUsage), mcp.Required(),
+		"chart", mcp.Enum("chartUnspecified", "mostPopular"),
+		mcp.DefaultString(""), mcp.Description(chartUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"hl", mcp.DefaultString(""),

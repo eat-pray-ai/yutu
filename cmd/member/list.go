@@ -62,8 +62,8 @@ var listTool = mcp.NewTool(
 		mcp.Description(mrUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"mode", mcp.DefaultString("all_current"),
-		mcp.Description(mmUsage), mcp.Required(),
+		"mode", mcp.Enum("listMembersModeUnknown", "updates", "all_current"),
+		mcp.DefaultString("all_current"), mcp.Description(mmUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"snippet"}),
