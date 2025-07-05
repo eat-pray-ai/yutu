@@ -1,8 +1,11 @@
 package comment
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -13,6 +16,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(markAsSpamTool, markAsSpamHandler)
 	commentCmd.AddCommand(markAsSpamCmd)
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
@@ -33,6 +37,48 @@ var markAsSpamCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var markAsSpamTool = mcp.NewTool(
+	"comment-markAsSpam",
+	mcp.WithTitleAnnotation(masShort),
+	mcp.WithDescription(masLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithArray(
+		"ids", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(idsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func markAsSpamHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	idsRaw, _ := args["ids"].([]any)
+	ids := make([]string, len(idsRaw))
+	for i, id := range idsRaw {
+		ids[i] = id.(string)
+	}
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := markAsSpam(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func markAsSpam(writer io.Writer) error {

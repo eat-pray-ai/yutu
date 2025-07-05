@@ -1,8 +1,11 @@
 package commentThread
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -14,6 +17,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(insertTool, insertHandler)
 	commentThreadCmd.AddCommand(insertCmd)
 	insertCmd.Flags().StringVarP(
 		&authorChannelId, "authorChannelId", "a", "", acidUsage,
@@ -41,6 +45,58 @@ var insertCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var insertTool = mcp.NewTool(
+	"commentThread-insert",
+	mcp.WithTitleAnnotation(insertShort),
+	mcp.WithDescription(insertLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithString(
+		"authorChannelId", mcp.DefaultString(""),
+		mcp.Description(acidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(cidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"textOriginal", mcp.DefaultString(""),
+		mcp.Description(toUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoId", mcp.DefaultString(""),
+		mcp.Description(insertVidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func insertHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	authorChannelId, _ = args["authorChannelId"].(string)
+	channelId, _ = args["channelId"].(string)
+	textOriginal, _ = args["textOriginal"].(string)
+	videoId, _ = args["videoId"].(string)
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := insert(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func insert(writer io.Writer) error {

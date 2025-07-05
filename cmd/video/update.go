@@ -1,8 +1,12 @@
 package video
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -15,6 +19,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(updateTool, updateHandler)
 	videoCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
@@ -47,6 +52,104 @@ var updateCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var updateTool = mcp.NewTool(
+	"video-update",
+	mcp.WithTitleAnnotation(updateShort),
+	mcp.WithDescription(updateLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithArray(
+		"ids", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(updateIdUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"title", mcp.DefaultString(""),
+		mcp.Description(titleUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"description", mcp.DefaultString(""),
+		mcp.Description(descUsage), mcp.Required(),
+	),
+	mcp.WithArray(
+		"tags", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(tagsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"language", mcp.DefaultString(""),
+		mcp.Description(updateLangUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"license", mcp.DefaultString("youtube"),
+		mcp.Description(licenseUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"thumbnail", mcp.DefaultString(""),
+		mcp.Description(thumbnailUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"playlistId", mcp.DefaultString(""),
+		mcp.Description(pidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"categoryId", mcp.DefaultString(""),
+		mcp.Description(caidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"privacy", mcp.DefaultString(""),
+		mcp.Description(privacyUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"embeddable", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("true"), mcp.Description(embeddableUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func updateHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	idsRaw, _ := args["ids"].([]any)
+	ids = make([]string, len(idsRaw))
+	for i, id := range idsRaw {
+		ids[i] = id.(string)
+	}
+	title, _ = args["title"].(string)
+	description, _ = args["description"].(string)
+	tagsRaw, _ := args["tags"].([]any)
+	tags = make([]string, len(tagsRaw))
+	for i, tag := range tagsRaw {
+		tags[i] = tag.(string)
+	}
+	language, _ = args["language"].(string)
+	license, _ = args["license"].(string)
+	thumbnail, _ = args["thumbnail"].(string)
+	playListId, _ = args["playlistId"].(string)
+	categoryId, _ = args["categoryId"].(string)
+	privacy, _ = args["privacy"].(string)
+	embeddableRaw, _ := args["embeddable"].(string)
+	embeddable = utils.BoolPtr(embeddableRaw)
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := update(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func update(writer io.Writer) error {

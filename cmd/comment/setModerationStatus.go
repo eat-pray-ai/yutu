@@ -1,8 +1,12 @@
 package comment
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -13,6 +17,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(setModerationStatusTool, setModerationStatusHandler)
 	commentCmd.AddCommand(setModerationStatusCmd)
 
 	setModerationStatusCmd.Flags().StringSliceVarP(
@@ -46,6 +51,59 @@ var setModerationStatusCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var setModerationStatusTool = mcp.NewTool(
+	"comment-setModerationStatus",
+	mcp.WithTitleAnnotation(smsShort),
+	mcp.WithDescription(smsLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithArray(
+		"ids", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(idsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"moderationStatus", mcp.DefaultString(""),
+		mcp.Description(msUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"banAuthor", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(baUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func setModerationStatusHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	idsRaw, _ := args["ids"].([]any)
+	ids := make([]string, len(idsRaw))
+	for i, id := range idsRaw {
+		ids[i] = id.(string)
+	}
+	moderationStatus, _ = args["moderationStatus"].(string)
+	banAuthorRaw, _ := args["banAuthor"].(string)
+	banAuthor = utils.BoolPtr(banAuthorRaw)
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := setModerationStatus(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func setModerationStatus(writer io.Writer) error {

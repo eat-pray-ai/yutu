@@ -47,20 +47,22 @@ var listCmd = &cobra.Command{
 
 var listTool = mcp.NewTool(
 	"activity-list",
-	mcp.WithTitleAnnotation("List Activities"),
+	mcp.WithTitleAnnotation(short),
+	mcp.WithDescription(long),
 	mcp.WithDestructiveHintAnnotation(false),
 	mcp.WithOpenWorldHintAnnotation(true),
 	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithDescription(long),
 	mcp.WithString(
-		"channelId", mcp.DefaultString(""), mcp.Description(ciUsage), mcp.Required(),
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(ciUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"home", mcp.Enum("true", "false", ""),
 		mcp.DefaultString(""), mcp.Description(homeUsage), mcp.Required(),
 	),
 	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5), mcp.Description(mrUsage), mcp.Required(),
+		"maxResults", mcp.DefaultNumber(5),
+		mcp.Description(mrUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
@@ -93,9 +95,9 @@ var listTool = mcp.NewTool(
 	),
 )
 
-func listHandler(ctx context.Context, request mcp.CallToolRequest) (
-	*mcp.CallToolResult, error,
-) {
+func listHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
 	args := request.GetArguments()
 	channelId, _ = args["channelId"].(string)
 	homeRaw, _ := args["home"].(string)
@@ -110,7 +112,7 @@ func listHandler(ctx context.Context, request mcp.CallToolRequest) (
 	publishedAfter, _ = args["publishedAfter"].(string)
 	publishedBefore, _ = args["publishedBefore"].(string)
 	regionCode, _ = args["regionCode"].(string)
-	partsRaw, _ := args["parts"].([]interface{})
+	partsRaw, _ := args["parts"].([]any)
 	parts = make([]string, len(partsRaw))
 	for i, part := range partsRaw {
 		parts[i] = part.(string)

@@ -15,6 +15,7 @@ go_library(
         "//cmd",
         "//pkg/playlist",
         "//pkg/utils",
+        "@com_github_mark3labs_mcp_go//mcp",
         "@com_github_spf13_cobra//:cobra",
     ],
 )

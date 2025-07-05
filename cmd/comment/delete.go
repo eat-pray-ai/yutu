@@ -1,7 +1,11 @@
 package comment
 
 import (
+	"bytes"
+	"context"
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -12,6 +16,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(deleteTool, deleteHandler)
 	commentCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
@@ -29,6 +34,38 @@ var deleteCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var deleteTool = mcp.NewTool(
+	"comment-delete",
+	mcp.WithTitleAnnotation(deleteShort),
+	mcp.WithDescription(deleteLong),
+	mcp.WithDestructiveHintAnnotation(true),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithArray(
+		"ids", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(idsUsage), mcp.Required(),
+	),
+)
+
+func deleteHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	idsRaw, _ := args["ids"].([]any)
+	ids := make([]string, len(idsRaw))
+	for i, id := range idsRaw {
+		ids[i] = id.(string)
+	}
+
+	var writer bytes.Buffer
+	err := del(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func del(writer io.Writer) error {

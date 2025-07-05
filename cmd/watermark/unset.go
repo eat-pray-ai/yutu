@@ -1,7 +1,11 @@
 package watermark
 
 import (
+	"bytes"
+	"context"
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -12,6 +16,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(unsetTool, unsetHandler)
 	watermarkCmd.AddCommand(unsetCmd)
 
 	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
@@ -29,6 +34,33 @@ var unsetCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var unsetTool = mcp.NewTool(
+	"watermark-unset",
+	mcp.WithTitleAnnotation(unsetShort),
+	mcp.WithDescription(unsetLong),
+	mcp.WithDestructiveHintAnnotation(true),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithString(
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(cidUsage), mcp.Required(),
+	),
+)
+
+func unsetHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	channelId, _ = args["channelId"].(string)
+
+	var writer bytes.Buffer
+	err := unset(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func unset(writer io.Writer) error {

@@ -1,13 +1,18 @@
 package search
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/search"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
 
 func init() {
+	cmd.MCP.AddTool(listTool, listHandler)
 	searchCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVar(&channelId, "channelId", "", cidUsage)
@@ -65,6 +70,202 @@ var listCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var listTool = mcp.NewTool(
+	"search-list",
+	mcp.WithTitleAnnotation(short),
+	mcp.WithDescription(long),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(true),
+	mcp.WithString(
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(cidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"channelType", mcp.DefaultString("channelTypeUnspecified"),
+		mcp.Description(ctUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"eventType", mcp.DefaultString("none"),
+		mcp.Description(etUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"forContentOwner", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(fcoUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"forDeveloper", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(fdUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"forMine", mcp.Enum("true", "false", ""),
+		mcp.DefaultString("false"), mcp.Description(fmUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"location", mcp.DefaultString(""),
+		mcp.Description(locationUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"locationRadius", mcp.DefaultString(""),
+		mcp.Description(lrUsage), mcp.Required(),
+	),
+	mcp.WithNumber(
+		"maxResults", mcp.DefaultNumber(5),
+		mcp.Description(mrUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"onBehalfOfContentOwner", mcp.DefaultString(""),
+		mcp.Description(""), mcp.Required(),
+	),
+	mcp.WithString(
+		"order", mcp.DefaultString("relevance"),
+		mcp.Description(orderUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"publishedAfter", mcp.DefaultString(""),
+		mcp.Description(paUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"publishedBefore", mcp.DefaultString(""),
+		mcp.Description(pbUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"q", mcp.DefaultString(""),
+		mcp.Description(qUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"regionCode", mcp.DefaultString(""),
+		mcp.Description(rcUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"relevanceLanguage", mcp.DefaultString(""),
+		mcp.Description(rlUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"safeSearch", mcp.DefaultString("moderate"),
+		mcp.Description(ssUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"topicId", mcp.DefaultString(""),
+		mcp.Description(tidUsage), mcp.Required(),
+	),
+	mcp.WithArray(
+		"types", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(typesUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoCaption", mcp.DefaultString("any"),
+		mcp.Description(vcUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoCategoryId", mcp.DefaultString(""),
+		mcp.Description(vcidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoDefinition", mcp.DefaultString(""),
+		mcp.Description(vdeUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoDimension", mcp.DefaultString("any"),
+		mcp.Description(vdiUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoDuration", mcp.DefaultString("any"),
+		mcp.Description(vduUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoEmbeddable", mcp.DefaultString(""),
+		mcp.Description(veUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoLicense", mcp.DefaultString(""),
+		mcp.Description(vlUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoPaidProductPlacement", mcp.DefaultString(""),
+		mcp.Description(vpppUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoSyndicated", mcp.DefaultString(""),
+		mcp.Description(vsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoType", mcp.DefaultString(""),
+		mcp.Description(vtUsage), mcp.Required(),
+	),
+	mcp.WithArray(
+		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(partsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString("table"),
+		mcp.Description(cmd.TableUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func listHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	channelId, _ = args["channelId"].(string)
+	channelType, _ = args["channelType"].(string)
+	eventType, _ = args["eventType"].(string)
+	forContentOwnerRaw, _ := args["forContentOwner"].(string)
+	forContentOwner = utils.BoolPtr(forContentOwnerRaw)
+	forDeveloperRaw, _ := args["forDeveloper"].(string)
+	forDeveloper = utils.BoolPtr(forDeveloperRaw)
+	forMineRaw, _ := args["forMine"].(string)
+	forMine = utils.BoolPtr(forMineRaw)
+	location, _ = args["location"].(string)
+	locationRadius, _ = args["locationRadius"].(string)
+	maxResultsRaw, _ := args["maxResults"].(float64)
+	maxResults = int64(maxResultsRaw)
+	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	order, _ = args["order"].(string)
+	publishedAfter, _ = args["publishedAfter"].(string)
+	publishedBefore, _ = args["publishedBefore"].(string)
+	q, _ = args["q"].(string)
+	regionCode, _ = args["regionCode"].(string)
+	relevanceLanguage, _ = args["relevanceLanguage"].(string)
+	safeSearch, _ = args["safeSearch"].(string)
+	topicId, _ = args["topicId"].(string)
+	typesRaw, _ := args["types"].([]any)
+	types = make([]string, len(typesRaw))
+	for i, typ := range typesRaw {
+		types[i] = typ.(string)
+	}
+	videoCaption, _ = args["videoCaption"].(string)
+	videoCategoryId, _ = args["videoCategoryId"].(string)
+	videoDefinition, _ = args["videoDefinition"].(string)
+	videoDimension, _ = args["videoDimension"].(string)
+	videoDuration, _ = args["videoDuration"].(string)
+	videoEmbeddable, _ = args["videoEmbeddable"].(string)
+	videoLicense, _ = args["videoLicense"].(string)
+	videoPaidProductPlacement, _ = args["videoPaidProductPlacement"].(string)
+	videoSyndicated, _ = args["videoSyndicated"].(string)
+	videoType, _ = args["videoType"].(string)
+	partsRaw, _ := args["parts"].([]any)
+	parts = make([]string, len(partsRaw))
+	for i, part := range partsRaw {
+		parts[i] = part.(string)
+	}
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := list(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func list(writer io.Writer) error {

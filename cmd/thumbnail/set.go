@@ -1,13 +1,17 @@
 package thumbnail
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
 
 func init() {
+	cmd.MCP.AddTool(setTool, setHandler)
 	thumbnailCmd.AddCommand(setCmd)
 
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
@@ -30,6 +34,48 @@ var setCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var setTool = mcp.NewTool(
+	"thumbnail-set",
+	mcp.WithTitleAnnotation(short),
+	mcp.WithDescription(long),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithString(
+		"file", mcp.DefaultString(""),
+		mcp.Description(fileUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoId", mcp.DefaultString(""),
+		mcp.Description(vidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func setHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	file, _ = args["file"].(string)
+	videoId, _ = args["videoId"].(string)
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := set(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func set(writer io.Writer) error {

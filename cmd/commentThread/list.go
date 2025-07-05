@@ -1,8 +1,11 @@
 package commentThread
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -14,6 +17,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(listTool, listHandler)
 	commentThreadCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
@@ -48,6 +52,99 @@ var listCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var listTool = mcp.NewTool(
+	"commentThread-list",
+	mcp.WithTitleAnnotation(listShort),
+	mcp.WithDescription(listLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(true),
+	mcp.WithArray(
+		"ids", mcp.DefaultArray([]string{}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(idsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"allThreadsRelatedToChannelId", mcp.DefaultString(""),
+		mcp.Description(atrtcidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(cidUsage), mcp.Required(),
+	),
+	mcp.WithNumber(
+		"maxResults", mcp.DefaultNumber(5),
+		mcp.Description(mrUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"moderationStatus", mcp.DefaultString("published"),
+		mcp.Description(msUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"order", mcp.DefaultString("time"),
+		mcp.Description(orderUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"searchTerms", mcp.DefaultString(""),
+		mcp.Description(stUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"textFormat", mcp.DefaultString("html"),
+		mcp.Description(tfUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"videoId", mcp.DefaultString(""),
+		mcp.Description(listVidUsage), mcp.Required(),
+	),
+	mcp.WithArray(
+		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(partsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString("table"),
+		mcp.Description(cmd.TableUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func listHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	idsRaw, _ := args["ids"].([]any)
+	ids := make([]string, len(idsRaw))
+	for i, id := range idsRaw {
+		ids[i] = id.(string)
+	}
+	allThreadsRelatedToChannelId, _ = args["allThreadsRelatedToChannelId"].(string)
+	channelId, _ = args["channelId"].(string)
+	maxResultsRaw, _ := args["maxResults"].(float64)
+	maxResults = int64(maxResultsRaw)
+	moderationStatus, _ = args["moderationStatus"].(string)
+	order, _ = args["order"].(string)
+	searchTerms, _ = args["searchTerms"].(string)
+	textFormat, _ = args["textFormat"].(string)
+	videoId, _ = args["videoId"].(string)
+	partsRaw, _ := args["parts"].([]any)
+	parts = make([]string, len(partsRaw))
+	for i, part := range partsRaw {
+		parts[i] = part.(string)
+	}
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := list(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func list(writer io.Writer) error {

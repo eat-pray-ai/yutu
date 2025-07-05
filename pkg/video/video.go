@@ -379,9 +379,14 @@ func (v *video) GetRating(output string, jpath string, writer io.Writer) error {
 	case "yaml":
 		utils.PrintYAML(res.Items, jpath, writer)
 	default:
-		_, _ = fmt.Fprintln(writer, "ID\tRating")
+		tb := table.NewWriter()
+		defer tb.Render()
+		tb.SetOutputMirror(writer)
+		tb.SetStyle(table.StyleLight)
+		tb.SetAutoIndex(true)
+		tb.AppendHeader(table.Row{"ID", "Rating"})
 		for _, item := range res.Items {
-			_, _ = fmt.Fprintf(writer, "%s\t%s\n", item.VideoId, item.Rating)
+			tb.AppendRow(table.Row{item.VideoId, item.Rating})
 		}
 	}
 	return nil

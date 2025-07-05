@@ -1,8 +1,11 @@
 package playlistImage
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -13,6 +16,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(listTool, listHandler)
 	playlistImageCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&parent, "parent", "P", "", parentUsage)
@@ -41,6 +45,69 @@ var listCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var listTool = mcp.NewTool(
+	"playlistImage-list",
+	mcp.WithTitleAnnotation(listShort),
+	mcp.WithDescription(listLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(true),
+	mcp.WithString(
+		"parent", mcp.DefaultString(""),
+		mcp.Description(parentUsage), mcp.Required(),
+	),
+	mcp.WithNumber(
+		"maxResults", mcp.DefaultNumber(5),
+		mcp.Description(mrUsage), mcp.Required(),
+	),
+	mcp.WithArray(
+		"parts", mcp.DefaultArray([]string{"id", "kind", "snippet"}),
+		mcp.Items(map[string]any{"type": "string"}),
+		mcp.Description(partsUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString("table"),
+		mcp.Description(cmd.TableUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"onBehalfOfContentOwner", mcp.DefaultString(""),
+		mcp.Description(""), mcp.Required(),
+	),
+	mcp.WithString(
+		"onBehalfOfContentOwnerChannel", mcp.DefaultString(""),
+		mcp.Description(""), mcp.Required(),
+	),
+)
+
+func listHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	parent, _ = args["parent"].(string)
+	maxResultsRaw, _ := args["maxResults"].(float64)
+	maxResults = int64(maxResultsRaw)
+	partsRaw, _ := args["parts"].([]any)
+	parts = make([]string, len(partsRaw))
+	for i, part := range partsRaw {
+		parts[i] = part.(string)
+	}
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	onBehalfOfContentOwnerChannel, _ = args["onBehalfOfContentOwnerChannel"].(string)
+
+	var writer bytes.Buffer
+	err := list(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func list(writer io.Writer) error {

@@ -1,8 +1,11 @@
 package playlistItem
 
 import (
+	"bytes"
+	"context"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
+	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 	"io"
 )
@@ -14,6 +17,7 @@ const (
 )
 
 func init() {
+	cmd.MCP.AddTool(insertTool, insertHandler)
 	playlistItemCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
@@ -49,6 +53,88 @@ var insertCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
+}
+
+var insertTool = mcp.NewTool(
+	"playlistItem-insert",
+	mcp.WithTitleAnnotation(insertShort),
+	mcp.WithDescription(insertLong),
+	mcp.WithDestructiveHintAnnotation(false),
+	mcp.WithOpenWorldHintAnnotation(true),
+	mcp.WithReadOnlyHintAnnotation(false),
+	mcp.WithString(
+		"title", mcp.DefaultString(""),
+		mcp.Description(titleUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"description", mcp.DefaultString(""),
+		mcp.Description(descUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"kind", mcp.DefaultString(""),
+		mcp.Description(kindUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"kVideoId", mcp.DefaultString(""),
+		mcp.Description(kvidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"kChannelId", mcp.DefaultString(""),
+		mcp.Description(kcidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"kPlaylistId", mcp.DefaultString(""),
+		mcp.Description(kpidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"playlistId", mcp.DefaultString(""),
+		mcp.Description(insertPidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"channelId", mcp.DefaultString(""),
+		mcp.Description(cidUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"privacy", mcp.DefaultString(""),
+		mcp.Description(privacyUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"onBehalfOfContentOwner", mcp.DefaultString(""),
+		mcp.Description(""), mcp.Required(),
+	),
+	mcp.WithString(
+		"output", mcp.DefaultString(""),
+		mcp.Description(cmd.SilentUsage), mcp.Required(),
+	),
+	mcp.WithString(
+		"jsonpath", mcp.DefaultString(""),
+		mcp.Description(cmd.JpUsage), mcp.Required(),
+	),
+)
+
+func insertHandler(
+	ctx context.Context, request mcp.CallToolRequest,
+) (*mcp.CallToolResult, error) {
+	args := request.GetArguments()
+	title, _ = args["title"].(string)
+	description, _ = args["description"].(string)
+	kind, _ = args["kind"].(string)
+	kVideoId, _ = args["kVideoId"].(string)
+	kChannelId, _ = args["kChannelId"].(string)
+	kPlaylistId, _ = args["kPlaylistId"].(string)
+	playlistId, _ = args["playlistId"].(string)
+	channelId, _ = args["channelId"].(string)
+	privacy, _ = args["privacy"].(string)
+	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	output, _ = args["output"].(string)
+	jpath, _ = args["jsonpath"].(string)
+
+	var writer bytes.Buffer
+	err := insert(&writer)
+	if err != nil {
+		return mcp.NewToolResultError(err.Error()), err
+	}
+	return mcp.NewToolResultText(writer.String()), nil
 }
 
 func insert(writer io.Writer) error {

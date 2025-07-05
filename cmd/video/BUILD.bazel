@@ -18,6 +18,7 @@ go_library(
         "//cmd",
         "//pkg/utils",
         "//pkg/video",
+        "@com_github_mark3labs_mcp_go//mcp",
         "@com_github_spf13_cobra//:cobra",
         "@com_github_spf13_pflag//:pflag",
     ],
