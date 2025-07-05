@@ -3,7 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.24.3
 
 require (
-	github.com/mark3labs/mcp-go v0.32.1-0.20250628092910-1eddde7bd69b
+	github.com/mark3labs/mcp-go v0.32.1-0.20250704180325-656a7b4cab77
 	github.com/savioxavier/termlink v1.4.3
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
@@ -51,7 +51,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
-	google.golang.org/api v0.239.0
+	google.golang.org/api v0.240.0
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )
