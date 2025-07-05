@@ -18,7 +18,7 @@ func init() {
 	activityCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
 	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, cmd.MRUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
 		&publishedAfter, "publishedAfter", "a", "", paUsage,
@@ -27,9 +27,11 @@ func init() {
 		&publishedBefore, "publishedBefore", "b", "", pbUsage,
 	)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
-	listCmd.Flags().StringSliceVarP(&parts, "parts", "p", defaultParts, partsUsage)
+	listCmd.Flags().StringSliceVarP(
+		&parts, "parts", "p", defaultParts, cmd.PartsUsage,
+	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -62,7 +64,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(mrUsage), mcp.Required(),
+		mcp.Description(cmd.MRUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
@@ -83,15 +85,15 @@ var listTool = mcp.NewTool(
 	mcp.WithArray(
 		"parts", mcp.DefaultArray(defaultParts),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(partsUsage), mcp.Required(),
+		mcp.Description(cmd.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString("table"),
-		mcp.Description(cmd.TableUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "table"),
+		mcp.DefaultString("table"), mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

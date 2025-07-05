@@ -1,8 +1,9 @@
 package cmd
 
 const (
-	// TODO: mcp.Enum
+	PartsUsage  = "Comma separated parts"
+	MRUsage     = "The maximum number of items that should be returned"
 	TableUsage  = "json, yaml, or table"
 	SilentUsage = "json, yaml, or silent"
-	JpUsage     = "JSONPath expression to filter the output"
+	JPUsage     = "JSONPath expression to filter the output"
 )

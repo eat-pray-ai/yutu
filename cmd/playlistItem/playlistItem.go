@@ -16,9 +16,7 @@ const (
 	kpidUsage    = "ID of the playlist if kind is playlist"
 	vidUsage     = "Return the playlist items associated with the given video id"
 	cidUsage     = "ID that YouTube uses to uniquely identify the user that added the item to the playlist"
-	mrUsage      = "The maximum number of items that should be returned"
 	privacyUsage = "public, private, or unlisted"
-	partsUsage   = "Comma separated parts"
 )
 
 var (

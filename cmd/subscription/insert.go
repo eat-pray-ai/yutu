@@ -27,7 +27,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -70,12 +70,12 @@ var insertTool = mcp.NewTool(
 		mcp.Description(titleUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.SilentUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "silent", ""),
+		mcp.DefaultString(""), mcp.Description(cmd.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

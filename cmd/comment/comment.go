@@ -7,20 +7,18 @@ import (
 )
 
 const (
-	short      = "Manipulate YouTube comments"
-	long       = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments"
-	idsUsage   = "IDs of comments"
-	acidUsage  = "Channel id of the comment author"
-	crUsage    = "Whether the viewer can rate the comment"
-	cidUsage   = "Channel id of the video owner"
-	mrUsage    = "The maximum number of items that should be returned"
-	tfUsage    = "textFormatUnspecified, html, or plainText"
-	toUsage    = "Text of the comment"
-	msUsage    = "heldForReview, published, or rejected"
-	baUsage    = "If set to true the author of the comment gets added to the ban list"
-	vidUsage   = "ID of the video"
-	vrUsage    = "none, like, or dislike"
-	partsUsage = "Comma separated parts"
+	short     = "Manipulate YouTube comments"
+	long      = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments"
+	idsUsage  = "IDs of comments"
+	acidUsage = "Channel id of the comment author"
+	crUsage   = "Whether the viewer can rate the comment"
+	cidUsage  = "Channel id of the video owner"
+	tfUsage   = "textFormatUnspecified, html, or plainText"
+	toUsage   = "Text of the comment"
+	msUsage   = "heldForReview, published, or rejected"
+	baUsage   = "If set to true the author of the comment gets added to the ban list"
+	vidUsage  = "ID of the video"
+	vrUsage   = "none, like, or dislike"
 )
 
 var (

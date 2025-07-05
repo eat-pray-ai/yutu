@@ -6,9 +6,8 @@ import (
 )
 
 const (
-	short      = "List memberships levels' info"
-	long       = "List memberships levels' info, such as id, displayName, etc"
-	partsUsage = "Comma separated parts"
+	short = "List memberships levels' info"
+	long  = "List memberships levels' info, such as id, displayName, etc"
 )
 
 var (

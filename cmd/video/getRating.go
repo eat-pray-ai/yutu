@@ -25,7 +25,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", cmd.TableUsage)
-	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }
@@ -60,12 +60,12 @@ var getRatingTool = mcp.NewTool(
 		mcp.Description(""), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.TableUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "table"),
+		mcp.DefaultString(""), mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

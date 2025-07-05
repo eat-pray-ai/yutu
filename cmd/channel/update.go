@@ -31,7 +31,7 @@ func init() {
 	)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -86,13 +86,12 @@ var updateTool = mcp.NewTool(
 		mcp.Description(titleUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.SilentUsage),
-		mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "silent", ""),
+		mcp.DefaultString(""), mcp.Description(cmd.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage),
+		mcp.Description(cmd.JPUsage),
 		mcp.Required(),
 	),
 )

@@ -17,7 +17,7 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	setCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	setCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
@@ -52,12 +52,12 @@ var setTool = mcp.NewTool(
 		mcp.Description(vidUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.SilentUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "silent", ""),
+		mcp.DefaultString(""), mcp.Description(cmd.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

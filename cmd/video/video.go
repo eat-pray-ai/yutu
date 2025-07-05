@@ -28,7 +28,6 @@ const (
 	privacyUsage    = "public, private, or unlisted"
 	fkUsage         = "Whether the video is for kids"
 	embeddableUsage = "Whether the video is embeddable"
-	partsUsage      = "Comma separated parts"
 	paUsage         = "Datetime when the video is scheduled to publish"
 	rcUsage         = "Specific to the specified region"
 	ridUsage        = "ID of the reason for reporting abuse"
@@ -36,7 +35,6 @@ const (
 	stabilizeUsage  = "Should stabilize be applied to the upload"
 	mhUsage         = ""
 	mwUsage         = ""
-	mrUsage         = "The maximum number of items that should be returned"
 	nsUsage         = "Notify the channel subscribers about the new video"
 	psvUsage        = "Whether the extended video statistics can be viewed by everyone"
 )

@@ -15,8 +15,6 @@ const (
 	widthUsage  = "The image width"
 	fileUsage   = "Path to the image file"
 	parentUsage = "Return PlaylistImages for this playlist id"
-	mrUsage     = "The maximum number of items that should be returned"
-	partsUsage  = "Comma separated parts"
 )
 
 var (

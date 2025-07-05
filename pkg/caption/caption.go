@@ -40,7 +40,7 @@ type caption struct {
 }
 
 type Caption interface {
-	Get(parts []string) ([]*youtube.Caption, error) // todo: return error
+	Get(parts []string) ([]*youtube.Caption, error)
 	List(parts []string, output string, s string, writer io.Writer) error
 	Insert(output string, s string, writer io.Writer) error
 	Update(output string, s string, writer io.Writer) error

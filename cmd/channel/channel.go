@@ -16,7 +16,6 @@ const (
 	fuUsage      = "Return the channel associated with a YouTube username"
 	hlUsage      = "Specifies the localization language of the metadata"
 	mbmUsage     = "Return the channels managed by the authenticated user"
-	mrUsage      = "The maximum number of items that should be returned"
 	mineUsage    = "Return the ids of channels owned by the authenticated user"
 	msUsage      = "Return the channels subscribed to the authenticated user"
 	countryUsage = "Country of the channel"
@@ -24,7 +23,6 @@ const (
 	dlUsage      = "The language of the channel's default title and description"
 	descUsage    = "Description of the channel"
 	titleUsage   = "Title of the channel"
-	partsUsage   = "Comma separated parts"
 )
 
 var (

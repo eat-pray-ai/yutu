@@ -6,11 +6,9 @@ import (
 )
 
 const (
-	short      = "List Super Chat events for a channel"
-	long       = "List Super Chat events for a channel"
-	hlUsage    = "Return rendered funding amounts in specified language"
-	mrUsage    = "The maximum number of items that should be returned"
-	partsUsage = "Comma separated parts"
+	short   = "List Super Chat events for a channel"
+	long    = "List Super Chat events for a channel"
+	hlUsage = "Return rendered funding amounts in specified language"
 )
 
 var (

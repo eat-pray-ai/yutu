@@ -17,7 +17,6 @@ const (
 	fmUsage       = "Search for the private videos of the authenticated user"
 	locationUsage = "Filter on location of the video"
 	lrUsage       = "Filter on distance from the location"
-	mrUsage       = "The maximum number of items that should be returned"
 	orderUsage    = "searchSortUnspecified, date, rating, viewCount, relevance, title, videoCount"
 	paUsage       = "Filter on resources published after this date"
 	pbUsage       = "Filter on resources published before this date"
@@ -37,7 +36,6 @@ const (
 	vpppUsage     = "videoPaidProductPlacementUnspecified, any, or true"
 	vsUsage       = "videoSyndicatedUnspecified, any, or true"
 	vtUsage       = "videoTypeUnspecified, any, movie, or episode"
-	partsUsage    = "Comma separated parts"
 )
 
 var (

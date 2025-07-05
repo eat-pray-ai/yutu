@@ -21,7 +21,7 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JpUsage)
+	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }
@@ -52,12 +52,12 @@ var markAsSpamTool = mcp.NewTool(
 		mcp.Description(idsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.SilentUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "silent", ""),
+		mcp.DefaultString(""), mcp.Description(cmd.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

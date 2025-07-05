@@ -12,13 +12,11 @@ const (
 	atrtcidUsage = "Returns the comment threads of all videos of the channel and the channel comments as well"
 	acidUsage    = "Channel id of the comment author"
 	cidUsage     = "Channel id of the video owner"
-	mrUsage      = "The maximum number of items that should be returned"
 	msUsage      = "published, heldForReview, likelySpam, or rejected"
 	orderUsage   = "orderUnspecified, time, or relevance"
 	stUsage      = "Search terms"
 	tfUsage      = "textFormatUnspecified, or html"
 	toUsage      = "Text of the comment"
-	partsUsage   = "Comma separated parts"
 )
 
 var (

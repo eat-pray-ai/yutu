@@ -6,10 +6,9 @@ import (
 )
 
 const (
-	short      = "List YouTube i18n regions"
-	long       = "List YouTube i18n regions' id, hl, and name"
-	hlUsage    = "Host language"
-	partsUsage = "Comma separated parts"
+	short   = "List YouTube i18n regions"
+	long    = "List YouTube i18n regions' id, hl, and name"
+	hlUsage = "Host language"
 )
 
 var (

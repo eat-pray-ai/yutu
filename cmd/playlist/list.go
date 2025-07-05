@@ -25,7 +25,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, cmd.MRUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
@@ -34,10 +34,10 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"}, partsUsage,
+		&parts, "parts", "p", []string{"id", "snippet", "status"}, cmd.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -75,7 +75,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(mrUsage), mcp.Required(),
+		mcp.Description(cmd.MRUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
@@ -92,15 +92,15 @@ var listTool = mcp.NewTool(
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet", "status"}),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(partsUsage), mcp.Required(),
+		mcp.Description(cmd.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString("table"),
-		mcp.Description(cmd.TableUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "table"),
+		mcp.DefaultString("table"), mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

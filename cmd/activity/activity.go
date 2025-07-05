@@ -7,16 +7,14 @@ import (
 )
 
 const (
-	short      = "List YouTube activities"
-	long       = "List YouTube activities, such as likes, favorites, uploads, etc"
-	ciUsage    = "ID of the channel"
-	homeUsage  = "true, false, or empty"
-	mrUsage    = "The maximum number of items that should be returned"
-	mineUsage  = "true, false, or empty"
-	paUsage    = "Filter on activities published after this date"
-	pbUsage    = "Filter on activities published before this date"
-	rcUsage    = ""
-	partsUsage = "Comma separated parts"
+	short     = "List YouTube activities"
+	long      = "List YouTube activities, such as likes, favorites, uploads, etc"
+	ciUsage   = "ID of the channel"
+	homeUsage = "true, false, or empty"
+	mineUsage = "true, false, or empty"
+	paUsage   = "Filter on activities published after this date"
+	pbUsage   = "Filter on activities published before this date"
+	rcUsage   = ""
 )
 
 var (

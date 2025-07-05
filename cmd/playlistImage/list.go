@@ -20,12 +20,12 @@ func init() {
 	playlistImageCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&parent, "parent", "P", "", parentUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, mrUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, cmd.MRUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "kind", "snippet"}, partsUsage,
+		&parts, "parts", "p", []string{"id", "kind", "snippet"}, cmd.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JpUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JPUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
@@ -60,20 +60,20 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(mrUsage), mcp.Required(),
+		mcp.Description(cmd.MRUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "kind", "snippet"}),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(partsUsage), mcp.Required(),
+		mcp.Description(cmd.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString("table"),
-		mcp.Description(cmd.TableUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "table"),
+		mcp.DefaultString("table"), mcp.Description(cmd.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

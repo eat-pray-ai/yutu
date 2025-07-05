@@ -6,12 +6,11 @@ import (
 )
 
 const (
-	short      = "List YouTube video categories"
-	long       = "List YouTube video categories' info, such as id, title, assignable, etc."
-	idsUsage   = "IDs of the video categories"
-	hlUsage    = "Host language"
-	rcUsage    = "Region code"
-	partsUsage = "Comma separated parts"
+	short    = "List YouTube video categories"
+	long     = "List YouTube video categories' info, such as id, title, assignable, etc."
+	idsUsage = "IDs of the video categories"
+	hlUsage  = "Host language"
+	rcUsage  = "Region code"
 )
 
 var (

@@ -6,10 +6,9 @@ import (
 )
 
 const (
-	short      = "List YouTube video abuse report reasons"
-	long       = "List YouTube video abuse report reasons"
-	hlUsage    = "Host language"
-	partsUsage = "Comma separated parts"
+	short   = "List YouTube video abuse report reasons"
+	long    = "List YouTube video abuse report reasons"
+	hlUsage = "Host language"
 )
 
 var (

@@ -21,7 +21,6 @@ const (
 	nameUsage     = "Name of the caption track"
 	tkUsage       = "standard, ASR, or forced"
 	vidUsage      = "ID of the video"
-	partsUsage    = "Comma separated parts"
 	tfmtUsage     = "sbv, srt, or vtt"
 	tlangUsage    = "Translate the captions into this language"
 )

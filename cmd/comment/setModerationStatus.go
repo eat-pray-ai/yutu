@@ -33,7 +33,7 @@ func init() {
 		&output, "output", "o", "", cmd.SilentUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&jpath, "jsonpath", "j", "", cmd.JpUsage,
+		&jpath, "jsonpath", "j", "", cmd.JPUsage,
 	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
@@ -74,12 +74,12 @@ var setModerationStatusTool = mcp.NewTool(
 		mcp.DefaultString("false"), mcp.Description(baUsage), mcp.Required(),
 	),
 	mcp.WithString(
-		"output", mcp.DefaultString(""),
-		mcp.Description(cmd.SilentUsage), mcp.Required(),
+		"output", mcp.Enum("json", "yaml", "silent", ""),
+		mcp.DefaultString(""), mcp.Description(cmd.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JpUsage), mcp.Required(),
+		mcp.Description(cmd.JPUsage), mcp.Required(),
 	),
 )
 

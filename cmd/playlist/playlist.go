@@ -13,12 +13,10 @@ const (
 	titleUsage    = "Title of the playlist"
 	descUsage     = "Description of the playlist"
 	hlUsage       = "Return content in specified language"
-	mrUsage       = "The maximum number of items that should be returned"
 	mineUsage     = "Return the playlists owned by the authenticated user"
 	tagsUsage     = "Comma separated tags"
 	languageUsage = "Language of the playlist"
 	privacyUsage  = "public, private, or unlisted"
-	partsUsage    = "Comma separated parts"
 )
 
 var (

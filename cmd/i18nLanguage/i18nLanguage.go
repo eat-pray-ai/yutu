@@ -6,10 +6,9 @@ import (
 )
 
 const (
-	short      = "List YouTube i18n languages"
-	long       = "List YouTube i18n languages' id, hl, and name"
-	hlUsage    = "Host language"
-	partsUsage = "Comma separated parts" // TODO: extract constants
+	short   = "List YouTube i18n languages"
+	long    = "List YouTube i18n languages' id, hl, and name"
+	hlUsage = "Host language"
 )
 
 var (
