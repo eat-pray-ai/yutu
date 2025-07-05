@@ -50,20 +50,23 @@ ONLY 'COPY-THIS' part is the code you need to enter on command line.
 
 func InitClient(
 	ctx context.Context, cred, token string, cacheable bool,
-) *http.Client {
+) (client *http.Client) {
 	config := getConfig(cred, scope...)
 
 	authedToken := &oauth2.Token{}
 	err := json.Unmarshal([]byte(token), authedToken)
 	if err != nil {
-		log.Fatalln(errors.Join(errParseToken, err))
+		client, authedToken = newClient(ctx, config)
+		if cacheable {
+			saveToken(cacheTokenFile, authedToken)
+		}
+		return client
 	}
 
 	if !authedToken.Valid() {
 		tokenSource := config.TokenSource(ctx, authedToken)
 		authedToken, err = tokenSource.Token()
 		if err != nil && cacheable {
-			var client *http.Client
 			client, authedToken = newClient(ctx, config)
 			saveToken(cacheTokenFile, authedToken)
 			return client

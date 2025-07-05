@@ -10,6 +10,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
@@ -90,7 +91,7 @@ func WithCacheToken(token string) Option {
 		if token == "" && ok {
 			token = envToken
 		} else if token == "" {
-			token = "youtube.token.json"
+			token = cacheTokenFile
 		}
 
 		// 1. token is a file path
@@ -102,6 +103,11 @@ func WithCacheToken(token string) Option {
 				log.Fatalln(errors.Join(errReadToken, err))
 			}
 			cacheToken = string(tokenBytes)
+			cacheable = true
+			return
+		} else if os.IsNotExist(err) && strings.HasSuffix(token, ".json") {
+			cacheToken = token
+			cacheable = true
 			return
 		}
 
@@ -112,11 +118,5 @@ func WithCacheToken(token string) Option {
 		} else {
 			log.Fatalln(errors.Join(errReadToken, err))
 		}
-	}
-}
-
-func WithCacheable(c bool) Option {
-	return func() {
-		cacheable = c
 	}
 }

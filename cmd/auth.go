@@ -25,7 +25,6 @@ var authCmd = &cobra.Command{
 		auth.NewY2BService(
 			auth.WithCredential(credential),
 			auth.WithCacheToken(cacheToken),
-			auth.WithCacheable(true),
 		)
 	},
 }
