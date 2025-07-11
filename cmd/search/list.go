@@ -95,15 +95,15 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"forContentOwner", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(fcoUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(fcoUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"forDeveloper", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(fdUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(fdUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"forMine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(fmUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(fmUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"location", mcp.DefaultString(""),

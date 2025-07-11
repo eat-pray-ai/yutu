@@ -83,7 +83,7 @@ var insertTool = mcp.NewTool(
 	mcp.WithReadOnlyHintAnnotation(false),
 	mcp.WithString(
 		"autoLevels", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(alUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(alUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"file", mcp.DefaultString(""),
@@ -132,11 +132,11 @@ var insertTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"forKids", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(fkUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(fkUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"embeddable", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(embeddableUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(embeddableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"publishAt", mcp.DefaultString(""),
@@ -144,15 +144,15 @@ var insertTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"stabilize", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(stabilizeUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(stabilizeUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"notifySubscribers", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(nsUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(nsUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"publicStatsViewable", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(psvUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(psvUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

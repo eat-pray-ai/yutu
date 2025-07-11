@@ -62,7 +62,7 @@ var updateTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"canRate", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(crUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(crUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"textOriginal", mcp.DefaultString(""),

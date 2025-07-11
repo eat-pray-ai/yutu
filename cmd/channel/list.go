@@ -95,7 +95,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"managedByMe", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(mbmUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(mbmUsage), mcp.Required(),
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
@@ -103,11 +103,11 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(mineUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(mineUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mySubscribers", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(msUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(msUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

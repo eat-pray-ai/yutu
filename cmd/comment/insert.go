@@ -75,7 +75,7 @@ var insertTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"canRate", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(crUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(crUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"parentId", mcp.DefaultString(""),

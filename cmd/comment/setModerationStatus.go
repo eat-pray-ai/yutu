@@ -71,7 +71,7 @@ var setModerationStatusTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"banAuthor", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(baUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(baUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),

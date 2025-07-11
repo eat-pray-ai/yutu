@@ -79,23 +79,23 @@ var updateTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"isAutoSynced", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(iasUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(iasUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"isCC", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(iscUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(iscUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"isDraft", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(isdUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(isdUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"isEasyReader", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(iserUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(iserUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"isLarge", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("false"), mcp.Description(islUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(islUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"language", mcp.DefaultString(""),

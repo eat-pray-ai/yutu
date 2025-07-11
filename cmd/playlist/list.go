@@ -79,7 +79,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(mineUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(mineUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

@@ -105,7 +105,7 @@ var updateTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"embeddable", mcp.Enum("true", "false", ""),
-		mcp.DefaultString("true"), mcp.Description(embeddableUsage), mcp.Required(),
+		mcp.DefaultString(""), mcp.Description(embeddableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
