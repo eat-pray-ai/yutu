@@ -83,7 +83,8 @@ func BoolPtr(b string) *bool {
 
 func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {
 	for k := range m {
-		if !flagSet.Lookup(k).Changed {
+		flag := flagSet.Lookup(k)
+		if flag != nil && !flag.Changed {
 			*m[k] = nil
 		}
 	}
