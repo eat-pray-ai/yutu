@@ -3,7 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.24.3
 
 require (
-	github.com/mark3labs/mcp-go v0.32.1-0.20250704180325-656a7b4cab77
+	github.com/mark3labs/mcp-go v0.33.0
 	github.com/savioxavier/termlink v1.4.3
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
