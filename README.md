@@ -19,7 +19,22 @@
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=490920&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
-`yutu` is a fully functional MCP server and CLI for YouTube.
+`yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more.
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [GitHub Actions](#github-actions)
+  - [Docker](#docker)
+  - [Gopher](#gopher)
+  - [Linux](#linux)
+  - [macOS](#macos)
+  - [Windows](#windows)
+  - [Verifying Installation](#verifying-installation)
+- [MCP Server](#mcp-server)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
 
 ## Prerequisites
 
