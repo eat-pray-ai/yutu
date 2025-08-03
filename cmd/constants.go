@@ -6,4 +6,5 @@ const (
 	TableUsage  = "json, yaml, or table"
 	SilentUsage = "json, yaml, or silent"
 	JPUsage     = "JSONPath expression to filter the output"
+	JsonMIME    = "application/json"
 )

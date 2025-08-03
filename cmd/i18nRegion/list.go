@@ -84,7 +84,7 @@ func listHandler(
 
 var alli18nRegion = mcp.NewResource(
 	rURI, rName,
-	mcp.WithMIMEType("application/json"),
+	mcp.WithMIMEType(cmd.JsonMIME),
 	mcp.WithResourceDescription(long),
 )
 
@@ -102,7 +102,7 @@ func resourceHandler(
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
 			URI:      rURI,
-			MIMEType: "application/json",
+			MIMEType: cmd.JsonMIME,
 			Text:     writer.String(),
 		},
 	}
