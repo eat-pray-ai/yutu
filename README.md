@@ -22,6 +22,7 @@
 `yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more.
 
 ## Table of Contents
+
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
   - [GitHub Actions](#github-actions)
@@ -80,6 +81,7 @@ A browser window will open asking for your permission to access your YouTube acc
   "expiry":"2024-05-26T18:49:56.1911165+08:00"
 }
 ```
+
 By default, `yutu` will read `client_secret.json` and `youtube.token.json` from the current directory, `--credential/-c` and `--cacheToken/-t` flags are available only in `auth` subcommand. To modify the default path in all subcommands, set these environment variables
 
 ```shell
@@ -88,7 +90,6 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 # or
 ❯ YUTU_CREDENTIAL=client_secret.json YUTU_CACHE_TOKEN=youtube.token.json yutu subcommand --flag value
 ```
-
 
 ## Installation
 
