@@ -9,13 +9,16 @@ const (
 	short   = "List YouTube i18n regions"
 	long    = "List YouTube i18n regions' id, hl, and name"
 	hlUsage = "Host language"
+	rURI    = "i18n://region"
+	rName   = "all i18n region"
 )
 
 var (
-	hl     string
-	parts  []string
-	output string
-	jpath  string
+	hl           string
+	parts        []string
+	output       string
+	jpath        string
+	defaultParts = []string{"id", "snippet"}
 )
 
 var i18nRegionCmd = &cobra.Command{

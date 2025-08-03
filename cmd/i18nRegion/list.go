@@ -11,11 +11,12 @@ import (
 )
 
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	// cmd.MCP.AddTool(listTool, listHandler)
+	cmd.MCP.AddResource(alli18nRegion, resourceHandler)
 	i18nRegionCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, cmd.PartsUsage,
+		&parts, "parts", "p", defaultParts, cmd.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
@@ -46,7 +47,7 @@ var listTool = mcp.NewTool(
 		mcp.Description(hlUsage), mcp.Required(),
 	),
 	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
+		"parts", mcp.DefaultArray(defaultParts),
 		mcp.Items(map[string]any{"type": "string"}),
 		mcp.Description(cmd.PartsUsage), mcp.Required(),
 	),
@@ -79,6 +80,33 @@ func listHandler(
 		return mcp.NewToolResultError(err.Error()), err
 	}
 	return mcp.NewToolResultText(writer.String()), nil
+}
+
+var alli18nRegion = mcp.NewResource(
+	rURI, rName,
+	mcp.WithMIMEType("application/json"),
+	mcp.WithResourceDescription(long),
+)
+
+func resourceHandler(
+	ctx context.Context, request mcp.ReadResourceRequest,
+) ([]mcp.ResourceContents, error) {
+	parts = defaultParts
+	output = "json"
+	var writer bytes.Buffer
+	err := list(&writer)
+	if err != nil {
+		return nil, err
+	}
+
+	contents := []mcp.ResourceContents{
+		mcp.TextResourceContents{
+			URI:      rURI,
+			MIMEType: "application/json",
+			Text:     writer.String(),
+		},
+	}
+	return contents, nil
 }
 
 func list(writer io.Writer) error {
