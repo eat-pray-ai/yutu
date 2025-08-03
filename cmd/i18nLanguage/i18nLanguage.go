@@ -9,13 +9,16 @@ const (
 	short   = "List YouTube i18n languages"
 	long    = "List YouTube i18n languages' id, hl, and name"
 	hlUsage = "Host language"
+	rURI    = "i18n://language"
+	rName   = "all i18n language"
 )
 
 var (
-	hl     string
-	parts  []string
-	output string
-	jpath  string
+	hl           string
+	parts        []string
+	output       string
+	jpath        string
+	defaultParts = []string{"id", "snippet"}
 )
 
 var i18nLanguageCmd = &cobra.Command{
