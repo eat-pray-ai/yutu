@@ -6,11 +6,11 @@ import (
 )
 
 const (
-	short   = "List YouTube i18n regions"
-	long    = "List YouTube i18n regions' id, hl, and name"
-	hlUsage = "Host language"
-	rURI    = "i18n://region"
-	rName   = "all i18n region"
+	short      = "List YouTube i18n regions"
+	long       = "List YouTube i18n regions' id, hl, and name"
+	hlUsage    = "Host language"
+	regionURI  = "i18n://region"
+	regionName = "all i18n regions"
 )
 
 var (

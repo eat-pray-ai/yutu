@@ -13,7 +13,7 @@ import (
 
 func init() {
 	// cmd.MCP.AddTool(listTool, listHandler)
-	cmd.MCP.AddResource(alli18nRegion, resourceHandler)
+	cmd.MCP.AddResource(RegionsResource, regionsHandler)
 	i18nRegionCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
@@ -36,13 +36,13 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var alli18nRegion = mcp.NewResource(
-	rURI, rName,
+var RegionsResource = mcp.NewResource(
+	regionURI, regionName,
 	mcp.WithMIMEType(cmd.JsonMIME),
 	mcp.WithResourceDescription(long),
 )
 
-func resourceHandler(
+func regionsHandler(
 	ctx context.Context, request mcp.ReadResourceRequest,
 ) ([]mcp.ResourceContents, error) {
 	parts = defaultParts
@@ -55,7 +55,7 @@ func resourceHandler(
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
-			URI:      rURI,
+			URI:      regionURI,
 			MIMEType: cmd.JsonMIME,
 			Text:     writer.String(),
 		},

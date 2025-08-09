@@ -13,7 +13,8 @@ import (
 
 func init() {
 	// cmd.MCP.AddTool(listTool, listHandler)
-	cmd.MCP.AddResource(allI18nLanguages, resourceHandler)
+	cmd.MCP.AddResource(langsResource, langsHandler)
+	cmd.MCP.AddResource(hlResource, hlHandler)
 	i18nLanguageCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
@@ -36,13 +37,41 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var allI18nLanguages = mcp.NewResource(
-	rURI, rName,
+var hlResource = mcp.NewResource(
+	hlURI, hlName,
+	mcp.WithMIMEType(cmd.JsonMIME),
+	mcp.WithResourceDescription(hlDesc),
+)
+
+func hlHandler(
+	ctx context.Context, request mcp.ReadResourceRequest,
+) ([]mcp.ResourceContents, error) {
+	parts = defaultParts
+	output = "json"
+	jpath = "$.*.snippet.hl"
+	var writer bytes.Buffer
+	err := list(&writer)
+	if err != nil {
+		return nil, err
+	}
+
+	contents := []mcp.ResourceContents{
+		mcp.TextResourceContents{
+			URI:      hlURI,
+			MIMEType: cmd.JsonMIME,
+			Text:     writer.String(),
+		},
+	}
+	return contents, nil
+}
+
+var langsResource = mcp.NewResource(
+	langURI, langName,
 	mcp.WithMIMEType(cmd.JsonMIME),
 	mcp.WithResourceDescription(long),
 )
 
-func resourceHandler(
+func langsHandler(
 	ctx context.Context, request mcp.ReadResourceRequest,
 ) ([]mcp.ResourceContents, error) {
 	parts = defaultParts
@@ -55,7 +84,7 @@ func resourceHandler(
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
-			URI:      rURI,
+			URI:      langURI,
 			MIMEType: cmd.JsonMIME,
 			Text:     writer.String(),
 		},
