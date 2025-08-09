@@ -3,11 +3,12 @@ package i18nLanguage
 import (
 	"bytes"
 	"context"
+	"io"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 func init() {
@@ -33,53 +34,6 @@ var listCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-var listTool = mcp.NewTool(
-	"i18nLanguage-list",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithString(
-		"hl", mcp.DefaultString(""),
-		mcp.Description(hlUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray(defaultParts),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(cmd.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
-	),
-)
-
-func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	hl, _ = args["hl"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
-
-	var writer bytes.Buffer
-	err := list(&writer)
-	if err != nil {
-		return mcp.NewToolResultError(err.Error()), err
-	}
-	return mcp.NewToolResultText(writer.String()), nil
 }
 
 var allI18nLanguages = mcp.NewResource(
