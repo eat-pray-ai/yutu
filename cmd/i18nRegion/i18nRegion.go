@@ -9,8 +9,8 @@ const (
 	short      = "List YouTube i18n regions"
 	long       = "List YouTube i18n regions' id, hl, and name"
 	hlUsage    = "Host language"
-	regionURI  = "i18n://region"
-	regionName = "all i18n regions"
+	regionURI  = "i18n://region/{hl}"
+	regionName = "i18n regions"
 )
 
 var (

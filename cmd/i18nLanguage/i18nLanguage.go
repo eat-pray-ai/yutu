@@ -12,8 +12,8 @@ const (
 	hlURI    = "i18n://hl"
 	hlName   = "all i18n host languages"
 	hlDesc   = "List all i18n host languages for YouTube regions"
-	langURI  = "i18n://language"
-	langName = "all i18n languages"
+	langURI  = "i18n://language/{hl}"
+	langName = "i18n languages"
 )
 
 var (

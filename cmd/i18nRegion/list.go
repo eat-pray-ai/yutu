@@ -7,13 +7,13 @@ import (
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/i18nRegion"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	// cmd.MCP.AddTool(listTool, listHandler)
-	cmd.MCP.AddResource(RegionsResource, regionsHandler)
+	cmd.MCP.AddResourceTemplate(RegionsResource, regionsHandler)
 	i18nRegionCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
@@ -36,16 +36,18 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var RegionsResource = mcp.NewResource(
+var RegionsResource = mcp.NewResourceTemplate(
 	regionURI, regionName,
-	mcp.WithMIMEType(cmd.JsonMIME),
-	mcp.WithResourceDescription(long),
+	mcp.WithTemplateMIMEType(cmd.JsonMIME),
+	mcp.WithTemplateDescription(long),
+	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
 
 func regionsHandler(
 	ctx context.Context, request mcp.ReadResourceRequest,
 ) ([]mcp.ResourceContents, error) {
 	parts = defaultParts
+	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
 	var writer bytes.Buffer
 	err := list(&writer)
@@ -55,7 +57,7 @@ func regionsHandler(
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
-			URI:      regionURI,
+			URI:      request.Params.URI,
 			MIMEType: cmd.JsonMIME,
 			Text:     writer.String(),
 		},

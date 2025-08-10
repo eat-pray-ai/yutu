@@ -5,12 +5,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/ohler55/ojg/jp"
-	"github.com/spf13/pflag"
 	"io"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
+
+	"github.com/ohler55/ojg/jp"
+	"github.com/spf13/pflag"
 
 	"gopkg.in/yaml.v3"
 )
@@ -88,4 +90,13 @@ func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {
 			*m[k] = nil
 		}
 	}
+}
+
+func ExtractHl(uri string) string {
+	pattern := `i18n://(?:language|region)/([^/]+)`
+	matches := regexp.MustCompile(pattern).FindStringSubmatch(uri)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	return ""
 }

@@ -2,10 +2,11 @@ package utils
 
 import (
 	"bytes"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"reflect"
 	"testing"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 func TestBoolPtr(t *testing.T) {
@@ -300,6 +301,57 @@ func TestResetBool(t *testing.T) {
 				ResetBool(tt.args.m, tt.args.flagSet)
 				if b != nil {
 					t.Errorf("ResetBool() = %v, want nil", *b)
+				}
+			},
+		)
+	}
+}
+
+func TestExtractHl(t *testing.T) {
+	type args struct {
+		uri string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "valid language uri with hl",
+			args: args{uri: "i18n://language/zh-CN"},
+			want: "zh-CN",
+		},
+		{
+			name: "valid region uri with hl",
+			args: args{uri: "i18n://region/zh-CN"},
+			want: "zh-CN",
+		},
+		{
+			name: "valid language uri without hl",
+			args: args{uri: "i18n://language/"},
+			want: "",
+		},
+		{
+			name: "valid region uri without hl",
+			args: args{uri: "i18n://region/"},
+			want: "",
+		},
+		{
+			name: "invalid uri",
+			args: args{uri: "i18n://invalid/zh-CN"},
+			want: "",
+		},
+		{
+			name: "empty uri",
+			args: args{uri: ""},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := ExtractHl(tt.args.uri); got != tt.want {
+					t.Errorf("ExtractHl() = %v, want %v", got, tt.want)
 				}
 			},
 		)

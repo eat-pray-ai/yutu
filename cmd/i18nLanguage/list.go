@@ -7,14 +7,14 @@ import (
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	// cmd.MCP.AddTool(listTool, listHandler)
-	cmd.MCP.AddResource(langsResource, langsHandler)
 	cmd.MCP.AddResource(hlResource, hlHandler)
+	cmd.MCP.AddResourceTemplate(langsResource, langsHandler)
 	i18nLanguageCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
@@ -41,6 +41,7 @@ var hlResource = mcp.NewResource(
 	hlURI, hlName,
 	mcp.WithMIMEType(cmd.JsonMIME),
 	mcp.WithResourceDescription(hlDesc),
+	mcp.WithAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
 
 func hlHandler(
@@ -65,16 +66,18 @@ func hlHandler(
 	return contents, nil
 }
 
-var langsResource = mcp.NewResource(
+var langsResource = mcp.NewResourceTemplate(
 	langURI, langName,
-	mcp.WithMIMEType(cmd.JsonMIME),
-	mcp.WithResourceDescription(long),
+	mcp.WithTemplateMIMEType(cmd.JsonMIME),
+	mcp.WithTemplateDescription(long),
+	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
 
 func langsHandler(
 	ctx context.Context, request mcp.ReadResourceRequest,
 ) ([]mcp.ResourceContents, error) {
 	parts = defaultParts
+	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
 	var writer bytes.Buffer
 	err := list(&writer)
@@ -84,7 +87,7 @@ func langsHandler(
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
-			URI:      langURI,
+			URI:      request.Params.URI,
 			MIMEType: cmd.JsonMIME,
 			Text:     writer.String(),
 		},
