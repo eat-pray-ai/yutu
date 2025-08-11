@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: actions/setup-go@v5
@@ -72,18 +72,6 @@ jobs:
           installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.RELEASE_PAT }}
           max-versions-to-keep: 3
-
-  homebrew:
-    needs: [goreleaser]
-    runs-on: macos-latest
-    if: false
-    steps:
-      - uses: dawidd6/action-homebrew-bump-formula@v4
-        with:
-          token: ${{ secrets.RELEASE_PAT }}
-          tag: ${{ github.event.release.tag_name }}
-          org: eat-pray-ai
-          formula: yutu
 
   github-package:
     needs: [goreleaser]

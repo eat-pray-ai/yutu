@@ -10,7 +10,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/first-interaction@v1.3.0
+      - uses: actions/first-interaction@v3
         with:
           repo-token: ${{ github.token }}
           issue-message: "Welcome to yutu, thank you for opening your first issue!"

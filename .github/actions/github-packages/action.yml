@@ -4,7 +4,7 @@ description: Release to GitHub Packages
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         sparse-checkout: |
           Dockerfile
