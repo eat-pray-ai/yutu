@@ -21,7 +21,7 @@
 
 `yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more.
 
-[![mcp demo](./asset/mcp-demo.gif)](https://asciinema.org/a/9fwmYAMiGKV3HSJxNPAs6zCX6)
+[![mcp demo](./asset/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
 ## Table of Contents
 
