@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log/slog"
+	"os"
+	"time"
+
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/spf13/cobra"
-	"log"
-	"time"
 )
 
 const (
@@ -23,6 +26,7 @@ var (
 var MCP = server.NewMCPServer(
 	"yutu", Version,
 	server.WithToolCapabilities(true),
+	server.WithResourceCapabilities(true, true),
 	server.WithLogging(),
 	server.WithRecovery(),
 )
@@ -32,10 +36,15 @@ var mcpCmd = &cobra.Command{
 	Short: mcpShort,
 	Long:  mcpLong,
 	Run: func(cmd *cobra.Command, args []string) {
+		ctx := context.Background()
 		var err error
 		interval := 13 * time.Second
 		addr := fmt.Sprintf(":%d", port)
-		message := fmt.Sprintf("%s server listening on %s", mode, addr)
+		slog.InfoContext(
+			ctx, "starting MCP server",
+			"mode", mode,
+			"version", Version,
+		)
 
 		switch mode {
 		case "stdio":
@@ -45,12 +54,29 @@ var mcpCmd = &cobra.Command{
 				MCP,
 				server.WithHeartbeatInterval(interval),
 			)
-			log.Printf("%s/%s\n", message, "mcp")
+
+			slog.InfoContext(
+				ctx, "http server configuration",
+				"url", fmt.Sprintf("http://localhost:%d/mcp", port),
+				"heartbeat_interval", interval,
+			)
 			err = httpServer.Start(addr)
+		default:
+			slog.ErrorContext(
+				ctx, "invalid server mode",
+				"mode", mode,
+				"valid_modes", []string{"stdio", "http"},
+			)
+			os.Exit(1)
 		}
 
 		if err != nil {
-			log.Printf("Server error: %v\n", err)
+			slog.ErrorContext(
+				ctx, "starting server failed",
+				"error", err,
+				"mode", mode,
+			)
+			os.Exit(1)
 		}
 	},
 }

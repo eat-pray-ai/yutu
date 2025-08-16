@@ -3,12 +3,14 @@ package activity
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/activity"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 var defaultParts = []string{"id", "snippet", "contentDetails"}
@@ -122,11 +124,22 @@ func listHandler(
 	output, _ = args["output"].(string)
 	jpath, _ = args["jsonpath"].(string)
 
+	slog.InfoContext(ctx, "activity list started")
+
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "activity list failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "activity list completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 
