@@ -135,13 +135,13 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>i18nLanguages</td>
       <td>🟢 list</td>
       <td>1</td>
-      <td>resource</td>
+      <td>resourceTemplate</td>
     </tr>
     <tr>
       <td>i18nRegions</td>
       <td>🟢 list</td>
       <td>1</td>
-      <td>resource</td>
+      <td>resourceTemplate</td>
     </tr>
     <tr>
       <td rowspan="7">liveBroadcasts</td>
@@ -430,7 +430,7 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>videoCategories</td>
       <td>🟢 list</td>
       <td>1</td>
-      <td>tool</td>
+      <td>resourceTemplate</td>
     </tr>
     <tr>
       <td rowspan="2">watermarks</td>
