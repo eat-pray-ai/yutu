@@ -5,16 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/youtube/v3"
 	"log"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"google.golang.org/api/youtube/v3"
 )
 
 const (

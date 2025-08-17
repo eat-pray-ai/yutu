@@ -1,9 +1,10 @@
 package video
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 func TestNewVideo(t *testing.T) {

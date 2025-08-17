@@ -1,9 +1,10 @@
 package channelSection
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 func TestNewChannelSection(t *testing.T) {

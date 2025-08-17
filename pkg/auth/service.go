@@ -5,12 +5,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"google.golang.org/api/option"
-	"google.golang.org/api/youtube/v3"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"google.golang.org/api/option"
+	"google.golang.org/api/youtube/v3"
 )
 
 var (

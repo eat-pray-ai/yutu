@@ -3,10 +3,11 @@ package watermark
 import (
 	"errors"
 	"fmt"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"google.golang.org/api/youtube/v3"
 	"io"
 	"os"
+
+	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"google.golang.org/api/youtube/v3"
 )
 
 var (

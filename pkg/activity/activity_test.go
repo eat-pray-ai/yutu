@@ -1,9 +1,10 @@
 package activity
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 func TestNewActivity(t *testing.T) {

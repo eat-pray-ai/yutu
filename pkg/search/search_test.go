@@ -1,9 +1,10 @@
 package search
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 func TestNewSearch(t *testing.T) {

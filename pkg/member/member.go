@@ -2,11 +2,12 @@ package member
 
 import (
 	"errors"
+	"io"
+
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
-	"io"
 )
 
 var (

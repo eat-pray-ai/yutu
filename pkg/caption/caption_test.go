@@ -1,9 +1,10 @@
 package caption
 
 import (
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"reflect"
 	"testing"
+
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 func TestNewCation(t *testing.T) {
