@@ -1,6 +1,6 @@
 module github.com/eat-pray-ai/yutu
 
-go 1.24.3
+go 1.25.0
 
 require (
 	github.com/mark3labs/mcp-go v0.37.0
@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/auth v0.16.3 // indirect
+	cloud.google.com/go/auth v0.16.5 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
@@ -34,14 +34,14 @@ require (
 	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/trace v1.37.0 // indirect
-	golang.org/x/crypto v0.40.0 // indirect
-	golang.org/x/net v0.42.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250811230008-5f3141c8851a // indirect
 	google.golang.org/grpc v1.74.2 // indirect
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.7.0 // indirect
+	cloud.google.com/go/compute/metadata v0.8.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.6.8
@@ -53,9 +53,9 @@ require (
 	github.com/spf13/cast v1.9.2 // indirect
 	github.com/spf13/pflag v1.0.7
 	github.com/subosito/gotenv v1.6.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
-	google.golang.org/api v0.246.0
-	google.golang.org/protobuf v1.36.6 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
+	google.golang.org/api v0.247.0
+	google.golang.org/protobuf v1.36.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )
