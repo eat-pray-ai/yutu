@@ -2,6 +2,7 @@
 
 # `yutu`
 
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/eat-pray-ai/yutu)](https://archestra.ai/mcp-catalog/eat-pray-ai__yutu)
 [![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%98%BF%F0%9F%90%B0%F0%9F%90%A7%E2%9D%A4%EF%B8%8F%E2%80%8D%F0%9F%A9%B9-love?style=flat-square&labelColor=%23EDD1CC&color=%23FF919F)](https://gitmoji.dev)
 [![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://goreportcard.com/report/github.com/eat-pray-ai/yutu)
 [![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)](https://github.com/eat-pray-ai/yutu?tab=Apache-2.0-1-ov-file)
