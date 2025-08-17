@@ -3,11 +3,13 @@ package video
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -61,11 +63,22 @@ func deleteHandler(
 		ids[i] = id.(string)
 	}
 
+	slog.InfoContext(ctx, "video delete started")
+
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "video delete failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "video delete completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

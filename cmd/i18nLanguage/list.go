@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
@@ -50,11 +51,24 @@ func hlHandler(
 	parts = defaultParts
 	output = "json"
 	jpath = "$.*.snippet.hl"
+	
+	slog.InfoContext(ctx, "i18nLanguage hl list started")
+	
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "i18nLanguage hl list failed",
+			"error", err,
+			"uri", request.Params.URI,
+		)
 		return nil, err
 	}
+
+	slog.InfoContext(
+		ctx, "i18nLanguage hl list completed successfully",
+		"resultSize", writer.Len(),
+	)
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
@@ -79,11 +93,24 @@ func langsHandler(
 	parts = defaultParts
 	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
+	
+	slog.InfoContext(ctx, "i18nLanguage list started")
+	
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "i18nLanguage list failed",
+			"error", err,
+			"uri", request.Params.URI,
+		)
 		return nil, err
 	}
+
+	slog.InfoContext(
+		ctx, "i18nLanguage list completed successfully",
+		"resultSize", writer.Len(),
+	)
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{

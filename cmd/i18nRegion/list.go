@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/i18nRegion"
@@ -49,11 +50,24 @@ func regionsHandler(
 	parts = defaultParts
 	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
+	
+	slog.InfoContext(ctx, "i18nRegion list started")
+	
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "i18nRegion list failed",
+			"error", err,
+			"uri", request.Params.URI,
+		)
 		return nil, err
 	}
+
+	slog.InfoContext(
+		ctx, "i18nRegion list completed successfully",
+		"resultSize", writer.Len(),
+	)
 
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{

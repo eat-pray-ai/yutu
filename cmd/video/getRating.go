@@ -3,11 +3,13 @@ package video
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -82,11 +84,22 @@ func getRatingHandler(
 	output, _ = args["output"].(string)
 	jpath, _ = args["jsonpath"].(string)
 
+	slog.InfoContext(ctx, "video getRating started")
+
 	var writer bytes.Buffer
 	err := getRating(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "video getRating failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "video getRating completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

@@ -3,11 +3,13 @@ package playlistItem
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -129,11 +131,22 @@ func insertHandler(
 	output, _ = args["output"].(string)
 	jpath, _ = args["jsonpath"].(string)
 
+	slog.InfoContext(ctx, "playlistItem insert started")
+
 	var writer bytes.Buffer
 	err := insert(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "playlistItem insert failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "playlistItem insert completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

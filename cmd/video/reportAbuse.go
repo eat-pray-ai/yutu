@@ -3,11 +3,13 @@ package video
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -101,11 +103,22 @@ func reportAbuseHandler(
 	language, _ = args["language"].(string)
 	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
 
+	slog.InfoContext(ctx, "video reportAbuse started")
+
 	var writer bytes.Buffer
 	err := reportAbuse(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "video reportAbuse failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "video reportAbuse completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

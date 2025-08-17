@@ -3,11 +3,13 @@ package caption
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -76,11 +78,22 @@ func deleteHandler(
 	onBehalfOf, _ = args["onBehalfOf"].(string)
 	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
 
+	slog.InfoContext(ctx, "caption delete started")
+
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "caption delete failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "caption delete completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

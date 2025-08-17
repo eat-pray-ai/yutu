@@ -3,11 +3,13 @@ package watermark
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -100,11 +102,22 @@ func setHandler(
 	offsetType, _ = args["offsetType"].(string)
 	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
 
+	slog.InfoContext(ctx, "watermark set started")
+
 	var writer bytes.Buffer
 	err := set(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "watermark set failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "watermark set completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

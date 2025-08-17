@@ -3,12 +3,14 @@ package comment
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -98,11 +100,22 @@ func setModerationStatusHandler(
 	output, _ = args["output"].(string)
 	jpath, _ = args["jsonpath"].(string)
 
+	slog.InfoContext(ctx, "comment setModerationStatus started")
+
 	var writer bytes.Buffer
 	err := setModerationStatus(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "comment setModerationStatus failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "comment setModerationStatus completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

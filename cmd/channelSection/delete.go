@@ -3,11 +3,13 @@ package channelSection
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -70,11 +72,22 @@ func deleteHandler(
 	}
 	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
 
+	slog.InfoContext(ctx, "channelSection delete started")
+
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "channelSection delete failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "channelSection delete completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

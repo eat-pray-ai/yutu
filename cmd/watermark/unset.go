@@ -3,11 +3,13 @@ package watermark
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -55,11 +57,22 @@ func unsetHandler(
 	args := request.GetArguments()
 	channelId, _ = args["channelId"].(string)
 
+	slog.InfoContext(ctx, "watermark unset started")
+
 	var writer bytes.Buffer
 	err := unset(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "watermark unset failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "watermark unset completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

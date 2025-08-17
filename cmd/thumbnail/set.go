@@ -3,11 +3,13 @@ package thumbnail
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 func init() {
@@ -70,11 +72,22 @@ func setHandler(
 	output, _ = args["output"].(string)
 	jpath, _ = args["jsonpath"].(string)
 
+	slog.InfoContext(ctx, "thumbnail set started")
+
 	var writer bytes.Buffer
 	err := set(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "thumbnail set failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "thumbnail set completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 

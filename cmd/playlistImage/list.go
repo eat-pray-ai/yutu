@@ -3,11 +3,13 @@ package playlistImage
 import (
 	"bytes"
 	"context"
+	"io"
+	"log/slog"
+
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -102,11 +104,22 @@ func listHandler(
 	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
 	onBehalfOfContentOwnerChannel, _ = args["onBehalfOfContentOwnerChannel"].(string)
 
+	slog.InfoContext(ctx, "playlistImage list started")
+
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
+		slog.ErrorContext(
+			ctx, "playlistImage list failed",
+			"error", err,
+			"args", args,
+		)
 		return mcp.NewToolResultError(err.Error()), err
 	}
+	slog.InfoContext(
+		ctx, "playlistImage list completed successfully",
+		"resultSize", writer.Len(),
+	)
 	return mcp.NewToolResultText(writer.String()), nil
 }
 
