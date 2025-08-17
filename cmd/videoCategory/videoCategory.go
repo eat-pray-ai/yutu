@@ -11,15 +11,18 @@ const (
 	idsUsage = "IDs of the video categories"
 	hlUsage  = "Host language"
 	rcUsage  = "Region code"
+	vcURI    = "video://category/{hl}"
+	vcName   = "video categories"
 )
 
 var (
-	ids        []string
-	hl         string
-	regionCode string
-	parts      []string
-	output     string
-	jpath      string
+	ids          []string
+	hl           string
+	regionCode   string
+	parts        []string
+	output       string
+	jpath        string
+	defaultParts = []string{"id", "snippet"}
 )
 
 var videoCategoryCmd = &cobra.Command{

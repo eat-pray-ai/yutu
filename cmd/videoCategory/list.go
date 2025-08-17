@@ -7,15 +7,15 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	cmd.MCP.AddResourceTemplate(categoriesResource, categoriesHandler)
 	videoCategoryCmd.AddCommand(listCmd)
-
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", rcUsage)
@@ -39,59 +39,19 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"videoCategory-list",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(idsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"hl", mcp.DefaultString(""),
-		mcp.Description(hlUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"regionCode", mcp.DefaultString("US"),
-		mcp.Description(rcUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(cmd.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
-	),
+var categoriesResource = mcp.NewResourceTemplate(
+	vcURI, vcName,
+	mcp.WithTemplateMIMEType(cmd.JsonMIME),
+	mcp.WithTemplateDescription(long),
+	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
 
-func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	hl, _ = args["hl"].(string)
-	regionCode, _ = args["regionCode"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+func categoriesHandler(
+	ctx context.Context, request mcp.ReadResourceRequest,
+) ([]mcp.ResourceContents, error) {
+	parts = defaultParts
+	hl = utils.ExtractHl(request.Params.URI)
+	output = "json"
 
 	slog.InfoContext(ctx, "videoCategory list started")
 
@@ -101,15 +61,24 @@ func listHandler(
 		slog.ErrorContext(
 			ctx, "videoCategory list failed",
 			"error", err,
-			"args", args,
+			"uri", request.Params.URI,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, err
 	}
+
 	slog.InfoContext(
 		ctx, "videoCategory list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+
+	contents := []mcp.ResourceContents{
+		mcp.TextResourceContents{
+			URI:      request.Params.URI,
+			MIMEType: cmd.JsonMIME,
+			Text:     writer.String(),
+		},
+	}
+	return contents, nil
 }
 
 func list(writer io.Writer) error {
