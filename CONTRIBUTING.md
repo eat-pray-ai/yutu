@@ -23,9 +23,10 @@ Here are some commands which may useful.
 ## install goreleaser: https://goreleaser.com/install
 ❯ GITHUB_REPOSITORY=eat-pray-ai/yutu goreleaser build --clean --auto-snapshot
 # or with bazel
+❯ bazel mod tidy
 ❯ bazel run //:gazelle  # (re)generate BUILD files
 ## update go.mod, go.sum, and use_repo in MODULE.bazel
-❯ bazel run @rules_go//go -- mod tidy -v 
+❯ bazel run @rules_go//go -- mod tidy -v
 ❯ bazel build //:yutu   # build the binary for the current platform
 ❯ bazel build //...     # build all targets
 ❯ bazel build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //:yutu
