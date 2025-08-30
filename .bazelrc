@@ -4,4 +4,5 @@ common --enable_bzlmod
 # build, test, and run commands
 build --stamp --workspace_status_command=./scripts/bazel-status.sh
 test --stamp --workspace_status_command=./scripts/bazel-status.sh
+coverage --combined_report=lcov
 run --stamp --workspace_status_command=./scripts/bazel-status.sh

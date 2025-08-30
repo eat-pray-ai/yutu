@@ -15,9 +15,23 @@ on:
   push:
     branches:
       - '*'
+    paths:
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'scripts/**'
+      - 'go.mod'
+      - 'main.go'
+      - '.github/workflows/codeql.yml'
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'scripts/**'
+      - 'go.mod'
+      - 'main.go'
+      - '.github/workflows/codeql.yml'
   schedule:
     - cron: '33 3 * * 3'
 

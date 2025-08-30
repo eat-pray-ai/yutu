@@ -21,6 +21,12 @@ on:
       - '.github/actions/test/**'
       - '.github/workflows/test.yml'
 
+permissions:
+  contents: write
+
+env:
+  COVERAGE_FILE: ./cover.out
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -31,3 +37,11 @@ jobs:
         with:
           go-version-file: ./go.mod
       - uses: eat-pray-ai/yutu/.github/actions/test@main
+      - uses: ncruces/go-coverage-report@v0
+        with:
+          coverage-file: ${{ env.COVERAGE_FILE }}
+          badge-style: flat-square
+          amend: true
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'

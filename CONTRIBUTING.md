@@ -13,9 +13,12 @@ Here are some commands which may useful.
 
 # run tests
 ## unit tests
-❯ go test ./...
+❯ go test ./... -coverprofile=./cover.out -coverpkg="$(go list || go list -m | head -1)/pkg/..."
+❯ go tool cover -html=cover.out -o=cover.html 
 ## or with bazel
 ❯ bazel test //...
+❯ bazel coverage //...
+❯ genhtml -o genhtml "$(bazel info output_path)/_coverage/_coverage_report.dat"
 ## verify binary commands, detect shorthands conflicts, etc.
 ❯ ./scripts/command-test.sh
 
