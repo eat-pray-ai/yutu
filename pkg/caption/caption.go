@@ -405,7 +405,7 @@ func WithService(svc *youtube.Service) Option {
 			svc = auth.NewY2BService(
 				auth.WithCredential(""),
 				auth.WithCacheToken(""),
-			)
+			).GetService()
 		}
 		service = svc
 	}

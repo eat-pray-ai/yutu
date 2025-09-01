@@ -6,18 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"google.golang.org/api/option"
+	"golang.org/x/oauth2"
 	"google.golang.org/api/youtube/v3"
 )
 
 var (
-	cacheable     bool
-	credential    string
-	cacheToken    string
 	errCreateSvc  = errors.New("unable to create YouTube service")
 	errReadToken  = errors.New("unable to read token")
 	errReadSecret = errors.New("unable to read client secret")
@@ -25,34 +23,47 @@ var (
 
 const missingClientSecretsHint string = `
 Please configure OAuth 2.0
-To make this sample run, you need to populate the client_secrets.json file
-found at:
-  %s
+You need to populate the client_secrets.json file
+found at: %s
 with information from the {{ Google Cloud Console }}
 {{ https://cloud.google.com/console }}
 For more information about the client_secrets.json file format, please visit:
 https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 `
 
-type Option func()
+type svc struct {
+	Cacheable  bool   `yaml:"cacheable" json:"cacheable"`
+	Credential string `yaml:"credential" json:"credential"`
+	CacheToken string `yaml:"cache_token" json:"cache_token"`
+	service    *youtube.Service
+	ctx        context.Context
+}
 
-func NewY2BService(opts ...Option) *youtube.Service {
+type Svc interface {
+	GetService() *youtube.Service
+	refreshClient() *http.Client
+	newClient(*oauth2.Config) (*http.Client, *oauth2.Token)
+	getConfig() *oauth2.Config
+	startWebServer(string) chan string
+	getTokenFromWeb(*oauth2.Config, string) *oauth2.Token
+	getCodeFromPrompt(string) string
+	saveToken(string, *oauth2.Token)
+}
+
+type Option func(*svc)
+
+func NewY2BService(opts ...Option) Svc {
+	s := &svc{}
+	s.ctx = context.Background()
+
 	for _, opt := range opts {
-		opt()
+		opt(s)
 	}
-
-	ctx := context.Background()
-	client := InitClient(ctx, credential, cacheToken, cacheable)
-	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalln(errors.Join(errCreateSvc, err))
-	}
-
-	return service
+	return s
 }
 
 func WithCredential(cred string) Option {
-	return func() {
+	return func(s *svc) {
 		// cred > YUTU_CREDENTIAL
 		envCred, ok := os.LookupEnv("YUTU_CREDENTIAL")
 		if cred == "" && ok {
@@ -67,26 +78,26 @@ func WithCredential(cred string) Option {
 		if _, err := os.Stat(cred); err == nil {
 			credBytes, err := os.ReadFile(cred)
 			if err != nil {
-				fmt.Printf(missingClientSecretsHint, credential)
+				fmt.Printf(missingClientSecretsHint, cred)
 				log.Fatalln(errors.Join(errReadSecret, err))
 			}
-			credential = string(credBytes)
+			s.Credential = string(credBytes)
 			return
 		}
 
 		if credB64, err := base64.StdEncoding.DecodeString(cred); err == nil {
-			credential = string(credB64)
+			s.Credential = string(credB64)
 		} else if utils.IsJson(cred) {
-			credential = cred
+			s.Credential = cred
 		} else {
-			fmt.Printf(missingClientSecretsHint, credential)
+			fmt.Printf(missingClientSecretsHint, cred)
 			log.Fatalln(errors.Join(errReadSecret, err))
 		}
 	}
 }
 
 func WithCacheToken(token string) Option {
-	return func() {
+	return func(s *svc) {
 		// token > YUTU_CACHE_TOKEN
 		envToken, ok := os.LookupEnv("YUTU_CACHE_TOKEN")
 		if token == "" && ok {
@@ -103,19 +114,19 @@ func WithCacheToken(token string) Option {
 			if err != nil {
 				log.Fatalln(errors.Join(errReadToken, err))
 			}
-			cacheToken = string(tokenBytes)
-			cacheable = true
+			s.CacheToken = string(tokenBytes)
+			s.Cacheable = true
 			return
 		} else if os.IsNotExist(err) && strings.HasSuffix(token, ".json") {
-			cacheToken = token
-			cacheable = true
+			s.CacheToken = token
+			s.Cacheable = true
 			return
 		}
 
 		if tokenB64, err := base64.StdEncoding.DecodeString(token); err == nil {
-			cacheToken = string(tokenB64)
+			s.CacheToken = string(tokenB64)
 		} else if utils.IsJson(token) {
-			cacheToken = token
+			s.CacheToken = token
 		} else {
 			log.Fatalln(errors.Join(errReadToken, err))
 		}

@@ -24,12 +24,12 @@ var versionCmd = &cobra.Command{
 	Short: versionShort,
 	Long:  versionLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Printf("yutu🐰 version %s %s/%s", Version, Os, Arch)
+		cmd.Printf("🐰yutu version %s %s/%s", Version, Os, Arch)
 		if Commit != "" && CommitDate != "" {
-			cmd.Printf("\nbuild %s-%s", Commit, CommitDate)
+			cmd.Printf("\n📦build %s-%s", Commit, CommitDate)
 		}
 
-		cmd.Println("\nStar🌟:", termlink.Link("Github/eat-pray-ai/yutu", repo))
+		cmd.Println("\n🌟Star:", termlink.Link("Github/eat-pray-ai/yutu", repo))
 	},
 }
 

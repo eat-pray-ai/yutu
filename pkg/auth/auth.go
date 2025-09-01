@@ -15,11 +15,20 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
 const (
-	cacheTokenFile = "youtube.token.json"
+	cacheTokenFile  = "youtube.token.json"
+	manualInputHint = `
+After completing the authorization flow, enter the authorization code on command line.
+
+If you end up in an error page after completing the authorization flow,
+and the url in the address bar is in the form of
+'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
+ONLY 'COPY-THIS' part is the code you need to enter on command line.
+`
 )
 
 var (
@@ -40,62 +49,61 @@ var (
 	}
 )
 
-const manualInputHint = `
-After completing the authorization flow, enter the authorization code on command line.
-
-If you end up in an error page after completing the authorization flow,
-and the url in the address bar is in the form of
-'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
-ONLY 'COPY-THIS' part is the code you need to enter on command line.
-`
-
-func InitClient(
-	ctx context.Context, cred, token string, cacheable bool,
-) (client *http.Client) {
-	config := getConfig(cred, scope...)
-
-	authedToken := &oauth2.Token{}
-	err := json.Unmarshal([]byte(token), authedToken)
+func (s *svc) GetService() *youtube.Service {
+	client := s.refreshClient()
+	service, err := youtube.NewService(s.ctx, option.WithHTTPClient(client))
 	if err != nil {
-		client, authedToken = newClient(ctx, config)
-		if cacheable {
-			saveToken(cacheTokenFile, authedToken)
+		log.Fatalln(errors.Join(errCreateSvc, err))
+	}
+	s.service = service
+
+	return s.service
+}
+
+func (s *svc) refreshClient() (client *http.Client) {
+	config := s.getConfig()
+	authedToken := &oauth2.Token{}
+	err := json.Unmarshal([]byte(s.CacheToken), authedToken)
+	if err != nil {
+		client, authedToken = s.newClient(config)
+		if s.Cacheable {
+			s.saveToken(cacheTokenFile, authedToken)
 		}
 		return client
 	}
 
 	if !authedToken.Valid() {
-		tokenSource := config.TokenSource(ctx, authedToken)
+		tokenSource := config.TokenSource(s.ctx, authedToken)
 		authedToken, err = tokenSource.Token()
-		if err != nil && cacheable {
-			client, authedToken = newClient(ctx, config)
-			saveToken(cacheTokenFile, authedToken)
+		if err != nil && s.Cacheable {
+			client, authedToken = s.newClient(config)
+			s.saveToken(cacheTokenFile, authedToken)
 			return client
 		} else if err != nil {
 			log.Fatalln(errors.Join(errRefreshToken, err))
 		}
 
-		if authedToken != nil && cacheable {
-			saveToken(cacheTokenFile, authedToken)
+		if authedToken != nil && s.Cacheable {
+			s.saveToken(cacheTokenFile, authedToken)
 		}
-		return config.Client(ctx, authedToken)
+		return config.Client(s.ctx, authedToken)
 	}
 
-	return config.Client(ctx, authedToken)
+	return config.Client(s.ctx, authedToken)
 }
 
-func newClient(
-	ctx context.Context, config *oauth2.Config,
-) (client *http.Client, token *oauth2.Token) {
+func (s *svc) newClient(config *oauth2.Config) (
+	client *http.Client, token *oauth2.Token,
+) {
 	authURL := config.AuthCodeURL(state, oauth2.AccessTypeOffline)
-	token = getTokenFromWeb(config, authURL)
-	client = config.Client(ctx, token)
+	token = s.getTokenFromWeb(config, authURL)
+	client = config.Client(s.ctx, token)
 
 	return
 }
 
-func getConfig(cred string, scope ...string) *oauth2.Config {
-	config, err := google.ConfigFromJSON([]byte(cred), scope...)
+func (s *svc) getConfig() *oauth2.Config {
+	config, err := google.ConfigFromJSON([]byte(s.Credential), scope...)
 	if err != nil {
 		log.Fatalln(errors.Join(errParseSecret, err))
 	}
@@ -103,7 +111,7 @@ func getConfig(cred string, scope ...string) *oauth2.Config {
 	return config
 }
 
-func startWebServer(redirectURL string) chan string {
+func (s *svc) startWebServer(redirectURL string) chan string {
 	u, err := url.Parse(redirectURL)
 	if err != nil {
 		log.Fatalln(errors.Join(errStartWeb, err))
@@ -139,7 +147,7 @@ func startWebServer(redirectURL string) chan string {
 	return codeCh
 }
 
-func getCodeFromPrompt(authURL string) (code string) {
+func (s *svc) getCodeFromPrompt(authURL string) (code string) {
 	fmt.Printf(
 		"It seems that your browser is not open. Go to the following "+
 			"link in your browser:\n%s\n", authURL,
@@ -156,8 +164,10 @@ func getCodeFromPrompt(authURL string) (code string) {
 	return code
 }
 
-func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
-	codeCh := startWebServer(config.RedirectURL)
+func (s *svc) getTokenFromWeb(
+	config *oauth2.Config, authURL string,
+) *oauth2.Token {
+	codeCh := s.startWebServer(config.RedirectURL)
 
 	var code string
 	if err := utils.OpenURL(authURL); err == nil {
@@ -170,7 +180,7 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 	}
 
 	if code == "" {
-		code = getCodeFromPrompt(authURL)
+		code = s.getCodeFromPrompt(authURL)
 	}
 
 	fmt.Printf("Authorization code generated: %s\n", code)
@@ -182,7 +192,7 @@ func getTokenFromWeb(config *oauth2.Config, authURL string) *oauth2.Token {
 	return token
 }
 
-func saveToken(file string, token *oauth2.Token) {
+func (s *svc) saveToken(file string, token *oauth2.Token) {
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Fatalln(errors.Join(errCacheToken, err))

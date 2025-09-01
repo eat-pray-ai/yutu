@@ -104,9 +104,12 @@ func WithHasAccessToLevel(level string) Option {
 	}
 }
 
-func WithMaxResults(results int64) Option {
+func WithMaxResults(maxResults int64) Option {
 	return func(m *member) {
-		m.MaxResults = results
+		if maxResults <= 0 {
+			maxResults = 1
+		}
+		m.MaxResults = maxResults
 	}
 }
 
@@ -122,7 +125,7 @@ func WithService(svc *youtube.Service) Option {
 			svc = auth.NewY2BService(
 				auth.WithCredential(""),
 				auth.WithCacheToken(""),
-			)
+			).GetService()
 		}
 		service = svc
 	}
