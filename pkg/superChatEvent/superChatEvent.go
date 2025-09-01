@@ -42,9 +42,6 @@ func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) 
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
 	}
-	if s.MaxResults <= 0 {
-		s.MaxResults = 1
-	}
 	call = call.MaxResults(s.MaxResults)
 
 	res, err := call.Do()
@@ -95,6 +92,9 @@ func WithHl(hl string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(s *superChatEvent) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		s.MaxResults = maxResults
 	}
 }

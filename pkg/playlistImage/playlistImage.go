@@ -66,9 +66,6 @@ func (pi *playlistImage) Get(parts []string) ([]*youtube.PlaylistImage, error) {
 	if pi.OnBehalfOfContentOwnerChannel != "" {
 		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
 	}
-	if pi.MaxResults <= 0 {
-		pi.MaxResults = 1
-	}
 	call = call.MaxResults(pi.MaxResults)
 
 	res, err := call.Do()
@@ -270,6 +267,9 @@ func WithParent(parent string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(pi *playlistImage) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		pi.MaxResults = maxResults
 	}
 }

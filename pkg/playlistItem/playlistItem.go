@@ -70,9 +70,6 @@ func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 	if pi.VideoId != "" {
 		call = call.VideoId(pi.VideoId)
 	}
-	if pi.MaxResults <= 0 {
-		pi.MaxResults = 1
-	}
 	call = call.MaxResults(pi.MaxResults)
 	res, err := call.Do()
 	if err != nil {
@@ -312,6 +309,9 @@ func WithPrivacy(privacy string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(p *playlistItem) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		p.MaxResults = maxResults
 	}
 }

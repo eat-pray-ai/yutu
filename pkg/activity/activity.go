@@ -56,9 +56,6 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 		call = call.Mine(*a.Mine)
 	}
 
-	if a.MaxResults <= 0 {
-		a.MaxResults = 1
-	}
 	call.MaxResults(a.MaxResults)
 
 	if a.PublishedAfter != "" {
@@ -129,6 +126,9 @@ func WithHome(home *bool) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(a *activity) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		a.MaxResults = maxResults
 	}
 }

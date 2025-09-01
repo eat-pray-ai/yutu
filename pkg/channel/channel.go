@@ -62,7 +62,7 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 	}
 
 	if c.ForHandle != "" {
-		call = call.ForUsername(c.ForHandle)
+		call = call.ForHandle(c.ForHandle)
 	}
 
 	if c.ForUsername != "" {
@@ -81,9 +81,6 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 		call = call.ManagedByMe(*c.ManagedByMe)
 	}
 
-	if c.MaxResults <= 0 {
-		c.MaxResults = 1
-	}
 	call = call.MaxResults(c.MaxResults)
 
 	if c.Mine != nil {
@@ -220,6 +217,9 @@ func WithChannelManagedByMe(managedByMe *bool) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(c *channel) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		c.MaxResults = maxResults
 	}
 }

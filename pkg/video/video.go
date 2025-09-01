@@ -118,10 +118,6 @@ func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
-
-	if v.MaxResults <= 0 {
-		v.MaxResults = 1
-	}
 	call = call.MaxResults(v.MaxResults)
 
 	res, err := call.Do()
@@ -596,6 +592,9 @@ func WithMaxWidth(maxWidth int64) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(v *video) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		v.MaxResults = maxResults
 	}
 }

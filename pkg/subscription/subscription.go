@@ -64,9 +64,6 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 	if s.ForChannelId != "" {
 		call = call.ForChannelId(s.ForChannelId)
 	}
-	if s.MaxResults <= 0 {
-		s.MaxResults = 1
-	}
 	call = call.MaxResults(s.MaxResults)
 
 	if s.Mine != nil {
@@ -213,6 +210,9 @@ func WithForChannelId(forChannelId string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(s *subscription) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		s.MaxResults = maxResults
 	}
 }

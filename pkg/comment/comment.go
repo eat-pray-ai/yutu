@@ -65,9 +65,6 @@ func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 		call = call.Id(c.IDs...)
 	}
 
-	if c.MaxResults <= 0 {
-		c.MaxResults = 1
-	}
 	call = call.MaxResults(c.MaxResults)
 
 	if c.ParentId != "" {
@@ -283,6 +280,9 @@ func WithChannelId(channelId string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(c *comment) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		c.MaxResults = maxResults
 	}
 }

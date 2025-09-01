@@ -64,9 +64,6 @@ func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 		call = call.ChannelId(c.ChannelId)
 	}
 
-	if c.MaxResults <= 0 {
-		c.MaxResults = 1
-	}
 	call = call.MaxResults(c.MaxResults)
 
 	if c.ModerationStatus != "" {
@@ -192,6 +189,9 @@ func WithIDs(ids []string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(c *commentThread) {
+		if maxResults <= 0 {
+			maxResults = 1
+		}
 		c.MaxResults = maxResults
 	}
 }
