@@ -20,6 +20,7 @@ qodana.yaml
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+genhtml
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

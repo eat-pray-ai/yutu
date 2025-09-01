@@ -3,25 +3,38 @@ package membershipsLevel
 import (
 	"reflect"
 	"testing"
+
+	"google.golang.org/api/youtube/v3"
 )
 
 func TestNewMembershipsLevel(t *testing.T) {
 	type args struct {
 		opts []Option
 	}
+
 	tests := []struct {
 		name string
 		args args
 		want MembershipsLevel
 	}{
 		{
-			name: "TestNewMembershipsLevel",
+			name: "with all options",
+			args: args{
+				opts: []Option{
+					WithService(&youtube.Service{}),
+				},
+			},
+			want: &membershipsLevel{},
+		},
+		{
+			name: "with no options",
 			args: args{
 				opts: []Option{},
 			},
 			want: &membershipsLevel{},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {

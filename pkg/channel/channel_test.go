@@ -4,71 +4,169 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"google.golang.org/api/youtube/v3"
 )
 
 func TestNewChannel(t *testing.T) {
 	type args struct {
 		opts []Option
 	}
+
+	managedByMeTrue := true
+	managedByMeFalse := false
+	mineTrue := true
+	mineFalse := false
+	mySubscribersTrue := true
+	mySubscribersFalse := false
+
 	tests := []struct {
 		name string
 		args args
 		want Channel
 	}{
 		{
-			name: "TestNewChannel",
+			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithCategoryId("15"),
-					WithForHandle("handle"),
-					WithForUsername("username"),
-					WithHl("hl"),
-					WithIDs([]string{"id1", "id2"}),
-					WithChannelManagedByMe(utils.BoolPtr("true")),
-					WithMaxResults(5),
-					WithMine(utils.BoolPtr("false")),
-					WithMySubscribers(utils.BoolPtr("true")),
-					WithOnBehalfOfContentOwner("contentOwner"),
+					WithCategoryId("category123"),
+					WithForHandle("@testhandle"),
+					WithForUsername("testuser"),
+					WithHl("en"),
+					WithIDs([]string{"channel1", "channel2"}),
+					WithChannelManagedByMe(&managedByMeTrue),
+					WithMaxResults(100),
+					WithMine(&mineTrue),
+					WithMySubscribers(&mySubscribersTrue),
+					WithOnBehalfOfContentOwner("owner123"),
+					WithCountry("US"),
+					WithCustomUrl("testchannel"),
+					WithDefaultLanguage("en"),
+					WithDescription("Test channel description"),
+					WithTitle("Test Channel"),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
-				CategoryId:             "15",
-				ForHandle:              "handle",
-				ForUsername:            "username",
-				Hl:                     "hl",
-				IDs:                    []string{"id1", "id2"},
-				ManagedByMe:            utils.BoolPtr("true"),
-				MaxResults:             5,
-				Mine:                   utils.BoolPtr("false"),
-				MySubscribers:          utils.BoolPtr("true"),
-				OnBehalfOfContentOwner: "contentOwner",
+				CategoryId:             "category123",
+				ForHandle:              "@testhandle",
+				ForUsername:            "testuser",
+				Hl:                     "en",
+				IDs:                    []string{"channel1", "channel2"},
+				ManagedByMe:            &managedByMeTrue,
+				MaxResults:             100,
+				Mine:                   &mineTrue,
+				MySubscribers:          &mySubscribersTrue,
+				OnBehalfOfContentOwner: "owner123",
+				Country:                "US",
+				CustomUrl:              "testchannel",
+				DefaultLanguage:        "en",
+				Description:            "Test channel description",
+				Title:                  "Test Channel",
 			},
 		},
 		{
-			name: "TestNewChannel",
+			name: "with no options",
+			args: args{
+				opts: []Option{},
+			},
+			want: &channel{},
+		},
+		{
+			name: "with nil boolean options",
 			args: args{
 				opts: []Option{
-					WithCategoryId("20"),
-					WithForHandle("handle"),
-					WithCountry("US"),
-					WithCustomUrl("customUrl"),
-					WithDefaultLanguage("en"),
-					WithDescription("description"),
-					WithTitle("title"),
+					WithChannelManagedByMe(nil),
+					WithMine(nil),
+					WithMySubscribers(nil),
+				},
+			},
+			want: &channel{},
+		},
+		{
+			name: "with false boolean options",
+			args: args{
+				opts: []Option{
+					WithChannelManagedByMe(&managedByMeFalse),
+					WithMine(&mineFalse),
+					WithMySubscribers(&mySubscribersFalse),
 				},
 			},
 			want: &channel{
-				CategoryId:      "20",
-				ForHandle:       "handle",
-				Country:         "US",
-				CustomUrl:       "customUrl",
-				DefaultLanguage: "en",
-				Description:     "description",
-				Title:           "title",
+				ManagedByMe:   &managedByMeFalse,
+				Mine:          &mineFalse,
+				MySubscribers: &mySubscribersFalse,
+			},
+		},
+		{
+			name: "with zero max results",
+			args: args{
+				opts: []Option{
+					WithMaxResults(0),
+				},
+			},
+			want: &channel{
+				MaxResults: 1,
+			},
+		},
+		{
+			name: "with negative max results",
+			args: args{
+				opts: []Option{
+					WithMaxResults(-5),
+				},
+			},
+			want: &channel{
+				MaxResults: 1,
+			},
+		},
+		{
+			name: "with empty string values",
+			args: args{
+				opts: []Option{
+					WithCategoryId(""),
+					WithForHandle(""),
+					WithForUsername(""),
+					WithHl(""),
+					WithOnBehalfOfContentOwner(""),
+					WithCountry(""),
+					WithCustomUrl(""),
+					WithDefaultLanguage(""),
+					WithDescription(""),
+					WithTitle(""),
+				},
+			},
+			want: &channel{
+				CategoryId:             "",
+				ForHandle:              "",
+				ForUsername:            "",
+				Hl:                     "",
+				OnBehalfOfContentOwner: "",
+				Country:                "",
+				CustomUrl:              "",
+				DefaultLanguage:        "",
+				Description:            "",
+				Title:                  "",
+			},
+		},
+		{
+			name: "with partial options",
+			args: args{
+				opts: []Option{
+					WithIDs([]string{"channel1"}),
+					WithTitle("My Channel"),
+					WithCountry("UK"),
+					WithMaxResults(50),
+				},
+			},
+			want: &channel{
+				IDs:        []string{"channel1"},
+				Title:      "My Channel",
+				Country:    "UK",
+				MaxResults: 50,
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
