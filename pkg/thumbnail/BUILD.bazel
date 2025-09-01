@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/eat-pray-ai/yutu/pkg/thumbnail",
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg",
         "//pkg/auth",
         "//pkg/utils",
         "@org_golang_google_api//youtube/v3:youtube",
@@ -16,4 +17,5 @@ go_test(
     name = "thumbnail_test",
     srcs = ["thumbnail_test.go"],
     embed = [":thumbnail"],
+    deps = ["@org_golang_google_api//youtube/v3:youtube"],
 )

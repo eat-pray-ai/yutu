@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/eat-pray-ai/yutu/pkg/watermark",
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg",
         "//pkg/auth",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
@@ -15,4 +16,5 @@ go_test(
     name = "watermark_test",
     srcs = ["watermark_test.go"],
     embed = [":watermark"],
+    deps = ["@org_golang_google_api//youtube/v3:youtube"],
 )

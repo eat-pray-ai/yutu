@@ -7,6 +7,7 @@ import (
 	"os"
 	"slices"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
@@ -641,8 +642,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *video) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential(""),
-				auth.WithCacheToken(""),
+				auth.WithCredential("", pkg.Fsys),
+				auth.WithCacheToken("", pkg.Fsys),
 			).GetService()
 		}
 		service = svc

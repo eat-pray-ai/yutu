@@ -19,6 +19,7 @@ go_library(
         "Arch": "{STABLE_ARCH}",
     },
     deps = [
+        "//pkg",
         "//pkg/auth",
         "@com_github_mark3labs_mcp_go//server",
         "@com_github_savioxavier_termlink//:termlink",

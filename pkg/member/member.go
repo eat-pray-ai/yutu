@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -123,8 +124,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *member) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential(""),
-				auth.WithCacheToken(""),
+				auth.WithCredential("", pkg.Fsys),
+				auth.WithCacheToken("", pkg.Fsys),
 			).GetService()
 		}
 		service = svc

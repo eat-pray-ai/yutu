@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/eat-pray-ai/yutu/pkg/activity",
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg",
         "//pkg/auth",
         "//pkg/utils",
         "@com_github_jedib0t_go_pretty_v6//table",
@@ -17,5 +18,5 @@ go_test(
     name = "activity_test",
     srcs = ["activity_test.go"],
     embed = [":activity"],
-    deps = ["//pkg/utils"],
+    deps = ["@org_golang_google_api//youtube/v3:youtube"],
 )

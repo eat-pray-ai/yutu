@@ -21,6 +21,7 @@ import (
 
 const (
 	cacheTokenFile  = "youtube.token.json"
+	credentialFile  = "client_secret.json"
 	manualInputHint = `
 After completing the authorization flow, enter the authorization code on command line.
 

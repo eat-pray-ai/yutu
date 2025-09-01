@@ -5,9 +5,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
@@ -21,15 +23,7 @@ var (
 	errReadSecret = errors.New("unable to read client secret")
 )
 
-const missingClientSecretsHint string = `
-Please configure OAuth 2.0
-You need to populate the client_secrets.json file
-found at: %s
-with information from the {{ Google Cloud Console }}
-{{ https://cloud.google.com/console }}
-For more information about the client_secrets.json file format, please visit:
-https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
-`
+const missingClientSecretsHint string = "Please configure client secrets as described in https://github.com/eat-pray-ai/yutu#prerequisites"
 
 type svc struct {
 	Cacheable  bool   `yaml:"cacheable" json:"cacheable"`
@@ -62,23 +56,26 @@ func NewY2BService(opts ...Option) Svc {
 	return s
 }
 
-func WithCredential(cred string) Option {
+func WithCredential(cred string, fsys fs.FS) Option {
 	return func(s *svc) {
 		// cred > YUTU_CREDENTIAL
 		envCred, ok := os.LookupEnv("YUTU_CREDENTIAL")
 		if cred == "" && ok {
 			cred = envCred
 		} else if cred == "" {
-			cred = "client_secret.json"
+			cred = credentialFile
 		}
-
 		// 1. cred is a file path
 		// 2. cred is a base64 encoded string
 		// 3. cred is a json string
-		if _, err := os.Stat(cred); err == nil {
-			credBytes, err := os.ReadFile(cred)
+		absCred, _ := filepath.Abs(cred)
+		relCred, _ := filepath.Rel("/", absCred)
+
+		if _, err := fs.Stat(fsys, relCred); err == nil {
+			// credBytes, err := yfs.ReadFile(cred)
+			credBytes, err := fs.ReadFile(fsys, relCred)
 			if err != nil {
-				fmt.Printf(missingClientSecretsHint, cred)
+				fmt.Println(missingClientSecretsHint)
 				log.Fatalln(errors.Join(errReadSecret, err))
 			}
 			s.Credential = string(credBytes)
@@ -90,13 +87,13 @@ func WithCredential(cred string) Option {
 		} else if utils.IsJson(cred) {
 			s.Credential = cred
 		} else {
-			fmt.Printf(missingClientSecretsHint, cred)
+			fmt.Println(missingClientSecretsHint)
 			log.Fatalln(errors.Join(errReadSecret, err))
 		}
 	}
 }
 
-func WithCacheToken(token string) Option {
+func WithCacheToken(token string, fsys fs.FS) Option {
 	return func(s *svc) {
 		// token > YUTU_CACHE_TOKEN
 		envToken, ok := os.LookupEnv("YUTU_CACHE_TOKEN")
@@ -109,8 +106,11 @@ func WithCacheToken(token string) Option {
 		// 1. token is a file path
 		// 2. token is a base64 encoded string
 		// 3. token is a json string
-		if _, err := os.Stat(token); err == nil {
-			tokenBytes, err := os.ReadFile(token)
+		absToken, _ := filepath.Abs(token)
+		relToken, _ := filepath.Rel("/", absToken)
+
+		if _, err := fs.Stat(fsys, relToken); err == nil {
+			tokenBytes, err := fs.ReadFile(fsys, relToken)
 			if err != nil {
 				log.Fatalln(errors.Join(errReadToken, err))
 			}
