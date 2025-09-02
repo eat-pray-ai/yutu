@@ -3,9 +3,8 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -20,6 +19,17 @@ import (
 )
 
 const (
+	createSvcFailed    = "failed to create YouTube service"
+	parseUrlFailed     = "failed to parse redirect URL"
+	stateMatchFailed   = "state doesn't match, possible CSRF attack"
+	readPromptFailed   = "failed to read prompt"
+	exchangeFailed     = "failed to exchange token"
+	listenFailed       = "failed to start web server"
+	cacheTokenFailed   = "failed to cache token"
+	parseTokenFailed   = "failed to parse token"
+	refreshTokenFailed = "failed to refresh token, please re-authenticate in cli"
+	parseSecretFailed  = "failed to parse client secret"
+
 	cacheTokenFile  = "youtube.token.json"
 	credentialFile  = "client_secret.json"
 	manualInputHint = `
@@ -33,16 +43,7 @@ ONLY 'COPY-THIS' part is the code you need to enter on command line.
 )
 
 var (
-	state            = utils.RandomStage()
-	errStateMismatch = errors.New("state doesn't match, possible CSRF attack")
-	errReadPrompt    = errors.New("unable to read prompt")
-	errExchange      = errors.New("unable retrieve token from web or prompt")
-	errStartWeb      = errors.New("unable to start web server")
-	errCacheToken    = errors.New("unable to cache token")
-	errParseToken    = errors.New("unable to parse token")
-	errRefreshToken  = errors.New("unable to refresh token, please re-authenticate in cli")
-	errParseSecret   = errors.New("unable to parse client secret")
-
+	state = utils.RandomStage()
 	scope = []string{
 		youtube.YoutubeScope,
 		youtube.YoutubeForceSslScope,
@@ -54,7 +55,8 @@ func (s *svc) GetService() *youtube.Service {
 	client := s.refreshClient()
 	service, err := youtube.NewService(s.ctx, option.WithHTTPClient(client))
 	if err != nil {
-		log.Fatalln(errors.Join(errCreateSvc, err))
+		slog.Error(createSvcFailed, "error", err)
+		os.Exit(1)
 	}
 	s.service = service
 
@@ -81,7 +83,8 @@ func (s *svc) refreshClient() (client *http.Client) {
 			s.saveToken(cacheTokenFile, authedToken)
 			return client
 		} else if err != nil {
-			log.Fatalln(errors.Join(errRefreshToken, err))
+			slog.Error(refreshTokenFailed, "error", err)
+			os.Exit(1)
 		}
 
 		if authedToken != nil && s.Cacheable {
@@ -106,7 +109,8 @@ func (s *svc) newClient(config *oauth2.Config) (
 func (s *svc) getConfig() *oauth2.Config {
 	config, err := google.ConfigFromJSON([]byte(s.Credential), scope...)
 	if err != nil {
-		log.Fatalln(errors.Join(errParseSecret, err))
+		slog.Error(parseSecretFailed, "error", err)
+		os.Exit(1)
 	}
 
 	return config
@@ -115,35 +119,45 @@ func (s *svc) getConfig() *oauth2.Config {
 func (s *svc) startWebServer(redirectURL string) chan string {
 	u, err := url.Parse(redirectURL)
 	if err != nil {
-		log.Fatalln(errors.Join(errStartWeb, err))
+		slog.Error(parseUrlFailed, "url", redirectURL, "error", err)
+		os.Exit(1)
 	}
 
 	listener, err := net.Listen("tcp", u.Host)
 	if err != nil {
-		log.Fatalln(errors.Join(errStartWeb, err))
+		slog.Error(listenFailed, "host", u.Host, "error", err)
+		os.Exit(1)
 	}
 
 	codeCh := make(chan string)
-	go http.Serve(
-		listener, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != "/" {
-					return
-				}
-				s := r.FormValue("state")
-				if s != state {
-					log.Fatalf("%v: %s != %s\n", errStateMismatch, s, state)
-				}
-				code := r.FormValue("code")
-				codeCh <- code
-				_ = listener.Close()
-				w.Header().Set("Content-Type", "text/plain")
-				_, _ = fmt.Fprintf(
-					w, "Received code: %s\r\nYou can now safely close this window.", code,
-				)
-			},
-		),
-	)
+	go func() {
+		_ = http.Serve(
+			listener, http.HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					if r.URL.Path != "/" {
+						return
+					}
+					s := r.FormValue("state")
+					if s != state {
+						slog.Error(
+							stateMatchFailed,
+							"actual", s,
+							"expected", state,
+						)
+						os.Exit(1)
+					}
+					code := r.FormValue("code")
+					codeCh <- code
+					_ = listener.Close()
+					w.Header().Set("Content-Type", "text/plain")
+					_, _ = fmt.Fprintf(
+						w, "Received code: %s\r\nYou can now safely close this window.",
+						code,
+					)
+				},
+			),
+		)
+	}()
 
 	return codeCh
 }
@@ -156,7 +170,8 @@ func (s *svc) getCodeFromPrompt(authURL string) (code string) {
 	fmt.Print(manualInputHint)
 	_, err := fmt.Scan(&code)
 	if err != nil {
-		log.Fatalln(errors.Join(errReadPrompt, err))
+		slog.Error(readPromptFailed, "error", err)
+		os.Exit(1)
 	}
 
 	if strings.HasPrefix(code, "4%2F") {
@@ -187,7 +202,8 @@ func (s *svc) getTokenFromWeb(
 	fmt.Printf("Authorization code generated: %s\n", code)
 	token, err := config.Exchange(context.TODO(), code)
 	if err != nil {
-		log.Fatalln(errors.Join(errExchange, err))
+		slog.Error(exchangeFailed, "error", err)
+		os.Exit(1)
 	}
 
 	return token
@@ -196,12 +212,16 @@ func (s *svc) getTokenFromWeb(
 func (s *svc) saveToken(file string, token *oauth2.Token) {
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Fatalln(errors.Join(errCacheToken, err))
+		slog.Error(cacheTokenFailed, "file", file, "error", err)
+		os.Exit(1)
 	}
 
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	err = json.NewEncoder(f).Encode(token)
 	if err != nil {
-		log.Fatalln(errors.Join(errCacheToken, err))
+		slog.Error(cacheTokenFailed, "error", err)
+		os.Exit(1)
 	}
 }

@@ -3,10 +3,8 @@ package auth
 import (
 	"context"
 	"encoding/base64"
-	"errors"
-	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,13 +15,11 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-var (
-	errCreateSvc  = errors.New("unable to create YouTube service")
-	errReadToken  = errors.New("unable to read token")
-	errReadSecret = errors.New("unable to read client secret")
+const (
+	readTokenFailed  = "failed to read token"
+	readSecretFailed = "failed to read client secret"
+	authHint         = "Please configure client secret as described in https://github.com/eat-pray-ai/yutu#prerequisites"
 )
-
-const missingClientSecretsHint string = "Please configure client secrets as described in https://github.com/eat-pray-ai/yutu#prerequisites"
 
 type svc struct {
 	Cacheable  bool   `yaml:"cacheable" json:"cacheable"`
@@ -75,8 +71,10 @@ func WithCredential(cred string, fsys fs.FS) Option {
 			// credBytes, err := yfs.ReadFile(cred)
 			credBytes, err := fs.ReadFile(fsys, relCred)
 			if err != nil {
-				fmt.Println(missingClientSecretsHint)
-				log.Fatalln(errors.Join(errReadSecret, err))
+				slog.Error(
+					readSecretFailed, "hint", authHint, "path", absCred, "error", err,
+				)
+				os.Exit(1)
 			}
 			s.Credential = string(credBytes)
 			return
@@ -87,8 +85,8 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		} else if utils.IsJson(cred) {
 			s.Credential = cred
 		} else {
-			fmt.Println(missingClientSecretsHint)
-			log.Fatalln(errors.Join(errReadSecret, err))
+			slog.Error(parseSecretFailed, "hint", authHint, "error", err)
+			os.Exit(1)
 		}
 	}
 }
@@ -112,7 +110,8 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		if _, err := fs.Stat(fsys, relToken); err == nil {
 			tokenBytes, err := fs.ReadFile(fsys, relToken)
 			if err != nil {
-				log.Fatalln(errors.Join(errReadToken, err))
+				slog.Error(readTokenFailed, "path", absToken, "error", err)
+				os.Exit(1)
 			}
 			s.CacheToken = string(tokenBytes)
 			s.Cacheable = true
@@ -128,7 +127,8 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		} else if utils.IsJson(token) {
 			s.CacheToken = token
 		} else {
-			log.Fatalln(errors.Join(errReadToken, err))
+			slog.Error(parseTokenFailed, "error", err)
+			os.Exit(1)
 		}
 	}
 }
