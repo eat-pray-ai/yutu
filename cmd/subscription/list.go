@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -27,7 +28,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&forChannelId, "forChannelId", "C", "", fcidUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, cmd.MRUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().BoolVarP(
 		myRecentSubscribers, "myRecentSubscribers", "R", false, mrsUsage,
@@ -41,10 +42,10 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, cmd.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -82,7 +83,7 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(cmd.MRUsage), mcp.Required(),
+		mcp.Description(pkg.MRUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"mine", mcp.Enum("true", "false", ""),
@@ -113,15 +114,15 @@ var listTool = mcp.NewTool(
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(cmd.PartsUsage), mcp.Required(),
+		mcp.Description(pkg.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

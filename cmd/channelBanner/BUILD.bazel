@@ -10,6 +10,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//cmd",
+        "//pkg",
         "//pkg/channelBanner",
         "@com_github_mark3labs_mcp_go//mcp",
         "@com_github_spf13_cobra//:cobra",

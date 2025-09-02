@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -45,8 +46,8 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JPUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("videoId")
@@ -127,11 +128,11 @@ var insertTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.SilentUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

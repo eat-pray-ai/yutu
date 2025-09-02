@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -26,8 +27,8 @@ func init() {
 	getRatingCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
-	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", cmd.TableUsage)
-	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", pkg.TableUsage)
+	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }
@@ -63,11 +64,11 @@ var getRatingTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

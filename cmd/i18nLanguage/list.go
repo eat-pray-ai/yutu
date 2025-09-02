@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/i18nLanguage"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -19,10 +20,10 @@ func init() {
 	i18nLanguageCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", defaultParts, cmd.PartsUsage,
+		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -40,7 +41,7 @@ var listCmd = &cobra.Command{
 
 var hlResource = mcp.NewResource(
 	hlURI, hlName,
-	mcp.WithMIMEType(cmd.JsonMIME),
+	mcp.WithMIMEType(pkg.JsonMIME),
 	mcp.WithResourceDescription(hlDesc),
 	mcp.WithAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
@@ -51,9 +52,9 @@ func hlHandler(
 	parts = defaultParts
 	output = "json"
 	jpath = "$.*.snippet.hl"
-	
+
 	slog.InfoContext(ctx, "i18nLanguage hl list started")
-	
+
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
@@ -73,7 +74,7 @@ func hlHandler(
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
 			URI:      hlURI,
-			MIMEType: cmd.JsonMIME,
+			MIMEType: pkg.JsonMIME,
 			Text:     writer.String(),
 		},
 	}
@@ -82,7 +83,7 @@ func hlHandler(
 
 var langsResource = mcp.NewResourceTemplate(
 	langURI, langName,
-	mcp.WithTemplateMIMEType(cmd.JsonMIME),
+	mcp.WithTemplateMIMEType(pkg.JsonMIME),
 	mcp.WithTemplateDescription(long),
 	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
@@ -93,9 +94,9 @@ func langsHandler(
 	parts = defaultParts
 	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
-	
+
 	slog.InfoContext(ctx, "i18nLanguage list started")
-	
+
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
@@ -115,7 +116,7 @@ func langsHandler(
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
 			URI:      request.Params.URI,
-			MIMEType: cmd.JsonMIME,
+			MIMEType: pkg.JsonMIME,
 			Text:     writer.String(),
 		},
 	}

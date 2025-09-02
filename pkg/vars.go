@@ -1,6 +1,7 @@
-package cmd
+package pkg
 
 import (
+	"io/fs"
 	"log/slog"
 	"os"
 )
@@ -14,9 +15,18 @@ const (
 	JsonMIME    = "application/json"
 )
 
-var Logger *slog.Logger
+var (
+	Fsys   fs.FS
+	Logger *slog.Logger
+)
 
 func init() {
+	root, err := os.OpenRoot("/")
+	if err != nil {
+		panic(err)
+	}
+	Fsys = root.FS()
+
 	Logger = slog.New(
 		slog.NewTextHandler(
 			os.Stdout, &slog.HandlerOptions{

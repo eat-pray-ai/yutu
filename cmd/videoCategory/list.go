@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -20,10 +21,10 @@ func init() {
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", rcUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, cmd.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -41,7 +42,7 @@ var listCmd = &cobra.Command{
 
 var categoriesResource = mcp.NewResourceTemplate(
 	vcURI, vcName,
-	mcp.WithTemplateMIMEType(cmd.JsonMIME),
+	mcp.WithTemplateMIMEType(pkg.JsonMIME),
 	mcp.WithTemplateDescription(long),
 	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
 )
@@ -74,7 +75,7 @@ func categoriesHandler(
 	contents := []mcp.ResourceContents{
 		mcp.TextResourceContents{
 			URI:      request.Params.URI,
-			MIMEType: cmd.JsonMIME,
+			MIMEType: pkg.JsonMIME,
 			Text:     writer.String(),
 		},
 	}

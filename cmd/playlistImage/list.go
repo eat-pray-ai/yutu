@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -22,12 +23,12 @@ func init() {
 	playlistImageCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(&parent, "parent", "P", "", parentUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, cmd.MRUsage)
+	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "kind", "snippet"}, cmd.PartsUsage,
+		&parts, "parts", "p", []string{"id", "kind", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", cmd.JPUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
@@ -62,20 +63,20 @@ var listTool = mcp.NewTool(
 	),
 	mcp.WithNumber(
 		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(cmd.MRUsage), mcp.Required(),
+		mcp.Description(pkg.MRUsage), mcp.Required(),
 	),
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "kind", "snippet"}),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(cmd.PartsUsage), mcp.Required(),
+		mcp.Description(pkg.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"onBehalfOfContentOwner", mcp.DefaultString(""),

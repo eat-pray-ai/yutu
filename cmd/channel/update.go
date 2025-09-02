@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -32,8 +33,8 @@ func init() {
 		&description, "description", "d", "", descUsage,
 	)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -89,11 +90,11 @@ var updateTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.SilentUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage),
+		mcp.Description(pkg.JPUsage),
 		mcp.Required(),
 	),
 )

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -32,10 +33,10 @@ func init() {
 		banAuthor, "banAuthor", "A", false, baUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&output, "output", "o", "", cmd.SilentUsage,
+		&output, "output", "o", "", pkg.SilentUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&jpath, "jsonpath", "j", "", cmd.JPUsage,
+		&jpath, "jsonpath", "j", "", pkg.JPUsage,
 	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
@@ -77,11 +78,11 @@ var setModerationStatusTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.SilentUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

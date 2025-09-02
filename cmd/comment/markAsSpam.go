@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -22,8 +23,8 @@ func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
-	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }
@@ -55,11 +56,11 @@ var markAsSpamTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.SilentUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

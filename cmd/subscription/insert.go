@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/spf13/cobra"
@@ -28,8 +29,8 @@ func init() {
 	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", cmd.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -73,11 +74,11 @@ var insertTool = mcp.NewTool(
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.SilentUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 

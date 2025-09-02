@@ -10,6 +10,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//cmd",
+        "//pkg",
         "//pkg/i18nLanguage",
         "//pkg/utils",
         "@com_github_mark3labs_mcp_go//mcp",

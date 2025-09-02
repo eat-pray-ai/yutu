@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -31,10 +32,10 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, cmd.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", cmd.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", cmd.JPUsage)
+	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -81,15 +82,15 @@ var listTool = mcp.NewTool(
 	mcp.WithArray(
 		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
 		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(cmd.PartsUsage), mcp.Required(),
+		mcp.Description(pkg.PartsUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(cmd.TableUsage), mcp.Required(),
+		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
 	),
 	mcp.WithString(
 		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(cmd.JPUsage), mcp.Required(),
+		mcp.Description(pkg.JPUsage), mcp.Required(),
 	),
 )
 
