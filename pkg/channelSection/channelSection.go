@@ -152,8 +152,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *channelSection) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Fsys),
-				auth.WithCacheToken("", pkg.Fsys),
+				auth.WithCredential("", pkg.Root.FS()),
+				auth.WithCacheToken("", pkg.Root.FS()),
 			).GetService()
 		}
 		service = svc

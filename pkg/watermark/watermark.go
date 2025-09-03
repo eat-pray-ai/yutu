@@ -45,7 +45,7 @@ func NewWatermark(opts ...Option) Watermark {
 }
 
 func (w *watermark) Set(writer io.Writer) error {
-	file, err := os.Open(w.File)
+	file, err := pkg.Root.Open(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)
 	}
@@ -144,8 +144,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *watermark) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Fsys),
-				auth.WithCacheToken("", pkg.Fsys),
+				auth.WithCredential("", pkg.Root.FS()),
+				auth.WithCacheToken("", pkg.Root.FS()),
 			).GetService()
 		}
 		service = svc

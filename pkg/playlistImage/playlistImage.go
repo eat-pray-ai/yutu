@@ -109,7 +109,7 @@ func (pi *playlistImage) List(
 func (pi *playlistImage) Insert(
 	output string, jpath string, writer io.Writer,
 ) error {
-	file, err := os.Open(pi.File)
+	file, err := pkg.Root.Open(pi.File)
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
 	}
@@ -181,7 +181,7 @@ func (pi *playlistImage) Update(
 		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
 	if pi.File != "" {
-		file, err := os.Open(pi.File)
+		file, err := pkg.Root.Open(pi.File)
 		if err != nil {
 			return errors.Join(errUpdatePlaylistImage, err)
 		}
@@ -291,8 +291,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(pi *playlistImage) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Fsys),
-				auth.WithCacheToken("", pkg.Fsys),
+				auth.WithCredential("", pkg.Root.FS()),
+				auth.WithCacheToken("", pkg.Root.FS()),
 			).GetService()
 		}
 		service = svc

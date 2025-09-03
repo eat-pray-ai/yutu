@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -205,12 +206,14 @@ func (s *svc) getTokenFromWeb(
 
 func (s *svc) saveToken(token *oauth2.Token) {
 	dir := filepath.Dir(s.tokenFile)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := pkg.Root.MkdirAll(dir, 0755); err != nil {
 		slog.Error(cacheTokenFailed, "dir", dir, "error", err)
 		os.Exit(1)
 	}
 
-	f, err := os.OpenFile(s.tokenFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	f, err := pkg.Root.OpenFile(
+		s.tokenFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600,
+	)
 	if err != nil {
 		slog.Error(cacheTokenFailed, "file", s.tokenFile, "error", err)
 		os.Exit(1)

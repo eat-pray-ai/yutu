@@ -113,7 +113,7 @@ func (c *caption) List(
 }
 
 func (c *caption) Insert(output string, jpath string, writer io.Writer) error {
-	file, err := os.Open(c.File)
+	file, err := pkg.Root.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
 	}
@@ -202,7 +202,7 @@ func (c *caption) Update(output string, jpath string, writer io.Writer) error {
 
 	call := service.Captions.Update([]string{"snippet"}, caption)
 	if c.File != "" {
-		file, err := os.Open(c.File)
+		file, err := pkg.Root.Open(c.File)
 		if err != nil {
 			return errors.Join(errUpdateCaption, err)
 		}
@@ -404,8 +404,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *caption) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Fsys),
-				auth.WithCacheToken("", pkg.Fsys),
+				auth.WithCredential("", pkg.Root.FS()),
+				auth.WithCacheToken("", pkg.Root.FS()),
 			).GetService()
 		}
 		service = svc

@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"io/fs"
 	"log/slog"
 	"os"
 )
@@ -16,16 +15,16 @@ const (
 )
 
 var (
-	Fsys   fs.FS
+	Root   *os.Root
 	Logger *slog.Logger
 )
 
 func init() {
-	root, err := os.OpenRoot("/")
+	var err error
+	Root, err = os.OpenRoot("/")
 	if err != nil {
 		panic(err)
 	}
-	Fsys = root.FS()
 
 	Logger = slog.New(
 		slog.NewTextHandler(

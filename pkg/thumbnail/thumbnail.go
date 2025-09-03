@@ -37,7 +37,7 @@ func NewThumbnail(opts ...Option) Thumbnail {
 }
 
 func (t *thumbnail) Set(output string, jpath string, writer io.Writer) error {
-	file, err := os.Open(t.File)
+	file, err := pkg.Root.Open(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
 	}
@@ -76,8 +76,8 @@ func WithService(svc *youtube.Service) Option {
 	return func(_ *thumbnail) {
 		if svc == nil {
 			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Fsys),
-				auth.WithCacheToken("", pkg.Fsys),
+				auth.WithCredential("", pkg.Root.FS()),
+				auth.WithCacheToken("", pkg.Root.FS()),
 			).GetService()
 		}
 		service = svc

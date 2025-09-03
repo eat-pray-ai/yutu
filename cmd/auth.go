@@ -24,8 +24,8 @@ var authCmd = &cobra.Command{
 	Long:  authLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		auth.NewY2BService(
-			auth.WithCredential(credential, pkg.Fsys),
-			auth.WithCacheToken(cacheToken, pkg.Fsys),
+			auth.WithCredential(credential, pkg.Root.FS()),
+			auth.WithCacheToken(cacheToken, pkg.Root.FS()),
 		).GetService()
 	},
 }
