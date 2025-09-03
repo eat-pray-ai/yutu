@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"

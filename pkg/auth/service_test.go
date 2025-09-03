@@ -40,7 +40,7 @@ func TestNewY2BService(t *testing.T) {
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				Cacheable:  false,
+				credFile:   "client_secret.json",
 				ctx:        context.Background(),
 			},
 		},
@@ -48,18 +48,14 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - base64",
 			args: args{
 				opts: []Option{
-					WithCredential(
-						"eyJjbGllbnRfaWQiOiJ0ZXN0In0=", mockFS,
-					),
-					WithCacheToken(
-						"eyJhY2Nlc3NfdG9rZW4iOiJ0ZXN0In0=", mockFS,
-					),
+					WithCredential("eyJjbGllbnRfaWQiOiJ0ZXN0In0=", mockFS),
+					WithCacheToken("eyJhY2Nlc3NfdG9rZW4iOiJ0ZXN0In0=", mockFS),
 				},
 			},
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				Cacheable:  false,
+				credFile:   "client_secret.json",
 				ctx:        context.Background(),
 			},
 		},
@@ -74,7 +70,8 @@ func TestNewY2BService(t *testing.T) {
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				Cacheable:  true,
+				credFile:   "/client_secrets.json",
+				tokenFile:  "/youtube.token.json",
 				ctx:        context.Background(),
 			},
 		},
@@ -84,7 +81,8 @@ func TestNewY2BService(t *testing.T) {
 				opts: []Option{},
 			},
 			want: &svc{
-				ctx: context.Background(),
+				credFile: "client_secret.json",
+				ctx:      context.Background(),
 			},
 		},
 	}
