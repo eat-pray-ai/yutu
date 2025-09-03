@@ -22,11 +22,13 @@ const (
 )
 
 type svc struct {
-	Cacheable  bool   `yaml:"cacheable" json:"cacheable"`
 	Credential string `yaml:"credential" json:"credential"`
 	CacheToken string `yaml:"cache_token" json:"cache_token"`
-	service    *youtube.Service
-	ctx        context.Context
+	credFile   string
+	tokenFile  string
+
+	service *youtube.Service
+	ctx     context.Context
 }
 
 type Svc interface {
@@ -37,7 +39,7 @@ type Svc interface {
 	startWebServer(string) chan string
 	getTokenFromWeb(*oauth2.Config, string) *oauth2.Token
 	getCodeFromPrompt(string) string
-	saveToken(string, *oauth2.Token)
+	saveToken(*oauth2.Token)
 }
 
 type Option func(*svc)
@@ -45,6 +47,7 @@ type Option func(*svc)
 func NewY2BService(opts ...Option) Svc {
 	s := &svc{}
 	s.ctx = context.Background()
+	s.credFile = "client_secret.json"
 
 	for _, opt := range opts {
 		opt(s)
@@ -59,7 +62,7 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		if cred == "" && ok {
 			cred = envCred
 		} else if cred == "" {
-			cred = credentialFile
+			cred = s.credFile
 		}
 		// 1. cred is a file path
 		// 2. cred is a base64 encoded string
@@ -68,7 +71,7 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		relCred, _ := filepath.Rel("/", absCred)
 
 		if _, err := fs.Stat(fsys, relCred); err == nil {
-			// credBytes, err := yfs.ReadFile(cred)
+			s.credFile = absCred
 			credBytes, err := fs.ReadFile(fsys, relCred)
 			if err != nil {
 				slog.Error(
@@ -98,7 +101,7 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		if token == "" && ok {
 			token = envToken
 		} else if token == "" {
-			token = cacheTokenFile
+			token = "youtube.token.json"
 		}
 
 		// 1. token is a file path
@@ -110,15 +113,13 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		if _, err := fs.Stat(fsys, relToken); err == nil {
 			tokenBytes, err := fs.ReadFile(fsys, relToken)
 			if err != nil {
-				slog.Error(readTokenFailed, "path", absToken, "error", err)
-				os.Exit(1)
+				slog.Warn(readTokenFailed, "path", absToken, "error", err)
 			}
+			s.tokenFile = absToken
 			s.CacheToken = string(tokenBytes)
-			s.Cacheable = true
 			return
 		} else if os.IsNotExist(err) && strings.HasSuffix(token, ".json") {
-			s.CacheToken = token
-			s.Cacheable = true
+			s.tokenFile = absToken
 			return
 		}
 
@@ -127,8 +128,7 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		} else if utils.IsJson(token) {
 			s.CacheToken = token
 		} else {
-			slog.Error(parseTokenFailed, "error", err)
-			os.Exit(1)
+			slog.Warn(parseTokenFailed, "error", err)
 		}
 	}
 }

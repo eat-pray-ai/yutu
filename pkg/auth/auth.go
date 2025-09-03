@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/utils"
@@ -30,9 +31,9 @@ const (
 	refreshTokenFailed = "failed to refresh token, please re-authenticate in cli"
 	parseSecretFailed  = "failed to parse client secret"
 
-	cacheTokenFile  = "youtube.token.json"
-	credentialFile  = "client_secret.json"
-	manualInputHint = `
+	browserOpenedHint = "Your browser has been opened to an authorization URL. yutu will resume once authorization has been provided.\n%s\n"
+	openBrowserHint   = "It seems that your browser is not open. Go to the following link in your browser:\n%s\n"
+	manualInputHint   = `
 After completing the authorization flow, enter the authorization code on command line.
 
 If you end up in an error page after completing the authorization flow,
@@ -69,8 +70,8 @@ func (s *svc) refreshClient() (client *http.Client) {
 	err := json.Unmarshal([]byte(s.CacheToken), authedToken)
 	if err != nil {
 		client, authedToken = s.newClient(config)
-		if s.Cacheable {
-			s.saveToken(cacheTokenFile, authedToken)
+		if s.tokenFile != "" {
+			s.saveToken(authedToken)
 		}
 		return client
 	}
@@ -78,17 +79,17 @@ func (s *svc) refreshClient() (client *http.Client) {
 	if !authedToken.Valid() {
 		tokenSource := config.TokenSource(s.ctx, authedToken)
 		authedToken, err = tokenSource.Token()
-		if err != nil && s.Cacheable {
+		if err != nil && s.tokenFile != "" {
 			client, authedToken = s.newClient(config)
-			s.saveToken(cacheTokenFile, authedToken)
+			s.saveToken(authedToken)
 			return client
 		} else if err != nil {
 			slog.Error(refreshTokenFailed, "error", err)
 			os.Exit(1)
 		}
 
-		if authedToken != nil && s.Cacheable {
-			s.saveToken(cacheTokenFile, authedToken)
+		if authedToken != nil && s.tokenFile != "" {
+			s.saveToken(authedToken)
 		}
 		return config.Client(s.ctx, authedToken)
 	}
@@ -163,10 +164,7 @@ func (s *svc) startWebServer(redirectURL string) chan string {
 }
 
 func (s *svc) getCodeFromPrompt(authURL string) (code string) {
-	fmt.Printf(
-		"It seems that your browser is not open. Go to the following "+
-			"link in your browser:\n%s\n", authURL,
-	)
+	fmt.Printf(openBrowserHint, authURL)
 	fmt.Print(manualInputHint)
 	_, err := fmt.Scan(&code)
 	if err != nil {
@@ -187,11 +185,7 @@ func (s *svc) getTokenFromWeb(
 
 	var code string
 	if err := utils.OpenURL(authURL); err == nil {
-		fmt.Printf(
-			"Your browser has been opened to an authorization URL. This "+
-				"program will resume once authorization has been provided.\n%s\n",
-			authURL,
-		)
+		fmt.Printf(browserOpenedHint, authURL)
 		code = <-codeCh
 	}
 
@@ -199,7 +193,7 @@ func (s *svc) getTokenFromWeb(
 		code = s.getCodeFromPrompt(authURL)
 	}
 
-	fmt.Printf("Authorization code generated: %s\n", code)
+	slog.Debug("Authorization code generated", "code", code)
 	token, err := config.Exchange(context.TODO(), code)
 	if err != nil {
 		slog.Error(exchangeFailed, "error", err)
@@ -209,10 +203,16 @@ func (s *svc) getTokenFromWeb(
 	return token
 }
 
-func (s *svc) saveToken(file string, token *oauth2.Token) {
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+func (s *svc) saveToken(token *oauth2.Token) {
+	dir := filepath.Dir(s.tokenFile)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		slog.Error(cacheTokenFailed, "dir", dir, "error", err)
+		os.Exit(1)
+	}
+
+	f, err := os.OpenFile(s.tokenFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		slog.Error(cacheTokenFailed, "file", file, "error", err)
+		slog.Error(cacheTokenFailed, "file", s.tokenFile, "error", err)
 		os.Exit(1)
 	}
 
@@ -224,4 +224,5 @@ func (s *svc) saveToken(file string, token *oauth2.Token) {
 		slog.Error(cacheTokenFailed, "error", err)
 		os.Exit(1)
 	}
+	slog.Info("Token cached to file", "file", s.tokenFile)
 }
