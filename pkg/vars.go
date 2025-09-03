@@ -21,15 +21,32 @@ var (
 
 func init() {
 	var err error
-	Root, err = os.OpenRoot("/")
+	rootDir, ok := os.LookupEnv("YUTU_ROOT")
+	if !ok {
+		rootDir = "/"
+	}
+	Root, err = os.OpenRoot(rootDir)
 	if err != nil {
 		panic(err)
 	}
 
+	logLevel := slog.LevelInfo
+	if lvl, ok := os.LookupEnv("YUTU_LOG_LEVEL"); ok {
+		switch lvl {
+		case "DEBUG", "debug":
+			logLevel = slog.LevelDebug
+		case "INFO", "info":
+			logLevel = slog.LevelInfo
+		case "WARN", "warn":
+			logLevel = slog.LevelWarn
+		case "ERROR", "error":
+			logLevel = slog.LevelError
+		}
+	}
 	Logger = slog.New(
 		slog.NewTextHandler(
 			os.Stdout, &slog.HandlerOptions{
-				Level: slog.LevelInfo,
+				Level: logLevel,
 			},
 		),
 	)
