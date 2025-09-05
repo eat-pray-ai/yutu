@@ -41,6 +41,7 @@ jobs:
         with:
           coverage-file: ${{ env.COVERAGE_FILE }}
           badge-style: flat-square
+          chart: true
           amend: true
         if: |
           github.event_name == 'push' &&

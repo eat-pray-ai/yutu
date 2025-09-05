@@ -6,6 +6,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://goreportcard.com/report/github.com/eat-pray-ai/yutu)
 [![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)](https://github.com/eat-pray-ai/yutu?tab=Apache-2.0-1-ov-file)
 [![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu)
+[![Go Coverage](https://github.com/eat-pray-ai/yutu/wiki/coverage.svg)](https://raw.githack.com/wiki/eat-pray-ai/yutu/coverage.html)
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/eat-pray-ai/yutu?style=flat-square&logo=github)](https://github.com/eat-pray-ai/yutu/stargazers)
 [![GitHub Downloads](https://img.shields.io/github/downloads/eat-pray-ai/yutu/total?style=flat-square)](https://github.com/eat-pray-ai/yutu/releases/latest)
@@ -19,7 +20,7 @@
 [![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget
 )](https://winstall.app/apps/eat-pray-ai.yutu)
 
-[![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=490920&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
+[![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=988886&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
 `yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more.
 
