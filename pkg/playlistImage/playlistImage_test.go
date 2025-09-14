@@ -16,7 +16,7 @@ func TestNewPlaylistImage(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want PlaylistImage
+		want PlaylistImage[youtube.PlaylistImage]
 	}{
 		{
 			name: "with all options",

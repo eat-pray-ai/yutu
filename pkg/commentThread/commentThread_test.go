@@ -16,7 +16,7 @@ func TestNewCommentThread(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want CommentThread
+		want CommentThread[youtube.CommentThread]
 	}{
 		{
 			name: "with all options",

@@ -23,7 +23,7 @@ func TestNewSearch(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Search
+		want Search[youtube.SearchResult]
 	}{
 		{
 			name: "with all options",

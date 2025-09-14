@@ -16,7 +16,7 @@ func TestNewMember(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Member
+		want Member[youtube.Member]
 	}{
 		{
 			name: "with all options",

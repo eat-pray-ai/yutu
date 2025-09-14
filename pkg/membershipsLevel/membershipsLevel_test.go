@@ -15,7 +15,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want MembershipsLevel
+		want MembershipsLevel[youtube.MembershipsLevel]
 	}{
 		{
 			name: "with all options",

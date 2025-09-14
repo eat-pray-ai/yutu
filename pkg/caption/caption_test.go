@@ -26,7 +26,7 @@ func TestNewCation(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Caption
+		want Caption[youtube.Caption]
 	}{
 		{
 			name: "with all options",

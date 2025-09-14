@@ -15,7 +15,7 @@ func TestNewVideoCategory(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want VideoCategory
+		want VideoCategory[youtube.VideoCategory]
 	}{
 		{
 			name: "with all options",

@@ -29,7 +29,7 @@ func TestNewVideo(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Video
+		want Video[youtube.Video]
 	}{
 		{
 			name: "with all options",

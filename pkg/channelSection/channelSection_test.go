@@ -18,7 +18,7 @@ func TestNewChannelSection(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want ChannelSection
+		want ChannelSection[youtube.ChannelSection]
 	}{
 		{
 			name: "with all options",

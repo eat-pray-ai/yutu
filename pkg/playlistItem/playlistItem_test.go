@@ -16,7 +16,7 @@ func TestNewPlaylistItem(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want PlaylistItem
+		want PlaylistItem[youtube.PlaylistItem]
 	}{
 		{
 			name: "with all options",

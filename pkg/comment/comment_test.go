@@ -21,7 +21,7 @@ func TestNewComment(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Comment
+		want Comment[youtube.Comment]
 	}{
 		{
 			name: "with all options",

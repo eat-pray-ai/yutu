@@ -15,7 +15,7 @@ func TestNewI18nRegion(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want I18nRegion
+		want I18nRegion[youtube.I18nRegion]
 	}{
 		{
 			name: "with all options",

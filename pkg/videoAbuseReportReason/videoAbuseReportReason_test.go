@@ -15,7 +15,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want VideoAbuseReportReason
+		want VideoAbuseReportReason[youtube.VideoAbuseReportReason]
 	}{
 		{
 			name: "with all options",
@@ -61,10 +61,14 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewVideoAbuseReportReason(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewVideoAbuseReportReason() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := NewVideoAbuseReportReason(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
+					t.Errorf("NewVideoAbuseReportReason() = %v, want %v", got, tt.want)
+				}
+			},
+		)
 	}
 }

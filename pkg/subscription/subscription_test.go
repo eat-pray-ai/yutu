@@ -23,7 +23,7 @@ func TestNewSubscription(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Subscription
+		want Subscription[youtube.Subscription]
 	}{
 		{
 			name: "with all options",

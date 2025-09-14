@@ -21,7 +21,7 @@ func TestNewActivity(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Activity
+		want Activity[youtube.Activity]
 	}{
 		{
 			name: "with all options",

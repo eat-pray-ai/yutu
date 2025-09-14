@@ -16,7 +16,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want SuperChatEvent
+		want SuperChatEvent[youtube.SuperChatEvent]
 	}{
 		{
 			name: "with all options",

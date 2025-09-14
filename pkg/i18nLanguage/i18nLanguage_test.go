@@ -15,7 +15,7 @@ func TestNewI18nLanguage(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want I18nLanguage
+		want I18nLanguage[youtube.I18nLanguage]
 	}{
 		{
 			name: "with all options",
