@@ -64,7 +64,7 @@ type video struct {
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
 
-type Video interface {
+type Video[T any] interface {
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Update(string, string, io.Writer) error
@@ -72,12 +72,12 @@ type Video interface {
 	GetRating(string, string, io.Writer) error
 	Delete(io.Writer) error
 	ReportAbuse(io.Writer) error
-	Get([]string) ([]*youtube.Video, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*video)
 
-func NewVideo(opts ...Option) Video {
+func NewVideo(opts ...Option) Video[youtube.Video] {
 	v := &video{}
 
 	for _, opt := range opts {
@@ -119,21 +119,36 @@ func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
-	call = call.MaxResults(v.MaxResults)
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetVideo, err)
+	var items []*youtube.Video
+	pageToken := ""
+	for v.MaxResults > 0 {
+		call = call.MaxResults(min(v.MaxResults, pkg.PerPage))
+		v.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetVideo, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (v *video) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	videos, err := v.Get(parts)
-	if err != nil {
+	if err != nil && videos == nil {
 		return err
 	}
 
@@ -159,7 +174,7 @@ func (v *video) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (v *video) Insert(output string, jpath string, writer io.Writer) error {

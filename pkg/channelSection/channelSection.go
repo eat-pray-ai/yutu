@@ -26,8 +26,8 @@ type channelSection struct {
 	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
-type ChannelSection interface {
-	Get([]string) ([]*youtube.ChannelSection, error)
+type ChannelSection[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 	Delete(writer io.Writer) error
 	// Update()
@@ -36,7 +36,7 @@ type ChannelSection interface {
 
 type Option func(*channelSection)
 
-func NewChannelSection(opts ...Option) ChannelSection {
+func NewChannelSection(opts ...Option) ChannelSection[youtube.ChannelSection] {
 	cs := &channelSection{}
 
 	for _, opt := range opts {

@@ -33,15 +33,15 @@ type commentThread struct {
 	VideoId                      string   `yaml:"video_id" json:"video_id"`
 }
 
-type CommentThread interface {
-	Get([]string) ([]*youtube.CommentThread, error)
+type CommentThread[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 	Insert(output string, s string, writer io.Writer) error
 }
 
 type Option func(*commentThread)
 
-func NewCommentThread(opts ...Option) CommentThread {
+func NewCommentThread(opts ...Option) CommentThread[youtube.CommentThread] {
 	c := &commentThread{}
 
 	for _, opt := range opts {
@@ -53,54 +53,60 @@ func NewCommentThread(opts ...Option) CommentThread {
 
 func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 	call := service.CommentThreads.List(parts)
-
 	if len(c.IDs) > 0 {
 		call = call.Id(c.IDs...)
 	}
-
 	if c.AllThreadsRelatedToChannelId != "" {
 		call = call.AllThreadsRelatedToChannelId(c.AllThreadsRelatedToChannelId)
 	}
-
 	if c.ChannelId != "" {
 		call = call.ChannelId(c.ChannelId)
 	}
-
-	call = call.MaxResults(c.MaxResults)
-
 	if c.ModerationStatus != "" {
 		call = call.ModerationStatus(c.ModerationStatus)
 	}
-
 	if c.Order != "" {
 		call = call.Order(c.Order)
 	}
-
 	if c.SearchTerms != "" {
 		call = call.SearchTerms(c.SearchTerms)
 	}
-
 	if c.TextFormat != "" {
 		call = call.TextFormat(c.TextFormat)
 	}
-
 	if c.VideoId != "" {
 		call = call.VideoId(c.VideoId)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetCommentThread, err)
+	var items []*youtube.CommentThread
+	pageToken := ""
+	for c.MaxResults > 0 {
+		call = call.MaxResults(min(c.MaxResults, pkg.PerPage))
+		c.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetCommentThread, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (c *commentThread) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	commentThreads, err := c.Get(parts)
-	if err != nil {
+	if err != nil && commentThreads == nil {
 		return err
 	}
 
@@ -126,7 +132,7 @@ func (c *commentThread) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (c *commentThread) Insert(

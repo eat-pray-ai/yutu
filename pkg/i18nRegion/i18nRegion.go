@@ -20,14 +20,14 @@ type i18nRegion struct {
 	Hl string `yaml:"hl" json:"hl"`
 }
 
-type I18nRegion interface {
-	Get([]string) ([]*youtube.I18nRegion, error)
+type I18nRegion[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*i18nRegion)
 
-func NewI18nRegion(opts ...Option) I18nRegion {
+func NewI18nRegion(opts ...Option) I18nRegion[youtube.I18nRegion] {
 	i := &i18nRegion{}
 
 	for _, opt := range opts {

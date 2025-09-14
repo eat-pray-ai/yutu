@@ -22,14 +22,14 @@ type superChatEvent struct {
 	MaxResults int64  `yaml:"max_results" json:"max_results"`
 }
 
-type SuperChatEvent interface {
-	Get([]string) ([]*youtube.SuperChatEvent, error)
+type SuperChatEvent[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*superChatEvent)
 
-func NewSuperChatEvent(opts ...Option) SuperChatEvent {
+func NewSuperChatEvent(opts ...Option) SuperChatEvent[youtube.SuperChatEvent] {
 	s := &superChatEvent{}
 
 	for _, opt := range opts {
@@ -44,22 +44,37 @@ func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) 
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
 	}
-	call = call.MaxResults(s.MaxResults)
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetSuperChatEvent, err)
+	var items []*youtube.SuperChatEvent
+	pageToken := ""
+	for s.MaxResults > 0 {
+		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
+		s.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetSuperChatEvent, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (s *superChatEvent) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	events, err := s.Get(parts)
-	if err != nil {
-		return errors.Join(errGetSuperChatEvent, err)
+	if err != nil && events == nil {
+		return err
 	}
 
 	switch output {
@@ -83,7 +98,7 @@ func (s *superChatEvent) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func WithHl(hl string) Option {

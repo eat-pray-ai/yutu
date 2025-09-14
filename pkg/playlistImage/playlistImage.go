@@ -36,8 +36,8 @@ type playlistImage struct {
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
 
-type PlaylistImage interface {
-	Get([]string) ([]*youtube.PlaylistImage, error)
+type PlaylistImage[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Update(string, string, io.Writer) error
@@ -46,7 +46,7 @@ type PlaylistImage interface {
 
 type Option func(*playlistImage)
 
-func NewPlaylistImage(opts ...Option) PlaylistImage {
+func NewPlaylistImage(opts ...Option) PlaylistImage[youtube.PlaylistImage] {
 	pi := &playlistImage{}
 	for _, opt := range opts {
 		opt(pi)
@@ -57,7 +57,6 @@ func NewPlaylistImage(opts ...Option) PlaylistImage {
 func (pi *playlistImage) Get(parts []string) ([]*youtube.PlaylistImage, error) {
 	call := service.PlaylistImages.List()
 	call = call.Part(parts...)
-
 	if pi.Parent != "" {
 		call = call.Parent(pi.Parent)
 	}
@@ -67,21 +66,36 @@ func (pi *playlistImage) Get(parts []string) ([]*youtube.PlaylistImage, error) {
 	if pi.OnBehalfOfContentOwnerChannel != "" {
 		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
 	}
-	call = call.MaxResults(pi.MaxResults)
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetPlaylistImage, err)
+	var items []*youtube.PlaylistImage
+	pageToken := ""
+	for pi.MaxResults > 0 {
+		call = call.MaxResults(min(pi.MaxResults, pkg.PerPage))
+		pi.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetPlaylistImage, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (pi *playlistImage) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	playlistImages, err := pi.Get(parts)
-	if err != nil {
+	if err != nil && playlistImages == nil {
 		return err
 	}
 
@@ -103,7 +117,7 @@ func (pi *playlistImage) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (pi *playlistImage) Insert(

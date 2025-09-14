@@ -38,17 +38,17 @@ type playlistItem struct {
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 }
 
-type PlaylistItem interface {
+type PlaylistItem[T any] interface {
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Update(string, string, io.Writer) error
 	Delete(io.Writer) error
-	Get([]string) ([]*youtube.PlaylistItem, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*playlistItem)
 
-func NewPlaylistItem(opts ...Option) PlaylistItem {
+func NewPlaylistItem(opts ...Option) PlaylistItem[youtube.PlaylistItem] {
 	p := &playlistItem{}
 
 	for _, opt := range opts {
@@ -72,20 +72,36 @@ func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 	if pi.VideoId != "" {
 		call = call.VideoId(pi.VideoId)
 	}
-	call = call.MaxResults(pi.MaxResults)
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetPlaylistItem, err)
+
+	var items []*youtube.PlaylistItem
+	pageToken := ""
+	for pi.MaxResults > 0 {
+		call = call.MaxResults(min(pi.MaxResults, pkg.PerPage))
+		pi.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetPlaylistItem, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (pi *playlistItem) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	playlistItems, err := pi.Get(parts)
-	if err != nil {
+	if err != nil && playlistItems == nil {
 		return err
 	}
 
@@ -118,7 +134,7 @@ func (pi *playlistItem) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (pi *playlistItem) Insert(

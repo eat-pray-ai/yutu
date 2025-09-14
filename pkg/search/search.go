@@ -49,14 +49,14 @@ type search struct {
 	VideoType                 string   `yaml:"video_type" json:"video_type"`
 }
 
-type Search interface {
-	Get([]string) ([]*youtube.SearchResult, error)
+type Search[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*search)
 
-func NewSearch(opts ...Option) Search {
+func NewSearch(opts ...Option) Search[youtube.SearchResult] {
 	s := &search{}
 
 	for _, opt := range opts {
@@ -71,130 +71,117 @@ func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 	if s.ChannelId != "" {
 		call.ChannelId(s.ChannelId)
 	}
-
 	if s.ChannelType != "" {
 		call.ChannelType(s.ChannelType)
 	}
-
 	if s.EventType != "" {
 		call.EventType(s.EventType)
 	}
-
 	if s.ForContentOwner != nil {
 		call.ForContentOwner(*s.ForContentOwner)
 	}
-
 	if s.ForDeveloper != nil {
 		call.ForDeveloper(*s.ForDeveloper)
 	}
-
 	if s.ForMine != nil {
 		call.ForMine(*s.ForMine)
 	}
-
 	if s.Location != "" {
 		call.Location(s.Location)
 	}
-
 	if s.LocationRadius != "" {
 		call.LocationRadius(s.LocationRadius)
 	}
-
-	call.MaxResults(s.MaxResults)
-
 	if s.OnBehalfOfContentOwner != "" {
 		call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
 	}
-
 	if s.Order != "" {
 		call.Order(s.Order)
 	}
-
 	if s.PublishedAfter != "" {
 		call.PublishedAfter(s.PublishedAfter)
 	}
-
 	if s.PublishedBefore != "" {
 		call.PublishedBefore(s.PublishedBefore)
 	}
-
 	if s.Q != "" {
 		call.Q(s.Q)
 	}
-
 	if s.RegionCode != "" {
 		call.RegionCode(s.RegionCode)
 	}
-
 	if s.RelevanceLanguage != "" {
 		call.RelevanceLanguage(s.RelevanceLanguage)
 	}
-
 	if s.SafeSearch != "" {
 		call.SafeSearch(s.SafeSearch)
 	}
-
 	if s.TopicId != "" {
 		call.TopicId(s.TopicId)
 	}
-
 	if len(s.Types) > 0 {
 		call.Type(s.Types...)
 	}
-
 	if s.VideoCaption != "" {
 		call.VideoCaption(s.VideoCaption)
 	}
-
 	if s.VideoCategoryId != "" {
 		call.VideoCategoryId(s.VideoCategoryId)
 	}
-
 	if s.VideoDefinition != "" {
 		call.VideoDefinition(s.VideoDefinition)
 	}
-
 	if s.VideoDimension != "" {
 		call.VideoDimension(s.VideoDimension)
 	}
-
 	if s.VideoDuration != "" {
 		call.VideoDuration(s.VideoDuration)
 	}
-
 	if s.VideoEmbeddable != "" {
 		call.VideoEmbeddable(s.VideoEmbeddable)
 	}
-
 	if s.VideoLicense != "" {
 		call.VideoLicense(s.VideoLicense)
 	}
-
 	if s.VideoPaidProductPlacement != "" {
 		call.VideoPaidProductPlacement(s.VideoPaidProductPlacement)
 	}
-
 	if s.VideoSyndicated != "" {
 		call.VideoSyndicated(s.VideoSyndicated)
 	}
-
 	if s.VideoType != "" {
 		call.VideoType(s.VideoType)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetSearch, err)
+	var items []*youtube.SearchResult
+	pageToken := ""
+	for s.MaxResults > 0 {
+		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
+		s.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetSearch, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (s *search) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	results, err := s.Get(parts)
-	if err != nil {
+	if err != nil && results == nil {
 		return err
 	}
 
@@ -225,7 +212,7 @@ func (s *search) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func WithChannelId(channelId string) Option {

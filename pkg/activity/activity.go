@@ -27,14 +27,14 @@ type activity struct {
 	RegionCode      string `yaml:"region_code" json:"region_code"`
 }
 
-type Activity interface {
+type Activity[T any] interface {
 	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*youtube.Activity, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*activity)
 
-func NewActivity(opts ...Option) Activity {
+func NewActivity(opts ...Option) Activity[youtube.Activity] {
 	a := &activity{}
 
 	for _, opt := range opts {
@@ -58,9 +58,8 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 		call = call.Mine(*a.Mine)
 	}
 
-	call.MaxResults(a.MaxResults)
-
 	if a.PublishedAfter != "" {
+		// TODO: update call
 		call.PublishedAfter(a.PublishedAfter)
 	}
 
@@ -72,19 +71,35 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 		call.RegionCode(a.RegionCode)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetActivity, err)
+	var items []*youtube.Activity
+	pageToken := ""
+	for a.MaxResults > 0 {
+		call = call.MaxResults(min(a.MaxResults, pkg.PerPage))
+		a.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetActivity, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (a *activity) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	activities, err := a.Get(parts)
-	if err != nil {
+	if err != nil && activities == nil {
 		return err
 	}
 
@@ -109,7 +124,7 @@ func (a *activity) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func WithChannelId(channelId string) Option {

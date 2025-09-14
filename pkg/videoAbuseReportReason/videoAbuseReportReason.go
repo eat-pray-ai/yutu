@@ -20,14 +20,14 @@ type videoAbuseReportReason struct {
 	Hl string `yaml:"hl" json:"hl"`
 }
 
-type VideoAbuseReportReason interface {
-	Get([]string) ([]*youtube.VideoAbuseReportReason, error)
+type VideoAbuseReportReason[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*videoAbuseReportReason)
 
-func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason {
+func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason[youtube.VideoAbuseReportReason] {
 	va := &videoAbuseReportReason{}
 	for _, o := range opt {
 		o(va)

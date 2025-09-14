@@ -39,15 +39,15 @@ type channel struct {
 	Title           string `yaml:"title" json:"title"`
 }
 
-type Channel interface {
+type Channel[T youtube.Channel] interface {
 	List([]string, string, string, io.Writer) error
 	Update(string, string, io.Writer) error
-	Get([]string) ([]*youtube.Channel, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*channel)
 
-func NewChannel(opts ...Option) Channel {
+func NewChannel(opts ...Option) Channel[youtube.Channel] {
 	c := &channel{}
 
 	for _, opt := range opts {
@@ -62,54 +62,59 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
 	}
-
 	if c.ForHandle != "" {
 		call = call.ForHandle(c.ForHandle)
 	}
-
 	if c.ForUsername != "" {
 		call = call.ForUsername(c.ForUsername)
 	}
-
 	if c.Hl != "" {
 		call = call.Hl(c.Hl)
 	}
-
 	if len(c.IDs) > 0 {
 		call = call.Id(c.IDs...)
 	}
-
 	if c.ManagedByMe != nil {
 		call = call.ManagedByMe(*c.ManagedByMe)
 	}
-
-	call = call.MaxResults(c.MaxResults)
-
 	if c.Mine != nil {
 		call = call.Mine(*c.Mine)
 	}
-
 	if c.MySubscribers != nil {
 		call = call.MySubscribers(*c.MySubscribers)
 	}
-
 	if c.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetChannel, err)
+	var items []*youtube.Channel
+	pageToken := ""
+	for c.MaxResults > 0 {
+		call = call.MaxResults(min(c.MaxResults, pkg.PerPage))
+		c.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetChannel, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (c *channel) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	channels, err := c.Get(parts)
-	if err != nil {
+	if err != nil && channels == nil {
 		return err
 	}
 
@@ -131,7 +136,7 @@ func (c *channel) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (c *channel) Update(output string, jpath string, writer io.Writer) error {

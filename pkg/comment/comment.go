@@ -38,8 +38,8 @@ type comment struct {
 	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating"`
 }
 
-type Comment interface {
-	Get([]string) ([]*youtube.Comment, error)
+type Comment[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Update(string, string, io.Writer) error
@@ -50,7 +50,7 @@ type Comment interface {
 
 type Option func(*comment)
 
-func NewComment(opts ...Option) Comment {
+func NewComment(opts ...Option) Comment[youtube.Comment] {
 	c := &comment{}
 
 	for _, opt := range opts {
@@ -62,34 +62,45 @@ func NewComment(opts ...Option) Comment {
 
 func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 	call := service.Comments.List(parts)
-
 	if c.IDs[0] != "" {
 		call = call.Id(c.IDs...)
 	}
-
-	call = call.MaxResults(c.MaxResults)
-
 	if c.ParentId != "" {
 		call = call.ParentId(c.ParentId)
 	}
-
 	if c.TextFormat != "" {
 		call = call.TextFormat(c.TextFormat)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetComment, err)
+	var items []*youtube.Comment
+	pageToken := ""
+	for c.MaxResults > 0 {
+		call = call.MaxResults(min(c.MaxResults, pkg.PerPage))
+		c.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetComment, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (c *comment) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	comments, err := c.Get(parts)
-	if err != nil {
+	if err != nil && comments == nil {
 		return err
 	}
 
@@ -114,7 +125,7 @@ func (c *comment) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (c *comment) Insert(output string, jpath string, writer io.Writer) error {

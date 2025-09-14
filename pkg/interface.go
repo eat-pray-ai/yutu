@@ -4,6 +4,10 @@ import (
 	"io"
 )
 
+type Getter[T any] interface {
+	Get([]string) ([]*T, error)
+}
+
 type Lister interface {
 	List([]string, string, string, io.Writer) error
 }

@@ -22,14 +22,14 @@ type videoCategory struct {
 	RegionCode string   `yaml:"region_code" json:"region_code"`
 }
 
-type VideoCategory interface {
-	Get([]string) ([]*youtube.VideoCategory, error)
+type VideoCategory[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*videoCategory)
 
-func NewVideoCategory(opt ...Option) VideoCategory {
+func NewVideoCategory(opt ...Option) VideoCategory[youtube.VideoCategory] {
 	vc := &videoCategory{}
 	for _, o := range opt {
 		o(vc)

@@ -41,18 +41,18 @@ type caption struct {
 	Tlang                  string   `yaml:"tlang" json:"tlang"`
 }
 
-type Caption interface {
-	Get(parts []string) ([]*youtube.Caption, error)
-	List(parts []string, output string, s string, writer io.Writer) error
-	Insert(output string, s string, writer io.Writer) error
-	Update(output string, s string, writer io.Writer) error
-	Delete(writer io.Writer) error
-	Download(writer io.Writer) error
+type Caption[T youtube.Caption] interface {
+	Get([]string) ([]*T, error)
+	List([]string, string, string, io.Writer) error
+	Insert(string, string, io.Writer) error
+	Update(string, string, io.Writer) error
+	Delete(io.Writer) error
+	Download(io.Writer) error
 }
 
 type Option func(*caption)
 
-func NewCation(opts ...Option) Caption {
+func NewCation(opts ...Option) Caption[youtube.Caption] {
 	c := &caption{}
 	for _, opt := range opts {
 		opt(c)
@@ -112,7 +112,9 @@ func (c *caption) List(
 	return nil
 }
 
-func (c *caption) Insert(output string, jpath string, writer io.Writer) error {
+func (c *caption) Insert(
+	output string, jpath string, writer io.Writer,
+) error {
 	file, err := pkg.Root.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
@@ -159,7 +161,9 @@ func (c *caption) Insert(output string, jpath string, writer io.Writer) error {
 	return nil
 }
 
-func (c *caption) Update(output string, jpath string, writer io.Writer) error {
+func (c *caption) Update(
+	output string, jpath string, writer io.Writer,
+) error {
 	captions, err := c.Get([]string{"snippet"})
 	if err != nil {
 		return errors.Join(errUpdateCaption, err)

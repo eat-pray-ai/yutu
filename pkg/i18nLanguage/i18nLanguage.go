@@ -20,14 +20,14 @@ type i18nLanguage struct {
 	Hl string `yaml:"hl" json:"hl"`
 }
 
-type I18nLanguage interface {
-	Get([]string) ([]*youtube.I18nLanguage, error)
+type I18nLanguage[T youtube.I18nLanguage] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 }
 
 type Option func(*i18nLanguage)
 
-func NewI18nLanguage(opts ...Option) I18nLanguage {
+func NewI18nLanguage(opts ...Option) I18nLanguage[youtube.I18nLanguage] {
 	i := &i18nLanguage{}
 
 	for _, opt := range opts {
@@ -37,7 +37,9 @@ func NewI18nLanguage(opts ...Option) I18nLanguage {
 	return i
 }
 
-func (i *i18nLanguage) Get(parts []string) ([]*youtube.I18nLanguage, error) {
+func (i *i18nLanguage) Get(parts []string) (
+	[]*youtube.I18nLanguage, error,
+) {
 	call := service.I18nLanguages.List(parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)

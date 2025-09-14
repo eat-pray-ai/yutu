@@ -37,17 +37,17 @@ type playlist struct {
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 }
 
-type Playlist interface {
+type Playlist[T any] interface {
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Update(string, string, io.Writer) error
 	Delete(io.Writer) error
-	Get([]string) ([]*youtube.Playlist, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*playlist)
 
-func NewPlaylist(opts ...Option) Playlist {
+func NewPlaylist(opts ...Option) Playlist[youtube.Playlist] {
 	p := &playlist{}
 
 	for _, opt := range opts {
@@ -69,7 +69,6 @@ func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 	if p.Mine != nil {
 		call = call.Mine(*p.Mine)
 	}
-	call = call.MaxResults(p.MaxResults)
 	if p.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
 	}
@@ -77,19 +76,35 @@ func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetPlaylist, err)
+	var items []*youtube.Playlist
+	pageToken := ""
+	for p.MaxResults > 0 {
+		call = call.MaxResults(min(p.MaxResults, pkg.PerPage))
+		p.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetPlaylist, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (p *playlist) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	playlists, err := p.Get(parts)
-	if err != nil {
+	if err != nil && playlists == nil {
 		return err
 	}
 
@@ -109,7 +124,7 @@ func (p *playlist) List(
 			tb.AppendRow(table.Row{pl.Id, pl.Snippet.ChannelId, pl.Snippet.Title})
 		}
 	}
-	return nil
+	return err
 }
 
 func (p *playlist) Insert(output string, jpath string, writer io.Writer) error {

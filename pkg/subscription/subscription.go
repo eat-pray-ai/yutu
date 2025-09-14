@@ -36,8 +36,8 @@ type subscription struct {
 	Title                         string   `yaml:"title" json:"title"`
 }
 
-type Subscription interface {
-	Get([]string) ([]*youtube.Subscription, error)
+type Subscription[T any] interface {
+	Get([]string) ([]*T, error)
 	List([]string, string, string, io.Writer) error
 	Insert(string, string, io.Writer) error
 	Delete(io.Writer) error
@@ -45,7 +45,7 @@ type Subscription interface {
 
 type Option func(*subscription)
 
-func NewSubscription(opts ...Option) Subscription {
+func NewSubscription(opts ...Option) Subscription[youtube.Subscription] {
 	s := &subscription{}
 
 	for _, opt := range opts {
@@ -66,8 +66,6 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 	if s.ForChannelId != "" {
 		call = call.ForChannelId(s.ForChannelId)
 	}
-	call = call.MaxResults(s.MaxResults)
-
 	if s.Mine != nil {
 		call = call.Mine(*s.Mine)
 	}
@@ -77,7 +75,6 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 	if s.MySubscribers != nil {
 		call = call.MySubscribers(*s.MySubscribers)
 	}
-
 	if s.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
 	}
@@ -88,20 +85,36 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 		call = call.Order(s.Order)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetSubscription, err)
+	var items []*youtube.Subscription
+	pageToken := ""
+	for s.MaxResults > 0 {
+		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
+		s.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetSubscription, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (s *subscription) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	subscriptions, err := s.Get(parts)
-	if err != nil {
-		return errors.Join(errGetSubscription, err)
+	if err != nil && subscriptions == nil {
+		return err
 	}
 
 	switch output {
@@ -133,7 +146,7 @@ func (s *subscription) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func (s *subscription) Insert(

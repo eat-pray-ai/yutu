@@ -18,14 +18,14 @@ var (
 
 type membershipsLevel struct{}
 
-type MembershipsLevel interface {
+type MembershipsLevel[T any] interface {
 	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*youtube.MembershipsLevel, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*membershipsLevel)
 
-func NewMembershipsLevel(opts ...Option) MembershipsLevel {
+func NewMembershipsLevel(opts ...Option) MembershipsLevel[youtube.MembershipsLevel] {
 	m := &membershipsLevel{}
 
 	for _, opt := range opts {

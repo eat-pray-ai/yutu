@@ -24,14 +24,14 @@ type member struct {
 	Mode             string `yaml:"mode" json:"mode"`
 }
 
-type Member interface {
+type Member[T any] interface {
 	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*youtube.Member, error)
+	Get([]string) ([]*T, error)
 }
 
 type Option func(*member)
 
-func NewMember(opts ...Option) Member {
+func NewMember(opts ...Option) Member[youtube.Member] {
 	m := &member{}
 
 	for _, opt := range opts {
@@ -49,24 +49,39 @@ func (m *member) Get(parts []string) ([]*youtube.Member, error) {
 	if m.HasAccessToLevel != "" {
 		call = call.HasAccessToLevel(m.HasAccessToLevel)
 	}
-	call = call.MaxResults(m.MaxResults)
 	if m.Mode != "" {
 		call = call.Mode(m.Mode)
 	}
 
-	res, err := call.Do()
-	if err != nil {
-		return nil, errors.Join(errGetMember, err)
+	var items []*youtube.Member
+	pageToken := ""
+	for m.MaxResults > 0 {
+		call = call.MaxResults(min(m.MaxResults, pkg.PerPage))
+		m.MaxResults -= pkg.PerPage
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errGetMember, err)
+		}
+
+		items = append(items, res.Items...)
+		pageToken = res.NextPageToken
+		if pageToken == "" || len(res.Items) == 0 {
+			break
+		}
 	}
 
-	return res.Items, nil
+	return items, nil
 }
 
 func (m *member) List(
 	parts []string, output string, jpath string, writer io.Writer,
 ) error {
 	members, err := m.Get(parts)
-	if err != nil {
+	if err != nil && members == nil {
 		return err
 	}
 
@@ -91,7 +106,7 @@ func (m *member) List(
 			)
 		}
 	}
-	return nil
+	return err
 }
 
 func WithMemberChannelId(channelId string) Option {
