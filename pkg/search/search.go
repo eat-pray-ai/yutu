@@ -69,88 +69,88 @@ func NewSearch(opts ...Option) Search[youtube.SearchResult] {
 func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 	call := service.Search.List(parts)
 	if s.ChannelId != "" {
-		call.ChannelId(s.ChannelId)
+		call = call.ChannelId(s.ChannelId)
 	}
 	if s.ChannelType != "" {
-		call.ChannelType(s.ChannelType)
+		call = call.ChannelType(s.ChannelType)
 	}
 	if s.EventType != "" {
-		call.EventType(s.EventType)
+		call = call.EventType(s.EventType)
 	}
 	if s.ForContentOwner != nil {
-		call.ForContentOwner(*s.ForContentOwner)
+		call = call.ForContentOwner(*s.ForContentOwner)
 	}
 	if s.ForDeveloper != nil {
-		call.ForDeveloper(*s.ForDeveloper)
+		call = call.ForDeveloper(*s.ForDeveloper)
 	}
 	if s.ForMine != nil {
-		call.ForMine(*s.ForMine)
+		call = call.ForMine(*s.ForMine)
 	}
 	if s.Location != "" {
-		call.Location(s.Location)
+		call = call.Location(s.Location)
 	}
 	if s.LocationRadius != "" {
-		call.LocationRadius(s.LocationRadius)
+		call = call.LocationRadius(s.LocationRadius)
 	}
 	if s.OnBehalfOfContentOwner != "" {
-		call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
 	}
 	if s.Order != "" {
-		call.Order(s.Order)
+		call = call.Order(s.Order)
 	}
 	if s.PublishedAfter != "" {
-		call.PublishedAfter(s.PublishedAfter)
+		call = call.PublishedAfter(s.PublishedAfter)
 	}
 	if s.PublishedBefore != "" {
-		call.PublishedBefore(s.PublishedBefore)
+		call = call.PublishedBefore(s.PublishedBefore)
 	}
 	if s.Q != "" {
-		call.Q(s.Q)
+		call = call.Q(s.Q)
 	}
 	if s.RegionCode != "" {
-		call.RegionCode(s.RegionCode)
+		call = call.RegionCode(s.RegionCode)
 	}
 	if s.RelevanceLanguage != "" {
-		call.RelevanceLanguage(s.RelevanceLanguage)
+		call = call.RelevanceLanguage(s.RelevanceLanguage)
 	}
 	if s.SafeSearch != "" {
-		call.SafeSearch(s.SafeSearch)
+		call = call.SafeSearch(s.SafeSearch)
 	}
 	if s.TopicId != "" {
-		call.TopicId(s.TopicId)
+		call = call.TopicId(s.TopicId)
 	}
 	if len(s.Types) > 0 {
-		call.Type(s.Types...)
+		call = call.Type(s.Types...)
 	}
 	if s.VideoCaption != "" {
-		call.VideoCaption(s.VideoCaption)
+		call = call.VideoCaption(s.VideoCaption)
 	}
 	if s.VideoCategoryId != "" {
-		call.VideoCategoryId(s.VideoCategoryId)
+		call = call.VideoCategoryId(s.VideoCategoryId)
 	}
 	if s.VideoDefinition != "" {
-		call.VideoDefinition(s.VideoDefinition)
+		call = call.VideoDefinition(s.VideoDefinition)
 	}
 	if s.VideoDimension != "" {
-		call.VideoDimension(s.VideoDimension)
+		call = call.VideoDimension(s.VideoDimension)
 	}
 	if s.VideoDuration != "" {
-		call.VideoDuration(s.VideoDuration)
+		call = call.VideoDuration(s.VideoDuration)
 	}
 	if s.VideoEmbeddable != "" {
-		call.VideoEmbeddable(s.VideoEmbeddable)
+		call = call.VideoEmbeddable(s.VideoEmbeddable)
 	}
 	if s.VideoLicense != "" {
-		call.VideoLicense(s.VideoLicense)
+		call = call.VideoLicense(s.VideoLicense)
 	}
 	if s.VideoPaidProductPlacement != "" {
-		call.VideoPaidProductPlacement(s.VideoPaidProductPlacement)
+		call = call.VideoPaidProductPlacement(s.VideoPaidProductPlacement)
 	}
 	if s.VideoSyndicated != "" {
-		call.VideoSyndicated(s.VideoSyndicated)
+		call = call.VideoSyndicated(s.VideoSyndicated)
 	}
 	if s.VideoType != "" {
-		call.VideoType(s.VideoType)
+		call = call.VideoType(s.VideoType)
 	}
 
 	var items []*youtube.SearchResult

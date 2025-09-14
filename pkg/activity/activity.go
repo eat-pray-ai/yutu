@@ -59,16 +59,15 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 	}
 
 	if a.PublishedAfter != "" {
-		// TODO: update call
-		call.PublishedAfter(a.PublishedAfter)
+		call = call.PublishedAfter(a.PublishedAfter)
 	}
 
 	if a.PublishedBefore != "" {
-		call.PublishedBefore(a.PublishedBefore)
+		call = call.PublishedBefore(a.PublishedBefore)
 	}
 
 	if a.RegionCode != "" {
-		call.RegionCode(a.RegionCode)
+		call = call.RegionCode(a.RegionCode)
 	}
 
 	var items []*youtube.Activity
