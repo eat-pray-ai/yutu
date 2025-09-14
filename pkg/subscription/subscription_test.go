@@ -1,6 +1,7 @@
 package subscription
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -101,7 +102,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &subscription{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

@@ -18,6 +18,14 @@ before:
     - go install github.com/tc-hib/go-winres@latest
     - go generate ./...
 
+gomod:
+  proxy: true
+
+report_sizes: true
+
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
 builds:
   - id: yutu
     binary: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
@@ -45,10 +53,11 @@ builds:
       - -X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .CommitDate }}
       - -X {{ .Env.MODULE_PATH }}/cmd.Os={{ .Os }}
       - -X {{ .Env.MODULE_PATH }}/cmd.Arch={{ .Arch }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
-  - format: binary
-    builds:
+  - formats: [ 'binary' ]
+    ids:
       - yutu
     name_template: "{{ .Binary }}"
 

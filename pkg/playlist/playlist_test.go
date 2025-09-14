@@ -1,6 +1,7 @@
 package playlist
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -89,7 +90,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &playlist{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

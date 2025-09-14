@@ -3,6 +3,7 @@ package activity
 import (
 	"errors"
 	"io"
+	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -127,8 +128,10 @@ func WithHome(home *bool) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(a *activity) {
-		if maxResults <= 0 {
+		if maxResults < 0 {
 			maxResults = 1
+		} else if maxResults == 0 {
+			maxResults = math.MaxInt64
 		}
 		a.MaxResults = maxResults
 	}

@@ -12,6 +12,7 @@ const (
 	SilentUsage = "json, yaml, or silent"
 	JPUsage     = "JSONPath expression to filter the output"
 	JsonMIME    = "application/json"
+	PerPage     = 20
 )
 
 var (

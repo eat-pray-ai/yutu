@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -105,7 +106,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &channel{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

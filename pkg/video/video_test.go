@@ -1,6 +1,7 @@
 package video
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -154,7 +155,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &video{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

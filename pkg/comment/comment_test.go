@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -94,7 +95,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &comment{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

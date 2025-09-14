@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -592,8 +593,10 @@ func WithMaxWidth(maxWidth int64) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(v *video) {
-		if maxResults <= 0 {
+		if maxResults < 0 {
 			maxResults = 1
+		} else if maxResults == 0 {
+			maxResults = math.MaxInt64
 		}
 		v.MaxResults = maxResults
 	}

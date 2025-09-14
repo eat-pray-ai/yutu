@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -281,8 +282,10 @@ func WithChannelId(channelId string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(c *comment) {
-		if maxResults <= 0 {
+		if maxResults < 0 {
 			maxResults = 1
+		} else if maxResults == 0 {
+			maxResults = math.MaxInt64
 		}
 		c.MaxResults = maxResults
 	}

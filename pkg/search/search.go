@@ -3,6 +3,7 @@ package search
 import (
 	"errors"
 	"io"
+	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -283,8 +284,10 @@ func WithLocationRadius(locationRadius string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(s *search) {
-		if maxResults <= 0 {
+		if maxResults < 0 {
 			maxResults = 1
+		} else if maxResults == 0 {
+			maxResults = math.MaxInt64
 		}
 		s.MaxResults = maxResults
 	}

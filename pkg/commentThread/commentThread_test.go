@@ -1,6 +1,7 @@
 package commentThread
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -64,7 +65,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &commentThread{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

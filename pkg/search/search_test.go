@@ -1,6 +1,7 @@
 package search
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -133,7 +134,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &search{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

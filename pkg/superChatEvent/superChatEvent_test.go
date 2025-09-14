@@ -1,6 +1,7 @@
 package superChatEvent
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -46,7 +47,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &superChatEvent{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

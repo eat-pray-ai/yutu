@@ -3,6 +3,7 @@ package member
 import (
 	"errors"
 	"io"
+	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -107,8 +108,10 @@ func WithHasAccessToLevel(level string) Option {
 
 func WithMaxResults(maxResults int64) Option {
 	return func(m *member) {
-		if maxResults <= 0 {
+		if maxResults < 0 {
 			maxResults = 1
+		} else if maxResults == 0 {
+			maxResults = math.MaxInt64
 		}
 		m.MaxResults = maxResults
 	}

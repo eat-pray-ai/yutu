@@ -1,6 +1,7 @@
 package playlistImage
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -62,7 +63,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &playlistImage{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

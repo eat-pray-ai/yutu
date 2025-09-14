@@ -1,6 +1,7 @@
 package playlistItem
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -68,7 +69,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &playlistItem{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

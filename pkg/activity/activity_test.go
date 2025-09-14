@@ -1,6 +1,7 @@
 package activity
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -84,7 +85,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &activity{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{

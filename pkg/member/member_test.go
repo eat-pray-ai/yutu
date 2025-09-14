@@ -1,6 +1,7 @@
 package member
 
 import (
+	"math"
 	"reflect"
 	"testing"
 
@@ -50,7 +51,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &member{
-				MaxResults: 1,
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
