@@ -126,6 +126,7 @@ func update(writer io.Writer) error {
 		comment.WithCanRate(canRate),
 		comment.WithTextOriginal(textOriginal),
 		comment.WithViewerRating(viewerRating),
+		comment.WithMaxResults(1),
 		comment.WithService(nil),
 	)
 

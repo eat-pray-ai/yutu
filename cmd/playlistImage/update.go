@@ -116,6 +116,7 @@ func update(writer io.Writer) error {
 		playlistImage.WithType(type_),
 		playlistImage.WithHeight(height),
 		playlistImage.WithWidth(width),
+		playlistImage.WithMaxResults(1),
 		playlistImage.WithService(nil),
 	)
 

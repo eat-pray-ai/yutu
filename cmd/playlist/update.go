@@ -139,6 +139,7 @@ func update(writer io.Writer) error {
 		playlist.WithTags(tags),
 		playlist.WithLanguage(language),
 		playlist.WithPrivacy(privacy),
+		playlist.WithMaxResults(1),
 		playlist.WithService(nil),
 	)
 

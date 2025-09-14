@@ -129,6 +129,7 @@ func update(writer io.Writer) error {
 		playlistItem.WithDescription(description),
 		playlistItem.WithPrivacy(privacy),
 		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		playlistItem.WithMaxResults(1),
 		playlistItem.WithService(nil),
 	)
 

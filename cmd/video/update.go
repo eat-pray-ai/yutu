@@ -179,6 +179,7 @@ func update(writer io.Writer) error {
 		video.WithCategory(categoryId),
 		video.WithPrivacy(privacy),
 		video.WithEmbeddable(embeddable),
+		video.WithMaxResults(1),
 		video.WithService(nil),
 	)
 

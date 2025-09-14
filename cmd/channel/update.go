@@ -143,6 +143,7 @@ func update(writer io.Writer) error {
 		channel.WithDefaultLanguage(defaultLanguage),
 		channel.WithDescription(description),
 		channel.WithTitle(title),
+		channel.WithMaxResults(1),
 		channel.WithService(nil),
 	)
 
