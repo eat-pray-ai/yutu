@@ -119,7 +119,9 @@ func (c *caption) Insert(
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	caption := &youtube.Caption{
 		Snippet: &youtube.CaptionSnippet{
@@ -210,7 +212,9 @@ func (c *caption) Update(
 		if err != nil {
 			return errors.Join(errUpdateCaption, err)
 		}
-		defer file.Close()
+		defer func(file *os.File) {
+			_ = file.Close()
+		}(file)
 		call = call.Media(file)
 	}
 	if c.OnBehalfOf != "" {
@@ -276,7 +280,9 @@ func (c *caption) Download(writer io.Writer) error {
 	if err != nil {
 		return errors.Join(errDownloadCaption, err)
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(res.Body)
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -287,7 +293,9 @@ func (c *caption) Download(writer io.Writer) error {
 	if err != nil {
 		return errors.Join(errDownloadCaption, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	_, err = file.Write(body)
 	if err != nil {

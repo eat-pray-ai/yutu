@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -127,7 +128,9 @@ func (pi *playlistImage) Insert(
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	playlistImage := &youtube.PlaylistImage{
 		Kind: "youtube#playlistImages",
@@ -199,7 +202,9 @@ func (pi *playlistImage) Update(
 		if err != nil {
 			return errors.Join(errUpdatePlaylistImage, err)
 		}
-		defer file.Close()
+		defer func(file *os.File) {
+			_ = file.Close()
+		}(file)
 		call = call.Media(file)
 	}
 	call = call.Part("id", "kind", "snippet")

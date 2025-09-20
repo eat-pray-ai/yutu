@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"os"
 	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -182,7 +183,9 @@ func (v *video) Insert(output string, jpath string, writer io.Writer) error {
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 
 	if !slices.Contains(v.Tags, "yutu🐰") {
 		v.Tags = append(v.Tags, "yutu🐰")

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -47,7 +48,9 @@ func (cb *channelBanner) Insert(
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 	cbr := &youtube.ChannelBannerResource{}
 
 	call := service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)

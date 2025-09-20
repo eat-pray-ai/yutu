@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
@@ -49,7 +50,9 @@ func (w *watermark) Set(writer io.Writer) error {
 		return errors.Join(errSetWatermark, err)
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 	inVideoBranding := &youtube.InvideoBranding{
 		Position: &youtube.InvideoPosition{},
 		Timing:   &youtube.InvideoTiming{},
