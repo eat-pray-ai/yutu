@@ -3,13 +3,15 @@ package subscription
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,61 @@ const (
 	insertCidUsage = "ID of the channel to be subscribed"
 )
 
+type insertIn struct {
+	SubscriberChannelId string `json:"subscriberChannelId"`
+	Description         string `json:"description"`
+	ChannelId           string `json:"channelId"`
+	Title               string `json:"title"`
+	Output              string `json:"output"`
+	Jsonpath            string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"subscriberChannelId", "description", "channelId", "title",
+		"output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"subscriberChannelId": {
+			Type: "string", Description: scidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"channelId": {
+			Type: "string", Description: insertCidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "subscription-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	subscriptionCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(
@@ -49,49 +104,15 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"subscription-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"subscriberChannelId", mcp.DefaultString(""),
-		mcp.Description(scidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(insertCidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	subscriberChannelId, _ = args["subscriberChannelId"].(string)
-	description, _ = args["description"].(string)
-	channelId, _ = args["channelId"].(string)
-	title, _ = args["title"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	subscriberChannelId = input.SubscriberChannelId
+	description = input.Description
+	channelId = input.ChannelId
+	title = input.Title
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "subscription insert started")
 
@@ -99,17 +120,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "subscription insert failed",
-			"error", err,
-			"args", args,
+			ctx, "subscription insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "subscription insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

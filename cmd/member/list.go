@@ -3,18 +3,83 @@ package member
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/member"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
+type listIn struct {
+	MemberChannelId  string   `json:"memberChannelId"`
+	HasAccessToLevel string   `json:"hasAccessToLevel"`
+	MaxResults       int64    `json:"maxResults"`
+	Mode             string   `json:"mode"`
+	Parts            []string `json:"parts"`
+	Output           string   `json:"output"`
+	Jsonpath         string   `json:"jsonpath"`
+}
+
+var listInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"memberChannelId", "hasAccessToLevel", "maxResults", "mode",
+		"parts", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"memberChannelId": {
+			Type: "string", Description: mcidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"hasAccessToLevel": {
+			Type: "string", Description: hatlUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"maxResults": {
+			Type: "number", Description: pkg.MRUsage,
+			Default: json.RawMessage("5"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"mode": {
+			Type:        "string",
+			Enum:        []any{"listMembersModeUnknown", "updates", "all_current"},
+			Description: mmUsage, Default: json.RawMessage(`"all_current"`),
+		},
+		"parts": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: pkg.PartsUsage,
+			Default:     json.RawMessage(`["snippet"]`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "member-list", Title: short, Description: long,
+			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, listHandler,
+	)
 	memberCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
@@ -45,60 +110,16 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"member-list",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithString(
-		"memberChannelId", mcp.DefaultString(""),
-		mcp.Description(mcidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"hasAccessToLevel", mcp.DefaultString(""),
-		mcp.Description(hatlUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(pkg.MRUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"mode", mcp.Enum("listMembersModeUnknown", "updates", "all_current"),
-		mcp.DefaultString("all_current"), mcp.Description(mmUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"snippet"}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(pkg.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	memberChannelId, _ = args["memberChannelId"].(string)
-	hasAccessToLevel, _ = args["hasAccessToLevel"].(string)
-	maxResultsRaw, _ := args["maxResults"].(float64)
-	maxResults = int64(maxResultsRaw)
-	mode, _ = args["mode"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+) (*mcp.CallToolResult, any, error) {
+	memberChannelId = input.MemberChannelId
+	hasAccessToLevel = input.HasAccessToLevel
+	maxResults = input.MaxResults
+	mode = input.Mode
+	parts = input.Parts
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "member list started")
 
@@ -106,17 +127,15 @@ func listHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "member list failed",
-			"error", err,
-			"args", args,
+			ctx, "member list failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "member list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func list(writer io.Writer) error {

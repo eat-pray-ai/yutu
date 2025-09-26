@@ -3,13 +3,15 @@ package channel
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,74 @@ const (
 	updateIdUsage = "ID of the channel to update"
 )
 
+type updateIn struct {
+	Ids             []string `json:"ids"`
+	Country         string   `json:"country"`
+	CustomUrl       string   `json:"customUrl"`
+	DefaultLanguage string   `json:"defaultLanguage"`
+	Description     string   `json:"description"`
+	Title           string   `json:"title"`
+	Output          string   `json:"output"`
+	Jsonpath        string   `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "country", "customUrl", "defaultLanguage",
+		"description", "title", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: updateIdUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"country": {
+			Type: "string", Description: countryUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"customUrl": {
+			Type: "string", Description: curlUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"defaultLanguage": {
+			Type: "string", Description: dlUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "channel-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	channelCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
@@ -52,69 +120,17 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"channel-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(updateIdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"country", mcp.DefaultString(""),
-		mcp.Description(countryUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"customUrl", mcp.DefaultString(""),
-		mcp.Description(curlUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"defaultLanguage", mcp.DefaultString(""),
-		mcp.Description(dlUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage),
-		mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	country, _ = args["country"].(string)
-	customUrl, _ = args["customUrl"].(string)
-	defaultLanguage, _ = args["defaultLanguage"].(string)
-	description, _ = args["description"].(string)
-	title, _ = args["title"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	country = input.Country
+	customUrl = input.CustomUrl
+	defaultLanguage = input.DefaultLanguage
+	description = input.Description
+	title = input.Title
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "channel update started")
 
@@ -122,17 +138,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "channel update failed",
-			"error", err,
-			"args", args,
+			ctx, "channel update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "channel update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

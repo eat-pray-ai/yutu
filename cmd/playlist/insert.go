@@ -3,13 +3,15 @@ package playlist
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,74 @@ const (
 	insertCidUsage = "Channel id of the playlist"
 )
 
+type insertIn struct {
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Tags        []string `json:"tags"`
+	Language    string   `json:"language"`
+	ChannelId   string   `json:"channelId"`
+	Privacy     string   `json:"privacy"`
+	Output      string   `json:"output"`
+	Jsonpath    string   `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"title", "description", "tags", "language",
+		"channelId", "privacy", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"tags": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: tagsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"language": {
+			Type: "string", Description: languageUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"channelId": {
+			Type: "string", Description: insertCidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"privacy": {
+			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
+			Description: privacyUsage, Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "playlist-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	playlistCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
@@ -50,64 +118,17 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"playlist-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"tags", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(tagsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"language", mcp.DefaultString(""),
-		mcp.Description(languageUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(insertCidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"privacy", mcp.Enum("public", "private", "unlisted"),
-		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	title, _ = args["title"].(string)
-	description, _ = args["description"].(string)
-	tagsRaw, _ := args["tags"].([]any)
-	tags = make([]string, len(tagsRaw))
-	for i, tag := range tagsRaw {
-		tags[i] = tag.(string)
-	}
-	language, _ = args["language"].(string)
-	channelId, _ = args["channelId"].(string)
-	privacy, _ = args["privacy"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	title = input.Title
+	description = input.Description
+	tags = input.Tags
+	language = input.Language
+	channelId = input.ChannelId
+	privacy = input.Privacy
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "playlist insert started")
 
@@ -115,17 +136,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "playlist insert failed",
-			"error", err,
-			"args", args,
+			ctx, "playlist insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "playlist insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

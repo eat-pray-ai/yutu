@@ -3,18 +3,62 @@ package thumbnail
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
+type setIn struct {
+	File     string `json:"file"`
+	VideoId  string `json:"videoId"`
+	Output   string `json:"output"`
+	Jsonpath string `json:"jsonpath"`
+}
+
+var setInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"file", "videoId", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"file": {
+			Type: "string", Description: fileUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"videoId": {
+			Type: "string", Description: vidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(setTool, setHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "thumbnail-set", Title: short, Description: long,
+			InputSchema: setInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, setHandler,
+	)
 	thumbnailCmd.AddCommand(setCmd)
 
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
@@ -39,39 +83,13 @@ var setCmd = &cobra.Command{
 	},
 }
 
-var setTool = mcp.NewTool(
-	"thumbnail-set",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"videoId", mcp.DefaultString(""),
-		mcp.Description(vidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func setHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	file, _ = args["file"].(string)
-	videoId, _ = args["videoId"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input setIn,
+) (*mcp.CallToolResult, any, error) {
+	file = input.File
+	videoId = input.VideoId
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "thumbnail set started")
 
@@ -79,17 +97,15 @@ func setHandler(
 	err := set(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "thumbnail set failed",
-			"error", err,
-			"args", args,
+			ctx, "thumbnail set failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "thumbnail set completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func set(writer io.Writer) error {

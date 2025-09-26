@@ -3,22 +3,64 @@ package membershipsLevel
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/membershipsLevel"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
+type listIn struct {
+	Parts    []string `json:"parts"`
+	Output   string   `json:"output"`
+	Jsonpath string   `json:"jsonpath"`
+}
+
+var listInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"parts", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"parts": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: pkg.PartsUsage,
+			Default:     json.RawMessage(`["id", "snippet"]`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "membershipsLevel-list", Title: short, Description: long,
+			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, listHandler,
+	)
 	membershipsLevelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id, snippet"}, pkg.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
@@ -37,39 +79,12 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"membershipsLevel-list",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id, snippet"}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(pkg.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+) (*mcp.CallToolResult, any, error) {
+	parts = input.Parts
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "membershipsLevel list started")
 
@@ -77,17 +92,15 @@ func listHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "membershipsLevel list failed",
-			"error", err,
-			"args", args,
+			ctx, "membershipsLevel list failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "membershipsLevel list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func list(writer io.Writer) error {

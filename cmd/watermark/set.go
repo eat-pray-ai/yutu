@@ -3,12 +3,14 @@ package watermark
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +19,78 @@ const (
 	setLong  = "Set watermark for channel's video by channel id"
 )
 
+type setIn struct {
+	ChannelId              string `json:"channelId"`
+	File                   string `json:"file"`
+	InVideoPosition        string `json:"inVideoPosition"`
+	DurationMs             int64  `json:"durationMs"`
+	OffsetMs               int64  `json:"offsetMs"`
+	OffsetType             string `json:"offsetType"`
+	OnBehalfOfContentOwner string `json:"onBehalfOfContentOwner"`
+}
+
+var setInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"channelId", "file", "inVideoPosition", "durationMs",
+		"offsetMs", "offsetType", "onBehalfOfContentOwner",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"channelId": {
+			Type:        "string",
+			Description: cidUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"file": {
+			Type:        "string",
+			Description: fileUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"inVideoPosition": {
+			Type:        "string",
+			Enum:        []any{"topLeft", "topRight", "bottomLeft", "bottomRight", ""},
+			Description: ivpUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"durationMs": {
+			Type:        "number",
+			Description: dmUsage,
+			Default:     json.RawMessage("0"),
+		},
+		"offsetMs": {
+			Type:        "number",
+			Description: omUsage,
+			Default:     json.RawMessage("0"),
+		},
+		"offsetType": {
+			Type:        "string",
+			Enum:        []any{"offsetFromStart", "offsetFromEnd", ""},
+			Description: otUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(setTool, setHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name:        "watermark-set",
+			Title:       setShort,
+			Description: setLong,
+			InputSchema: setInSchema,
+			Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, setHandler,
+	)
 	watermarkCmd.AddCommand(setCmd)
 
 	setCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
@@ -50,57 +122,16 @@ var setCmd = &cobra.Command{
 	},
 }
 
-var setTool = mcp.NewTool(
-	"watermark-set",
-	mcp.WithTitleAnnotation(setShort),
-	mcp.WithDescription(setLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"inVideoPosition",
-		mcp.Enum("topLeft", "topRight", "bottomLeft", "bottomRight"),
-		mcp.DefaultString(""), mcp.Description(ivpUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"durationMs", mcp.DefaultNumber(0),
-		mcp.Description(dmUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"offsetMs", mcp.DefaultNumber(0),
-		mcp.Description(omUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"offsetType", mcp.Enum("offsetFromStart", "offsetFromEnd"),
-		mcp.DefaultString(""), mcp.Description(otUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-)
-
 func setHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	channelId, _ = args["channelId"].(string)
-	file, _ = args["file"].(string)
-	inVideoPosition, _ = args["inVideoPosition"].(string)
-	durationMsRaw, _ := args["durationMs"].(float64)
-	durationMs = uint64(durationMsRaw)
-	offsetMsRaw, _ := args["offsetMs"].(float64)
-	offsetMs = uint64(offsetMsRaw)
-	offsetType, _ = args["offsetType"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input setIn,
+) (*mcp.CallToolResult, any, error) {
+	channelId = input.ChannelId
+	file = input.File
+	inVideoPosition = input.InVideoPosition
+	durationMs = uint64(input.DurationMs)
+	offsetMs = uint64(input.OffsetMs)
+	offsetType = input.OffsetType
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
 	slog.InfoContext(ctx, "watermark set started")
 
@@ -108,17 +139,15 @@ func setHandler(
 	err := set(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "watermark set failed",
-			"error", err,
-			"args", args,
+			ctx, "watermark set failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "watermark set completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func set(writer io.Writer) error {

@@ -3,6 +3,7 @@ package comment
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -20,8 +22,71 @@ const (
 	insertPidUsage = "ID of the parent comment"
 )
 
+type insertIn struct {
+	AuthorChannelId string `json:"authorChannelId"`
+	ChannelId       string `json:"channelId"`
+	CanRate         string `json:"canRate"`
+	ParentId        string `json:"parentId"`
+	TextOriginal    string `json:"textOriginal"`
+	VideoId         string `json:"videoId"`
+	Output          string `json:"output"`
+	Jsonpath        string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"authorChannelId", "channelId", "canRate", "parentId",
+		"textOriginal", "videoId", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"authorChannelId": {
+			Type: "string", Description: acidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"channelId": {
+			Type: "string", Description: cidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"canRate": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: crUsage, Default: json.RawMessage(`""`),
+		},
+		"parentId": {
+			Type: "string", Description: insertPidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"textOriginal": {
+			Type: "string", Description: toUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"videoId": {
+			Type: "string", Description: vidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "comment-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	commentCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(
@@ -61,60 +126,17 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"comment-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"authorChannelId", mcp.DefaultString(""),
-		mcp.Description(acidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"canRate", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(crUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"parentId", mcp.DefaultString(""),
-		mcp.Description(insertPidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"textOriginal", mcp.DefaultString(""),
-		mcp.Description(toUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"videoId", mcp.DefaultString(""),
-		mcp.Description(vidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	authorChannelId, _ = args["authorChannelId"].(string)
-	channelId, _ = args["channelId"].(string)
-	canRateRaw, _ := args["canRate"].(string)
-	canRate = utils.BoolPtr(canRateRaw)
-	parentId, _ = args["parentId"].(string)
-	textOriginal, _ = args["textOriginal"].(string)
-	videoId, _ = args["videoId"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	authorChannelId = input.AuthorChannelId
+	channelId = input.ChannelId
+	canRate = utils.BoolPtr(input.CanRate)
+	parentId = input.ParentId
+	textOriginal = input.TextOriginal
+	videoId = input.VideoId
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "comment insert started")
 
@@ -122,17 +144,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "comment insert failed",
-			"error", err,
-			"args", args,
+			ctx, "comment insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "comment insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

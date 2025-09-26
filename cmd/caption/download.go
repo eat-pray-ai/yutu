@@ -3,12 +3,14 @@ package caption
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -18,8 +20,69 @@ const (
 	downloadIdUsage = "ID of the caption to download"
 )
 
+type downloadIn struct {
+	Ids                    []string `json:"ids"`
+	File                   string   `json:"file"`
+	Tfmt                   string   `json:"tfmt"`
+	Tlang                  string   `json:"tlang"`
+	OnBehalfOf             string   `json:"onBehalfOf"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+}
+
+var downloadInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "file", "tfmt", "tlang", "onBehalfOf", "onBehalfOfContentOwner",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: downloadIdUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"file": {
+			Type:        "string",
+			Description: fileUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"tfmt": {
+			Type:        "string",
+			Enum:        []any{"sbv", "srt", "vtt", ""},
+			Description: tfmtUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"tlang": {
+			Type:        "string",
+			Description: tlangUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOf": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(downloadTool, downloadHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "caption-download", Title: downloadShort, Description: downloadLong,
+			InputSchema: downloadInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, downloadHandler,
+	)
 	captionCmd.AddCommand(downloadCmd)
 
 	downloadCmd.Flags().StringSliceVarP(
@@ -50,54 +113,15 @@ var downloadCmd = &cobra.Command{
 	},
 }
 
-var downloadTool = mcp.NewTool(
-	"caption-download",
-	mcp.WithTitleAnnotation(downloadShort),
-	mcp.WithDescription(downloadLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(downloadIdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"tfmt", mcp.Enum("sbv", "srt", "vtt"),
-		mcp.DefaultString(""), mcp.Description(tfmtUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"tlang", mcp.DefaultString(""),
-		mcp.Description(tlangUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOf", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-)
-
 func downloadHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	file, _ = args["file"].(string)
-	tfmt, _ = args["tfmt"].(string)
-	tlang, _ = args["tlang"].(string)
-	onBehalfOf, _ = args["onBehalfOf"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input downloadIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	file = input.File
+	tfmt = input.Tfmt
+	tlang = input.Tlang
+	onBehalfOf = input.OnBehalfOf
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
 	slog.InfoContext(ctx, "caption download started")
 
@@ -105,17 +129,15 @@ func downloadHandler(
 	err := download(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "caption download failed",
-			"error", err,
-			"args", args,
+			ctx, "caption download failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "caption download completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func download(writer io.Writer) error {

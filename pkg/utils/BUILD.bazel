@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/eat-pray-ai/yutu/pkg/utils",
     visibility = ["//visibility:public"],
     deps = [
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_ohler55_ojg//jp",
         "@com_github_spf13_pflag//:pflag",
         "@in_gopkg_yaml_v3//:yaml_v3",

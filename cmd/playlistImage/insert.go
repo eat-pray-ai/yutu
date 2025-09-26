@@ -3,15 +3,66 @@ package playlistImage
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type insertIn struct {
+	File       string `json:"file"`
+	PlaylistId string `json:"playlistId"`
+	Type       string `json:"type"`
+	Height     int64  `json:"height"`
+	Width      int64  `json:"width"`
+	Output     string `json:"output"`
+	Jsonpath   string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"file", "playlistId", "type", "height", "width", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"file": {
+			Type: "string", Description: fileUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"playlistId": {
+			Type: "string", Description: pidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"type": {
+			Type: "string", Description: typeUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"height": {
+			Type: "number", Description: heightUsage,
+			Default: json.RawMessage("0"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"width": {
+			Type: "number", Description: widthUsage,
+			Default: json.RawMessage("0"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	insertShort = "Insert a YouTube playlist image"
@@ -19,7 +70,17 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "playlistImage-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	playlistImageCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
@@ -47,56 +108,16 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"playlistImage-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"playlistId", mcp.DefaultString(""),
-		mcp.Description(pidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"type", mcp.DefaultString(""),
-		mcp.Description(typeUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"height", mcp.DefaultNumber(0),
-		mcp.Description(heightUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"width", mcp.DefaultNumber(0),
-		mcp.Description(widthUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	file, _ = args["file"].(string)
-	playlistId, _ = args["playlistId"].(string)
-	type_, _ = args["type"].(string)
-	heightRaw, _ := args["height"].(float64)
-	height = int64(heightRaw)
-	widthRaw, _ := args["width"].(float64)
-	width = int64(widthRaw)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	file = input.File
+	playlistId = input.PlaylistId
+	type_ = input.Type
+	height = input.Height
+	width = input.Width
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "playlistImage insert started")
 
@@ -104,17 +125,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "playlistImage insert failed",
-			"error", err,
-			"args", args,
+			ctx, "playlistImage insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "playlistImage insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

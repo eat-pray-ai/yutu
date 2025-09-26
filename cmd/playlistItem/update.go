@@ -3,13 +3,15 @@ package playlistItem
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,69 @@ const (
 	updateIdUsage = "ID of the playlist item to update"
 )
 
+type updateIn struct {
+	Ids                    []string `json:"ids"`
+	Title                  string   `json:"title"`
+	Description            string   `json:"description"`
+	Privacy                string   `json:"privacy"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+	Output                 string   `json:"output"`
+	Jsonpath               string   `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "title", "description", "privacy",
+		"onBehalfOfContentOwner", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: updateIdUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"privacy": {
+			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
+			Description: privacyUsage, Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "playlistItem-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	playlistItemCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
@@ -49,59 +112,16 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"playlistItem-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(updateIdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"privacy", mcp.Enum("public", "private", "unlisted"),
-		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	title, _ = args["title"].(string)
-	description, _ = args["description"].(string)
-	privacy, _ = args["privacy"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	title = input.Title
+	description = input.Description
+	privacy = input.Privacy
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "playlistItem update started")
 
@@ -109,17 +129,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "playlistItem update failed",
-			"error", err,
-			"args", args,
+			ctx, "playlistItem update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "playlistItem update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

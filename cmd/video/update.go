@@ -3,6 +3,7 @@ package video
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,9 +11,95 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type updateIn struct {
+	Ids         []string `json:"ids"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Tags        []string `json:"tags"`
+	Language    string   `json:"language"`
+	License     string   `json:"license"`
+	Thumbnail   string   `json:"thumbnail"`
+	PlaylistId  string   `json:"playlistId"`
+	CategoryId  string   `json:"categoryId"`
+	Privacy     string   `json:"privacy"`
+	Embeddable  *string  `json:"embeddable,omitempty"`
+	Output      string   `json:"output"`
+	Jsonpath    string   `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "title", "description", "tags", "language",
+		"license", "thumbnail", "playlistId", "categoryId",
+		"privacy", "embeddable", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: updateIdUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"tags": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: tagsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"language": {
+			Type: "string", Description: updateLangUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"license": {
+			Type: "string", Enum: []any{"youtube", "creativeCommon"},
+			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
+		},
+		"thumbnail": {
+			Type: "string", Description: thumbnailUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"playlistId": {
+			Type: "string", Description: pidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"categoryId": {
+			Type: "string", Description: caidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"privacy": {
+			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
+			Description: privacyUsage, Default: json.RawMessage(`""`),
+		},
+		"embeddable": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: embeddableUsage, Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	updateShort     = "Update a video on YouTube"
@@ -22,7 +109,17 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "video-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	videoCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
@@ -57,95 +154,22 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"video-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(updateIdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"tags", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(tagsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"language", mcp.DefaultString(""),
-		mcp.Description(updateLangUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"license", mcp.Enum("youtube", "creativeCommon"),
-		mcp.DefaultString("youtube"), mcp.Description(licenseUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"thumbnail", mcp.DefaultString(""),
-		mcp.Description(thumbnailUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"playlistId", mcp.DefaultString(""),
-		mcp.Description(pidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"categoryId", mcp.DefaultString(""),
-		mcp.Description(caidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"privacy", mcp.Enum("public", "private", "unlisted"),
-		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"embeddable", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(embeddableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	title, _ = args["title"].(string)
-	description, _ = args["description"].(string)
-	tagsRaw, _ := args["tags"].([]any)
-	tags = make([]string, len(tagsRaw))
-	for i, tag := range tagsRaw {
-		tags[i] = tag.(string)
-	}
-	language, _ = args["language"].(string)
-	license, _ = args["license"].(string)
-	thumbnail, _ = args["thumbnail"].(string)
-	playListId, _ = args["playlistId"].(string)
-	categoryId, _ = args["categoryId"].(string)
-	privacy, _ = args["privacy"].(string)
-	embeddableRaw, _ := args["embeddable"].(string)
-	embeddable = utils.BoolPtr(embeddableRaw)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	title = input.Title
+	description = input.Description
+	tags = input.Tags
+	language = input.Language
+	license = input.License
+	thumbnail = input.Thumbnail
+	playListId = input.PlaylistId
+	categoryId = input.CategoryId
+	privacy = input.Privacy
+	embeddable = utils.BoolPtr(*input.Embeddable)
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "video update started")
 
@@ -153,17 +177,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "video update failed",
-			"error", err,
-			"args", args,
+			ctx, "video update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "video update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

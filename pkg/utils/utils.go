@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"runtime"
 
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/ohler55/ojg/jp"
 	"github.com/spf13/pflag"
 
@@ -99,4 +100,11 @@ func ExtractHl(uri string) string {
 		return matches[1]
 	}
 	return ""
+}
+
+func Errf(format string, args ...any) *mcp.CallToolResult {
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{&mcp.TextContent{Text: fmt.Sprintf(format, args...)}},
+		IsError: true,
+	}
 }

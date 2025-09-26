@@ -3,12 +3,14 @@ package comment
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +19,36 @@ const (
 	deleteLong  = "Delete YouTube comments by ids"
 )
 
+type deleteIn struct {
+	IDs []string `json:"ids"`
+}
+
+var deleteInSchema = &jsonschema.Schema{
+	Type:     "object",
+	Required: []string{"ids"},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: idsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(deleteTool, deleteHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "comment-delete", Title: deleteShort, Description: deleteLong,
+			InputSchema: deleteInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(true),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, deleteHandler,
+	)
 	commentCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
@@ -38,29 +68,10 @@ var deleteCmd = &cobra.Command{
 	},
 }
 
-var deleteTool = mcp.NewTool(
-	"comment-delete",
-	mcp.WithTitleAnnotation(deleteShort),
-	mcp.WithDescription(deleteLong),
-	mcp.WithDestructiveHintAnnotation(true),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(idsUsage), mcp.Required(),
-	),
-)
-
 func deleteHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
+	ctx context.Context, _ *mcp.CallToolRequest, input deleteIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.IDs
 
 	slog.InfoContext(ctx, "comment delete started")
 
@@ -68,17 +79,15 @@ func deleteHandler(
 	err := del(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "comment delete failed",
-			"error", err,
-			"args", args,
+			ctx, "comment delete failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "comment delete completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func del(writer io.Writer) error {

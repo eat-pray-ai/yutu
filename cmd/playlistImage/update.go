@@ -3,15 +3,61 @@ package playlistImage
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type updateIn struct {
+	PlaylistId string `json:"playlistId"`
+	Type       string `json:"type"`
+	Height     int64  `json:"height"`
+	Width      int64  `json:"width"`
+	Output     string `json:"output"`
+	Jsonpath   string `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"playlistId", "type", "height", "width", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"playlistId": {
+			Type: "string", Description: pidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"type": {
+			Type: "string", Description: typeUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"height": {
+			Type: "number", Description: heightUsage,
+			Default: json.RawMessage("0"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"width": {
+			Type: "number", Description: widthUsage,
+			Default: json.RawMessage("0"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	updateShort = "Update a playlist image"
@@ -19,7 +65,17 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "playlistImage-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	playlistImageCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringVarP(&playlistId, "playlistId", "p", "", pidUsage)
@@ -45,51 +101,15 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"playlistImage-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"playlistId", mcp.DefaultString(""),
-		mcp.Description(pidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"type", mcp.DefaultString(""),
-		mcp.Description(typeUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"height", mcp.DefaultNumber(0),
-		mcp.Description(heightUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"width", mcp.DefaultNumber(0),
-		mcp.Description(widthUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	playlistId, _ = args["playlistId"].(string)
-	type_, _ = args["type"].(string)
-	heightRaw, _ := args["height"].(float64)
-	height = int64(heightRaw)
-	widthRaw, _ := args["width"].(float64)
-	width = int64(widthRaw)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	playlistId = input.PlaylistId
+	type_ = input.Type
+	height = input.Height
+	width = input.Width
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "playlistImage update started")
 
@@ -97,17 +117,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "playlistImage update failed",
-			"error", err,
-			"args", args,
+			ctx, "playlistImage update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "playlistImage update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

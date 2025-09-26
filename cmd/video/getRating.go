@@ -3,15 +3,52 @@ package video
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/video"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type getRatingIn struct {
+	Ids                    []string `json:"ids"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+	Output                 string   `json:"output"`
+	Jsonpath               string   `json:"jsonpath"`
+}
+
+var getRatingInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "onBehalfOfContentOwner", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: grIdsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	getRatingShort = "Get the rating of videos"
@@ -20,7 +57,17 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(getRatingTool, getRatingHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "video-getRating", Title: getRatingShort, Description: getRatingLong,
+			InputSchema: getRatingInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, getRatingHandler,
+	)
 	videoCmd.AddCommand(getRatingCmd)
 
 	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, grIdsUsage)
@@ -46,44 +93,13 @@ var getRatingCmd = &cobra.Command{
 	},
 }
 
-var getRatingTool = mcp.NewTool(
-	"video-getRating",
-	mcp.WithTitleAnnotation(getRatingShort),
-	mcp.WithDescription(getRatingLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(grIdsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func getRatingHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input getRatingIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "video getRating started")
 
@@ -91,17 +107,15 @@ func getRatingHandler(
 	err := getRating(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "video getRating failed",
-			"error", err,
-			"args", args,
+			ctx, "video getRating failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "video getRating completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func getRating(writer io.Writer) error {

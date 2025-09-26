@@ -3,6 +3,7 @@ package caption
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,129 @@ const (
 	updateLong  = "Update caption of a video"
 )
 
+type updateIn struct {
+	File                   string  `json:"file"`
+	AudioTrackType         string  `json:"audioTrackType"`
+	IsAutoSynced           *string `json:"isAutoSynced,omitempty"`
+	IsCC                   *string `json:"isCC,omitempty"`
+	IsDraft                *string `json:"isDraft,omitempty"`
+	IsEasyReader           *string `json:"isEasyReader,omitempty"`
+	IsLarge                *string `json:"isLarge,omitempty"`
+	Language               string  `json:"language"`
+	Name                   string  `json:"name"`
+	TrackKind              string  `json:"trackKind"`
+	VideoId                string  `json:"videoId"`
+	OnBehalfOf             string  `json:"onBehalfOf"`
+	OnBehalfOfContentOwner string  `json:"onBehalfOfContentOwner"`
+	Output                 string  `json:"output"`
+	Jsonpath               string  `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"file", "audioTrackType", "isAutoSynced", "isCC", "isDraft",
+		"isEasyReader", "isLarge", "language", "name", "trackKind",
+		"videoId", "onBehalfOf", "onBehalfOfContentOwner", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"file": {
+			Type:        "string",
+			Description: fileUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"audioTrackType": {
+			Type:        "string",
+			Description: attUsage,
+			Default:     json.RawMessage(`"unknown"`),
+		},
+		"isAutoSynced": {
+			Type:        "string",
+			Enum:        []any{"true", "false", ""},
+			Description: iasUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"isCC": {
+			Type:        "string",
+			Enum:        []any{"true", "false", ""},
+			Description: iscUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"isDraft": {
+			Type:        "string",
+			Enum:        []any{"true", "false", ""},
+			Description: isdUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"isEasyReader": {
+			Type:        "string",
+			Enum:        []any{"true", "false", ""},
+			Description: iserUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"isLarge": {
+			Type:        "string",
+			Enum:        []any{"true", "false", ""},
+			Description: islUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"language": {
+			Type:        "string",
+			Description: languageUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"name": {
+			Type:        "string",
+			Description: nameUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"trackKind": {
+			Type:        "string",
+			Enum:        []any{"standard", "ASR", "forced"},
+			Description: tkUsage,
+			Default:     json.RawMessage(`"standard"`),
+		},
+		"videoId": {
+			Type:        "string",
+			Description: vidUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOf": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+		"output": {
+			Type:        "string",
+			Enum:        []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage,
+			Default:     json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type:        "string",
+			Description: pkg.JPUsage,
+			Default:     json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "caption-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	captionCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
@@ -65,99 +188,24 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"caption-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"audioTrackType", mcp.DefaultString("unknown"),
-		mcp.Description(attUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"isAutoSynced", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(iasUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"isCC", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(iscUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"isDraft", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(isdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"isEasyReader", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(iserUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"isLarge", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(islUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"language", mcp.DefaultString(""),
-		mcp.Description(languageUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"name", mcp.DefaultString(""),
-		mcp.Description(nameUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"trackKind", mcp.Enum("standard", "ASR", "forced"),
-		mcp.DefaultString("standard"), mcp.Description(tkUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"videoId", mcp.DefaultString(""),
-		mcp.Description(vidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOf", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	file, _ = args["file"].(string)
-	audioTrackType, _ = args["audioTrackType"].(string)
-	isAutoSyncedRaw, _ := args["isAutoSynced"].(string)
-	isAutoSynced = utils.BoolPtr(isAutoSyncedRaw)
-	isCCRaw, _ := args["isCC"].(string)
-	isCC = utils.BoolPtr(isCCRaw)
-	isDraftRaw, _ := args["isDraft"].(string)
-	isDraft = utils.BoolPtr(isDraftRaw)
-	isEasyReaderRaw, _ := args["isEasyReader"].(string)
-	isEasyReader = utils.BoolPtr(isEasyReaderRaw)
-	isLargeRaw, _ := args["isLarge"].(string)
-	isLarge = utils.BoolPtr(isLargeRaw)
-	language, _ = args["language"].(string)
-	name, _ = args["name"].(string)
-	trackKind, _ = args["trackKind"].(string)
-	videoId, _ = args["videoId"].(string)
-	onBehalfOf, _ = args["onBehalfOf"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	file = input.File
+	audioTrackType = input.AudioTrackType
+	isAutoSynced = utils.BoolPtr(*input.IsAutoSynced)
+	isCC = utils.BoolPtr(*input.IsCC)
+	isDraft = utils.BoolPtr(*input.IsDraft)
+	isEasyReader = utils.BoolPtr(*input.IsEasyReader)
+	isLarge = utils.BoolPtr(*input.IsLarge)
+	language = input.Language
+	name = input.Name
+	trackKind = input.TrackKind
+	videoId = input.VideoId
+	onBehalfOf = input.OnBehalfOf
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "caption update started")
 
@@ -165,17 +213,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "caption update failed",
-			"error", err,
-			"args", args,
+			ctx, "caption update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "caption update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

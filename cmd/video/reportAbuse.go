@@ -3,14 +3,62 @@ package video
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type reportAbuseIn struct {
+	Ids                    []string `json:"ids"`
+	ReasonId               string   `json:"reasonId"`
+	SecondaryReasonId      string   `json:"secondaryReasonId"`
+	Comments               string   `json:"comments"`
+	Language               string   `json:"language"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+}
+
+var reportAbuseInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "reasonId", "secondaryReasonId", "comments",
+		"language", "onBehalfOfContentOwner",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: raIdsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"reasonId": {
+			Type: "string", Description: ridUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"secondaryReasonId": {
+			Type: "string", Description: sridUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"comments": {
+			Type: "string", Description: commentsUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"language": {
+			Type: "string", Description: raLangUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	reportAbuseShort = "Report abuse on a video"
@@ -20,7 +68,18 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(reportAbuseTool, reportAbuseHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "video-reportAbuse", Title: reportAbuseShort,
+			Description: reportAbuseLong,
+			InputSchema: reportAbuseInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, reportAbuseHandler,
+	)
 	videoCmd.AddCommand(reportAbuseCmd)
 
 	reportAbuseCmd.Flags().StringSliceVarP(
@@ -55,53 +114,15 @@ var reportAbuseCmd = &cobra.Command{
 	},
 }
 
-var reportAbuseTool = mcp.NewTool(
-	"video-reportAbuse",
-	mcp.WithTitleAnnotation(reportAbuseShort),
-	mcp.WithDescription(reportAbuseLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(raIdsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"reasonId", mcp.DefaultString(""), mcp.Description(ridUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"secondaryReasonId", mcp.DefaultString(""), mcp.Description(sridUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"comments", mcp.DefaultString(""), mcp.Description(commentsUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"language", mcp.DefaultString(""), mcp.Description(raLangUsage),
-		mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""), mcp.Description(""),
-		mcp.Required(),
-	),
-)
-
 func reportAbuseHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	reasonId, _ = args["reasonId"].(string)
-	secondaryReasonId, _ = args["secondaryReasonId"].(string)
-	comments, _ = args["comments"].(string)
-	language, _ = args["language"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input reportAbuseIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	reasonId = input.ReasonId
+	secondaryReasonId = input.SecondaryReasonId
+	comments = input.Comments
+	language = input.Language
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
 	slog.InfoContext(ctx, "video reportAbuse started")
 
@@ -109,17 +130,15 @@ func reportAbuseHandler(
 	err := reportAbuse(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "video reportAbuse failed",
-			"error", err,
-			"args", args,
+			ctx, "video reportAbuse failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "video reportAbuse completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func reportAbuse(writer io.Writer) error {

@@ -18,7 +18,8 @@ go_library(
         "//pkg",
         "//pkg/comment",
         "//pkg/utils",
-        "@com_github_mark3labs_mcp_go//mcp",
+        "@com_github_google_jsonschema_go//jsonschema",
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_spf13_cobra//:cobra",
     ],
 )

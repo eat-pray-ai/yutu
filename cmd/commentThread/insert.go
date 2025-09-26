@@ -3,13 +3,15 @@ package commentThread
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/commentThread"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,61 @@ const (
 	insertVidUsage = "ID of the video"
 )
 
+type insertIn struct {
+	AuthorChannelId string `json:"authorChannelId"`
+	ChannelId       string `json:"channelId"`
+	TextOriginal    string `json:"textOriginal"`
+	VideoId         string `json:"videoId"`
+	Output          string `json:"output"`
+	Jsonpath        string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"authorChannelId", "channelId", "textOriginal", "videoId",
+		"output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"authorChannelId": {
+			Type: "string", Description: acidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"channelId": {
+			Type: "string", Description: cidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"textOriginal": {
+			Type: "string", Description: toUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"videoId": {
+			Type: "string", Description: insertVidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "commentThread-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	commentThreadCmd.AddCommand(insertCmd)
 	insertCmd.Flags().StringVarP(
 		&authorChannelId, "authorChannelId", "a", "", acidUsage,
@@ -50,49 +105,15 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"commentThread-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"authorChannelId", mcp.DefaultString(""),
-		mcp.Description(acidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"textOriginal", mcp.DefaultString(""),
-		mcp.Description(toUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"videoId", mcp.DefaultString(""),
-		mcp.Description(insertVidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	authorChannelId, _ = args["authorChannelId"].(string)
-	channelId, _ = args["channelId"].(string)
-	textOriginal, _ = args["textOriginal"].(string)
-	videoId, _ = args["videoId"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	authorChannelId = input.AuthorChannelId
+	channelId = input.ChannelId
+	textOriginal = input.TextOriginal
+	videoId = input.VideoId
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "commentThread insert started")
 
@@ -100,17 +121,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "commentThread insert failed",
-			"error", err,
-			"args", args,
+			ctx, "commentThread insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "commentThread insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

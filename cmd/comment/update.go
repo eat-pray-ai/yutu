@@ -3,6 +3,7 @@ package comment
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -20,8 +22,64 @@ const (
 	updateIdUsage = "ID of the comment"
 )
 
+type updateIn struct {
+	IDs          []string `json:"ids"`
+	CanRate      string   `json:"canRate"`
+	TextOriginal string   `json:"textOriginal"`
+	ViewerRating string   `json:"viewerRating"`
+	Output       string   `json:"output"`
+	Jsonpath     string   `json:"jsonpath"`
+}
+
+var updateInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "canRate", "textOriginal", "viewerRating",
+		"output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: updateIdUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"canRate": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: crUsage, Default: json.RawMessage(`""`),
+		},
+		"textOriginal": {
+			Type: "string", Description: toUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"viewerRating": {
+			Type: "string", Enum: []any{"none", "like", "dislike", ""},
+			Description: vrUsage, Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(updateTool, updateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "comment-update", Title: updateShort, Description: updateLong,
+			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, updateHandler,
+	)
 	commentCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
@@ -51,55 +109,15 @@ var updateCmd = &cobra.Command{
 	},
 }
 
-var updateTool = mcp.NewTool(
-	"comment-update",
-	mcp.WithTitleAnnotation(updateShort),
-	mcp.WithDescription(updateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(updateIdUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"canRate", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(crUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"textOriginal", mcp.DefaultString(""),
-		mcp.Description(toUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"viewerRating", mcp.Enum("none", "like", "dislike"),
-		mcp.DefaultString(""), mcp.Description(vrUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func updateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	canRateRaw, _ := args["canRate"].(string)
-	canRate = utils.BoolPtr(canRateRaw)
-	textOriginal, _ = args["textOriginal"].(string)
-	viewerRating, _ = args["viewerRating"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.IDs
+	canRate = utils.BoolPtr(input.CanRate)
+	textOriginal = input.TextOriginal
+	viewerRating = input.ViewerRating
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "comment update started")
 
@@ -107,17 +125,15 @@ func updateHandler(
 	err := update(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "comment update failed",
-			"error", err,
-			"args", args,
+			ctx, "comment update failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "comment update completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func update(writer io.Writer) error {

@@ -3,6 +3,7 @@ package comment
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,60 @@ const (
 	smsLong  = "Set YouTube comments moderation status by ids"
 )
 
+type setModerationStatusIn struct {
+	IDs              []string `json:"ids"`
+	ModerationStatus string   `json:"moderationStatus"`
+	BanAuthor        string   `json:"banAuthor"`
+	Output           string   `json:"output"`
+	Jsonpath         string   `json:"jsonpath"`
+}
+
+var setModerationStatusInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "moderationStatus", "banAuthor",
+		"output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: idsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"moderationStatus": {
+			Type: "string", Enum: []any{"heldForReview", "published", "rejected", ""},
+			Description: msUsage, Default: json.RawMessage(`""`),
+		},
+		"banAuthor": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: baUsage, Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(setModerationStatusTool, setModerationStatusHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "comment-setModerationStatus", Title: smsShort, Description: smsLong,
+			InputSchema: setModerationStatusInSchema,
+			Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, setModerationStatusHandler,
+	)
 	commentCmd.AddCommand(setModerationStatusCmd)
 
 	setModerationStatusCmd.Flags().StringSliceVarP(
@@ -56,50 +110,14 @@ var setModerationStatusCmd = &cobra.Command{
 	},
 }
 
-var setModerationStatusTool = mcp.NewTool(
-	"comment-setModerationStatus",
-	mcp.WithTitleAnnotation(smsShort),
-	mcp.WithDescription(smsLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(idsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"moderationStatus", mcp.Enum("heldForReview", "published", "rejected"),
-		mcp.DefaultString(""), mcp.Description(msUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"banAuthor", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(baUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func setModerationStatusHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	moderationStatus, _ = args["moderationStatus"].(string)
-	banAuthorRaw, _ := args["banAuthor"].(string)
-	banAuthor = utils.BoolPtr(banAuthorRaw)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input setModerationStatusIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.IDs
+	moderationStatus = input.ModerationStatus
+	banAuthor = utils.BoolPtr(input.BanAuthor)
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "comment setModerationStatus started")
 
@@ -107,17 +125,15 @@ func setModerationStatusHandler(
 	err := setModerationStatus(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "comment setModerationStatus failed",
-			"error", err,
-			"args", args,
+			ctx, "comment setModerationStatus failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "comment setModerationStatus completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func setModerationStatus(writer io.Writer) error {

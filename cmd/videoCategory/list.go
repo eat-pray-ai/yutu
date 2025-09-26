@@ -10,12 +10,23 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/videoCategory"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	cmd.MCP.AddResourceTemplate(categoriesResource, categoriesHandler)
+	cmd.Server.AddResourceTemplate(
+		&mcp.ResourceTemplate{
+			Name:        vcName,
+			Title:       short,
+			Description: long,
+			MIMEType:    pkg.JsonMIME,
+			URITemplate: vcURI,
+			Annotations: &mcp.Annotations{
+				Audience: []mcp.Role{"user", "assistant"}, Priority: 0.51,
+			},
+		}, categoriesHandler,
+	)
 	videoCategoryCmd.AddCommand(listCmd)
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
@@ -40,16 +51,9 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var categoriesResource = mcp.NewResourceTemplate(
-	vcURI, vcName,
-	mcp.WithTemplateMIMEType(pkg.JsonMIME),
-	mcp.WithTemplateDescription(long),
-	mcp.WithTemplateAnnotations([]mcp.Role{"user", "assistant"}, 0.51),
-)
-
 func categoriesHandler(
-	ctx context.Context, request mcp.ReadResourceRequest,
-) ([]mcp.ResourceContents, error) {
+	ctx context.Context, request *mcp.ReadResourceRequest,
+) (*mcp.ReadResourceResult, error) {
 	parts = defaultParts
 	hl = utils.ExtractHl(request.Params.URI)
 	output = "json"
@@ -60,9 +64,7 @@ func categoriesHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "videoCategory list failed",
-			"error", err,
-			"uri", request.Params.URI,
+			ctx, "videoCategory list failed", "error", err, "uri", request.Params.URI,
 		)
 		return nil, err
 	}
@@ -72,14 +74,13 @@ func categoriesHandler(
 		"resultSize", writer.Len(),
 	)
 
-	contents := []mcp.ResourceContents{
-		mcp.TextResourceContents{
-			URI:      request.Params.URI,
-			MIMEType: pkg.JsonMIME,
-			Text:     writer.String(),
+	return &mcp.ReadResourceResult{
+		Contents: []*mcp.ResourceContents{
+			{
+				URI: request.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String(),
+			},
 		},
-	}
-	return contents, nil
+	}, nil
 }
 
 func list(writer io.Writer) error {

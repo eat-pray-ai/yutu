@@ -3,6 +3,7 @@ package channel
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,7 +11,8 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -20,8 +22,104 @@ const (
 	listIdsUsage = "Return the channels with the specified IDs"
 )
 
+type listIn struct {
+	CategoryId             string   `json:"categoryId"`
+	ForHandle              string   `json:"forHandle"`
+	ForUsername            string   `json:"forUsername"`
+	Hl                     string   `json:"hl"`
+	Ids                    []string `json:"ids"`
+	ManagedByMe            *string  `json:"managedByMe,omitempty"`
+	MaxResults             int64    `json:"maxResults"`
+	Mine                   *string  `json:"mine,omitempty"`
+	MySubscribers          *string  `json:"mySubscribers,omitempty"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+	Parts                  []string `json:"parts"`
+	Output                 string   `json:"output"`
+	Jsonpath               string   `json:"jsonpath"`
+}
+
+var listInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"categoryId", "forHandle", "forUsername", "hl", "ids",
+		"managedByMe", "maxResults", "mine", "mySubscribers",
+		"onBehalfOfContentOwner", "parts", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"categoryId": {
+			Type: "string", Description: cidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"forHandle": {
+			Type: "string", Description: fhUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"forUsername": {
+			Type: "string", Description: fuUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"hl": {
+			Type: "string", Description: hlUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: listIdsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"managedByMe": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: mbmUsage, Default: json.RawMessage(`""`),
+		},
+		"maxResults": {
+			Type: "number", Description: pkg.MRUsage,
+			Default: json.RawMessage("5"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"mine": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: mineUsage, Default: json.RawMessage(`""`),
+		},
+		"mySubscribers": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: msUsage, Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"parts": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: pkg.PartsUsage,
+			Default:     json.RawMessage(`["id","snippet","status"]`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "channel-list", Title: listShort, Description: listLong,
+			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, listHandler,
+	)
 	channelCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringVarP(
@@ -68,101 +166,22 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"channel-list",
-	mcp.WithTitleAnnotation(listShort),
-	mcp.WithDescription(listLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithString(
-		"categoryId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"forHandle", mcp.DefaultString(""),
-		mcp.Description(fhUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"forUsername", mcp.DefaultString(""),
-		mcp.Description(fuUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"hl", mcp.DefaultString(""),
-		mcp.Description(hlUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(listIdsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"managedByMe", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(mbmUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(pkg.MRUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(mineUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"mySubscribers", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(msUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id", "snippet", "status"}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(pkg.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	categoryId, _ = args["categoryId"].(string)
-	forHandle, _ = args["forHandle"].(string)
-	forUsername, _ = args["forUsername"].(string)
-	hl, _ = args["hl"].(string)
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	managedByMeRaw, _ := args["managedByMe"].(string)
-	managedByMe = utils.BoolPtr(managedByMeRaw)
-	maxResultsRaw, _ := args["maxResults"].(float64)
-	maxResults = int64(maxResultsRaw)
-	mineRaw, ok := args["mine"].(string)
-	if !ok {
-		mineRaw = "true"
-	}
-	mine = utils.BoolPtr(mineRaw)
-	mySubscribersRaw, _ := args["mySubscribers"].(string)
-	mySubscribers = utils.BoolPtr(mySubscribersRaw)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+) (*mcp.CallToolResult, any, error) {
+	categoryId = input.CategoryId
+	forHandle = input.ForHandle
+	forUsername = input.ForUsername
+	hl = input.Hl
+	ids = input.Ids
+	managedByMe = utils.BoolPtr(*input.ManagedByMe)
+	maxResults = input.MaxResults
+	mine = utils.BoolPtr(*input.Mine)
+	mySubscribers = utils.BoolPtr(*input.MySubscribers)
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	parts = input.Parts
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "channel list started")
 
@@ -170,17 +189,15 @@ func listHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "channel list failed",
-			"error", err,
-			"args", args,
+			ctx, "channel list failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "channel list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func list(writer io.Writer) error {

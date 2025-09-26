@@ -3,18 +3,73 @@ package channelBanner
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channelBanner"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
+type insertIn struct {
+	ChannelId                     string `json:"channelId"`
+	File                          string `json:"file"`
+	OnBehalfOfContentOwner        string `json:"onBehalfOfContentOwner"`
+	OnBehalfOfContentOwnerChannel string `json:"onBehalfOfContentOwnerChannel"`
+	Output                        string `json:"output"`
+	Jsonpath                      string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"channelId", "file", "onBehalfOfContentOwner",
+		"onBehalfOfContentOwnerChannel", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"channelId": {
+			Type: "string", Description: cidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"file": {
+			Type: "string", Description: fileUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwnerChannel": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "channelBanner-insert", Title: short, Description: long,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	channelBannerCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
@@ -45,49 +100,15 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"channelBanner-insert",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"file", mcp.DefaultString(""),
-		mcp.Description(fileUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwnerChannel", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	channelId, _ = args["channelId"].(string)
-	file, _ = args["file"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	onBehalfOfContentOwnerChannel, _ = args["onBehalfOfContentOwnerChannel"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	channelId = input.ChannelId
+	file = input.File
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "channelBanner insert started")
 
@@ -95,17 +116,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "channelBanner insert failed",
-			"error", err,
-			"args", args,
+			ctx, "channelBanner insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "channelBanner insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

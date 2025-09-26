@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"time"
 
-	"github.com/mark3labs/mcp-go/server"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -23,12 +24,14 @@ var (
 	port int
 )
 
-var MCP = server.NewMCPServer(
-	"yutu", Version,
-	server.WithToolCapabilities(true),
-	server.WithResourceCapabilities(true, true),
-	server.WithLogging(),
-	server.WithRecovery(),
+var Server = mcp.NewServer(
+	&mcp.Implementation{Name: "yutu", Version: Version},
+	&mcp.ServerOptions{
+		PageSize:     99,
+		KeepAlive:    13 * time.Second,
+		HasResources: true,
+		HasTools:     true,
+	},
 )
 
 var mcpCmd = &cobra.Command{
@@ -36,9 +39,8 @@ var mcpCmd = &cobra.Command{
 	Short: mcpShort,
 	Long:  mcpLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.Background()
 		var err error
-		interval := 13 * time.Second
+		ctx := context.Background()
 		addr := fmt.Sprintf(":%d", port)
 		slog.InfoContext(
 			ctx, "starting MCP server",
@@ -48,33 +50,32 @@ var mcpCmd = &cobra.Command{
 
 		switch mode {
 		case "stdio":
-			err = server.ServeStdio(MCP)
+			t := &mcp.LoggingTransport{
+				Transport: &mcp.StdioTransport{},
+				Writer:    os.Stderr,
+			}
+			err = Server.Run(ctx, t)
 		case "http":
-			httpServer := server.NewStreamableHTTPServer(
-				MCP,
-				server.WithHeartbeatInterval(interval),
+			handler := mcp.NewStreamableHTTPHandler(
+				func(*http.Request) *mcp.Server {
+					return Server
+				}, nil,
 			)
-
 			slog.InfoContext(
 				ctx, "http server configuration",
 				"url", fmt.Sprintf("http://localhost:%d/mcp", port),
-				"heartbeat_interval", interval,
 			)
-			err = httpServer.Start(addr)
+			err = http.ListenAndServe(addr, handler)
 		default:
 			slog.ErrorContext(
-				ctx, "invalid server mode",
-				"mode", mode,
-				"valid_modes", []string{"stdio", "http"},
+				ctx, "invalid mode", "mode", mode, "valid_modes", "stdio, http",
 			)
 			os.Exit(1)
 		}
 
 		if err != nil {
 			slog.ErrorContext(
-				ctx, "starting server failed",
-				"error", err,
-				"mode", mode,
+				ctx, "starting server failed", "error", err, "mode", mode,
 			)
 			os.Exit(1)
 		}

@@ -3,13 +3,15 @@ package playlistItem
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,92 @@ const (
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 )
 
+type insertIn struct {
+	Title                  string `json:"title"`
+	Description            string `json:"description"`
+	Kind                   string `json:"kind"`
+	KVideoId               string `json:"kVideoId"`
+	KChannelId             string `json:"kChannelId"`
+	KPlaylistId            string `json:"kPlaylistId"`
+	PlaylistId             string `json:"playlistId"`
+	ChannelId              string `json:"channelId"`
+	Privacy                string `json:"privacy"`
+	OnBehalfOfContentOwner string `json:"onBehalfOfContentOwner"`
+	Output                 string `json:"output"`
+	Jsonpath               string `json:"jsonpath"`
+}
+
+var insertInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"title", "description", "kind", "kVideoId", "kChannelId",
+		"kPlaylistId", "playlistId", "channelId", "privacy",
+		"onBehalfOfContentOwner", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"title": {
+			Type: "string", Description: titleUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"description": {
+			Type: "string", Description: descUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"kind": {
+			Type: "string", Enum: []any{"video", "channel", "playlist", ""},
+			Description: kindUsage, Default: json.RawMessage(`""`),
+		},
+		"kVideoId": {
+			Type: "string", Description: kvidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"kChannelId": {
+			Type: "string", Description: kcidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"kPlaylistId": {
+			Type: "string", Description: kpidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"playlistId": {
+			Type: "string", Description: insertPidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"channelId": {
+			Type: "string", Description: cidUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"privacy": {
+			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
+			Description: privacyUsage, Default: json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type: "string", Description: "",
+			Default: json.RawMessage(`""`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(insertTool, insertHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "playlistItem-insert", Title: insertShort, Description: insertLong,
+			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, insertHandler,
+	)
 	playlistItemCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
@@ -58,79 +144,21 @@ var insertCmd = &cobra.Command{
 	},
 }
 
-var insertTool = mcp.NewTool(
-	"playlistItem-insert",
-	mcp.WithTitleAnnotation(insertShort),
-	mcp.WithDescription(insertLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"title", mcp.DefaultString(""),
-		mcp.Description(titleUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"description", mcp.DefaultString(""),
-		mcp.Description(descUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"kind", mcp.Enum("video", "channel", "playlist"),
-		mcp.DefaultString(""), mcp.Description(kindUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"kVideoId", mcp.DefaultString(""),
-		mcp.Description(kvidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"kChannelId", mcp.DefaultString(""),
-		mcp.Description(kcidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"kPlaylistId", mcp.DefaultString(""),
-		mcp.Description(kpidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"playlistId", mcp.DefaultString(""),
-		mcp.Description(insertPidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"privacy", mcp.Enum("public", "private", "unlisted"),
-		mcp.DefaultString(""), mcp.Description(privacyUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "silent", ""),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.SilentUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func insertHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	title, _ = args["title"].(string)
-	description, _ = args["description"].(string)
-	kind, _ = args["kind"].(string)
-	kVideoId, _ = args["kVideoId"].(string)
-	kChannelId, _ = args["kChannelId"].(string)
-	kPlaylistId, _ = args["kPlaylistId"].(string)
-	playlistId, _ = args["playlistId"].(string)
-	channelId, _ = args["channelId"].(string)
-	privacy, _ = args["privacy"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+) (*mcp.CallToolResult, any, error) {
+	title = input.Title
+	description = input.Description
+	kind = input.Kind
+	kVideoId = input.KVideoId
+	kChannelId = input.KChannelId
+	kPlaylistId = input.KPlaylistId
+	playlistId = input.PlaylistId
+	channelId = input.ChannelId
+	privacy = input.Privacy
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "playlistItem insert started")
 
@@ -138,17 +166,15 @@ func insertHandler(
 	err := insert(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "playlistItem insert failed",
-			"error", err,
-			"args", args,
+			ctx, "playlistItem insert failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "playlistItem insert completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func insert(writer io.Writer) error {

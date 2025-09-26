@@ -3,13 +3,15 @@ package caption
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +21,78 @@ const (
 	listIdsUsage = "IDs of the captions to list"
 )
 
+type listIn struct {
+	Ids                    []string `json:"ids"`
+	VideoId                string   `json:"videoId"`
+	OnBehalfOf             string   `json:"onBehalfOf"`
+	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
+	Parts                  []string `json:"parts"`
+	Output                 string   `json:"output"`
+	Jsonpath               string   `json:"jsonpath"`
+}
+
+var listInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"ids", "videoId", "onBehalfOf", "onBehalfOfContentOwner",
+		"parts", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: listIdsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"videoId": {
+			Type:        "string",
+			Description: vidUsage,
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOf": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+		"onBehalfOfContentOwner": {
+			Type:        "string",
+			Description: "",
+			Default:     json.RawMessage(`""`),
+		},
+		"parts": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: pkg.PartsUsage,
+			Default:     json.RawMessage(`["id","snippet"]`),
+		},
+		"output": {
+			Type:        "string",
+			Enum:        []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage,
+			Default:     json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type:        "string",
+			Description: pkg.JPUsage,
+			Default:     json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "caption-list", Title: listShort, Description: listLong,
+			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, listHandler,
+	)
 	captionCmd.AddCommand(listCmd)
 
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
@@ -49,64 +121,16 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"caption-list",
-	mcp.WithTitleAnnotation(listShort),
-	mcp.WithDescription(listLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(listIdsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"videoId", mcp.DefaultString(""),
-		mcp.Description(vidUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOf", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithString(
-		"onBehalfOfContentOwner", mcp.DefaultString(""),
-		mcp.Description(""), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray([]string{"id", "snippet"}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(pkg.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids := make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	videoId, _ = args["videoId"].(string)
-	onBehalfOf, _ = args["onBehalfOf"].(string)
-	onBehalfOfContentOwner, _ = args["onBehalfOfContentOwner"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	videoId = input.VideoId
+	onBehalfOf = input.OnBehalfOf
+	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
+	parts = input.Parts
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "caption list started")
 
@@ -114,17 +138,15 @@ func listHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "caption list failed",
-			"error", err,
-			"args", args,
+			ctx, "caption list failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "caption list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func list(writer io.Writer) error {

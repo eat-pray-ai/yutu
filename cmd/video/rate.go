@@ -3,14 +3,39 @@ package video
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
+
+type rateIn struct {
+	Ids    []string `json:"ids"`
+	Rating string   `json:"rating"`
+}
+
+var rateInSchema = &jsonschema.Schema{
+	Type:     "object",
+	Required: []string{"ids", "rating"},
+	Properties: map[string]*jsonschema.Schema{
+		"ids": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: rateIdsUsage,
+			Default:     json.RawMessage(`[]`),
+		},
+		"rating": {
+			Type: "string", Enum: []any{"like", "dislike", "none", ""},
+			Description: rateRUsage, Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 const (
 	rateShort    = "Rate a video on YouTube"
@@ -20,7 +45,17 @@ const (
 )
 
 func init() {
-	cmd.MCP.AddTool(rateTool, rateHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "video-rate", Title: rateShort, Description: rateLong,
+			InputSchema: rateInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  false,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, rateHandler,
+	)
 	videoCmd.AddCommand(rateCmd)
 
 	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
@@ -43,34 +78,11 @@ var rateCmd = &cobra.Command{
 	},
 }
 
-var rateTool = mcp.NewTool(
-	"video-rate",
-	mcp.WithTitleAnnotation(rateShort),
-	mcp.WithDescription(rateLong),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithArray(
-		"ids", mcp.DefaultArray([]string{}),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(rateIdsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"rating", mcp.Enum("like", "dislike", "none"),
-		mcp.DefaultString(""), mcp.Description(rateRUsage), mcp.Required(),
-	),
-)
-
 func rateHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	idsRaw, _ := args["ids"].([]any)
-	ids = make([]string, len(idsRaw))
-	for i, id := range idsRaw {
-		ids[i] = id.(string)
-	}
-	rating, _ = args["rating"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input rateIn,
+) (*mcp.CallToolResult, any, error) {
+	ids = input.Ids
+	rating = input.Rating
 
 	slog.InfoContext(ctx, "video rate started")
 
@@ -78,17 +90,15 @@ func rateHandler(
 	err := rate(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "video rate failed",
-			"error", err,
-			"args", args,
+			ctx, "video rate failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "video rate completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func rate(writer io.Writer) error {

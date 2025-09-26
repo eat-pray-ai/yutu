@@ -3,6 +3,7 @@ package activity
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
@@ -10,14 +11,90 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/activity"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
-var defaultParts = []string{"id", "snippet", "contentDetails"}
+type listIn struct {
+	ChannelId       string   `json:"channelId"`
+	Home            *string  `json:"home,omitempty"`
+	MaxResults      int64    `json:"maxResults"`
+	Mine            *string  `json:"mine,omitempty"`
+	PublishedAfter  string   `json:"publishedAfter"`
+	PublishedBefore string   `json:"publishedBefore"`
+	RegionCode      string   `json:"regionCode"`
+	Parts           []string `json:"parts"`
+	Output          string   `json:"output"`
+	Jsonpath        string   `json:"jsonpath"`
+}
+
+var listInSchema = &jsonschema.Schema{
+	Type: "object",
+	Required: []string{
+		"channelId", "home", "maxResults", "mine", "publishedAfter",
+		"publishedBefore", "regionCode", "parts", "output", "jsonpath",
+	},
+	Properties: map[string]*jsonschema.Schema{
+		"channelId": {
+			Type: "string", Description: ciUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"home": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: homeUsage, Default: json.RawMessage(`""`),
+		},
+		"maxResults": {
+			Type: "number", Description: pkg.MRUsage,
+			Default: json.RawMessage("5"),
+			Minimum: jsonschema.Ptr(float64(0)),
+		},
+		"mine": {
+			Type: "string", Enum: []any{"true", "false", ""},
+			Description: mineUsage, Default: json.RawMessage(`""`),
+		},
+		"publishedAfter": {
+			Type: "string", Description: paUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"publishedBefore": {
+			Type: "string", Description: pbUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"regionCode": {
+			Type: "string", Description: rcUsage,
+			Default: json.RawMessage(`""`),
+		},
+		"parts": {
+			Type: "array", Items: &jsonschema.Schema{
+				Type: "string",
+			},
+			Description: pkg.PartsUsage,
+			Default:     json.RawMessage(`["id","snippet","contentDetails"]`),
+		},
+		"output": {
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+		},
+		"jsonpath": {
+			Type: "string", Description: pkg.JPUsage,
+			Default: json.RawMessage(`""`),
+		},
+	},
+}
 
 func init() {
-	cmd.MCP.AddTool(listTool, listHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name: "activity-list", Title: short, Description: long,
+			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(false),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    true,
+			},
+		}, listHandler,
+	)
 	activityCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
 	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
@@ -31,7 +108,8 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet", "contentDetails"},
+		pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
 	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
@@ -50,80 +128,19 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var listTool = mcp.NewTool(
-	"activity-list",
-	mcp.WithTitleAnnotation(short),
-	mcp.WithDescription(long),
-	mcp.WithDestructiveHintAnnotation(false),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(true),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(ciUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"home", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(homeUsage), mcp.Required(),
-	),
-	mcp.WithNumber(
-		"maxResults", mcp.DefaultNumber(5),
-		mcp.Description(pkg.MRUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"mine", mcp.Enum("true", "false", ""),
-		mcp.DefaultString(""), mcp.Description(mineUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"publishedAfter", mcp.DefaultString(""),
-		mcp.Description(paUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"publishedBefore", mcp.DefaultString(""),
-		mcp.Description(pbUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"regionCode", mcp.DefaultString(""),
-		mcp.Description(rcUsage), mcp.Required(),
-	),
-	mcp.WithArray(
-		"parts", mcp.DefaultArray(defaultParts),
-		mcp.Items(map[string]any{"type": "string"}),
-		mcp.Description(pkg.PartsUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"output", mcp.Enum("json", "yaml", "table"),
-		mcp.DefaultString("yaml"), mcp.Description(pkg.TableUsage), mcp.Required(),
-	),
-	mcp.WithString(
-		"jsonpath", mcp.DefaultString(""),
-		mcp.Description(pkg.JPUsage), mcp.Required(),
-	),
-)
-
 func listHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	channelId, _ = args["channelId"].(string)
-	homeRaw, _ := args["home"].(string)
-	home = utils.BoolPtr(homeRaw)
-	maxResultsRaw, _ := args["maxResults"].(float64)
-	maxResults = int64(maxResultsRaw)
-	mineRaw, ok := args["mine"].(string)
-	if !ok {
-		mineRaw = "true" // Default to true if not provided
-	}
-	mine = utils.BoolPtr(mineRaw)
-	publishedAfter, _ = args["publishedAfter"].(string)
-	publishedBefore, _ = args["publishedBefore"].(string)
-	regionCode, _ = args["regionCode"].(string)
-	partsRaw, _ := args["parts"].([]any)
-	parts = make([]string, len(partsRaw))
-	for i, part := range partsRaw {
-		parts[i] = part.(string)
-	}
-	output, _ = args["output"].(string)
-	jpath, _ = args["jsonpath"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+) (*mcp.CallToolResult, any, error) {
+	channelId = input.ChannelId
+	home = utils.BoolPtr(*input.Home)
+	maxResults = input.MaxResults
+	mine = utils.BoolPtr(*input.Mine)
+	publishedAfter = input.PublishedAfter
+	publishedBefore = input.PublishedBefore
+	regionCode = input.RegionCode
+	parts = input.Parts
+	output = input.Output
+	jpath = input.Jsonpath
 
 	slog.InfoContext(ctx, "activity list started")
 
@@ -131,17 +148,15 @@ func listHandler(
 	err := list(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "activity list failed",
-			"error", err,
-			"args", args,
+			ctx, "activity list failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "activity list completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func list(writer io.Writer) error {

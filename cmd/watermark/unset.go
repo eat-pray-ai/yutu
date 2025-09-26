@@ -3,12 +3,14 @@ package watermark
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
-	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +19,37 @@ const (
 	unsetLong  = "Unset watermark for channel's video by channel id"
 )
 
+type unsetIn struct {
+	ChannelId string `json:"channelId"`
+}
+
+var unsetInSchema = &jsonschema.Schema{
+	Type:     "object",
+	Required: []string{"channelId"},
+	Properties: map[string]*jsonschema.Schema{
+		"channelId": {
+			Type:        "string",
+			Description: cidUsage,
+			Default:     json.RawMessage(`""`),
+		},
+	},
+}
+
 func init() {
-	cmd.MCP.AddTool(unsetTool, unsetHandler)
+	mcp.AddTool(
+		cmd.Server, &mcp.Tool{
+			Name:        "watermark-unset",
+			Title:       unsetShort,
+			Description: unsetLong,
+			InputSchema: unsetInSchema,
+			Annotations: &mcp.ToolAnnotations{
+				DestructiveHint: jsonschema.Ptr(true),
+				IdempotentHint:  true,
+				OpenWorldHint:   jsonschema.Ptr(true),
+				ReadOnlyHint:    false,
+			},
+		}, unsetHandler,
+	)
 	watermarkCmd.AddCommand(unsetCmd)
 
 	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
@@ -38,24 +69,10 @@ var unsetCmd = &cobra.Command{
 	},
 }
 
-var unsetTool = mcp.NewTool(
-	"watermark-unset",
-	mcp.WithTitleAnnotation(unsetShort),
-	mcp.WithDescription(unsetLong),
-	mcp.WithDestructiveHintAnnotation(true),
-	mcp.WithOpenWorldHintAnnotation(true),
-	mcp.WithReadOnlyHintAnnotation(false),
-	mcp.WithString(
-		"channelId", mcp.DefaultString(""),
-		mcp.Description(cidUsage), mcp.Required(),
-	),
-)
-
 func unsetHandler(
-	ctx context.Context, request mcp.CallToolRequest,
-) (*mcp.CallToolResult, error) {
-	args := request.GetArguments()
-	channelId, _ = args["channelId"].(string)
+	ctx context.Context, _ *mcp.CallToolRequest, input unsetIn,
+) (*mcp.CallToolResult, any, error) {
+	channelId = input.ChannelId
 
 	slog.InfoContext(ctx, "watermark unset started")
 
@@ -63,17 +80,15 @@ func unsetHandler(
 	err := unset(&writer)
 	if err != nil {
 		slog.ErrorContext(
-			ctx, "watermark unset failed",
-			"error", err,
-			"args", args,
+			ctx, "watermark unset failed", "error", err, "input", input,
 		)
-		return mcp.NewToolResultError(err.Error()), err
+		return nil, nil, err
 	}
 	slog.InfoContext(
 		ctx, "watermark unset completed successfully",
 		"resultSize", writer.Len(),
 	)
-	return mcp.NewToolResultText(writer.String()), nil
+	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
 func unset(writer io.Writer) error {
