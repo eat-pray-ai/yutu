@@ -115,11 +115,11 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 			if err != nil {
 				slog.Warn(readTokenFailed, "path", absToken, "error", err)
 			}
-			s.tokenFile = absToken
+			s.tokenFile = relToken
 			s.CacheToken = string(tokenBytes)
 			return
 		} else if os.IsNotExist(err) && strings.HasSuffix(token, ".json") {
-			s.tokenFile = absToken
+			s.tokenFile = relToken
 			return
 		}
 

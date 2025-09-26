@@ -31,7 +31,7 @@ func init() {
 		panic(err)
 	}
 
-	logLevel := slog.LevelInfo
+	logLevel := slog.LevelWarn
 	if lvl, ok := os.LookupEnv("YUTU_LOG_LEVEL"); ok {
 		switch lvl {
 		case "DEBUG", "debug":

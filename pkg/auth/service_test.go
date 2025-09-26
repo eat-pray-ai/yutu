@@ -71,7 +71,7 @@ func TestNewY2BService(t *testing.T) {
 				Credential: credential,
 				CacheToken: cacheToken,
 				credFile:   "/client_secrets.json",
-				tokenFile:  "/youtube.token.json",
+				tokenFile:  "youtube.token.json",
 				ctx:        context.Background(),
 			},
 		},
