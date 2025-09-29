@@ -22,37 +22,37 @@
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=988886&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
-`yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more. [中文文档](./README_zh.md)
+`yutu` 是一个全功能的 MCP 服务器和 YouTube CLI 工具，用于自动化您的 YouTube 工作流程。它可以操作几乎所有的 YouTube 资源，如视频、播放列表、频道、评论、字幕等。
 
 [![mcp demo](./assets/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
-## Table of Contents
+## 目录
 
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
+- [前提条件](#前提条件)
+- [安装](#安装)
   - [GitHub Actions](#github-actions)
   - [Docker](#docker)
   - [Gopher](#gopher)
   - [Linux](#linux)
   - [macOS](#macos)
   - [Windows](#windows)
-  - [Verifying Installation](#verifying-installation)
-- [MCP Server](#mcp-server)
-- [Usage](#usage)
-- [Features](#features)
-- [Contributing](#contributing)
+  - [验证安装](#验证安装)
+- [MCP 服务器](#mcp-服务器)
+- [使用方法](#使用方法)
+- [功能特性](#功能特性)
+- [贡献](#贡献)
 
-## Prerequisites
+## 前提条件
 
-Before you begin, an account on [Google Cloud Platform](https://console.cloud.google.com/) is required to create a **Project** and enable these APIs for this project, in `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`
+开始之前，您需要在 [Google Cloud Platform](https://console.cloud.google.com/) 上创建一个账户来创建**项目**，并为该项目启用以下 API，位置在 `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`
 
-- [YouTube Data API v3(Required)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
-- [YouTube Analytics API(Optional)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
-- [YouTube Reporting API(Optional)](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
+- [YouTube Data API v3（必需）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
+- [YouTube Analytics API（可选）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
+- [YouTube Reporting API（可选）](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
 
-After enabling the APIs, create an `OAuth content screen` with yourself as test user, then create an `OAuth Client ID` of type `Web Application` with `http://localhost:8216` as the redirect URI.
+启用 API 后，创建一个 `OAuth content screen`，将您自己设置为测试用户，然后创建一个类型为 `Web Application` 的 `OAuth Client ID`，将 `http://localhost:8216` 作为重定向 URI。
 
-Download this credential to your local machine with name `client_secret.json`, it should look like
+将此凭据下载到本地机器，命名为 `client_secret.json`，它应该看起来像这样：
 
 ```json
 {
@@ -70,13 +70,13 @@ Download this credential to your local machine with name `client_secret.json`, i
 }
 ```
 
-To verify this credential, run the following command
+要验证此凭据，请运行以下命令：
 
 ```shell
 ❯ yutu auth --credential client_secret.json
 ```
 
-A browser window will open asking for your permission to access your YouTube account, after granting the permission, a token will be generated and saved to `youtube.token.json`.
+浏览器窗口将打开，要求您授权访问您的 YouTube 账户。授权后，将生成一个令牌并保存到 `youtube.token.json`。
 
 ```json
 {
@@ -87,29 +87,29 @@ A browser window will open asking for your permission to access your YouTube acc
 }
 ```
 
-By default, `yutu` will read `client_secret.json` and `youtube.token.json` from the current directory, `--credential/-c` and `--cacheToken/-t` flags are available only in `auth` subcommand. To modify the default path in all subcommands, set these environment variables
+默认情况下，`yutu` 将从当前目录读取 `client_secret.json` 和 `youtube.token.json`，`--credential/-c` 和 `--cacheToken/-t` 标志仅在 `auth` 子命令中可用。要在所有子命令中修改默认路径，请设置这些环境变量：
 
 ```shell
 ❯ export YUTU_CREDENTIAL=client_secret.json
 ❯ export YUTU_CACHE_TOKEN=youtube.token.json
-# or
+# 或
 ❯ YUTU_CREDENTIAL=client_secret.json YUTU_CACHE_TOKEN=youtube.token.json yutu subcommand --flag value
 ```
 
-## Installation
+## 安装
 
-You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
+您可以直接从[发布页面](https://github.com/eat-pray-ai/yutu/releases/latest)下载 `yutu`，或使用以下您喜欢的方法。
 
 ### GitHub Actions
 
-There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [youtube-action](https://github.com/eat-pray-ai/youtube-action) and [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader) for more information.
+yutu 有两个可用的 action，一个是通用 action，另一个专用于上传视频到 YouTube。更多信息请参考 [youtube-action](https://github.com/eat-pray-ai/youtube-action) 和 [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader)。
 
 ### Docker
 
 ```shell
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
 ❯ docker run --rm ghcr.io/eat-pray-ai/yutu:latest
-# make sure client_secret.json is in the current directory
+# 确保 client_secret.json 在当前目录中
 ❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app ghcr.io/eat-pray-ai/yutu:latest auth
 ```
 
@@ -127,12 +127,12 @@ There are two actions available for yutu, one is for general purpose and the oth
 
 ### macOS
 
-Install `yutu` using [Homebrew🍺](https://brew.sh/)(recommended), or run the shell script.
+使用 [Homebrew🍺](https://brew.sh/) 安装 `yutu`（推荐），或运行 shell 脚本。
 
 ```shell
 ❯ brew install yutu
 
-# or
+# 或
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
@@ -142,31 +142,31 @@ Install `yutu` using [Homebrew🍺](https://brew.sh/)(recommended), or run the s
 ❯ winget install yutu
 ```
 
-### Verifying Installation
+### 验证安装
 
-Verify the integrity and provenance of `yutu` using its associated cryptographically signed attestations.
+使用其关联的加密签名证明来验证 `yutu` 的完整性和来源。
 
 ```shell
 # Docker
 ❯ gh attestation verify oci://ghcr.io/eat-pray-ai/yutu:latest --repo eat-pray-ai/yutu
 
-# Linux and macOS(if installed using shell script)
+# Linux 和 macOS（如果使用 shell 脚本安装）
 ❯ gh attestation verify $(which yutu) --repo eat-pray-ai/yutu
 
 # Windows
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
 
-## MCP Server
+## MCP 服务器
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+[![在 VS Code 中安装](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
+[![在 Cursor 中安装](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
 
-As a [MCP server](https://modelcontextprotocol.io/introduction), `yutu` can be used in MCP clients like [Claude Desktop](https://modelcontextprotocol.io/quickstart/user), [VS Code](https://code.visualstudio.com/) or [Cursor](https://docs.cursor.com/), which allows you to interact with YouTube resources in a chat-like interface.
+作为一个 [MCP 服务器](https://modelcontextprotocol.io/introduction)，`yutu` 可以在 MCP 客户端中使用，如 [Claude Desktop](https://modelcontextprotocol.io/quickstart/user)、[VS Code](https://code.visualstudio.com/) 或 [Cursor](https://docs.cursor.com/) 等，这允许您通过聊天的形式与 YouTube 资源进行交互。
 
-Before using `yutu` as an MCP server, make sure `yutu` is installed(see [Installation](#installation) section), and you have a valid `client_secret.json` and `youtube.token.json` files(refer to [Prerequisites](#prerequisites) section).
+在将 `yutu` 用作 MCP 服务器之前，请确保已安装 `yutu`（参见[安装](#安装)部分），并且您有有效的 `client_secret.json` 和 `youtube.token.json` 文件（参考[前提条件](#前提条件)部分）。
 
-You can add `yutu` as a MCP server in VS Code or Cursor by clicking corresponding badge above, or add the following configuration manually to your MCP client. Remember to replace the values of `YUTU_CREDENTIAL` and `YUTU_CACHE_TOKEN` with correct paths on your local machine.
+您可以通过点击上面相应的徽章将 `yutu` 添加为 VS Code 或 Cursor 中的 MCP 服务器，或手动将以下配置添加到您的 MCP 客户端。记得将 `YUTU_CREDENTIAL` 和 `YUTU_CACHE_TOKEN` 的值替换为您本地机器上的正确路径。
 
 ```json
 {
@@ -184,7 +184,7 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
 }
 ```
 
-## Usage
+## 使用方法
 
 ```shell
 ❯ yutu        
@@ -229,14 +229,14 @@ Flags:
 Use "yutu [command] --help" for more information about a command.
 ```
 
-## Features
+## 功能特性
 
-Please refer to [FEATURES.md](docs/FEATURES.md) for more information.
+请参考 [FEATURES.md](docs/FEATURES.md) 获取更多信息。
 
-## Contributing
+## 贡献
 
-Please refer to [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more information.
+请参考 [CONTRIBUTING.md](docs/CONTRIBUTING.md) 获取更多信息。
 
-## Star History
+## Star 历史
 
 [![Star History Chart](https://api.star-history.com/svg?repos=eat-pray-ai/yutu&type=Date)](https://star-history.com/#eat-pray-ai/yutu&Date)
