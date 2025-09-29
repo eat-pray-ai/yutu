@@ -1,100 +1,121 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MOD="github.com/eat-pray-ai/yutu/cmd"
-Version="${MOD}.Version=$(git describe --tags --always --dirty)"
-Commit="${MOD}.Commit=$(git rev-parse --short HEAD)"
-CommitDate="${MOD}.CommitDate=$(git log -1 --date='format:%Y-%m-%dT%H:%M:%SZ' --pretty=%cd)"
-Os="${MOD}.Os=$(go env GOOS)"
-Arch="${MOD}.Arch=$(go env GOARCH)"
-ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch}"
+# Accept yutu executable path as first parameter
+YUTU_PATH="${1:-}"
 
-go mod download
-go build -ldflags "${ldflags}" -o yutu .
-trap 'rm yutu' EXIT
-chmod +x yutu
+# If no path provided, build yutu
+if [[ -z "$YUTU_PATH" ]]; then
+    echo "No yutu path provided, building yutu..."
 
+    MOD="github.com/eat-pray-ai/yutu/cmd"
+    Version="${MOD}.Version=$(git describe --tags --always --dirty)"
+    Commit="${MOD}.Commit=$(git rev-parse --short HEAD)"
+    CommitDate="${MOD}.CommitDate=$(git log -1 --date='format:%Y-%m-%dT%H:%M:%SZ' --pretty=%cd)"
+    Os="${MOD}.Os=$(go env GOOS)"
+    Arch="${MOD}.Arch=$(go env GOARCH)"
+    ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch}"
 
-./yutu help
-./yutu completion
-./yutu version
+    go mod download
+    go build -ldflags "${ldflags}" -o yutu .
+    trap 'rm yutu' EXIT
+    chmod +x yutu
+
+    YUTU_PATH="./yutu"
+else
+    # Verify the provided path exists and is executable
+    if [[ ! -f "$YUTU_PATH" ]]; then
+        echo "Error: yutu executable not found at: $YUTU_PATH"
+        exit 1
+    fi
+    if [[ ! -x "$YUTU_PATH" ]]; then
+        echo "Error: $YUTU_PATH is not executable"
+        exit 1
+    fi
+    echo "Using yutu at: $YUTU_PATH"
+fi
+
+# Run tests with the yutu executable
+"$YUTU_PATH" help
+"$YUTU_PATH" completion
+"$YUTU_PATH" version
 
 # yutu
 echo "======= auth ======="
-./yutu auth --help
+"$YUTU_PATH" auth --help
 
 echo "======= version ======="
-./yutu version --help
+"$YUTU_PATH" version --help
 
 # youtube api
 echo "======= activity ======="
-./yutu activity --help
+"$YUTU_PATH" activity --help
 echo "------- list -------"
-./yutu activity list --help
+"$YUTU_PATH" activity list --help
 
 echo "======= caption ======="
-./yutu caption --help
+"$YUTU_PATH" caption --help
 echo "------- delete -------"
-./yutu caption delete --help
+"$YUTU_PATH" caption delete --help
 echo "------- insert -------"
-./yutu caption insert --help
+"$YUTU_PATH" caption insert --help
 echo "------- list -------"
-./yutu caption list --help
+"$YUTU_PATH" caption list --help
 echo "------- update -------"
-./yutu caption update --help
+"$YUTU_PATH" caption update --help
 echo "------- download -------"
-./yutu caption download --help
+"$YUTU_PATH" caption download --help
 
 echo "======= channel ======="
-./yutu channel --help
+"$YUTU_PATH" channel --help
 echo "------- list -------"
-./yutu channel list --help
+"$YUTU_PATH" channel list --help
 echo "------- update -------"
-./yutu channel update --help
+"$YUTU_PATH" channel update --help
 
 echo "======= channelBanner ======="
-./yutu channelBanner --help
+"$YUTU_PATH" channelBanner --help
 echo "------- insert -------"
-./yutu channelBanner insert --help
+"$YUTU_PATH" channelBanner insert --help
 
 echo "======= channelSection ======="
-./yutu channelSection --help
+"$YUTU_PATH" channelSection --help
 echo "------- delete -------"
-./yutu channelSection delete --help
+"$YUTU_PATH" channelSection delete --help
 echo "------- insert -------"
-./yutu channelSection list --help
+"$YUTU_PATH" channelSection list --help
 
 echo "======= comment ======="
-./yutu comment --help
+"$YUTU_PATH" comment --help
 echo "------- delete -------"
-./yutu comment delete --help
+"$YUTU_PATH" comment delete --help
 echo "------- insert -------"
-./yutu comment insert --help
+"$YUTU_PATH" comment insert --help
 echo "------- list -------"
-./yutu comment list --help
+"$YUTU_PATH" comment list --help
 echo "------- markAsSpam -------"
-./yutu comment markAsSpam --help
+"$YUTU_PATH" comment markAsSpam --help
 echo "------- setModerationStatus -------"
-./yutu comment setModerationStatus --help
+"$YUTU_PATH" comment setModerationStatus --help
 echo "------- update -------"
-./yutu comment update --help
+"$YUTU_PATH" comment update --help
 
 echo "======= commentThread ======="
-./yutu commentThread --help
+"$YUTU_PATH" commentThread --help
 echo "------- list -------"
-./yutu commentThread list --help
+"$YUTU_PATH" commentThread list --help
 echo "------- insert -------"
-./yutu commentThread insert --help
+"$YUTU_PATH" commentThread insert --help
 
 echo "======= i18nLanguage ======="
-./yutu i18nLanguage --help
+"$YUTU_PATH" i18nLanguage --help
 echo "------- list -------"
-./yutu i18nLanguage list --help
+"$YUTU_PATH" i18nLanguage list --help
 
 echo "======= i18nRegion ======="
-./yutu i18nRegion --help
+"$YUTU_PATH" i18nRegion --help
 echo "------- list -------"
-./yutu i18nRegion list --help
+"$YUTU_PATH" i18nRegion list --help
 
 echo "======= liveBroadcast ======="
 echo "pending implementation"
@@ -112,66 +133,66 @@ echo "======= liveStream ======="
 echo "pending implementation"
 
 echo "======= member ======="
-./yutu member --help
+"$YUTU_PATH" member --help
 echo "------- list -------"
-./yutu member list --help
+"$YUTU_PATH" member list --help
 
 echo "======= membershipsLevel ======="
-./yutu membershipsLevel --help
+"$YUTU_PATH" membershipsLevel --help
 echo "------- list -------"
-./yutu membershipsLevel list --help
+"$YUTU_PATH" membershipsLevel list --help
 
 echo "======= playlist ======="
-./yutu playlist --help
+"$YUTU_PATH" playlist --help
 echo "------- delete -------"
-./yutu playlist delete --help
+"$YUTU_PATH" playlist delete --help
 echo "------- insert -------"
-./yutu playlist insert --help
+"$YUTU_PATH" playlist insert --help
 echo "------- list -------"
-./yutu playlist list --help
+"$YUTU_PATH" playlist list --help
 echo "------- update -------"
-./yutu playlist update --help
+"$YUTU_PATH" playlist update --help
 
 echo "======= playlistItem ======="
-./yutu playlistItem --help
+"$YUTU_PATH" playlistItem --help
 echo "------- delete -------"
-./yutu playlistItem delete --help
+"$YUTU_PATH" playlistItem delete --help
 echo "------- insert -------"
-./yutu playlistItem insert --help
+"$YUTU_PATH" playlistItem insert --help
 echo "------- list -------"
-./yutu playlistItem list --help
+"$YUTU_PATH" playlistItem list --help
 echo "------- update -------"
-./yutu playlistItem update --help
+"$YUTU_PATH" playlistItem update --help
 
 echo "======= playlistImage ======="
-./yutu playlistImage --help
+"$YUTU_PATH" playlistImage --help
 echo "------- delete -------"
-./yutu playlistImage delete --help
+"$YUTU_PATH" playlistImage delete --help
 echo "------- insert -------"
-./yutu playlistImage insert --help
+"$YUTU_PATH" playlistImage insert --help
 echo "------- list -------"
-./yutu playlistImage list --help
+"$YUTU_PATH" playlistImage list --help
 echo "------- update -------"
-./yutu playlistImage update --help
+"$YUTU_PATH" playlistImage update --help
 
 echo "======= search ======="
-./yutu search --help
+"$YUTU_PATH" search --help
 echo "------- list -------"
-./yutu search list --help
+"$YUTU_PATH" search list --help
 
 echo "======= subscription ======="
-./yutu subscription --help
+"$YUTU_PATH" subscription --help
 echo "------- delete -------"
-./yutu subscription delete --help
+"$YUTU_PATH" subscription delete --help
 echo "------- insert -------"
-./yutu subscription insert --help
+"$YUTU_PATH" subscription insert --help
 echo "------- list -------"
-./yutu subscription list --help
+"$YUTU_PATH" subscription list --help
 
 echo "======= superChatEvent ======="
-./yutu superChatEvent --help
+"$YUTU_PATH" superChatEvent --help
 echo "------- list -------"
-./yutu superChatEvent list --help
+"$YUTU_PATH" superChatEvent list --help
 
 echo "======= test ======="
 echo "pending implementation"
@@ -180,40 +201,40 @@ echo "======= thirdPartyLink ======="
 echo "pending implementation"
 
 echo "======= thumbnail ======="
-./yutu thumbnail --help
+"$YUTU_PATH" thumbnail --help
 echo "------- set -------"
-./yutu thumbnail set --help
+"$YUTU_PATH" thumbnail set --help
 
 echo "======= video ======="
-./yutu video --help
+"$YUTU_PATH" video --help
 echo "------- delete -------"
-./yutu video delete --help
+"$YUTU_PATH" video delete --help
 echo "------- getRating -------"
-./yutu video getRating --help
+"$YUTU_PATH" video getRating --help
 echo "------- insert -------"
-./yutu video insert --help
+"$YUTU_PATH" video insert --help
 echo "------- list -------"
-./yutu video list --help
+"$YUTU_PATH" video list --help
 echo "------- rate -------"
-./yutu video rate --help
+"$YUTU_PATH" video rate --help
 echo "------- update -------"
-./yutu video update --help
+"$YUTU_PATH" video update --help
 echo "------- reportAbuse -------"
-./yutu video reportAbuse --help
+"$YUTU_PATH" video reportAbuse --help
 
 echo "======= videoAbuseReportReason ======="
-./yutu videoAbuseReportReason --help
+"$YUTU_PATH" videoAbuseReportReason --help
 echo "------- list -------"
-./yutu videoAbuseReportReason list --help
+"$YUTU_PATH" videoAbuseReportReason list --help
 
 echo "======= videoCategory ======="
-./yutu videoCategory --help
+"$YUTU_PATH" videoCategory --help
 echo "------- list -------"
-./yutu videoCategory list --help
+"$YUTU_PATH" videoCategory list --help
 
 echo "======= watermark ======="
-./yutu watermark --help
+"$YUTU_PATH" watermark --help
 echo "------- set -------"
-./yutu watermark set --help
+"$YUTU_PATH" watermark set --help
 echo "------- unset -------"
-./yutu watermark unset --help
+"$YUTU_PATH" watermark unset --help
