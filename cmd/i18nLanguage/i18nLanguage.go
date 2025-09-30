@@ -1,3 +1,6 @@
+// Copyright 2025 eat-pray-ai & OpenWaygate
+// SPDX-License-Identifier: Apache-2.0
+
 package i18nLanguage
 
 import (
