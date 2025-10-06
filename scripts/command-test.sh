@@ -17,7 +17,8 @@ if [[ -z "$YUTU_PATH" ]]; then
     CommitDate="${MOD}.CommitDate=$(git log -1 --date='format:%Y-%m-%dT%H:%M:%SZ' --pretty=%cd)"
     Os="${MOD}.Os=$(go env GOOS)"
     Arch="${MOD}.Arch=$(go env GOARCH)"
-    ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch}"
+    Builder="${MOD}.Builder=${GITHUB_ACTOR:-$USER}"
+    ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch} -X ${Builder}"
 
     go mod download
     go build -ldflags "${ldflags}" -o yutu .

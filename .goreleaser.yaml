@@ -10,7 +10,8 @@ version: 2
 project_name: yutu
 
 env:
-  - MODULE_PATH=github.com/{{ .Env.GITHUB_REPOSITORY }}
+  - MODULE_PATH=github.com/{{ if index .Env "GITHUB_REPOSITORY"  }}{{ .Env.GITHUB_REPOSITORY }}{{ else }}eat-pray-ai/yutu{{ end }}
+  - Builder={{ if index .Env "GITHUB_ACTOR"  }}{{ .Env.GITHUB_ACTOR }}{{ else }}Gopher{{ end }}
 
 before:
   hooks:
@@ -53,10 +54,11 @@ builds:
       - -X {{ .Env.MODULE_PATH }}/cmd.CommitDate={{ .CommitDate }}
       - -X {{ .Env.MODULE_PATH }}/cmd.Os={{ .Os }}
       - -X {{ .Env.MODULE_PATH }}/cmd.Arch={{ .Arch }}
+      - -X {{ .Env.MODULE_PATH }}/cmd.Builder={{ .Env.Builder }}
     mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
-  - formats: [ 'binary' ]
+  - formats: ["binary"]
     ids:
       - yutu
     name_template: "{{ .Binary }}"
@@ -96,4 +98,3 @@ changelog:
 
 release:
   discussion_category_name: General
-

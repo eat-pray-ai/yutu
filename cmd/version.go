@@ -4,13 +4,17 @@
 package cmd
 
 import (
+	"runtime/debug"
+
 	"github.com/savioxavier/termlink"
 	"github.com/spf13/cobra"
 )
 
 const (
-	versionShort = "Show the version of yutu"
-	versionLong  = "Show the version of yutu"
+	verShort = "Show the version of yutu"
+	verLong  = "Show the version of yutu"
+	repo     = "Github/eat-pray-ai/yutu"
+	repoUrl  = "https://github.com/eat-pray-ai/yutu"
 )
 
 var (
@@ -19,20 +23,37 @@ var (
 	CommitDate = ""
 	Os         = ""
 	Arch       = ""
-	repo       = "https://github.com/eat-pray-ai/yutu"
+	Builder    = "Gopher"
 )
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: versionShort,
-	Long:  versionLong,
+	Short: verShort,
+	Long:  verLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Printf("🐰yutu version %s %s/%s", Version, Os, Arch)
-		if Commit != "" && CommitDate != "" {
-			cmd.Printf("\n📦build %s-%s", Commit, CommitDate)
+		info, ok := debug.ReadBuildInfo()
+		if ok && Version == "" {
+			Version = info.Main.Version
+
+			settings := make(map[string]string)
+			for _, setting := range info.Settings {
+				settings[setting.Key] = setting.Value
+			}
+
+			if val, exists := settings["vcs.time"]; exists {
+				CommitDate = val
+			}
+			if val, exists := settings["GOOS"]; exists {
+				Os = val
+			}
+			if val, exists := settings["GOARCH"]; exists {
+				Arch = val
+			}
 		}
 
-		cmd.Println("\n🌟Star:", termlink.Link("Github/eat-pray-ai/yutu", repo))
+		cmd.Printf("🐰yutu %s %s/%s\n", Version, Os, Arch)
+		cmd.Printf("📦build %s-%s\n", Builder, CommitDate)
+		cmd.Printf("🌟Star: %s\n", termlink.Link(repo, repoUrl))
 	},
 }
 

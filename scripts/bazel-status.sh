@@ -19,3 +19,4 @@ fi
 
 echo STABLE_OS "$(uname -s | tr '[:upper:]' '[:lower:]')"
 echo STABLE_ARCH "$(uname -m | sed 's/x86_64/amd64/' | tr '[:upper:]' '[:lower:]')"
+echo STABLE_Builder "${GITHUB_ACTOR:-$USER}"

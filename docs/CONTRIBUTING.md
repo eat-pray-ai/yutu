@@ -16,13 +16,13 @@ Here are some commands which may useful.
 ## run tests
 ### unit tests
 ❯ go test ./... -coverprofile=./cover.out -coverpkg="$(go list || go list -m | head -1)/pkg/..."
-❯ go tool cover -html=cover.out -o=cover.html 
+❯ go tool cover -html=cover.out -o=cover.html
 
 ## build the binary
 ### install goreleaser: https://goreleaser.com/install
-❯ GITHUB_REPOSITORY=eat-pray-ai/yutu goreleaser build --clean --auto-snapshot
+❯ goreleaser build --clean --auto-snapshot
 
-❯ tree dist 
+❯ tree dist
 dist
 ├── artifacts.json
 ├── config.yaml
