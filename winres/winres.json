@@ -11,7 +11,7 @@
           "name": "",
           "version": ""
         },
-        "description": "yutu is a fully functional CLI for YouTube",
+        "description": "MCP server and CLI for YouTube",
         "minimum-os": "win10",
         "execution-level": "",
         "ui-access": false,
@@ -40,10 +40,10 @@
           "0409": {
             "Comments": "yutu",
             "CompanyName": "eat-pray-ai",
-            "FileDescription": "yutu is a fully functional CLI for YouTube",
+            "FileDescription": "MCP server and CLI for YouTube",
             "FileVersion": "",
             "InternalName": "yutu",
-            "LegalCopyright": "Copyright (c) [eat-pray-ai & Chaoqun]",
+            "LegalCopyright": "Copyright (c) [eat-pray-ai & OpenWaygate]",
             "LegalTrademarks": "",
             "OriginalFilename": "yutu",
             "PrivateBuild": "",
