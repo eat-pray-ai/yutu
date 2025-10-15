@@ -110,7 +110,7 @@ There are two actions available for yutu, one is for general purpose and the oth
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
 ❯ docker run --rm ghcr.io/eat-pray-ai/yutu:latest
 # make sure client_secret.json is in the current directory
-❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app ghcr.io/eat-pray-ai/yutu:latest auth
+❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
 ```
 
 ### Gopher

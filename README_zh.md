@@ -110,7 +110,7 @@ yutu 有两个可用的 action，一个是通用 action，另一个专用于上�
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
 ❯ docker run --rm ghcr.io/eat-pray-ai/yutu:latest
 # 确保 client_secret.json 在当前目录中
-❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app ghcr.io/eat-pray-ai/yutu:latest auth
+❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
 ```
 
 ### Gopher
