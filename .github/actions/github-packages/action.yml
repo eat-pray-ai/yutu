@@ -24,6 +24,8 @@ runs:
       uses: docker/metadata-action@v5
       with:
         images: ghcr.io/${{ github.repository }}
+        labels: |
+          io.modelcontextprotocol.server.name="io.github.eat-pray-ai/yutu"
     - id: push
       uses: docker/build-push-action@v6
       with:
