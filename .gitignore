@@ -3,6 +3,8 @@
 *.json
 *.mp4
 *.jpg
+.mcpregistry_github_token
+.mcpregistry_registry_token
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -47,3 +49,4 @@ dist/
 
 # except for the following files
 !winres/*
+!server.json
