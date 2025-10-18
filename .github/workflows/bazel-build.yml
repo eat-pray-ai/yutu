@@ -1,0 +1,75 @@
+name: Bazel Build and Docker
+
+on:
+  workflow_dispatch:
+  push:
+    tags: # for non-release builds
+      - '*.*.*-rc*'
+      - '*.*.*-beta*'
+      - '*.*.*-alpha*'
+      - '*.*.*-dev*'
+      - '!v*'
+
+permissions: read-all
+
+jobs:
+  bazel-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - name: Update dependencies
+        run: |
+          bazel run @rules_go//go -- mod tidy -v
+          bazel mod tidy
+          bazel run @rules_go//go -- install github.com/tc-hib/go-winres@latest
+          bazel run @rules_go//go -- generate ./...
+      - name: Bazel test
+        run: |
+          bazel test //... --test_output=errors
+      - name: Build binaries
+        run: |
+          bazel build //...
+      - name: Prepare binaries for Docker
+        shell: bash
+        run: |
+          targets=(darwin-amd64 darwin-arm64 linux-amd64 linux-arm64 windows-amd64.exe windows-arm64.exe)
+          dirs=(darwin_amd64 darwin_arm64 linux_amd64 linux_arm64 windows_amd64 windows_arm64)
+          for i in ${!targets[@]}; do
+            binary=$(bazel cquery --output=files //:yutu-${targets[$i]})
+            mkdir -p dist/yutu_${dirs[$i]}
+            cp $binary dist/yutu_${dirs[$i]}/
+          done
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: dist/yutu_*/yutu-*
+          retention-days: 15
+
+  github-package:
+    needs: [bazel-build]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - uses: eat-pray-ai/yutu/.github/actions/github-packages@main
+        with:
+          linux_arm64: yutu_linux_arm64/yutu-linux-arm64
+          linux_amd64: yutu_linux_amd64/yutu-linux-amd64
+          add_latest: false
