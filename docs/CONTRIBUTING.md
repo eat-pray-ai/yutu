@@ -68,7 +68,8 @@ dist
 ❯ bazel mod tidy
 ❯ bazel build //:yutu   # build the binary for the current platform
 ❯ bazel build //...     # build all targets
-❯ bazel build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //:yutu
+❯ bazel build --platforms=@rules_go//go/toolchain:linux_amd64 //:yutu
+❯ bazel cquery --output=files //:yutu-linux-amd64
 
 ❯ tree -L 1 bazel-bin/yutu_
 bazel-bin/yutu_
