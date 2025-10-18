@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: actions/first-interaction@v3
         with:
-          repo-token: ${{ github.token }}
-          issue-message: "Welcome to yutu, thank you for opening your first issue!"
-          pr-message: "Welcome to yutu, thank you for opening your first PR!"
+          repo_token: ${{ github.token }}
+          issue_message: "Welcome to yutu, thank you for opening your first issue!"
+          pr_message: "Welcome to yutu, thank you for opening your first PR!"
