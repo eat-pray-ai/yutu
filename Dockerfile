@@ -3,12 +3,14 @@
 
 FROM alpine:latest AS binary
 ARG TARGETARCH
+ARG arm64_binary
+ARG amd64_binary
 
 COPY dist /app/
 RUN if [[ "${TARGETARCH}" == "arm64" ]]; then \
-      mv /app/yutu_linux_arm64_v8.0/yutu-linux-arm64 /app/yutu; \
+      mv /app/${arm64_binary} /app/yutu; \
     elif [[ "${TARGETARCH}" == "amd64" ]]; then \
-      mv /app/yutu_linux_amd64_v1/yutu-linux-amd64 /app/yutu; \
+      mv /app/${amd64_binary} /app/yutu; \
     fi && \
     chmod +x /app/yutu
 

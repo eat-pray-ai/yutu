@@ -3,7 +3,11 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "v*"
+      - 'v*'
+      - '!*.*.*-rc*'
+      - '!*.*.*-beta*'
+      - '!*.*.*-alpha*'
+      - '!*.*.*-dev*'
 
 permissions: read-all
 
