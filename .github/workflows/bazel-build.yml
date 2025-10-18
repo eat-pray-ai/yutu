@@ -8,7 +8,6 @@ on:
       - '*.*.*-beta*'
       - '*.*.*-alpha*'
       - '*.*.*-dev*'
-      - '!v*'
 
 permissions: read-all
 
@@ -54,7 +53,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: binary
           path: dist/yutu_*/yutu-*
           retention-days: 15
 

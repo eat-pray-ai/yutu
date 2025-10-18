@@ -24,7 +24,7 @@ runs:
         sparse-checkout: |
           Dockerfile
         sparse-checkout-cone-mode: false
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
         name: binary
         path: ${{ github.workspace }}/dist
@@ -58,7 +58,7 @@ runs:
         build-args: |
           arm64_binary=${{ inputs.amd64_binary }}
           amd64_binary=${{ inputs.amd64_binary }}
-    - uses: actions/attest-build-provenance@v2
+    - uses: actions/attest-build-provenance@v3
       with:
         subject-name: ghcr.io/${{ github.repository }}
         subject-digest: ${{ steps.push.outputs.digest }}
