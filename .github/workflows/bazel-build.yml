@@ -57,7 +57,7 @@ jobs:
           path: dist/yutu_*/yutu-*
           retention-days: 15
 
-  github-package:
+  github-registry:
     needs: [bazel-build]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
@@ -72,3 +72,9 @@ jobs:
           arm64_binary: yutu_linux_arm64/yutu-linux-arm64
           amd64_binary: yutu_linux_amd64/yutu-linux-amd64
           add_latest: false
+      - shell: bash
+        run: |
+          mcp-publisher="mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz"
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/${mcp-publisher}" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

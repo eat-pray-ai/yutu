@@ -77,7 +77,7 @@ jobs:
           token: ${{ secrets.RELEASE_PAT }}
           max-versions-to-keep: 3
 
-  github-package:
+  github-registry:
     needs: [goreleaser]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
