@@ -11,7 +11,7 @@
     }
   ],
   "repository": {
-    "url": "git@github.com:eat-pray-ai/yutu.git",
+    "url": "https://github.com/eat-pray-ai/yutu",
     "source": "github",
     "id": "643163403"
   },
@@ -19,9 +19,7 @@
   "packages": [
     {
       "registryType": "oci",
-      "registryBaseUrl": "https://ghcr.io",
-      "identifier": "eat-pray-ai/yutu",
-      "version": "v0.10.4-dev",
+      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.4-dev",
       "transport": {
         "type": "streamable-http",
         "url": "http://localhost:8216/mcp"
