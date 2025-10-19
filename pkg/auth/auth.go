@@ -230,5 +230,5 @@ func (s *svc) saveToken(token *oauth2.Token) {
 		slog.Error(cacheTokenFailed, "error", err)
 		os.Exit(1)
 	}
-	slog.Info("Token cached to file", "file", s.tokenFile)
+	slog.Debug("Token cached to file", "file", s.tokenFile)
 }
