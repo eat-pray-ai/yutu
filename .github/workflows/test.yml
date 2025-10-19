@@ -3,6 +3,8 @@ name: Test
 on:
   workflow_dispatch:
   push:
+    branches:
+      - '*'
     paths:
       - 'go.*'
       - '**/*.go'
@@ -12,6 +14,8 @@ on:
     tags-ignore:
       - '*'
   pull_request:
+    branches:
+      - '*'
     paths:
       - 'go.*'
       - '**/*.go'
