@@ -42,7 +42,7 @@ runs:
         flavor: |
           latest=${{ inputs.add_latest }}
         labels: |
-          io.modelcontextprotocol.server.name="io.github.eat-pray-ai/yutu"
+          io.modelcontextprotocol.server.name=io.github.eat-pray-ai/yutu
     - id: push
       uses: docker/build-push-action@v6
       with:

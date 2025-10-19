@@ -69,6 +69,6 @@ jobs:
     steps:
       - uses: eat-pray-ai/yutu/.github/actions/github-packages@main
         with:
-          linux_arm64: yutu_linux_arm64/yutu-linux-arm64
-          linux_amd64: yutu_linux_amd64/yutu-linux-amd64
+          arm64_binary: yutu_linux_arm64/yutu-linux-arm64
+          amd64_binary: yutu_linux_amd64/yutu-linux-amd64
           add_latest: false

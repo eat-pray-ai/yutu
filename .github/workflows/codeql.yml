@@ -20,6 +20,8 @@ on:
       - '**/*.go'
       - '**/*.yml'
       - '**/*.yaml'
+    tags-ignore:
+      - '*'
   pull_request:
     branches:
       - '*'
