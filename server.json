@@ -15,11 +15,11 @@
     "source": "github",
     "id": "643163403"
   },
-  "version": "v0.10.4-dev",
+  "version": "v0.10.4-dev1",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.4-dev",
+      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.4-dev1",
       "transport": {
         "type": "streamable-http",
         "url": "http://localhost:8216/mcp"
@@ -45,7 +45,7 @@
           "type": "named",
           "name": "--mount",
           "value": "type=bind,source={hostPath},target=/app",
-          "description": "Working directory inside the container",
+          "description": "Host directory containing YUTU credentials and token",
           "isRepeated": false,
           "isRequired": false,
           "variables": {
