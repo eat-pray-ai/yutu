@@ -74,7 +74,7 @@ jobs:
           add_latest: false
       - shell: bash
         run: |
-          mcp-publisher="mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz"
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/${mcp-publisher}" | tar xz mcp-publisher
+          mcp_publisher="mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz"
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/${mcp_publisher}" | tar xz mcp-publisher
           ./mcp-publisher login github-oidc
           ./mcp-publisher publish

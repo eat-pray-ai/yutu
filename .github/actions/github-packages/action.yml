@@ -23,6 +23,7 @@ runs:
       with:
         sparse-checkout: |
           Dockerfile
+          server.json
         sparse-checkout-cone-mode: false
     - uses: actions/download-artifact@v5
       with:
