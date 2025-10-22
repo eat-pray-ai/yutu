@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/youtube/v3"
@@ -71,7 +72,8 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		// 2. cred is a base64 encoded string
 		// 3. cred is a json string
 		absCred, _ := filepath.Abs(cred)
-		relCred, _ := filepath.Rel("/", absCred)
+		relCred, _ := filepath.Rel(*pkg.RootDir, absCred)
+		relCred = strings.ReplaceAll(relCred, `\`, `/`)
 
 		if _, err := fs.Stat(fsys, relCred); err == nil {
 			s.credFile = absCred
@@ -111,7 +113,8 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		// 2. token is a base64 encoded string
 		// 3. token is a json string
 		absToken, _ := filepath.Abs(token)
-		relToken, _ := filepath.Rel("/", absToken)
+		relToken, _ := filepath.Rel(*pkg.RootDir, absToken)
+		relToken = strings.ReplaceAll(relToken, `\`, `/`)
 
 		if _, err := fs.Stat(fsys, relToken); err == nil {
 			tokenBytes, err := fs.ReadFile(fsys, relToken)
@@ -131,7 +134,7 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		} else if utils.IsJson(token) {
 			s.CacheToken = token
 		} else {
-			slog.Warn(parseTokenFailed, "error", err)
+			slog.Warn(parseTokenFailed, "token", token, "error", err)
 		}
 	}
 }

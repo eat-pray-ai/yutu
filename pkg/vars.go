@@ -6,6 +6,7 @@ package pkg
 import (
 	"log/slog"
 	"os"
+	"runtime"
 )
 
 const (
@@ -19,8 +20,9 @@ const (
 )
 
 var (
-	Root   *os.Root
-	Logger *slog.Logger
+	RootDir *string
+	Root    *os.Root
+	Logger  *slog.Logger
 )
 
 func init() {
@@ -28,8 +30,12 @@ func init() {
 	rootDir, ok := os.LookupEnv("YUTU_ROOT")
 	if !ok {
 		rootDir = "/"
+		if runtime.GOOS == "windows" {
+			rootDir = os.Getenv("SystemDrive") + `\`
+		}
 	}
-	Root, err = os.OpenRoot(rootDir)
+	RootDir = &rootDir
+	Root, err = os.OpenRoot(*RootDir)
 	if err != nil {
 		panic(err)
 	}
