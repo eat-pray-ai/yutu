@@ -15,11 +15,11 @@
     "source": "github",
     "id": "643163403"
   },
-  "version": "v0.10.4-dev1",
+  "version": "v0.10.4-dev2",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.4-dev1",
+      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.4-dev2",
       "transport": {
         "type": "streamable-http",
         "url": "http://localhost:8216/mcp"
@@ -29,7 +29,7 @@
           "type": "named",
           "name": "--user",
           "value": "{user}:{group}",
-          "description": "Username or UID in docker (format: <name|uid>[:<group|gid>])",
+          "description": "UID and GID in the container to match host user",
           "isRepeated": false,
           "isRequired": false,
           "variables": {
@@ -45,12 +45,12 @@
           "type": "named",
           "name": "--mount",
           "value": "type=bind,source={hostPath},target=/app",
-          "description": "Host directory containing YUTU credentials and token",
+          "description": "Mount host directory containing credentials and token",
           "isRepeated": false,
           "isRequired": false,
           "variables": {
             "hostPath": {
-              "description": "The directory containing `youtube.token.json` and `youtube.token.json`"
+              "description": "The directory containing `client_secret.json` and `youtube.token.json`"
             }
           }
         },
