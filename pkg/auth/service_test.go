@@ -5,22 +5,31 @@ package auth
 
 import (
 	"context"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 	"testing/fstest"
 )
 
-func TestNewY2BService(t *testing.T) {
-	credential := `{"client_id":"test"}`
-	cacheToken := `{"access_token":"test"}`
+const (
+	credFile   = "client_secret.json"
+	tokenFile  = "youtube.token.json"
+	credential = `{"client_id":"test"}`
+	cacheToken = `{"access_token":"test"}`
+	credB64    = "eyJjbGllbnRfaWQiOiJ0ZXN0In0="
+	tokenB64   = "eyJhY2Nlc3NfdG9rZW4iOiJ0ZXN0In0="
+)
 
+func TestNewY2BService(t *testing.T) {
+	rootDir, _ := os.Getwd()
+	absCred := filepath.Join(rootDir, credFile)
+	absToken := filepath.Join(rootDir, tokenFile)
 	mockFS := fstest.MapFS{
-		"youtube.token.json": &fstest.MapFile{
-			Data: []byte(cacheToken),
-		},
-		"client_secrets.json": &fstest.MapFile{
-			Data: []byte(credential),
-		},
+		rootDir:   &fstest.MapFile{Mode: fs.ModeDir},
+		credFile:  &fstest.MapFile{Data: []byte(credential)},
+		tokenFile: &fstest.MapFile{Data: []byte(cacheToken)},
 	}
 
 	type args struct {
@@ -43,7 +52,7 @@ func TestNewY2BService(t *testing.T) {
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				credFile:   "client_secret.json",
+				credFile:   credFile,
 				ctx:        context.Background(),
 			},
 		},
@@ -51,14 +60,14 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - base64",
 			args: args{
 				opts: []Option{
-					WithCredential("eyJjbGllbnRfaWQiOiJ0ZXN0In0=", mockFS),
-					WithCacheToken("eyJhY2Nlc3NfdG9rZW4iOiJ0ZXN0In0=", mockFS),
+					WithCredential(credB64, mockFS),
+					WithCacheToken(tokenB64, mockFS),
 				},
 			},
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				credFile:   "client_secret.json",
+				credFile:   credFile,
 				ctx:        context.Background(),
 			},
 		},
@@ -66,15 +75,15 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - file",
 			args: args{
 				opts: []Option{
-					WithCredential("/client_secrets.json", mockFS),
-					WithCacheToken("/youtube.token.json", mockFS),
+					WithCredential(absCred, mockFS),
+					WithCacheToken(absToken, mockFS),
 				},
 			},
 			want: &svc{
 				Credential: credential,
 				CacheToken: cacheToken,
-				credFile:   "/client_secrets.json",
-				tokenFile:  "youtube.token.json",
+				credFile:   absCred,
+				tokenFile:  tokenFile,
 				ctx:        context.Background(),
 			},
 		},
@@ -84,7 +93,7 @@ func TestNewY2BService(t *testing.T) {
 				opts: []Option{},
 			},
 			want: &svc{
-				credFile: "client_secret.json",
+				credFile: credFile,
 				ctx:      context.Background(),
 			},
 		},
