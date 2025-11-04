@@ -9,26 +9,23 @@ import (
 	"runtime"
 )
 
-const (
-	PartsUsage  = "Comma separated parts"
-	MRUsage     = "The maximum number of items that should be returned, 0 for no limit"
-	TableUsage  = "json, yaml, or table"
-	SilentUsage = "json, yaml, or silent"
-	JPUsage     = "JSONPath expression to filter the output"
-	JsonMIME    = "application/json"
-	PerPage     = 20
-
-	getWdFailed    = "failed to get working directory"
-	openRootFailed = "failed to open root directory"
-)
-
 var (
 	RootDir *string
 	Root    *os.Root
-	Logger  *slog.Logger
+	logger  *slog.Logger
 )
 
 func init() {
+	if logger == nil {
+		initLogger()
+	}
+
+	if RootDir == nil {
+		initRootDir()
+	}
+}
+
+func initLogger() {
 	logLevel := slog.LevelInfo
 	if lvl, ok := os.LookupEnv("YUTU_LOG_LEVEL"); ok {
 		switch lvl {
@@ -42,7 +39,7 @@ func init() {
 			logLevel = slog.LevelError
 		}
 	}
-	Logger = slog.New(
+	logger = slog.New(
 		slog.NewTextHandler(
 			os.Stdout, &slog.HandlerOptions{
 				Level: logLevel,
@@ -50,8 +47,10 @@ func init() {
 		),
 	)
 
-	slog.SetDefault(Logger)
+	slog.SetDefault(logger)
+}
 
+func initRootDir() {
 	var err error
 	rootDir, ok := os.LookupEnv("YUTU_ROOT")
 	if !ok {

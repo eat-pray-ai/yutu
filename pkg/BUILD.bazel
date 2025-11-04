@@ -3,8 +3,9 @@ load("@rules_go//go:def.bzl", "go_library")
 go_library(
     name = "pkg",
     srcs = [
+        "constants.go",
+        "init.go",
         "interface.go",
-        "vars.go",
     ],
     importpath = "github.com/eat-pray-ai/yutu/pkg",
     visibility = ["//visibility:public"],
