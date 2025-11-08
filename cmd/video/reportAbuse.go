@@ -9,12 +9,21 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	reportAbuseTool  = "video-reportAbuse"
+	reportAbuseShort = "Report abuse on a video"
+	reportAbuseLong  = "Report abuse on a video"
+	raIdsUsage       = "IDs of the videos to report abuse on"
+	raLangUsage      = "Language that the content was viewed in"
 )
 
 type reportAbuseIn struct {
@@ -63,17 +72,10 @@ var reportAbuseInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	reportAbuseShort = "Report abuse on a video"
-	reportAbuseLong  = "Report abuse on a video"
-	raIdsUsage       = "IDs of the videos to report abuse on"
-	raLangUsage      = "Language that the content was viewed in"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "video-reportAbuse", Title: reportAbuseShort,
+			Name: reportAbuseTool, Title: reportAbuseShort,
 			Description: reportAbuseLong,
 			InputSchema: reportAbuseInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
@@ -118,8 +120,17 @@ var reportAbuseCmd = &cobra.Command{
 }
 
 func reportAbuseHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input reportAbuseIn,
+	ctx context.Context, req *mcp.CallToolRequest, input reportAbuseIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: reportAbuseTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
 	reasonId = input.ReasonId
 	secondaryReasonId = input.SecondaryReasonId
@@ -127,20 +138,12 @@ func reportAbuseHandler(
 	language = input.Language
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
-	slog.InfoContext(ctx, "video reportAbuse started")
-
 	var writer bytes.Buffer
 	err := reportAbuse(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "video reportAbuse failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "video reportAbuse completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

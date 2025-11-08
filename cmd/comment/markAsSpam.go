@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -19,6 +20,7 @@ import (
 )
 
 const (
+	masTool  = "comment-markAsSpam"
 	masShort = "Mark YouTube comments as spam"
 	masLong  = "Mark YouTube comments as spam by ids"
 )
@@ -54,7 +56,7 @@ var markAsSpamInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "comment-markAsSpam", Title: masShort, Description: masLong,
+			Name: masTool, Title: masShort, Description: masLong,
 			InputSchema: markAsSpamInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  false,
@@ -86,26 +88,25 @@ var markAsSpamCmd = &cobra.Command{
 }
 
 func markAsSpamHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input markAsSpamIn,
+	ctx context.Context, req *mcp.CallToolRequest, input markAsSpamIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: masTool, MinInterval: time.Second},
+		),
+	)
+
 	ids = input.IDs
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "comment markAsSpam started")
-
 	var writer bytes.Buffer
 	err := markAsSpam(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "comment markAsSpam failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "comment markAsSpam completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

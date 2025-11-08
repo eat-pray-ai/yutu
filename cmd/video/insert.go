@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -17,6 +18,13 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	insertTool      = "video-insert"
+	insertShort     = "Upload a video to YouTube"
+	insertLong      = "Upload a video to YouTube, with the specified title, description, tags, etc"
+	insertLangUsage = "Language of the video"
 )
 
 type insertIn struct {
@@ -149,16 +157,10 @@ var insertInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	insertShort     = "Upload a video to YouTube"
-	insertLong      = "Upload a video to YouTube, with the specified title, description, tags, etc"
-	insertLangUsage = "Language of the video"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "video-insert", Title: insertShort, Description: insertLong,
+			Name: insertTool, Title: insertShort, Description: insertLong,
 			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  false,
@@ -223,8 +225,17 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: insertTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	autoLevels = utils.BoolPtr(*input.AutoLevels)
 	file = input.File
 	title = input.Title
@@ -248,20 +259,12 @@ func insertHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "video insert started")
-
 	var writer bytes.Buffer
 	err := insert(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "video insert failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "video insert completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

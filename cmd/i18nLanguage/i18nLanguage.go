@@ -13,10 +13,10 @@ const (
 	long     = "List YouTube i18n languages' id, hl, and name"
 	hlUsage  = "Host language"
 	hlURI    = "i18n://hl"
-	hlName   = "all i18n host languages"
+	hlName   = "i18nHostLanguages"
 	hlDesc   = "List all i18n host languages for YouTube regions"
 	langURI  = "i18n://language/{hl}"
-	langName = "i18n languages"
+	langName = "i18nLanguages"
 )
 
 var (

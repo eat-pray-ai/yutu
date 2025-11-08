@@ -8,6 +8,7 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -63,28 +64,25 @@ var listCmd = &cobra.Command{
 }
 
 func hlHandler(
-	ctx context.Context, request *mcp.ReadResourceRequest,
+	ctx context.Context, req *mcp.ReadResourceRequest,
 ) (*mcp.ReadResourceResult, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: hlName, MinInterval: time.Second},
+		),
+	)
+
 	parts = defaultParts
 	output = "json"
 	jpath = "$.*.snippet.hl"
 
-	slog.InfoContext(ctx, "i18nLanguage hl list started")
-
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "i18nLanguage hl list failed", "error", err, "uri",
-			request.Params.URI,
-		)
+		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 		return nil, err
 	}
-
-	slog.InfoContext(
-		ctx, "i18nLanguage hl list completed successfully",
-		"resultSize", writer.Len(),
-	)
 
 	return &mcp.ReadResourceResult{
 		Contents: []*mcp.ResourceContents{
@@ -96,33 +94,29 @@ func hlHandler(
 }
 
 func langsHandler(
-	ctx context.Context, request *mcp.ReadResourceRequest,
+	ctx context.Context, req *mcp.ReadResourceRequest,
 ) (*mcp.ReadResourceResult, error) {
-	parts = defaultParts
-	hl = utils.ExtractHl(request.Params.URI)
-	output = "json"
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: langName, MinInterval: time.Second},
+		),
+	)
 
-	slog.InfoContext(ctx, "i18nLanguage list started")
+	parts = defaultParts
+	hl = utils.ExtractHl(req.Params.URI)
+	output = "json"
 
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "i18nLanguage list failed", "error", err, "uri", request.Params.URI,
-		)
+		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 		return nil, err
 	}
 
-	slog.InfoContext(
-		ctx, "i18nLanguage list completed successfully",
-		"resultSize", writer.Len(),
-	)
-
 	return &mcp.ReadResourceResult{
 		Contents: []*mcp.ResourceContents{
-			{
-				URI: request.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String(),
-			},
+			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
 		},
 	}, nil
 }

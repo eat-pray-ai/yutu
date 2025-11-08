@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
@@ -18,6 +19,7 @@ import (
 )
 
 const (
+	deleteTool     = "subscription-delete"
 	deleteShort    = "Delete a YouTube subscriptions"
 	deleteLong     = "Delete a YouTube subscriptions by ids"
 	deleteIdsUsage = "IDs of the subscriptions to delete"
@@ -44,7 +46,7 @@ var deleteInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "subscription-delete", Title: deleteShort, Description: deleteLong,
+			Name: deleteTool, Title: deleteShort, Description: deleteLong,
 			InputSchema: deleteInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(true),
 				IdempotentHint:  true,
@@ -73,24 +75,24 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input deleteIn,
+	ctx context.Context, req *mcp.CallToolRequest, input deleteIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: deleteTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
-
-	slog.InfoContext(ctx, "subscription delete started")
-
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "subscription delete failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "subscription delete completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

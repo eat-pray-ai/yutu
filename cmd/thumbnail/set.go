@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -16,6 +17,10 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	setTool = "thumbnail-set"
 )
 
 type setIn struct {
@@ -53,7 +58,7 @@ var setInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "thumbnail-set", Title: short, Description: long,
+			Name: setTool, Title: short, Description: long,
 			InputSchema: setInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -87,27 +92,26 @@ var setCmd = &cobra.Command{
 }
 
 func setHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input setIn,
+	ctx context.Context, req *mcp.CallToolRequest, input setIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: setTool, MinInterval: time.Second},
+		),
+	)
+
 	file = input.File
 	videoId = input.VideoId
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "thumbnail set started")
-
 	var writer bytes.Buffer
 	err := set(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "thumbnail set failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "thumbnail set completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

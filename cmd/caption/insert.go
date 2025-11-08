@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -20,6 +21,7 @@ import (
 )
 
 const (
+	insertTool  = "caption-insert"
 	insertShort = "Insert caption"
 	insertLong  = "Insert caption to a video"
 )
@@ -139,7 +141,7 @@ var insertInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "caption-insert", Title: insertShort, Description: insertLong,
+			Name: insertTool, Title: insertShort, Description: insertLong,
 			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  false,
@@ -194,8 +196,17 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: insertTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	file = input.File
 	audioTrackType = input.AudioTrackType
 	isAutoSynced = utils.BoolPtr(*input.IsAutoSynced)
@@ -212,20 +223,12 @@ func insertHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "caption insert started")
-
 	var writer bytes.Buffer
 	err := insert(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "caption insert failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "caption insert completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

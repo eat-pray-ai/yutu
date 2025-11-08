@@ -38,12 +38,12 @@ jobs:
         with:
           go-version-file: ./go.mod
       - uses: eat-pray-ai/yutu/.github/actions/test@main
-      - uses: ncruces/go-coverage-report@v0
-        with:
-          coverage-file: ${{ env.COVERAGE_FILE }}
-          badge-style: flat-square
-          chart: true
-          amend: true
-        if: |
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/main'
+#      - uses: ncruces/go-coverage-report@v0
+#        with:
+#          coverage-file: ${{ env.COVERAGE_FILE }}
+#          badge-style: flat-square
+#          chart: true
+#          amend: true
+#        if: |
+#          github.event_name == 'push' &&
+#          github.ref == 'refs/heads/main'

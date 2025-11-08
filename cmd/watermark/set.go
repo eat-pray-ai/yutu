@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
@@ -18,6 +19,7 @@ import (
 )
 
 const (
+	setTool  = "watermark-set"
 	setShort = "Set watermark for channel's video"
 	setLong  = "Set watermark for channel's video by channel id"
 )
@@ -82,7 +84,7 @@ var setInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name:        "watermark-set",
+			Name:        setTool,
 			Title:       setShort,
 			Description: setLong,
 			InputSchema: setInSchema,
@@ -126,8 +128,15 @@ var setCmd = &cobra.Command{
 }
 
 func setHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input setIn,
+	ctx context.Context, req *mcp.CallToolRequest, input setIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: setTool, MinInterval: time.Second},
+		),
+	)
+
 	channelId = input.ChannelId
 	file = input.File
 	inVideoPosition = input.InVideoPosition
@@ -136,20 +145,12 @@ func setHandler(
 	offsetType = input.OffsetType
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
-	slog.InfoContext(ctx, "watermark set started")
-
 	var writer bytes.Buffer
 	err := set(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "watermark set failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "watermark set completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

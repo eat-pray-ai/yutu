@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -16,6 +17,10 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	insertTool = "channelBanner-insert"
 )
 
 type insertIn struct {
@@ -64,7 +69,7 @@ var insertInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "channelBanner-insert", Title: short, Description: long,
+			Name: insertTool, Title: short, Description: long,
 			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -104,8 +109,17 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: insertTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	channelId = input.ChannelId
 	file = input.File
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
@@ -113,20 +127,12 @@ func insertHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "channelBanner insert started")
-
 	var writer bytes.Buffer
 	err := insert(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "channelBanner insert failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "channelBanner insert completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

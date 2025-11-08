@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -16,6 +17,13 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	getRatingTool  = "video-getRating"
+	getRatingShort = "Get the rating of videos"
+	getRatingLong  = "Get the rating of videos by ids"
+	grIdsUsage     = "IDs of the videos to get the rating for"
 )
 
 type getRatingIn struct {
@@ -53,16 +61,10 @@ var getRatingInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	getRatingShort = "Get the rating of videos"
-	getRatingLong  = "Get the rating of videos by ids"
-	grIdsUsage     = "IDs of the videos to get the rating for"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "video-getRating", Title: getRatingShort, Description: getRatingLong,
+			Name: getRatingTool, Title: getRatingShort, Description: getRatingLong,
 			InputSchema: getRatingInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -97,27 +99,28 @@ var getRatingCmd = &cobra.Command{
 }
 
 func getRatingHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input getRatingIn,
+	ctx context.Context, req *mcp.CallToolRequest, input getRatingIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: getRatingTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "video getRating started")
-
 	var writer bytes.Buffer
 	err := getRating(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "video getRating failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "video getRating completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

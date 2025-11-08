@@ -81,7 +81,6 @@ var (
 	onBehalfOfContentOwnerChannel string
 )
 
-// videoCmd represents the video command
 var videoCmd = &cobra.Command{
 	Use:   "video",
 	Short: short,

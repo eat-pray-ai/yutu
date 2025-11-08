@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
@@ -18,6 +19,7 @@ import (
 )
 
 const (
+	unsetTool  = "watermark-unset"
 	unsetShort = "Unset watermark for channel's video"
 	unsetLong  = "Unset watermark for channel's video by channel id"
 )
@@ -41,11 +43,8 @@ var unsetInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name:        "watermark-unset",
-			Title:       unsetShort,
-			Description: unsetLong,
-			InputSchema: unsetInSchema,
-			Annotations: &mcp.ToolAnnotations{
+			Name: unsetTool, Title: unsetShort, Description: unsetLong,
+			InputSchema: unsetInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(true),
 				IdempotentHint:  true,
 				OpenWorldHint:   jsonschema.Ptr(true),
@@ -73,24 +72,24 @@ var unsetCmd = &cobra.Command{
 }
 
 func unsetHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input unsetIn,
+	ctx context.Context, req *mcp.CallToolRequest, input unsetIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: unsetTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	channelId = input.ChannelId
-
-	slog.InfoContext(ctx, "watermark unset started")
-
 	var writer bytes.Buffer
 	err := unset(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "watermark unset failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "watermark unset completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

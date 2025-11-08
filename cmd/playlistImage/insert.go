@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -16,6 +17,12 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	insertTool  = "playlistImage-insert"
+	insertShort = "Insert a YouTube playlist image"
+	insertLong  = "Insert a YouTube playlist image for a given playlist id"
 )
 
 type insertIn struct {
@@ -67,15 +74,10 @@ var insertInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	insertShort = "Insert a YouTube playlist image"
-	insertLong  = "Insert a YouTube playlist image for a given playlist id"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "playlistImage-insert", Title: insertShort, Description: insertLong,
+			Name: insertTool, Title: insertShort, Description: insertLong,
 			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  false,
@@ -112,8 +114,17 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: insertTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	file = input.File
 	playlistId = input.PlaylistId
 	type_ = input.Type
@@ -122,20 +133,12 @@ func insertHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "playlistImage insert started")
-
 	var writer bytes.Buffer
 	err := insert(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "playlistImage insert failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "playlistImage insert completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

@@ -13,7 +13,7 @@ const (
 	long       = "List YouTube i18n regions' id, hl, and name"
 	hlUsage    = "Host language"
 	regionURI  = "i18n://region/{hl}"
-	regionName = "i18n regions"
+	regionName = "i18nRegions"
 )
 
 var (

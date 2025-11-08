@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -19,6 +20,7 @@ import (
 )
 
 const (
+	updateTool    = "playlist-update"
 	updateShort   = "Update an existing playlist"
 	updateLong    = "Update an existing playlist, with the specified title, description, tags, etc"
 	updateIdUsage = "ID of the playlist to update"
@@ -86,7 +88,7 @@ var updateInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "playlist-update", Title: updateShort, Description: updateLong,
+			Name: updateTool, Title: updateShort, Description: updateLong,
 			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  false,
@@ -123,8 +125,17 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: updateTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
 	title = input.Title
 	description = input.Description
@@ -134,20 +145,12 @@ func updateHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "playlist update started")
-
 	var writer bytes.Buffer
 	err := update(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "playlist update failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "playlist update completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

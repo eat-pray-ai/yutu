@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -16,6 +17,12 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	listTool  = "playlistImage-list"
+	listShort = "List YouTube playlist images"
+	listLong  = "List YouTube playlist images' info"
 )
 
 type listIn struct {
@@ -70,15 +77,10 @@ var listInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	listShort = "List YouTube playlist images"
-	listLong  = "List YouTube playlist images' info"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "playlistImage-list", Title: listShort, Description: listLong,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -117,8 +119,15 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input listIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: listTool, MinInterval: time.Second},
+		),
+	)
+
 	parent = input.Parent
 	maxResults = input.MaxResults
 	parts = input.Parts
@@ -127,20 +136,12 @@ func listHandler(
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 
-	slog.InfoContext(ctx, "playlistImage list started")
-
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "playlistImage list failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "playlistImage list completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

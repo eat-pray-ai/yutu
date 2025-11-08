@@ -9,12 +9,19 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+)
+
+const (
+	deleteTool  = "playlistImage-delete"
+	deleteShort = "Delete YouTube playlist images"
+	deleteLong  = "Delete YouTube playlist images by ids"
 )
 
 type deleteIn struct {
@@ -42,15 +49,10 @@ var deleteInSchema = &jsonschema.Schema{
 	},
 }
 
-const (
-	deleteShort = "Delete YouTube playlist images"
-	deleteLong  = "Delete YouTube playlist images by ids"
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "playlistImage-delete", Title: deleteShort, Description: deleteLong,
+			Name: deleteTool, Title: deleteShort, Description: deleteLong,
 			InputSchema: deleteInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(true),
 				IdempotentHint:  true,
@@ -83,25 +85,26 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input deleteIn,
+	ctx context.Context, req *mcp.CallToolRequest, input deleteIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: deleteTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
-	slog.InfoContext(ctx, "playlistImage delete started")
 
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "playlistImage delete failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "playlistImage delete completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

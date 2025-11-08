@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -20,6 +21,7 @@ import (
 )
 
 const (
+	listTool     = "playlist-list"
 	listShort    = "List playlist's info"
 	listLong     = "List playlist's info, such as title, description, etc"
 	listIdsUsage = "Return the playlists with the given IDs for Stubby or Apiary"
@@ -100,7 +102,7 @@ var listInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "playlist-list", Title: listShort, Description: listLong,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -143,8 +145,15 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input listIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: listTool, MinInterval: time.Second},
+		),
+	)
+
 	ids = input.Ids
 	channelId = input.ChannelId
 	hl = input.Hl
@@ -156,20 +165,12 @@ func listHandler(
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "playlist list started")
-
 	var writer bytes.Buffer
 	err := list(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "playlist list failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "playlist list completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

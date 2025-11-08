@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -20,6 +21,7 @@ import (
 )
 
 const (
+	smsTool  = "comment-setModerationStatus"
 	smsShort = "Set YouTube comments moderation status"
 	smsLong  = "Set YouTube comments moderation status by ids"
 )
@@ -68,7 +70,7 @@ var setModerationStatusInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "comment-setModerationStatus", Title: smsShort, Description: smsLong,
+			Name: smsTool, Title: smsShort, Description: smsLong,
 			InputSchema: setModerationStatusInSchema,
 			Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
@@ -114,28 +116,27 @@ var setModerationStatusCmd = &cobra.Command{
 }
 
 func setModerationStatusHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input setModerationStatusIn,
+	ctx context.Context, req *mcp.CallToolRequest, input setModerationStatusIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{LoggerName: smsTool, MinInterval: time.Second},
+		),
+	)
+
 	ids = input.IDs
 	moderationStatus = input.ModerationStatus
 	banAuthor = utils.BoolPtr(input.BanAuthor)
 	output = input.Output
 	jpath = input.Jsonpath
 
-	slog.InfoContext(ctx, "comment setModerationStatus started")
-
 	var writer bytes.Buffer
 	err := setModerationStatus(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "comment setModerationStatus failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "comment setModerationStatus completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 

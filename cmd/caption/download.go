@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io"
 	"log/slog"
+	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
@@ -18,6 +19,7 @@ import (
 )
 
 const (
+	downloadTool    = "caption-download"
 	downloadShort   = "Download caption"
 	downloadLong    = "Download caption from a video"
 	downloadIdUsage = "ID of the caption to download"
@@ -77,7 +79,7 @@ var downloadInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: "caption-download", Title: downloadShort, Description: downloadLong,
+			Name: downloadTool, Title: downloadShort, Description: downloadLong,
 			InputSchema: downloadInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: jsonschema.Ptr(false),
 				IdempotentHint:  true,
@@ -117,8 +119,17 @@ var downloadCmd = &cobra.Command{
 }
 
 func downloadHandler(
-	ctx context.Context, _ *mcp.CallToolRequest, input downloadIn,
+	ctx context.Context, req *mcp.CallToolRequest, input downloadIn,
 ) (*mcp.CallToolResult, any, error) {
+	logger := slog.New(
+		mcp.NewLoggingHandler(
+			req.Session,
+			&mcp.LoggingHandlerOptions{
+				LoggerName: downloadTool, MinInterval: time.Second,
+			},
+		),
+	)
+
 	ids = input.Ids
 	file = input.File
 	tfmt = input.Tfmt
@@ -126,20 +137,12 @@ func downloadHandler(
 	onBehalfOf = input.OnBehalfOf
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 
-	slog.InfoContext(ctx, "caption download started")
-
 	var writer bytes.Buffer
 	err := download(&writer)
 	if err != nil {
-		slog.ErrorContext(
-			ctx, "caption download failed", "error", err, "input", input,
-		)
+		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	slog.InfoContext(
-		ctx, "caption download completed successfully",
-		"resultSize", writer.Len(),
-	)
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
