@@ -71,8 +71,7 @@ func (i *i18nRegion) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Gl", "Name"})
 		for _, region := range i18nRegions {
 			tb.AppendRow(table.Row{region.Id, region.Snippet.Gl, region.Snippet.Name})

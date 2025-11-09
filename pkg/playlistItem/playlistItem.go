@@ -117,8 +117,7 @@ func (pi *playlistItem) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Title", "Kind", "Resource ID"})
 		for _, item := range playlistItems {
 			var resourceId string

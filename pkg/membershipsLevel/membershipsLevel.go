@@ -67,8 +67,7 @@ func (m *membershipsLevel) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Display Name"})
 		for _, ml := range membershipsLevels {
 			tb.AppendRow(table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName})

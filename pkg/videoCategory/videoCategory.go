@@ -77,8 +77,7 @@ func (vc *videoCategory) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Title", "Assignable"})
 		for _, cat := range videoCategories {
 			tb.AppendRow(table.Row{cat.Id, cat.Snippet.Title, cat.Snippet.Assignable})

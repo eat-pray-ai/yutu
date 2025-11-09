@@ -99,8 +99,7 @@ func (c *caption) List(
 	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Video ID", "Name", "Language"})
 		defer tb.Render()
 		for _, caption := range captions {

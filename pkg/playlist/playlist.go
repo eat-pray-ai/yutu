@@ -120,8 +120,7 @@ func (p *playlist) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
 		for _, pl := range playlists {
 			tb.AppendRow(table.Row{pl.Id, pl.Snippet.ChannelId, pl.Snippet.Title})

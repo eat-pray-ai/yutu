@@ -45,8 +45,7 @@ var listInSchema = &jsonschema.Schema{
 	},
 	Properties: map[string]*jsonschema.Schema{
 		"channelId": {
-			Type: "string", Description: ciUsage,
-			Default: json.RawMessage(`""`),
+			Type: "string", Description: ciUsage, Default: json.RawMessage(`""`),
 		},
 		"home": {
 			Type: "string", Enum: []any{"true", "false", ""},
@@ -54,39 +53,32 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"maxResults": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
-			Minimum: jsonschema.Ptr(float64(0)),
+			Default: json.RawMessage("5"), Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
 			Type: "string", Enum: []any{"true", "false", ""},
 			Description: mineUsage, Default: json.RawMessage(`""`),
 		},
 		"publishedAfter": {
-			Type: "string", Description: paUsage,
-			Default: json.RawMessage(`""`),
+			Type: "string", Description: paUsage, Default: json.RawMessage(`""`),
 		},
 		"publishedBefore": {
-			Type: "string", Description: pbUsage,
-			Default: json.RawMessage(`""`),
+			Type: "string", Description: pbUsage, Default: json.RawMessage(`""`),
 		},
 		"regionCode": {
-			Type: "string", Description: rcUsage,
-			Default: json.RawMessage(`""`),
+			Type: "string", Description: rcUsage, Default: json.RawMessage(`""`),
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet","contentDetails"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet","contentDetails"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
+			Type: "string", Description: pkg.JPUsage, Default: json.RawMessage(`""`),
 		},
 	},
 }

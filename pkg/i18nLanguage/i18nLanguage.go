@@ -73,8 +73,7 @@ func (i *i18nLanguage) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Hl", "Name"})
 		for _, lang := range i18nLanguages {
 			tb.AppendRow(table.Row{lang.Id, lang.Snippet.Hl, lang.Snippet.Name})

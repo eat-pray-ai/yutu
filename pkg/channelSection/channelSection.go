@@ -92,8 +92,7 @@ func (cs *channelSection) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
 		for _, chs := range channelSections {
 			tb.AppendRow(table.Row{chs.Id, chs.Snippet.ChannelId, chs.Snippet.Title})

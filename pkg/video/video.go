@@ -165,8 +165,7 @@ func (v *video) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Title", "Channel ID", "Views"})
 		for _, video := range videos {
 			tb.AppendRow(
@@ -401,8 +400,7 @@ func (v *video) GetRating(output string, jpath string, writer io.Writer) error {
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Rating"})
 		for _, item := range res.Items {
 			tb.AppendRow(table.Row{item.VideoId, item.Rating})

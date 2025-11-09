@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/ohler55/ojg/jp"
@@ -80,7 +81,7 @@ func IsJson(s string) bool {
 }
 
 func BoolPtr(b string) *bool {
-	if b == "" {
+	if b == "" || strings.ToLower(strings.TrimSpace(b)) == "null" {
 		return nil
 	}
 	val := b == "true"

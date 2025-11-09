@@ -197,8 +197,7 @@ func (s *search) List(
 		tb := table.NewWriter()
 		defer tb.Render()
 		tb.SetOutputMirror(writer)
-		tb.SetStyle(table.StyleLight)
-		tb.SetAutoIndex(true)
+		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"Kind", "Title", "Resource ID"})
 		for _, result := range results {
 			var resourceId string
