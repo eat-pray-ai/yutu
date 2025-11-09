@@ -18,8 +18,8 @@ import (
 const (
 	mcpShort  = "Start MCP server"
 	mcpLong   = "Start MCP server to handle requests from clients"
-	modeUsage = "stdio, or http"
-	portUsage = "Port to listen on for HTTP or SSE mode"
+	modeUsage = "stdio|http"
+	portUsage = "Port to listen on for HTTP mode"
 )
 
 var (

@@ -14,7 +14,7 @@ const (
 	short         = "Manipulate YouTube captions"
 	long          = "List, insert, update, download, or delete YouTube captions"
 	fileUsage     = "Path to save the caption file"
-	attUsage      = "unknown, primary, commentary, or descriptive"
+	attUsage      = "unknown|primary|commentary|descriptive"
 	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"
 	iscUsage      = "Whether the track contains closed captions for the deaf and hard of hearing"
 	isdUsage      = "whether the caption track is a draft"
@@ -22,9 +22,9 @@ const (
 	islUsage      = "Whether the caption track uses large text for the vision-impaired"
 	languageUsage = "Language of the caption track"
 	nameUsage     = "Name of the caption track"
-	tkUsage       = "standard, ASR, or forced"
+	tkUsage       = "standard|ASR|forced"
 	vidUsage      = "ID of the video"
-	tfmtUsage     = "sbv, srt, or vtt"
+	tfmtUsage     = "sbv|srt|vtt"
 	tlangUsage    = "Translate the captions into this language"
 )
 

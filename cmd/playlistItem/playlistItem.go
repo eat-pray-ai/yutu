@@ -13,13 +13,13 @@ const (
 	long         = "List, insert, update, or delete YouTube playlist items"
 	titleUsage   = "Title of the playlist item"
 	descUsage    = "Description of the playlist item"
-	kindUsage    = "video, channel, or playlist"
+	kindUsage    = "video|channel|playlist"
 	kvidUsage    = "ID of the video if kind is video"
 	kcidUsage    = "ID of the channel if kind is channel"
 	kpidUsage    = "ID of the playlist if kind is playlist"
 	vidUsage     = "Return the playlist items associated with the given video id"
 	cidUsage     = "ID that YouTube uses to uniquely identify the user that added the item to the playlist"
-	privacyUsage = "public, private, or unlisted"
+	privacyUsage = "public|private|unlisted"
 )
 
 var (

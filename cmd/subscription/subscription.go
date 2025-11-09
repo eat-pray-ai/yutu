@@ -16,9 +16,9 @@ const (
 	descUsage  = "Description of the subscription"
 	fcidUsage  = "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to"
 	mineUsage  = "Return the subscriptions of the authenticated user"
-	mrsUsage   = "true, false, or leave empty"
+	mrsUsage   = "true|false|null"
 	msUsage    = "Return the subscribers of the given channel owner"
-	orderUsage = "subscriptionOrderUnspecified, relevance, unread, or alphabetical"
+	orderUsage = "subscriptionOrderUnspecified|relevance|unread|alphabetical"
 	titleUsage = "Title of the subscription"
 )
 

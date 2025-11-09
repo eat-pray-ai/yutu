@@ -23,7 +23,7 @@ const (
 	rateShort    = "Rate a video on YouTube"
 	rateLong     = "Rate a video on YouTube, with the specified rating"
 	rateIdsUsage = "IDs of the videos to rate"
-	rateRUsage   = "like, dislike, or none"
+	rateRUsage   = "like|dislike|none"
 )
 
 type rateIn struct {

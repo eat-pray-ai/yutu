@@ -16,12 +16,12 @@ const (
 	acidUsage = "Channel id of the comment author"
 	crUsage   = "Whether the viewer can rate the comment"
 	cidUsage  = "Channel id of the video owner"
-	tfUsage   = "textFormatUnspecified, html, or plainText"
+	tfUsage   = "textFormatUnspecified|html|plainText"
 	toUsage   = "Text of the comment"
-	msUsage   = "heldForReview, published, or rejected"
+	msUsage   = "heldForReview|published|rejected"
 	baUsage   = "If set to true the author of the comment gets added to the ban list"
 	vidUsage  = "ID of the video"
-	vrUsage   = "none, like, or dislike"
+	vrUsage   = "none|like|dislike"
 )
 
 var (

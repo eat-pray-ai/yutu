@@ -15,10 +15,10 @@ const (
 	atrtcidUsage = "Returns the comment threads of all videos of the channel and the channel comments as well"
 	acidUsage    = "Channel id of the comment author"
 	cidUsage     = "Channel id of the video owner"
-	msUsage      = "published, heldForReview, likelySpam, or rejected"
-	orderUsage   = "orderUnspecified, time, or relevance"
+	msUsage      = "published|heldForReview|likelySpam|rejected"
+	orderUsage   = "orderUnspecified|time|relevance"
 	stUsage      = "Search terms"
-	tfUsage      = "textFormatUnspecified, or html"
+	tfUsage      = "textFormatUnspecified|html"
 	toUsage      = "Text of the comment"
 )
 

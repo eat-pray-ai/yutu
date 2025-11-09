@@ -13,10 +13,10 @@ const (
 	long      = "Set or unset YouTube watermarks"
 	cidUsage  = "ID of the channel"
 	fileUsage = "Path to the watermark file"
-	ivpUsage  = "topLeft, topRight, bottomLeft, or bottomRight"
+	ivpUsage  = "topLeft|topRight|bottomLeft|bottomRight"
 	dmUsage   = "Duration in milliseconds for which the watermark should be displayed"
 	omUsage   = "Defines the time at which the watermark will appear"
-	otUsage   = "offsetFromStart or offsetFromEnd"
+	otUsage   = "offsetFromStart|offsetFromEnd"
 )
 
 var (

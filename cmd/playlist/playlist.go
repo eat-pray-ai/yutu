@@ -19,7 +19,7 @@ const (
 	mineUsage     = "Return the playlists owned by the authenticated user"
 	tagsUsage     = "Comma separated tags"
 	languageUsage = "Language of the playlist"
-	privacyUsage  = "public, private, or unlisted"
+	privacyUsage  = "public|private|unlisted"
 )
 
 var (
