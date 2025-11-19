@@ -44,7 +44,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.7.2
 	github.com/modelcontextprotocol/go-sdk v1.1.0
-	github.com/ohler55/ojg v1.26.10
+	github.com/ohler55/ojg v1.27.0
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
