@@ -3,11 +3,13 @@ load("@rules_go//go:def.bzl", "go_library")
 go_library(
     name = "cmd",
     srcs = [
+        "agent.go",
         "auth.go",
         "mcp.go",
         "root.go",
         "version.go",
     ],
+    embedsrcs = ["INSTRUCTION.md"],
     importpath = "github.com/eat-pray-ai/yutu/cmd",
     visibility = ["//visibility:public"],
     x_defs = {
@@ -25,5 +27,13 @@ go_library(
         "@com_github_savioxavier_termlink//:termlink",
         "@com_github_spf13_cobra//:cobra",
         "@com_github_spf13_viper//:viper",
+        "@org_golang_google_adk//agent",
+        "@org_golang_google_adk//agent/llmagent",
+        "@org_golang_google_adk//cmd/launcher",
+        "@org_golang_google_adk//cmd/launcher/full",
+        "@org_golang_google_adk//model/gemini",
+        "@org_golang_google_adk//tool",
+        "@org_golang_google_adk//tool/mcptoolset",
+        "@org_golang_google_genai//:genai",
     ],
 )

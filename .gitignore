@@ -5,6 +5,7 @@
 *.jpg
 .mcpregistry_github_token
 .mcpregistry_registry_token
+.env
 # Binaries for programs and plugins
 *.exe
 *.exe~
