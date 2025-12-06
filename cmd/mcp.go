@@ -4,7 +4,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -43,7 +42,7 @@ var mcpCmd = &cobra.Command{
 	Long:  mcpLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
-		ctx := context.Background()
+		ctx := cmd.Context()
 		addr := fmt.Sprintf(":%d", port)
 		slog.InfoContext(
 			ctx, "starting MCP server",
