@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	github.com/google/jsonschema-go v0.3.0
 	github.com/savioxavier/termlink v1.4.3
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	golang.org/x/oauth2 v0.34.0
 )
