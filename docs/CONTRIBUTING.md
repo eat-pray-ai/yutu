@@ -87,3 +87,15 @@ bazel-bin/yutu_
 ## script to install yutu
 ❯ ./scripts/install.sh
 ```
+
+```shell
+# add license headers to all source files
+❯ go install github.com/google/addlicense@latest
+❯ addlicense \
+    -c "eat-pray-ai & OpenWaygate" \
+    -f LICENSE \
+    -s=only \
+    -ignore "**/*.yml" \
+    -ignore "**/*.yaml" \
+    -ignore "**/*.bazel" .
+```
