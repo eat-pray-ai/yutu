@@ -35,10 +35,8 @@ type downloadIn struct {
 }
 
 var downloadInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "file", "tfmt", "tlang", "onBehalfOf", "onBehalfOfContentOwner",
-	},
+	Type:     "object",
+	Required: []string{"ids", "file"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

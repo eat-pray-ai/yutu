@@ -32,10 +32,8 @@ type deleteIn struct {
 }
 
 var deleteInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "onBehalfOf", "onBehalfOfContentOwner",
-	},
+	Type:     "object",
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

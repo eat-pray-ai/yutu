@@ -38,11 +38,8 @@ type listIn struct {
 }
 
 var listInSchema = &jsonschema.Schema{
-	Type: "object",
-	// Required: []string{
-	// 	"channelId", "home", "maxResults", "mine", "publishedAfter",
-	// 	"publishedBefore", "regionCode", "parts", "output", "jsonpath",
-	// },
+	Type:     "object",
+	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"channelId": {
 			Type: "string", Description: ciUsage, Default: json.RawMessage(`""`),

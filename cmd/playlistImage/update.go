@@ -35,10 +35,8 @@ type updateIn struct {
 }
 
 var updateInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"playlistId", "type", "height", "width", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"playlistId"},
 	Properties: map[string]*jsonschema.Schema{
 		"playlistId": {
 			Type: "string", Description: pidUsage,

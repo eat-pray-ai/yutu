@@ -53,15 +53,8 @@ type insertIn struct {
 }
 
 var insertInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"autoLevels", "file", "title", "description", "tags",
-		"language", "license", "thumbnail", "channelId", "playlistId",
-		"categoryId", "privacy", "forKids", "embeddable", "publishAt",
-		"stabilize", "notifySubscribers", "publicStatsViewable",
-		"onBehalfOfContentOwner", "onBehalfOfContentOwnerChannel",
-		"output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"file", "categoryId", "privacy"},
 	Properties: map[string]*jsonschema.Schema{
 		"autoLevels": {
 			Type: "string", Enum: []any{"true", "false", ""},

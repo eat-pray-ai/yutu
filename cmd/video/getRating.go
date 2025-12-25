@@ -34,10 +34,8 @@ type getRatingIn struct {
 }
 
 var getRatingInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "onBehalfOfContentOwner", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

@@ -38,11 +38,8 @@ type updateIn struct {
 }
 
 var updateInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "title", "description", "tags",
-		"language", "privacy", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

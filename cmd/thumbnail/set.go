@@ -31,10 +31,8 @@ type setIn struct {
 }
 
 var setInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"file", "videoId", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"file", "videoId"},
 	Properties: map[string]*jsonschema.Schema{
 		"file": {
 			Type: "string", Description: fileUsage,

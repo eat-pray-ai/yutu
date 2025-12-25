@@ -36,10 +36,8 @@ type insertIn struct {
 }
 
 var insertInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"file", "playlistId", "type", "height", "width", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"file", "playlistId"},
 	Properties: map[string]*jsonschema.Schema{
 		"file": {
 			Type: "string", Description: fileUsage,

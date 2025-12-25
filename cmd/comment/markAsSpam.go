@@ -26,14 +26,14 @@ const (
 )
 
 type markAsSpamIn struct {
-	IDs      []string `json:"ids"`
+	Ids      []string `json:"ids"`
 	Output   string   `json:"output"`
 	Jsonpath string   `json:"jsonpath"`
 }
 
 var markAsSpamInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"ids", "output", "jsonpath"},
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{
@@ -97,7 +97,7 @@ func markAsSpamHandler(
 		),
 	)
 
-	ids = input.IDs
+	ids = input.Ids
 	output = input.Output
 	jpath = input.Jsonpath
 

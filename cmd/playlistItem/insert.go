@@ -42,12 +42,8 @@ type insertIn struct {
 }
 
 var insertInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"title", "description", "kind", "kVideoId", "kChannelId",
-		"kPlaylistId", "playlistId", "channelId", "privacy",
-		"onBehalfOfContentOwner", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"kind", "playlistId", "channelId"},
 	Properties: map[string]*jsonschema.Schema{
 		"title": {
 			Type: "string", Description: titleUsage,

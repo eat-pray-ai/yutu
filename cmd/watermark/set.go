@@ -35,11 +35,8 @@ type setIn struct {
 }
 
 var setInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"channelId", "file", "inVideoPosition", "durationMs",
-		"offsetMs", "offsetType", "onBehalfOfContentOwner",
-	},
+	Type:     "object",
+	Required: []string{"channelId", "file"},
 	Properties: map[string]*jsonschema.Schema{
 		"channelId": {
 			Type:        "string",

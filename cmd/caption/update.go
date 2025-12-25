@@ -45,12 +45,8 @@ type updateIn struct {
 }
 
 var updateInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"file", "audioTrackType", "isAutoSynced", "isCC", "isDraft",
-		"isEasyReader", "isLarge", "language", "name", "trackKind",
-		"videoId", "onBehalfOf", "onBehalfOfContentOwner", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"videoId"},
 	Properties: map[string]*jsonschema.Schema{
 		"file": {
 			Type:        "string",

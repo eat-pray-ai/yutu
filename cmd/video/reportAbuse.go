@@ -36,11 +36,8 @@ type reportAbuseIn struct {
 }
 
 var reportAbuseInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "reasonId", "secondaryReasonId", "comments",
-		"language", "onBehalfOfContentOwner",
-	},
+	Type:     "object",
+	Required: []string{"ids", "reasonId"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

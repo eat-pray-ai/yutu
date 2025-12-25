@@ -36,11 +36,8 @@ type insertIn struct {
 }
 
 var insertInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"subscriberChannelId", "description", "channelId", "title",
-		"output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"subscriberChannelId", "channelId"},
 	Properties: map[string]*jsonschema.Schema{
 		"subscriberChannelId": {
 			Type: "string", Description: scidUsage,

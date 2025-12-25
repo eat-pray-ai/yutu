@@ -45,12 +45,8 @@ type updateIn struct {
 }
 
 var updateInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "title", "description", "tags", "language",
-		"license", "thumbnail", "playlistId", "categoryId",
-		"privacy", "embeddable", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{
@@ -143,7 +139,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
 
-	_ = updateCmd.MarkFlagRequired("ids")
+	_ = updateCmd.MarkFlagRequired("id")
 }
 
 var updateCmd = &cobra.Command{

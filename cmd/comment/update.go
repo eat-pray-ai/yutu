@@ -28,7 +28,7 @@ const (
 )
 
 type updateIn struct {
-	IDs          []string `json:"ids"`
+	Ids          []string `json:"ids"`
 	CanRate      string   `json:"canRate"`
 	TextOriginal string   `json:"textOriginal"`
 	ViewerRating string   `json:"viewerRating"`
@@ -37,11 +37,8 @@ type updateIn struct {
 }
 
 var updateInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "canRate", "textOriginal", "viewerRating",
-		"output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{
@@ -126,7 +123,7 @@ func updateHandler(
 		),
 	)
 
-	ids = input.IDs
+	ids = input.Ids
 	canRate = utils.BoolPtr(input.CanRate)
 	textOriginal = input.TextOriginal
 	viewerRating = input.ViewerRating

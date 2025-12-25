@@ -34,11 +34,8 @@ type listIn struct {
 }
 
 var listInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"memberChannelId", "hasAccessToLevel", "maxResults", "mode",
-		"parts", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"memberChannelId": {
 			Type: "string", Description: mcidUsage,

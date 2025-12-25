@@ -38,11 +38,8 @@ type insertIn struct {
 }
 
 var insertInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"title", "description", "tags", "language",
-		"channelId", "privacy", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"title", "channelId", "privacy"},
 	Properties: map[string]*jsonschema.Schema{
 		"title": {
 			Type: "string", Description: titleUsage,
@@ -106,7 +103,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("title")
-	_ = insertCmd.MarkFlagRequired("channel")
+	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("privacy")
 }
 

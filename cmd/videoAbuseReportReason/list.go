@@ -32,7 +32,7 @@ type listIn struct {
 
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"hl", "parts", "output", "jsonpath"},
+	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"hl": {
 			Type:        "string",

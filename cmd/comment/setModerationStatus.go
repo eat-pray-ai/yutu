@@ -27,7 +27,7 @@ const (
 )
 
 type setModerationStatusIn struct {
-	IDs              []string `json:"ids"`
+	Ids              []string `json:"ids"`
 	ModerationStatus string   `json:"moderationStatus"`
 	BanAuthor        string   `json:"banAuthor"`
 	Output           string   `json:"output"`
@@ -35,11 +35,8 @@ type setModerationStatusIn struct {
 }
 
 var setModerationStatusInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "moderationStatus", "banAuthor",
-		"output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{"ids", "moderationStatus"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{
@@ -125,7 +122,7 @@ func setModerationStatusHandler(
 		),
 	)
 
-	ids = input.IDs
+	ids = input.Ids
 	moderationStatus = input.ModerationStatus
 	banAuthor = utils.BoolPtr(input.BanAuthor)
 	output = input.Output

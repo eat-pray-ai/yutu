@@ -45,12 +45,8 @@ type listIn struct {
 }
 
 var listInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"ids", "channelId", "forChannelId", "maxResults", "mine",
-		"myRecentSubscribers", "mySubscribers", "onBehalfOfContentOwner",
-		"onBehalfOfContentOwnerChannel", "order", "parts", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{

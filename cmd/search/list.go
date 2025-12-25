@@ -60,18 +60,8 @@ type listIn struct {
 }
 
 var listInSchema = &jsonschema.Schema{
-	Type: "object",
-	Required: []string{
-		"channelId", "channelType", "eventType", "forContentOwner", "forDeveloper",
-		"forMine", "location", "locationRadius", "maxResults",
-		"onBehalfOfContentOwner",
-		"order", "publishedAfter", "publishedBefore", "q", "regionCode",
-		"relevanceLanguage", "safeSearch", "topicId", "types", "videoCaption",
-		"videoCategoryId", "videoDefinition", "videoDimension", "videoDuration",
-		"videoEmbeddable", "videoLicense", "videoPaidProductPlacement",
-		"videoSyndicated",
-		"videoType", "parts", "output", "jsonpath",
-	},
+	Type:     "object",
+	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"channelId": {
 			Type: "string", Description: cidUsage,
