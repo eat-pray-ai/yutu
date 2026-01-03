@@ -9,7 +9,6 @@ on:
       - 'go.*'
       - '**/*.go'
       - 'scripts/**'
-      - '.github/actions/test/**'
       - '.github/workflows/test.yml'
     tags-ignore:
       - '*'
@@ -20,7 +19,6 @@ on:
       - 'go.*'
       - '**/*.go'
       - 'scripts/**'
-      - '.github/actions/test/**'
       - '.github/workflows/test.yml'
 
 permissions:
@@ -30,14 +28,19 @@ env:
   COVERAGE_FILE: ./cover.out
 
 jobs:
-  test:
+  go-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
-      - uses: eat-pray-ai/yutu/.github/actions/test@main
+      - name: Go test
+        run: |
+          go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./pkg/..."
+      - name: Command tests
+        run: |
+          ./scripts/command-test.sh
 #      - uses: ncruces/go-coverage-report@v0
 #        with:
 #          coverage-file: ${{ env.COVERAGE_FILE }}
@@ -47,3 +50,34 @@ jobs:
 #        if: |
 #          github.event_name == 'push' &&
 #          github.ref == 'refs/heads/main'
+  bazel-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: ./go.mod
+      - name: Update dependencies
+        run: |
+          bazel run @rules_go//go -- mod tidy -v
+          bazel mod tidy
+          bazel run @rules_go//go -- install github.com/tc-hib/go-winres@latest
+          bazel run @rules_go//go -- generate ./...
+      - name: Bazel test
+        shell: bash
+        run: |
+          bazel test //... --test_output=errors
+      - name: Build binaries
+        shell: bash
+        run: |
+          bazel build //...
+      - name: Command tests
+        shell: bash
+        run: |
+          binary=$(bazel cquery --output=files //:yutu-linux-amd64)
+          ./scripts/command-test.sh $binary
