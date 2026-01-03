@@ -157,6 +157,24 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
 
+## Agent
+
+`yutu` provides an agent mode to automate YouTube workflows. Currently, the agent mode is in the experimental stage, only supports Google's Gemini models with the following environment variables set:
+
+```shell
+❯ export GEMINI_MODEL=gemini-3-pro-preview
+❯ export GEMINI_API_KEY=your_gemini_api_key
+// Optional settings
+❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
+❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
+```
+
+Then run the following command to start the agent:
+```
+❯ yutu agent console        // interactive console mode
+❯ yutu agent web api webui  // webui mode for debugging
+```
+
 ## MCP Server
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
@@ -196,6 +214,7 @@ Usage:
 
 Available Commands:
   activity               List YouTube activities
+  agent                  Start agent to automate YouTube workflows
   auth                   Authenticate with YouTube API
   caption                Manipulate YouTube captions
   channel                Manipulate YouTube channels
