@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         sparse-checkout: |
           Dockerfile
@@ -27,7 +27,7 @@ runs:
         else
           echo "is_latest=false" >> $GITHUB_OUTPUT
         fi
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v7
       with:
         name: binary
         path: ${{ github.workspace }}/dist

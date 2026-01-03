@@ -31,7 +31,7 @@ jobs:
   go-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
@@ -53,20 +53,26 @@ jobs:
   bazel-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: bazel-contrib/setup-bazel@0.15.0
-        with:
-          bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
+      - uses: actions/checkout@v6
+      - uses: bazel-contrib/setup-bazel@0.16.0
+#        with:
+#          bazelisk-cache: true
+#          disk-cache: ${{ github.workflow }}
+#          repository-cache: true
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
-      - name: Update dependencies
+      - name: Install dependencies
         shell: bash
         run: |
           bazel run @rules_go//go -- mod tidy -v
+      - name: bazel mod tidy
+        shell: bash
+        run: |
           bazel mod tidy
+      - name: bazel generate
+        shell: bash
+        run: |
           bazel run @rules_go//go -- install github.com/tc-hib/go-winres@latest
           bazel run @rules_go//go -- generate ./...
       - name: Bazel test
