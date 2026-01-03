@@ -1,7 +1,7 @@
 """Module dependencies for the yutu project."""
 
-bazel_dep(name = "rules_go", version = "0.57.0")
-bazel_dep(name = "gazelle", version = "0.45.0")
+bazel_dep(name = "rules_go", version = "0.59.0")
+bazel_dep(name = "gazelle", version = "0.47.0")
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.from_file(go_mod = "//:go.mod")
