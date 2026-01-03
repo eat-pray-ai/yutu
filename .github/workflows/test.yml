@@ -63,6 +63,7 @@ jobs:
         with:
           go-version-file: ./go.mod
       - name: Update dependencies
+        shell: bash
         run: |
           bazel run @rules_go//go -- mod tidy -v
           bazel mod tidy
