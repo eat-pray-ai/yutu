@@ -51,6 +51,13 @@ echo "======= auth ======="
 echo "======= version ======="
 "$YUTU_PATH" version --help
 
+# yutu ai
+echo "======= mcp ======="
+"$YUTU_PATH" mcp --help
+
+echo "======= agent ======="
+"$YUTU_PATH" agent --help
+
 # youtube api
 echo "======= activity ======="
 "$YUTU_PATH" activity --help

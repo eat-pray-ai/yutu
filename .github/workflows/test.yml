@@ -43,15 +43,15 @@ jobs:
       - name: Command tests
         run: |
           ./scripts/command-test.sh
-#      - uses: ncruces/go-coverage-report@v0
-#        with:
-#          coverage-file: ${{ env.COVERAGE_FILE }}
-#          badge-style: flat-square
-#          chart: true
-#          amend: true
-#        if: |
-#          github.event_name == 'push' &&
-#          github.ref == 'refs/heads/main'
+      - uses: ncruces/go-coverage-report@v0
+        with:
+          coverage-file: ${{ env.COVERAGE_FILE }}
+          badge-style: flat-square
+          chart: true
+          amend: true
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
   bazel-test:
     runs-on: ubuntu-latest
     steps:
@@ -59,10 +59,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: bazel-contrib/setup-bazel@0.16.0
-#        with:
-#          bazelisk-cache: true
-#          disk-cache: ${{ github.workflow }}
-#          repository-cache: true
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
