@@ -1,3 +1,6 @@
+// Copyright 2026 eat-pray-ai & OpenWaygate
+// SPDX-License-Identifier: Apache-2.0
+
 package pkg
 
 import "github.com/jedib0t/go-pretty/v6/table"
