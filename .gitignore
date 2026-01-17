@@ -3,6 +3,7 @@
 *.json
 *.mp4
 *.jpg
+*.md
 .mcpregistry_github_token
 .mcpregistry_registry_token
 .env

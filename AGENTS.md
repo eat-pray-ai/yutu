@@ -1,5 +1,7 @@
 # Agent Guidelines
 
+Focus mostly on given tasks, avoid unnecessary complexity. Since developers may update code manually, codebase can be different from generated code. Ensure compatibility with existing structures and conventions.
+
 ## Commands
 - **Build**: `go build ./...` or `bazel build //...`
 - **Test (All)**: `go test ./...` or `bazel test //...`
