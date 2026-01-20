@@ -1,13 +1,14 @@
 // Copyright 2026 eat-pray-ai & OpenWaygate
 // SPDX-License-Identifier: Apache-2.0
 
-package cmd
+package agent
 
 import (
 	_ "embed"
 	"log/slog"
 	"os"
 
+	rootCmd "github.com/eat-pray-ai/yutu/cmd"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 	"google.golang.org/adk/agent"
@@ -54,7 +55,7 @@ var agentCmd = &cobra.Command{
 		}
 
 		clientTransport, serverTransport := mcp.NewInMemoryTransports()
-		_, err = Server.Connect(ctx, serverTransport, nil)
+		_, err = rootCmd.Server.Connect(ctx, serverTransport, nil)
 		if err != nil {
 			slog.ErrorContext(ctx, "failed to connect to MCP server", "error", err)
 			os.Exit(1)
@@ -97,5 +98,5 @@ var agentCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(agentCmd)
+	rootCmd.RootCmd.AddCommand(agentCmd)
 }

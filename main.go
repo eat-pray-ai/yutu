@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	_ "github.com/eat-pray-ai/yutu/cmd/activity"
+	_ "github.com/eat-pray-ai/yutu/cmd/agent"
 	_ "github.com/eat-pray-ai/yutu/cmd/caption"
 	_ "github.com/eat-pray-ai/yutu/cmd/channel"
 	_ "github.com/eat-pray-ai/yutu/cmd/channelBanner"
