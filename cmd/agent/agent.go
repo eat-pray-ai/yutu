@@ -65,8 +65,8 @@ func init() {
 
 func launch(ctx context.Context, args []string) {
 	m, err := gemini.NewModel(
-		ctx, os.Getenv("GEMINI_MODEL"), &genai.ClientConfig{
-			APIKey:  os.Getenv("GEMINI_API_KEY"),
+		ctx, os.Getenv("YUTU_AGENT_MODEL"), &genai.ClientConfig{
+			APIKey:  os.Getenv("YUTU_LLM_API_KEY"),
 			Backend: genai.BackendGeminiAPI,
 		},
 	)
