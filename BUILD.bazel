@@ -18,6 +18,7 @@ go_library(
     deps = [
         "//cmd",
         "//cmd/activity",
+        "//cmd/agent",
         "//cmd/caption",
         "//cmd/channel",
         "//cmd/channelBanner",
