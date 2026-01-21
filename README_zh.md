@@ -44,7 +44,7 @@
 
 ## 前提条件
 
-开始之前，您需要在 [Google Cloud Platform](https://console.cloud.google.com/) 上创建一个账户来创建**项目**，并为该项目启用以下 API，位置在 `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`
+开始之前，您需要在 [Google Cloud Platform](https://console.cloud.google.com/) 上创建一个账户来新建**项目**，并为该项目启用以下 API，位置在 `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`:
 
 - [YouTube Data API v3（必需）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
 - [YouTube Analytics API（可选）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
@@ -155,6 +155,24 @@ yutu 有两个可用的 action，一个是通用 action，另一个专用于上�
 
 # Windows
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
+```
+
+## Agent
+
+`yutu` 提供了一种 Agent 模式来自动化 YouTube 工作流程。目前，Agent 模式仍处于实验阶段且正在积极开发中，仅支持 Google 的 Gemini 模型，需设置以下环境变量：
+
+```shell
+❯ export YUTU_AGENT_MODEL=gemini-3-pro-preview
+❯ export YUTU_LLM_API_KEY=your_gemini_api_key
+// 可选设置
+❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
+❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
+```
+
+然后运行以下命令查看详细用法：
+
+```
+❯ yutu agent --help
 ```
 
 ## MCP 服务器

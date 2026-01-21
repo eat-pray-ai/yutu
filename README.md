@@ -44,7 +44,7 @@
 
 ## Prerequisites
 
-Before you begin, an account on [Google Cloud Platform](https://console.cloud.google.com/) is required to create a **Project** and enable these APIs for this project, in `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`
+Before you begin, an account on [Google Cloud Platform](https://console.cloud.google.com/) is required to create a **Project** and enable these APIs for this project, in `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`:
 
 - [YouTube Data API v3(Required)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
 - [YouTube Analytics API(Optional)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
@@ -159,20 +159,20 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ## Agent
 
-`yutu` provides an agent mode to automate YouTube workflows. Currently, the agent mode is in the experimental stage, only supports Google's Gemini models with the following environment variables set:
+`yutu` provides an agent mode to automate YouTube workflows. Currently, the agent mode is in the experimental stage under active development, only supports Google's Gemini models with the following environment variables set:
 
 ```shell
-❯ export GEMINI_MODEL=gemini-3-pro-preview
-❯ export GEMINI_API_KEY=your_gemini_api_key
+❯ export YUTU_AGENT_MODEL=gemini-3-pro-preview
+❯ export YUTU_LLM_API_KEY=your_gemini_api_key
 // Optional settings
 ❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
 ❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
 ```
 
-Then run the following command to start the agent:
+Then run the following command for detail usage:
+
 ```
-❯ yutu agent console        // interactive console mode
-❯ yutu agent web api webui  // webui mode for debugging
+❯ yutu agent --help
 ```
 
 ## MCP Server

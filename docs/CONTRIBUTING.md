@@ -95,6 +95,7 @@ bazel-bin/yutu_
     -c "eat-pray-ai & OpenWaygate" \
     -f LICENSE \
     -s=only \
+    -y $(date +%Y) \
     -ignore "**/*.yml" \
     -ignore "**/*.yaml" \
     -ignore "**/*.bazel" .
