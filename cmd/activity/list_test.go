@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/activity"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
@@ -46,8 +47,14 @@ func TestList(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
+	input := &listIn{
+		Home:   utils.Ptr(true),
+		Mine:   utils.Ptr(true),
+		Parts:  []string{"id", "snippet", "contentDetails"},
+		Output: "json",
+	}
 
-	err = list(&buf, activity.WithService(svc))
+	err = input.call(&buf, activity.WithService(svc))
 
 	assert.NoError(t, err)
 	output := buf.String()
