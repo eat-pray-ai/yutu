@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*'
-      - '*.*.*-rc*'
-      - '*.*.*-beta*'
-      - '*.*.*-alpha*'
-      - '*.*.*-dev*'
+      - "v*"
+      - "*.*.*-rc*"
+      - "*.*.*-beta*"
+      - "*.*.*-alpha*"
+      - "*.*.*-dev*"
 
 permissions: read-all
 
@@ -61,17 +61,17 @@ jobs:
       - name: Attest
         uses: actions/attest-build-provenance@v3
         with:
-          subject-path: '${{ github.workspace }}/yutu_${{ matrix.path }}'
+          subject-path: "${{ github.workspace }}/yutu_${{ matrix.path }}"
 
   winget:
     needs: [goreleaser]
     runs-on: windows-latest
     if: |
-      startsWith(github.ref, 'refs/tags/') && 
-      !endsWith(github.ref, '-rc') && 
-      !endsWith(github.ref, '-beta') && 
-      !endsWith(github.ref, '-alpha') && 
-      !endsWith(github.ref, '-dev')
+      startsWith(github.ref, 'refs/tags/') &&
+      !contains(github.ref, '-rc') &&
+      !contains(github.ref, '-beta') &&
+      !contains(github.ref, '-alpha') &&
+      !contains(github.ref, '-dev')
     steps:
       - uses: vedantmgoyal9/winget-releaser@main
         with:
