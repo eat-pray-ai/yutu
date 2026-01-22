@@ -92,7 +92,7 @@ func init() {
 	insertCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	insertCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("playlistId")
@@ -129,7 +129,7 @@ func insertHandler(
 	height = input.Height
 	width = input.Width
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -150,5 +150,5 @@ func insert(writer io.Writer) error {
 		playlistImage.WithService(nil),
 	)
 
-	return pi.Insert(output, jpath, writer)
+	return pi.Insert(output, jsonpath, writer)
 }

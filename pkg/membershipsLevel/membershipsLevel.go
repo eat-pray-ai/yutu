@@ -51,7 +51,7 @@ func (m *membershipsLevel) Get(parts []string) (
 }
 
 func (m *membershipsLevel) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	membershipsLevels, err := m.Get(parts)
 	if err != nil {
@@ -60,9 +60,9 @@ func (m *membershipsLevel) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(membershipsLevels, jpath, writer)
+		utils.PrintJSON(membershipsLevels, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels, jpath, writer)
+		utils.PrintYAML(membershipsLevels, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

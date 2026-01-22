@@ -57,7 +57,7 @@ func (i *i18nLanguage) Get(parts []string) (
 }
 
 func (i *i18nLanguage) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	i18nLanguages, err := i.Get(parts)
 	if err != nil {
@@ -66,9 +66,9 @@ func (i *i18nLanguage) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nLanguages, jpath, writer)
+		utils.PrintJSON(i18nLanguages, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages, jpath, writer)
+		utils.PrintYAML(i18nLanguages, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

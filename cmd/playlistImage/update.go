@@ -86,7 +86,7 @@ func init() {
 	updateCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("playlistId")
 }
@@ -121,7 +121,7 @@ func updateHandler(
 	height = input.Height
 	width = input.Width
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -142,5 +142,5 @@ func update(writer io.Writer) error {
 		playlistImage.WithService(nil),
 	)
 
-	return pi.Update(output, jpath, writer)
+	return pi.Update(output, jsonpath, writer)
 }

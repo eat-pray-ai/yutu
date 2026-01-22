@@ -38,7 +38,7 @@ func NewThumbnail(opts ...Option) Thumbnail {
 	return t
 }
 
-func (t *thumbnail) Set(output string, jpath string, writer io.Writer) error {
+func (t *thumbnail) Set(output string, jsonpath string, writer io.Writer) error {
 	file, err := pkg.Root.Open(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
@@ -52,9 +52,9 @@ func (t *thumbnail) Set(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Thumbnail set for video %s", t.VideoId)

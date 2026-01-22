@@ -271,7 +271,7 @@ func init() {
 		&parts, "parts", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVar(&output, "output", "table", pkg.TableUsage)
-	listCmd.Flags().StringVar(&jpath, "jsonpath", "", pkg.JPUsage)
+	listCmd.Flags().StringVar(&jsonpath, "jsonpath", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -328,7 +328,7 @@ func listHandler(
 	videoType = input.VideoType
 	parts = input.Parts
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := list(&writer)
@@ -373,5 +373,5 @@ func list(writer io.Writer) error {
 		search.WithService(nil),
 	)
 
-	return s.List(parts, output, jpath, writer)
+	return s.List(parts, output, jsonpath, writer)
 }

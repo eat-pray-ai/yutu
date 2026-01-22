@@ -37,7 +37,7 @@ var (
 	privacy     string
 	parts       []string
 	output      string
-	jpath       string
+	jsonpath    string
 
 	onBehalfOfContentOwner string
 )

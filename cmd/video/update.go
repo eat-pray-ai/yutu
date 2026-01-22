@@ -137,7 +137,7 @@ func init() {
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -179,7 +179,7 @@ func updateHandler(
 	privacy = input.Privacy
 	embeddable = utils.BoolPtr(*input.Embeddable)
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -207,5 +207,5 @@ func update(writer io.Writer) error {
 		video.WithService(nil),
 	)
 
-	return v.Update(output, jpath, writer)
+	return v.Update(output, jsonpath, writer)
 }

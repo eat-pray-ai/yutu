@@ -106,7 +106,7 @@ func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 }
 
 func (c *commentThread) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	commentThreads, err := c.Get(parts)
 	if err != nil && commentThreads == nil {
@@ -115,9 +115,9 @@ func (c *commentThread) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(commentThreads, jpath, writer)
+		utils.PrintJSON(commentThreads, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(commentThreads, jpath, writer)
+		utils.PrintYAML(commentThreads, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -138,7 +138,7 @@ func (c *commentThread) List(
 }
 
 func (c *commentThread) Insert(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
@@ -163,9 +163,9 @@ func (c *commentThread) Insert(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "CommentThread inserted: %s\n", res.Id)

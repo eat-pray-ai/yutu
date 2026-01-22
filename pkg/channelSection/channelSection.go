@@ -76,7 +76,7 @@ func (cs *channelSection) Get(parts []string) (
 }
 
 func (cs *channelSection) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	channelSections, err := cs.Get(parts)
 	if err != nil {
@@ -85,9 +85,9 @@ func (cs *channelSection) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(channelSections, jpath, writer)
+		utils.PrintJSON(channelSections, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(channelSections, jpath, writer)
+		utils.PrintYAML(channelSections, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

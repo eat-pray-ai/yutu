@@ -78,7 +78,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", pkg.TableUsage)
-	getRatingCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	getRatingCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }
@@ -111,7 +111,7 @@ func getRatingHandler(
 	ids = input.Ids
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := getRating(&writer)
@@ -129,5 +129,5 @@ func getRating(writer io.Writer) error {
 		video.WithService(nil),
 	)
 
-	return v.GetRating(output, jpath, writer)
+	return v.GetRating(output, jsonpath, writer)
 }

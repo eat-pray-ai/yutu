@@ -113,7 +113,7 @@ func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 }
 
 func (s *subscription) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	subscriptions, err := s.Get(parts)
 	if err != nil && subscriptions == nil {
@@ -122,9 +122,9 @@ func (s *subscription) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(subscriptions, jpath, writer)
+		utils.PrintJSON(subscriptions, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(subscriptions, jpath, writer)
+		utils.PrintYAML(subscriptions, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -152,7 +152,7 @@ func (s *subscription) List(
 }
 
 func (s *subscription) Insert(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
@@ -173,9 +173,9 @@ func (s *subscription) Insert(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	default:
 		_, _ = fmt.Fprintf(writer, "Subscription inserted: %s\n", res.Id)
 	}

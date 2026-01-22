@@ -100,7 +100,7 @@ func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 }
 
 func (c *comment) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	comments, err := c.Get(parts)
 	if err != nil && comments == nil {
@@ -109,9 +109,9 @@ func (c *comment) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(comments, jpath, writer)
+		utils.PrintJSON(comments, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(comments, jpath, writer)
+		utils.PrintYAML(comments, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -130,7 +130,7 @@ func (c *comment) List(
 	return err
 }
 
-func (c *comment) Insert(output string, jpath string, writer io.Writer) error {
+func (c *comment) Insert(output string, jsonpath string, writer io.Writer) error {
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -155,9 +155,9 @@ func (c *comment) Insert(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment inserted: %s\n", res.Id)
@@ -165,7 +165,7 @@ func (c *comment) Insert(output string, jpath string, writer io.Writer) error {
 	return nil
 }
 
-func (c *comment) Update(output string, jpath string, writer io.Writer) error {
+func (c *comment) Update(output string, jsonpath string, writer io.Writer) error {
 	comments, err := c.Get([]string{"id", "snippet"})
 	if err != nil {
 		return errors.Join(errUpdateComment, err)
@@ -195,9 +195,9 @@ func (c *comment) Update(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment updated: %s\n", res.Id)
@@ -206,7 +206,7 @@ func (c *comment) Update(output string, jpath string, writer io.Writer) error {
 }
 
 func (c *comment) MarkAsSpam(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	call := service.Comments.MarkAsSpam(c.IDs)
 	err := call.Do()
@@ -216,9 +216,9 @@ func (c *comment) MarkAsSpam(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c, jpath, writer)
+		utils.PrintJSON(c, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(c, jpath, writer)
+		utils.PrintYAML(c, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.IDs)
@@ -227,7 +227,7 @@ func (c *comment) MarkAsSpam(
 }
 
 func (c *comment) SetModerationStatus(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	call := service.Comments.SetModerationStatus(c.IDs, c.ModerationStatus)
 
@@ -242,9 +242,9 @@ func (c *comment) SetModerationStatus(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(c, jpath, writer)
+		utils.PrintJSON(c, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(c, jpath, writer)
+		utils.PrintYAML(c, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(

@@ -104,7 +104,7 @@ func init() {
 	)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -141,7 +141,7 @@ func updateHandler(
 	description = input.Description
 	title = input.Title
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -164,5 +164,5 @@ func update(writer io.Writer) error {
 		channel.WithService(nil),
 	)
 
-	return c.Update(output, jpath, writer)
+	return c.Update(output, jsonpath, writer)
 }

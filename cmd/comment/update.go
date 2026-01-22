@@ -93,7 +93,7 @@ func init() {
 		&viewerRating, "viewerRating", "r", "", vrUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -128,7 +128,7 @@ func updateHandler(
 	textOriginal = input.TextOriginal
 	viewerRating = input.ViewerRating
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -149,5 +149,5 @@ func update(writer io.Writer) error {
 		comment.WithService(nil),
 	)
 
-	return c.Update(output, jpath, writer)
+	return c.Update(output, jsonpath, writer)
 }

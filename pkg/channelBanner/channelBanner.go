@@ -45,7 +45,7 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 }
 
 func (cb *channelBanner) Insert(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	file, err := pkg.Root.Open(cb.File)
 	if err != nil {
@@ -71,9 +71,9 @@ func (cb *channelBanner) Insert(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)

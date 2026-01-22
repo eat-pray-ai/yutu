@@ -47,7 +47,7 @@ func init() {
 		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -75,7 +75,7 @@ func hlHandler(
 
 	parts = defaultParts
 	output = "json"
-	jpath = "$.*.snippet.hl"
+	jsonpath = "$.*.snippet.hl"
 
 	var writer bytes.Buffer
 	err := list(&writer)
@@ -126,5 +126,5 @@ func list(writer io.Writer) error {
 		i18nLanguage.WithHl(hl), i18nLanguage.WithService(nil),
 	)
 
-	return i.List(parts, output, jpath, writer)
+	return i.List(parts, output, jsonpath, writer)
 }

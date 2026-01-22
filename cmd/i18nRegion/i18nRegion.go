@@ -20,7 +20,7 @@ var (
 	hl           string
 	parts        []string
 	output       string
-	jpath        string
+	jsonpath     string
 	defaultParts = []string{"id", "snippet"}
 )
 

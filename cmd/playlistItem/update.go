@@ -96,7 +96,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -132,7 +132,7 @@ func updateHandler(
 	privacy = input.Privacy
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -154,5 +154,5 @@ func update(writer io.Writer) error {
 		playlistItem.WithService(nil),
 	)
 
-	return pi.Update(output, jpath, writer)
+	return pi.Update(output, jsonpath, writer)
 }

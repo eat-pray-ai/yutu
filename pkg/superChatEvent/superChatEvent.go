@@ -73,7 +73,7 @@ func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) 
 }
 
 func (s *superChatEvent) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	events, err := s.Get(parts)
 	if err != nil && events == nil {
@@ -82,9 +82,9 @@ func (s *superChatEvent) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(events, jpath, writer)
+		utils.PrintJSON(events, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(events, jpath, writer)
+		utils.PrintYAML(events, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

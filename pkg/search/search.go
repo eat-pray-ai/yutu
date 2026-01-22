@@ -181,7 +181,7 @@ func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 }
 
 func (s *search) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	results, err := s.Get(parts)
 	if err != nil && results == nil {
@@ -190,9 +190,9 @@ func (s *search) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(results, jpath, writer)
+		utils.PrintJSON(results, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(results, jpath, writer)
+		utils.PrintYAML(results, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

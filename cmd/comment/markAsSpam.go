@@ -69,7 +69,7 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	markAsSpamCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	markAsSpamCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }
@@ -99,7 +99,7 @@ func markAsSpamHandler(
 
 	ids = input.Ids
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := markAsSpam(&writer)
@@ -116,5 +116,5 @@ func markAsSpam(writer io.Writer) error {
 		comment.WithService(nil),
 	)
 
-	return c.MarkAsSpam(output, jpath, writer)
+	return c.MarkAsSpam(output, jsonpath, writer)
 }

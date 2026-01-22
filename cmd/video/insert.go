@@ -197,7 +197,7 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")
@@ -250,7 +250,7 @@ func insertHandler(
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -286,5 +286,5 @@ func insert(writer io.Writer) error {
 		video.WithService(nil),
 	)
 
-	return v.Insert(output, jpath, writer)
+	return v.Insert(output, jsonpath, writer)
 }

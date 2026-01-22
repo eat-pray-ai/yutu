@@ -87,7 +87,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -123,7 +123,7 @@ func insertHandler(
 	channelId = input.ChannelId
 	title = input.Title
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -143,5 +143,5 @@ func insert(writer io.Writer) error {
 		subscription.WithService(nil),
 	)
 
-	return s.Insert(output, jpath, writer)
+	return s.Insert(output, jsonpath, writer)
 }

@@ -19,7 +19,7 @@ var (
 	channelId string
 	file      string
 	output    string
-	jpath     string
+	jsonpath  string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

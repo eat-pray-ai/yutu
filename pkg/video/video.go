@@ -149,7 +149,7 @@ func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 }
 
 func (v *video) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	videos, err := v.Get(parts)
 	if err != nil && videos == nil {
@@ -158,9 +158,9 @@ func (v *video) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videos, jpath, writer)
+		utils.PrintJSON(videos, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(videos, jpath, writer)
+		utils.PrintYAML(videos, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -180,7 +180,7 @@ func (v *video) List(
 	return err
 }
 
-func (v *video) Insert(output string, jpath string, writer io.Writer) error {
+func (v *video) Insert(output string, jsonpath string, writer io.Writer) error {
 	file, err := pkg.Root.Open(v.File)
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
@@ -274,9 +274,9 @@ func (v *video) Insert(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video inserted: %s\n", res.Id)
@@ -284,7 +284,7 @@ func (v *video) Insert(output string, jpath string, writer io.Writer) error {
 	return nil
 }
 
-func (v *video) Update(output string, jpath string, writer io.Writer) error {
+func (v *video) Update(output string, jsonpath string, writer io.Writer) error {
 	videos, err := v.Get([]string{"id", "snippet", "status"})
 	if err != nil {
 		return errors.Join(errUpdateVideo, err)
@@ -359,9 +359,9 @@ func (v *video) Update(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video updated: %s\n", res.Id)
@@ -381,7 +381,7 @@ func (v *video) Rate(writer io.Writer) error {
 	return nil
 }
 
-func (v *video) GetRating(output string, jpath string, writer io.Writer) error {
+func (v *video) GetRating(output string, jsonpath string, writer io.Writer) error {
 	call := service.Videos.GetRating(v.IDs)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
@@ -393,9 +393,9 @@ func (v *video) GetRating(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res.Items, jpath, writer)
+		utils.PrintJSON(res.Items, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res.Items, jpath, writer)
+		utils.PrintYAML(res.Items, jsonpath, writer)
 	default:
 		tb := table.NewWriter()
 		defer tb.Render()

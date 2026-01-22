@@ -100,7 +100,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("title")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -139,7 +139,7 @@ func insertHandler(
 	channelId = input.ChannelId
 	privacy = input.Privacy
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -161,5 +161,5 @@ func insert(writer io.Writer) error {
 		playlist.WithService(nil),
 	)
 
-	return p.Insert(output, jpath, writer)
+	return p.Insert(output, jsonpath, writer)
 }

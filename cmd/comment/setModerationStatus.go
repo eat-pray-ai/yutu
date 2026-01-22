@@ -92,7 +92,7 @@ func init() {
 		&output, "output", "o", "", pkg.SilentUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
-		&jpath, "jsonpath", "j", "", pkg.JPUsage,
+		&jsonpath, "jsonpath", "j", "", pkg.JPUsage,
 	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
@@ -126,7 +126,7 @@ func setModerationStatusHandler(
 	moderationStatus = input.ModerationStatus
 	banAuthor = utils.BoolPtr(input.BanAuthor)
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := setModerationStatus(&writer)
@@ -145,5 +145,5 @@ func setModerationStatus(writer io.Writer) error {
 		comment.WithService(nil),
 	)
 
-	return c.SetModerationStatus(output, jpath, writer)
+	return c.SetModerationStatus(output, jsonpath, writer)
 }

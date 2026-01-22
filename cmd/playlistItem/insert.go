@@ -125,7 +125,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("kind")
 	_ = insertCmd.MarkFlagRequired("playlistId")
@@ -168,7 +168,7 @@ func insertHandler(
 	privacy = input.Privacy
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -194,5 +194,5 @@ func insert(writer io.Writer) error {
 		playlistItem.WithService(nil),
 	)
 
-	return pi.Insert(output, jpath, writer)
+	return pi.Insert(output, jsonpath, writer)
 }

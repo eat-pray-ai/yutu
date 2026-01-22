@@ -73,7 +73,7 @@ var (
 	maxResults        int64
 	parts             []string
 	output            string
-	jpath             string
+	jsonpath          string
 
 	notifySubscribers             = utils.BoolPtr("false")
 	publicStatsViewable           = utils.BoolPtr("false")

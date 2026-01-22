@@ -109,7 +109,7 @@ func init() {
 		pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -144,7 +144,7 @@ func listHandler(
 	regionCode = input.RegionCode
 	parts = input.Parts
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := list(&writer)
@@ -168,5 +168,5 @@ func list(writer io.Writer, opts ...activity.Option) error {
 	}
 	a := activity.NewActivity(append(defaultOpts, opts...)...)
 
-	return a.List(parts, output, jpath, writer)
+	return a.List(parts, output, jsonpath, writer)
 }

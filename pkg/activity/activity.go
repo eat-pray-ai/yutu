@@ -105,7 +105,7 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 }
 
 func (a *activity) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	activities, err := a.Get(parts)
 	if err != nil && activities == nil {
@@ -114,9 +114,9 @@ func (a *activity) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(activities, jpath, writer)
+		utils.PrintJSON(activities, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(activities, jpath, writer)
+		utils.PrintYAML(activities, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

@@ -114,7 +114,7 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 }
 
 func (c *channel) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	channels, err := c.Get(parts)
 	if err != nil && channels == nil {
@@ -123,9 +123,9 @@ func (c *channel) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(channels, jpath, writer)
+		utils.PrintJSON(channels, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(channels, jpath, writer)
+		utils.PrintYAML(channels, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -141,7 +141,7 @@ func (c *channel) List(
 	return err
 }
 
-func (c *channel) Update(output string, jpath string, writer io.Writer) error {
+func (c *channel) Update(output string, jsonpath string, writer io.Writer) error {
 	parts := []string{"snippet"}
 	channels, err := c.Get(parts)
 	if err != nil {
@@ -176,9 +176,9 @@ func (c *channel) Update(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)

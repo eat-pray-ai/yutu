@@ -172,7 +172,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("videoId")
@@ -217,7 +217,7 @@ func insertHandler(
 	onBehalfOf = input.OnBehalfOf
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -246,5 +246,5 @@ func insert(writer io.Writer) error {
 		caption.WithService(nil),
 	)
 
-	return c.Insert(output, jpath, writer)
+	return c.Insert(output, jsonpath, writer)
 }

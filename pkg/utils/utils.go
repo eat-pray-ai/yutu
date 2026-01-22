@@ -22,24 +22,24 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func PrintJSON(data interface{}, jpath string, writer io.Writer) {
-	j, err := jp.ParseString(jpath)
-	if err != nil && jpath != "" {
-		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jpath)
+func PrintJSON(data interface{}, jsonpath string, writer io.Writer) {
+	j, err := jp.ParseString(jsonpath)
+	if err != nil && jsonpath != "" {
+		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
 		return
-	} else if jpath != "" {
+	} else if jsonpath != "" {
 		data = j.Get(data)
 	}
 	marshalled, _ := json.MarshalIndent(data, "", "  ")
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
-func PrintYAML(data interface{}, jpath string, writer io.Writer) {
-	j, err := jp.ParseString(jpath)
-	if err != nil && jpath != "" {
-		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jpath)
+func PrintYAML(data interface{}, jsonpath string, writer io.Writer) {
+	j, err := jp.ParseString(jsonpath)
+	if err != nil && jsonpath != "" {
+		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
 		return
-	} else if jpath != "" {
+	} else if jsonpath != "" {
 		data = j.Get(data)
 	}
 	marshalled, _ := yaml.Marshal(data)

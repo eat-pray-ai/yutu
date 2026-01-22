@@ -93,7 +93,7 @@ func init() {
 		&parts, "parts", "p", []string{"id", "kind", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	listCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
 	)
@@ -129,7 +129,7 @@ func listHandler(
 	maxResults = input.MaxResults
 	parts = input.Parts
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 
@@ -151,5 +151,5 @@ func list(writer io.Writer) error {
 		playlistImage.WithService(nil),
 	)
 
-	return pi.List(parts, output, jpath, writer)
+	return pi.List(parts, output, jsonpath, writer)
 }

@@ -171,7 +171,7 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("videoId")
 }
@@ -215,7 +215,7 @@ func updateHandler(
 	onBehalfOf = input.OnBehalfOf
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -244,5 +244,5 @@ func update(writer io.Writer) error {
 		caption.WithService(nil),
 	)
 
-	return c.Update(output, jpath, writer)
+	return c.Update(output, jsonpath, writer)
 }

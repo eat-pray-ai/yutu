@@ -118,8 +118,8 @@ func TestIsJson(t *testing.T) {
 
 func TestPrintJSON(t *testing.T) {
 	type args struct {
-		data  interface{}
-		jpath string
+		data     interface{}
+		jsonpath string
 	}
 	tests := []struct {
 		name       string
@@ -128,18 +128,18 @@ func TestPrintJSON(t *testing.T) {
 	}{
 		{
 			name:       "empty jsonpath",
-			args:       args{data: map[string]string{"key": "value"}, jpath: ""},
+			args:       args{data: map[string]string{"key": "value"}, jsonpath: ""},
 			wantWriter: "{\n  \"key\": \"value\"\n}\n",
 		},
 		{
 			name:       "simple json",
-			args:       args{data: map[string]string{"key": "value"}, jpath: "$"},
+			args:       args{data: map[string]string{"key": "value"}, jsonpath: "$"},
 			wantWriter: "[\n  {\n    \"key\": \"value\"\n  }\n]\n",
 		},
 		{
 			name: "invalid jsonpath",
 			args: args{
-				data: map[string]string{"key": "value"}, jpath: "//",
+				data: map[string]string{"key": "value"}, jsonpath: "//",
 			},
 			wantWriter: "Invalid JSONPath: //\n",
 		},
@@ -149,7 +149,7 @@ func TestPrintJSON(t *testing.T) {
 				data: map[string]interface{}{
 					"key":     "value",
 					"another": "field",
-				}, jpath: "$.key",
+				}, jsonpath: "$.key",
 			},
 			wantWriter: "[\n  \"value\"\n]\n",
 		},
@@ -161,7 +161,7 @@ func TestPrintJSON(t *testing.T) {
 					"item2": map[string]string{"key2": "value2"},
 					"count": 2,
 				},
-				jpath: "$.*.key1",
+				jsonpath: "$.*.key1",
 			},
 			wantWriter: "[\n  \"value1\"\n]\n",
 		},
@@ -173,13 +173,13 @@ func TestPrintJSON(t *testing.T) {
 					{"key2": "value2"},
 					{"key1": "value3"},
 				},
-				jpath: "$[*].key1",
+				jsonpath: "$[*].key1",
 			},
 			wantWriter: "[\n  \"value1\",\n  \"value3\"\n]\n",
 		},
 		{
 			name:       "nil data",
-			args:       args{data: nil, jpath: "$"},
+			args:       args{data: nil, jsonpath: "$"},
 			wantWriter: "[\n  null\n]\n",
 		},
 	}
@@ -187,7 +187,7 @@ func TestPrintJSON(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintJSON(tt.args.data, tt.args.jpath, writer)
+				PrintJSON(tt.args.data, tt.args.jsonpath, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintJSON() = %v, want %v", gotWriter, tt.wantWriter)
 				}
@@ -198,8 +198,8 @@ func TestPrintJSON(t *testing.T) {
 
 func TestPrintYAML(t *testing.T) {
 	type args struct {
-		data  interface{}
-		jpath string
+		data     interface{}
+		jsonpath string
 	}
 	tests := []struct {
 		name       string
@@ -208,18 +208,18 @@ func TestPrintYAML(t *testing.T) {
 	}{
 		{
 			name:       "empty jsonpath",
-			args:       args{data: map[string]string{"key": "value"}, jpath: ""},
+			args:       args{data: map[string]string{"key": "value"}, jsonpath: ""},
 			wantWriter: "key: value\n\n",
 		},
 		{
 			name:       "simple yaml",
-			args:       args{data: map[string]string{"key": "value"}, jpath: "$"},
+			args:       args{data: map[string]string{"key": "value"}, jsonpath: "$"},
 			wantWriter: "- key: value\n\n",
 		},
 		{
 			name: "invalid jsonpath",
 			args: args{
-				data: map[string]string{"key": "value"}, jpath: "//",
+				data: map[string]string{"key": "value"}, jsonpath: "//",
 			},
 			wantWriter: "Invalid JSONPath: //\n",
 		},
@@ -229,7 +229,7 @@ func TestPrintYAML(t *testing.T) {
 				data: map[string]interface{}{
 					"key":     "value",
 					"another": "field",
-				}, jpath: "$.key",
+				}, jsonpath: "$.key",
 			},
 			wantWriter: "- value\n\n",
 		},
@@ -241,7 +241,7 @@ func TestPrintYAML(t *testing.T) {
 					"item2": map[string]string{"key2": "value2"},
 					"count": 2,
 				},
-				jpath: "$.*.key1",
+				jsonpath: "$.*.key1",
 			},
 			wantWriter: "- value1\n\n",
 		},
@@ -253,13 +253,13 @@ func TestPrintYAML(t *testing.T) {
 					{"key2": "value2"},
 					{"key1": "value3"},
 				},
-				jpath: "$[*].key1",
+				jsonpath: "$[*].key1",
 			},
 			wantWriter: "- value1\n- value3\n\n",
 		},
 		{
 			name:       "nil data",
-			args:       args{data: nil, jpath: "$"},
+			args:       args{data: nil, jsonpath: "$"},
 			wantWriter: "- null\n\n",
 		},
 	}
@@ -267,7 +267,7 @@ func TestPrintYAML(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintYAML(tt.args.data, tt.args.jpath, writer)
+				PrintYAML(tt.args.data, tt.args.jsonpath, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintYAML() = %v, want %v", gotWriter, tt.wantWriter)
 				}

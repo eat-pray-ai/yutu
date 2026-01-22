@@ -55,7 +55,7 @@ func (i *i18nRegion) Get(parts []string) ([]*youtube.I18nRegion, error) {
 }
 
 func (i *i18nRegion) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	i18nRegions, err := i.Get(parts)
 	if err != nil {
@@ -64,9 +64,9 @@ func (i *i18nRegion) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(i18nRegions, jpath, writer)
+		utils.PrintJSON(i18nRegions, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nRegions, jpath, writer)
+		utils.PrintYAML(i18nRegions, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

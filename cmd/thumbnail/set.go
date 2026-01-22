@@ -70,7 +70,7 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	setCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	setCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
@@ -102,7 +102,7 @@ func setHandler(
 	file = input.File
 	videoId = input.VideoId
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := set(&writer)
@@ -120,5 +120,5 @@ func set(writer io.Writer) error {
 		thumbnail.WithService(nil),
 	)
 
-	return t.Set(output, jpath, writer)
+	return t.Set(output, jsonpath, writer)
 }

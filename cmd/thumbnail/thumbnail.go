@@ -16,10 +16,10 @@ const (
 )
 
 var (
-	file    string
-	videoId string
-	output  string
-	jpath   string
+	file     string
+	videoId  string
+	output   string
+	jsonpath string
 )
 
 var thumbnailCmd = &cobra.Command{

@@ -84,7 +84,7 @@ func (c *caption) Get(parts []string) ([]*youtube.Caption, error) {
 }
 
 func (c *caption) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	captions, err := c.Get(parts)
 	if err != nil {
@@ -93,9 +93,9 @@ func (c *caption) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(captions, jpath, writer)
+		utils.PrintJSON(captions, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(captions, jpath, writer)
+		utils.PrintYAML(captions, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
@@ -115,7 +115,7 @@ func (c *caption) List(
 }
 
 func (c *caption) Insert(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	file, err := pkg.Root.Open(c.File)
 	if err != nil {
@@ -155,9 +155,9 @@ func (c *caption) Insert(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
@@ -166,7 +166,7 @@ func (c *caption) Insert(
 }
 
 func (c *caption) Update(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	captions, err := c.Get([]string{"snippet"})
 	if err != nil {
@@ -233,9 +233,9 @@ func (c *caption) Update(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)

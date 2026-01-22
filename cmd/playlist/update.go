@@ -103,7 +103,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jpath, "jsonPath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -140,7 +140,7 @@ func updateHandler(
 	language = input.Language
 	privacy = input.Privacy
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := update(&writer)
@@ -163,5 +163,5 @@ func update(writer io.Writer) error {
 		playlist.WithService(nil),
 	)
 
-	return p.Update(output, jpath, writer)
+	return p.Update(output, jsonpath, writer)
 }

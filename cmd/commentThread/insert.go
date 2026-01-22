@@ -86,7 +86,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	insertCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -124,7 +124,7 @@ func insertHandler(
 	textOriginal = input.TextOriginal
 	videoId = input.VideoId
 	output = input.Output
-	jpath = input.Jsonpath
+	jsonpath = input.Jsonpath
 
 	var writer bytes.Buffer
 	err := insert(&writer)
@@ -144,5 +144,5 @@ func insert(writer io.Writer) error {
 		commentThread.WithService(nil),
 	)
 
-	return ct.Insert(output, jpath, writer)
+	return ct.Insert(output, jsonpath, writer)
 }

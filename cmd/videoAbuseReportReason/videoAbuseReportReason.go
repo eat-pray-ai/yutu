@@ -15,10 +15,10 @@ const (
 )
 
 var (
-	hl     string
-	parts  []string
-	output string
-	jpath  string
+	hl       string
+	parts    []string
+	output   string
+	jsonpath string
 )
 
 var videoAbuseReportReasonCmd = &cobra.Command{

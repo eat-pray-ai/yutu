@@ -61,7 +61,7 @@ func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
 }
 
 func (vc *videoCategory) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	videoCategories, err := vc.Get(parts)
 	if err != nil {
@@ -70,9 +70,9 @@ func (vc *videoCategory) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videoCategories, jpath, writer)
+		utils.PrintJSON(videoCategories, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoCategories, jpath, writer)
+		utils.PrintYAML(videoCategories, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

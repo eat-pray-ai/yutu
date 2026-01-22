@@ -104,7 +104,7 @@ func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 }
 
 func (p *playlist) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	playlists, err := p.Get(parts)
 	if err != nil && playlists == nil {
@@ -113,9 +113,9 @@ func (p *playlist) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(playlists, jpath, writer)
+		utils.PrintJSON(playlists, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlists, jpath, writer)
+		utils.PrintYAML(playlists, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -129,7 +129,7 @@ func (p *playlist) List(
 	return err
 }
 
-func (p *playlist) Insert(output string, jpath string, writer io.Writer) error {
+func (p *playlist) Insert(output string, jsonpath string, writer io.Writer) error {
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -151,9 +151,9 @@ func (p *playlist) Insert(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
@@ -161,7 +161,7 @@ func (p *playlist) Insert(output string, jpath string, writer io.Writer) error {
 	return nil
 }
 
-func (p *playlist) Update(output string, jpath string, writer io.Writer) error {
+func (p *playlist) Update(output string, jsonpath string, writer io.Writer) error {
 	playlists, err := p.Get([]string{"id", "snippet", "status"})
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
@@ -195,9 +195,9 @@ func (p *playlist) Update(output string, jpath string, writer io.Writer) error {
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)

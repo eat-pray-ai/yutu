@@ -55,7 +55,7 @@ func (va *videoAbuseReportReason) Get(parts []string) (
 }
 
 func (va *videoAbuseReportReason) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	videoAbuseReportReasons, err := va.Get(parts)
 	if err != nil {
@@ -64,9 +64,9 @@ func (va *videoAbuseReportReason) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons, jpath, writer)
+		utils.PrintJSON(videoAbuseReportReasons, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons, jpath, writer)
+		utils.PrintYAML(videoAbuseReportReasons, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

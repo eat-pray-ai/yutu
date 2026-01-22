@@ -81,7 +81,7 @@ func (m *member) Get(parts []string) ([]*youtube.Member, error) {
 }
 
 func (m *member) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	members, err := m.Get(parts)
 	if err != nil && members == nil {
@@ -90,9 +90,9 @@ func (m *member) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(members, jpath, writer)
+		utils.PrintJSON(members, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(members, jpath, writer)
+		utils.PrintYAML(members, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()

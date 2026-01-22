@@ -101,7 +101,7 @@ func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 }
 
 func (pi *playlistItem) List(
-	parts []string, output string, jpath string, writer io.Writer,
+	parts []string, output string, jsonpath string, writer io.Writer,
 ) error {
 	playlistItems, err := pi.Get(parts)
 	if err != nil && playlistItems == nil {
@@ -110,9 +110,9 @@ func (pi *playlistItem) List(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(playlistItems, jpath, writer)
+		utils.PrintJSON(playlistItems, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlistItems, jpath, writer)
+		utils.PrintYAML(playlistItems, jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -140,7 +140,7 @@ func (pi *playlistItem) List(
 }
 
 func (pi *playlistItem) Insert(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
@@ -188,9 +188,9 @@ func (pi *playlistItem) Insert(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist Item inserted: %s\n", res.Id)
@@ -199,7 +199,7 @@ func (pi *playlistItem) Insert(
 }
 
 func (pi *playlistItem) Update(
-	output string, jpath string, writer io.Writer,
+	output string, jsonpath string, writer io.Writer,
 ) error {
 	playlistItems, err := pi.Get([]string{"id", "snippet", "status"})
 	if err != nil {
@@ -234,9 +234,9 @@ func (pi *playlistItem) Update(
 
 	switch output {
 	case "json":
-		utils.PrintJSON(res, jpath, writer)
+		utils.PrintJSON(res, jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jpath, writer)
+		utils.PrintYAML(res, jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist Item updated: %s\n", res.Id)

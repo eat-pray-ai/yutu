@@ -39,7 +39,7 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jpath, "jsonpath", "j", "", pkg.JPUsage)
+	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -91,5 +91,5 @@ func list(writer io.Writer) error {
 		videoCategory.WithService(nil),
 	)
 
-	return vc.List(parts, output, jpath, writer)
+	return vc.List(parts, output, jsonpath, writer)
 }
