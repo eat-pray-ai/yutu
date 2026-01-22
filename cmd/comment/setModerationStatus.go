@@ -142,6 +142,7 @@ func setModerationStatus(writer io.Writer) error {
 		comment.WithIDs(ids),
 		comment.WithModerationStatus(moderationStatus),
 		comment.WithBanAuthor(banAuthor),
+		comment.WithService(nil),
 	)
 
 	return c.SetModerationStatus(output, jpath, writer)
