@@ -6,6 +6,7 @@ package search
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 )
 
@@ -45,9 +46,9 @@ var (
 	channelId                 string
 	channelType               string
 	eventType                 string
-	forContentOwner           = utils.Ptr(false)
-	forDeveloper              = utils.Ptr(false)
-	forMine                   = utils.Ptr(false)
+	forContentOwner           = jsonschema.Ptr(false)
+	forDeveloper              = jsonschema.Ptr(false)
+	forMine                   = jsonschema.Ptr(false)
 	location                  string
 	locationRadius            string
 	maxResults                int64

@@ -6,6 +6,7 @@ package subscription
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 )
 
@@ -29,9 +30,9 @@ var (
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
-	mine                          = utils.Ptr(false)
-	myRecentSubscribers           = utils.Ptr(false)
-	mySubscribers                 = utils.Ptr(false)
+	mine                          = jsonschema.Ptr(false)
+	myRecentSubscribers           = jsonschema.Ptr(false)
+	mySubscribers                 = jsonschema.Ptr(false)
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string

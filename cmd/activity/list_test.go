@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/activity"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
@@ -48,8 +48,8 @@ func TestList(t *testing.T) {
 
 	var buf bytes.Buffer
 	input := &listIn{
-		Home:   utils.Ptr(true),
-		Mine:   utils.Ptr(true),
+		Home:   jsonschema.Ptr(true),
+		Mine:   jsonschema.Ptr(true),
 		Parts:  []string{"id", "snippet", "contentDetails"},
 		Output: "json",
 	}

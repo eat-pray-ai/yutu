@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -23,7 +24,7 @@ func TestStrToBoolPtr(t *testing.T) {
 	}{
 		{
 			name: "true",
-			args: args{b: Ptr("true")},
+			args: args{b: jsonschema.Ptr("true")},
 			want: func() *bool {
 				b := true
 				return &b
@@ -31,7 +32,7 @@ func TestStrToBoolPtr(t *testing.T) {
 		},
 		{
 			name: "false",
-			args: args{b: Ptr("false")},
+			args: args{b: jsonschema.Ptr("false")},
 			want: func() *bool {
 				b := false
 				return &b
@@ -39,7 +40,7 @@ func TestStrToBoolPtr(t *testing.T) {
 		},
 		{
 			name: "empty",
-			args: args{b: Ptr("")},
+			args: args{b: jsonschema.Ptr("")},
 			want: nil,
 		},
 	}
@@ -281,7 +282,7 @@ func TestResetBool(t *testing.T) {
 		m       map[string]**bool
 		flagSet *pflag.FlagSet
 	}
-	b := Ptr(true)
+	b := jsonschema.Ptr(true)
 	cmd := &cobra.Command{}
 	cmd.Flags().BoolVar(b, "flag", false, "")
 	tests := []struct {

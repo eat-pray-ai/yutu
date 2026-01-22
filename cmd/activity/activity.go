@@ -6,6 +6,7 @@ package activity
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 )
 
@@ -22,9 +23,9 @@ const (
 
 var (
 	channelId       string
-	home            = utils.Ptr(false)
+	home            = jsonschema.Ptr(false)
 	maxResults      int64
-	mine            = utils.Ptr(false)
+	mine            = jsonschema.Ptr(false)
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string

@@ -6,6 +6,7 @@ package video
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/pflag"
 
 	"github.com/spf13/cobra"
@@ -44,7 +45,7 @@ const (
 
 var (
 	ids               []string
-	autoLevels        = utils.Ptr(false)
+	autoLevels        = jsonschema.Ptr(false)
 	file              string
 	title             string
 	description       string
@@ -61,13 +62,13 @@ var (
 	playListId        string
 	categoryId        string
 	privacy           string
-	forKids           = utils.Ptr(false)
-	embeddable        = utils.Ptr(false)
+	forKids           = jsonschema.Ptr(false)
+	embeddable        = jsonschema.Ptr(false)
 	publishAt         string
 	regionCode        string
 	reasonId          string
 	secondaryReasonId string
-	stabilize         = utils.Ptr(false)
+	stabilize         = jsonschema.Ptr(false)
 	maxHeight         int64
 	maxWidth          int64
 	maxResults        int64
@@ -75,8 +76,8 @@ var (
 	output            string
 	jsonpath          string
 
-	notifySubscribers             = utils.Ptr(false)
-	publicStatsViewable           = utils.Ptr(false)
+	notifySubscribers             = jsonschema.Ptr(false)
+	publicStatsViewable           = jsonschema.Ptr(false)
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 )

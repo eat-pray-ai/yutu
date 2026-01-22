@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/ohler55/ojg/jp"
 	"github.com/spf13/pflag"
@@ -91,14 +92,10 @@ func StrToBoolPtr(b *string) *bool {
 
 func BoolToStrPtr(b *bool) *string {
 	if b == nil {
-		return Ptr("")
+		return jsonschema.Ptr("")
 	}
 
-	return Ptr(strconv.FormatBool(*b))
-}
-
-func Ptr[T any](v T) *T {
-	return &v
+	return jsonschema.Ptr(strconv.FormatBool(*b))
 }
 
 func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {

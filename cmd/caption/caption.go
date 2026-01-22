@@ -6,6 +6,7 @@ package caption
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -32,11 +33,11 @@ var (
 	ids                    []string
 	file                   string
 	audioTrackType         string
-	isAutoSynced           = utils.Ptr(false)
-	isCC                   = utils.Ptr(false)
-	isDraft                = utils.Ptr(false)
-	isEasyReader           = utils.Ptr(false)
-	isLarge                = utils.Ptr(false)
+	isAutoSynced           = jsonschema.Ptr(false)
+	isCC                   = jsonschema.Ptr(false)
+	isDraft                = jsonschema.Ptr(false)
+	isEasyReader           = jsonschema.Ptr(false)
+	isLarge                = jsonschema.Ptr(false)
 	language               string
 	name                   string
 	trackKind              string

@@ -6,6 +6,7 @@ package comment
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 )
 
@@ -27,14 +28,14 @@ const (
 var (
 	ids              []string
 	authorChannelId  string
-	canRate          = utils.Ptr(false)
+	canRate          = jsonschema.Ptr(false)
 	channelId        string
 	maxResults       int64
 	parentId         string
 	textFormat       string
 	textOriginal     string
 	moderationStatus string
-	banAuthor        = utils.Ptr(false)
+	banAuthor        = jsonschema.Ptr(false)
 	videoId          string
 	viewerRating     string
 	parts            []string
