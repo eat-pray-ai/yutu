@@ -300,9 +300,9 @@ func listHandler(
 	channelId = input.ChannelId
 	channelType = input.ChannelType
 	eventType = input.EventType
-	forContentOwner = utils.BoolPtr(*input.ForContentOwner)
-	forDeveloper = utils.BoolPtr(*input.ForDeveloper)
-	forMine = utils.BoolPtr(*input.ForMine)
+	forContentOwner = utils.StrToBoolPtr(input.ForContentOwner)
+	forDeveloper = utils.StrToBoolPtr(input.ForDeveloper)
+	forMine = utils.StrToBoolPtr(input.ForMine)
 	location = input.Location
 	locationRadius = input.LocationRadius
 	maxResults = input.MaxResults

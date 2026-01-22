@@ -177,7 +177,7 @@ func updateHandler(
 	playListId = input.PlaylistId
 	categoryId = input.CategoryId
 	privacy = input.Privacy
-	embeddable = utils.BoolPtr(*input.Embeddable)
+	embeddable = utils.StrToBoolPtr(input.Embeddable)
 	output = input.Output
 	jsonpath = input.Jsonpath
 

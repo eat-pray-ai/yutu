@@ -137,7 +137,7 @@ func listHandler(
 	ids = input.Ids
 	channelId = input.ChannelId
 	hl = input.Hl
-	mine = utils.BoolPtr(*input.Mine)
+	mine = utils.StrToBoolPtr(input.Mine)
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	parts = input.Parts
 	output = input.Output

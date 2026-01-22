@@ -182,10 +182,10 @@ func listHandler(
 	forUsername = input.ForUsername
 	hl = input.Hl
 	ids = input.Ids
-	managedByMe = utils.BoolPtr(*input.ManagedByMe)
+	managedByMe = utils.StrToBoolPtr(input.ManagedByMe)
 	maxResults = input.MaxResults
-	mine = utils.BoolPtr(*input.Mine)
-	mySubscribers = utils.BoolPtr(*input.MySubscribers)
+	mine = utils.StrToBoolPtr(input.Mine)
+	mySubscribers = utils.StrToBoolPtr(input.MySubscribers)
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	parts = input.Parts
 	output = input.Output

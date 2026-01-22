@@ -154,7 +154,7 @@ func listHandler(
 	channelId = input.ChannelId
 	hl = input.Hl
 	maxResults = input.MaxResults
-	mine = utils.BoolPtr(*input.Mine)
+	mine = utils.StrToBoolPtr(input.Mine)
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 	parts = input.Parts

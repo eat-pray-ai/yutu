@@ -29,9 +29,9 @@ var (
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
-	mine                          = utils.BoolPtr("false")
-	myRecentSubscribers           = utils.BoolPtr("false")
-	mySubscribers                 = utils.BoolPtr("false")
+	mine                          = utils.Ptr(false)
+	myRecentSubscribers           = utils.Ptr(false)
+	mySubscribers                 = utils.Ptr(false)
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string

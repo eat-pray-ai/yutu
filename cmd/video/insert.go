@@ -229,7 +229,7 @@ func insertHandler(
 		),
 	)
 
-	autoLevels = utils.BoolPtr(*input.AutoLevels)
+	autoLevels = utils.StrToBoolPtr(input.AutoLevels)
 	file = input.File
 	title = input.Title
 	description = input.Description
@@ -241,12 +241,12 @@ func insertHandler(
 	playListId = input.PlaylistId
 	categoryId = input.CategoryId
 	privacy = input.Privacy
-	forKids = utils.BoolPtr(*input.ForKids)
-	embeddable = utils.BoolPtr(*input.Embeddable)
+	forKids = utils.StrToBoolPtr(input.ForKids)
+	embeddable = utils.StrToBoolPtr(input.Embeddable)
 	publishAt = input.PublishAt
-	stabilize = utils.BoolPtr(*input.Stabilize)
-	notifySubscribers = utils.BoolPtr(*input.NotifySubscribers)
-	publicStatsViewable = utils.BoolPtr(*input.PublicStatsViewable)
+	stabilize = utils.StrToBoolPtr(input.Stabilize)
+	notifySubscribers = utils.StrToBoolPtr(input.NotifySubscribers)
+	publicStatsViewable = utils.StrToBoolPtr(input.PublicStatsViewable)
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 	output = input.Output

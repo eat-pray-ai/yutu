@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -80,12 +81,24 @@ func IsJson(s string) bool {
 	return json.Unmarshal([]byte(s), &js) == nil
 }
 
-func BoolPtr(b string) *bool {
-	if b == "" || strings.ToLower(strings.TrimSpace(b)) == "null" {
+func StrToBoolPtr(b *string) *bool {
+	if b == nil || *b == "" || strings.ToLower(strings.TrimSpace(*b)) == "null" {
 		return nil
 	}
-	val := b == "true"
+	val := *b == "true"
 	return &val
+}
+
+func BoolToStrPtr(b *bool) *string {
+	if b == nil {
+		return Ptr("")
+	}
+
+	return Ptr(strconv.FormatBool(*b))
+}
+
+func Ptr[T any](v T) *T {
+	return &v
 }
 
 func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {

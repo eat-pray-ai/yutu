@@ -176,9 +176,9 @@ func listHandler(
 	channelId = input.ChannelId
 	forChannelId = input.ForChannelId
 	maxResults = input.MaxResults
-	mine = utils.BoolPtr(*input.Mine)
-	myRecentSubscribers = utils.BoolPtr(*input.MyRecentSubscribers)
-	mySubscribers = utils.BoolPtr(*input.MySubscribers)
+	mine = utils.StrToBoolPtr(input.Mine)
+	myRecentSubscribers = utils.StrToBoolPtr(input.MyRecentSubscribers)
+	mySubscribers = utils.StrToBoolPtr(input.MySubscribers)
 	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
 	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
 	order = input.Order

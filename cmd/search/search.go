@@ -45,9 +45,9 @@ var (
 	channelId                 string
 	channelType               string
 	eventType                 string
-	forContentOwner           = utils.BoolPtr("false")
-	forDeveloper              = utils.BoolPtr("false")
-	forMine                   = utils.BoolPtr("false")
+	forContentOwner           = utils.Ptr(false)
+	forDeveloper              = utils.Ptr(false)
+	forMine                   = utils.Ptr(false)
 	location                  string
 	locationRadius            string
 	maxResults                int64

@@ -27,14 +27,14 @@ const (
 var (
 	ids              []string
 	authorChannelId  string
-	canRate          = utils.BoolPtr("false")
+	canRate          = utils.Ptr(false)
 	channelId        string
 	maxResults       int64
 	parentId         string
 	textFormat       string
 	textOriginal     string
 	moderationStatus string
-	banAuthor        = utils.BoolPtr("false")
+	banAuthor        = utils.Ptr(false)
 	videoId          string
 	viewerRating     string
 	parts            []string

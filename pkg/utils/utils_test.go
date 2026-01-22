@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func TestBoolPtr(t *testing.T) {
+func TestStrToBoolPtr(t *testing.T) {
 	type args struct {
-		b string
+		b *string
 	}
 	tests := []struct {
 		name string
@@ -23,7 +23,7 @@ func TestBoolPtr(t *testing.T) {
 	}{
 		{
 			name: "true",
-			args: args{b: "true"},
+			args: args{b: Ptr("true")},
 			want: func() *bool {
 				b := true
 				return &b
@@ -31,7 +31,7 @@ func TestBoolPtr(t *testing.T) {
 		},
 		{
 			name: "false",
-			args: args{b: "false"},
+			args: args{b: Ptr("false")},
 			want: func() *bool {
 				b := false
 				return &b
@@ -39,14 +39,14 @@ func TestBoolPtr(t *testing.T) {
 		},
 		{
 			name: "empty",
-			args: args{b: ""},
+			args: args{b: Ptr("")},
 			want: nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := BoolPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
+				if got := StrToBoolPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("BoolPtr() = %v, want %v", got, tt.want)
 				}
 			},
@@ -281,7 +281,7 @@ func TestResetBool(t *testing.T) {
 		m       map[string]**bool
 		flagSet *pflag.FlagSet
 	}
-	b := BoolPtr("true")
+	b := Ptr(true)
 	cmd := &cobra.Command{}
 	cmd.Flags().BoolVar(b, "flag", false, "")
 	tests := []struct {

@@ -124,7 +124,7 @@ func setModerationStatusHandler(
 
 	ids = input.Ids
 	moderationStatus = input.ModerationStatus
-	banAuthor = utils.BoolPtr(input.BanAuthor)
+	banAuthor = utils.StrToBoolPtr(&input.BanAuthor)
 	output = input.Output
 	jsonpath = input.Jsonpath
 

@@ -21,7 +21,7 @@ var (
 	ids                    []string
 	channelId              string
 	hl                     string
-	mine                   = utils.BoolPtr("false")
+	mine                   = utils.Ptr(false)
 	onBehalfOfContentOwner string
 	parts                  []string
 	output                 string

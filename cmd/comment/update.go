@@ -124,7 +124,7 @@ func updateHandler(
 	)
 
 	ids = input.Ids
-	canRate = utils.BoolPtr(input.CanRate)
+	canRate = utils.StrToBoolPtr(&input.CanRate)
 	textOriginal = input.TextOriginal
 	viewerRating = input.ViewerRating
 	output = input.Output

@@ -28,7 +28,7 @@ var (
 	description string
 	hl          string
 	maxResults  int64
-	mine        = utils.BoolPtr("false")
+	mine        = utils.Ptr(false)
 	tags        []string
 	language    string
 	channelId   string

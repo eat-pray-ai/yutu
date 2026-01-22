@@ -144,7 +144,7 @@ func insertHandler(
 
 	authorChannelId = input.AuthorChannelId
 	channelId = input.ChannelId
-	canRate = utils.BoolPtr(input.CanRate)
+	canRate = utils.StrToBoolPtr(&input.CanRate)
 	parentId = input.ParentId
 	textOriginal = input.TextOriginal
 	videoId = input.VideoId

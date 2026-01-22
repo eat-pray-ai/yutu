@@ -34,10 +34,10 @@ var (
 	forUsername     string
 	hl              string
 	ids             []string
-	managedByMe     = utils.BoolPtr("false")
+	managedByMe     = utils.Ptr(false)
 	maxResults      int64
-	mine            = utils.BoolPtr("false")
-	mySubscribers   = utils.BoolPtr("false")
+	mine            = utils.Ptr(false)
+	mySubscribers   = utils.Ptr(false)
 	country         string
 	customUrl       string
 	defaultLanguage string

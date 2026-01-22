@@ -44,7 +44,7 @@ const (
 
 var (
 	ids               []string
-	autoLevels        = utils.BoolPtr("false")
+	autoLevels        = utils.Ptr(false)
 	file              string
 	title             string
 	description       string
@@ -61,13 +61,13 @@ var (
 	playListId        string
 	categoryId        string
 	privacy           string
-	forKids           = utils.BoolPtr("false")
-	embeddable        = utils.BoolPtr("false")
+	forKids           = utils.Ptr(false)
+	embeddable        = utils.Ptr(false)
 	publishAt         string
 	regionCode        string
 	reasonId          string
 	secondaryReasonId string
-	stabilize         = utils.BoolPtr("false")
+	stabilize         = utils.Ptr(false)
 	maxHeight         int64
 	maxWidth          int64
 	maxResults        int64
@@ -75,8 +75,8 @@ var (
 	output            string
 	jsonpath          string
 
-	notifySubscribers             = utils.BoolPtr("false")
-	publicStatsViewable           = utils.BoolPtr("false")
+	notifySubscribers             = utils.Ptr(false)
+	publicStatsViewable           = utils.Ptr(false)
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 )

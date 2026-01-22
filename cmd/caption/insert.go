@@ -205,11 +205,11 @@ func insertHandler(
 
 	file = input.File
 	audioTrackType = input.AudioTrackType
-	isAutoSynced = utils.BoolPtr(*input.IsAutoSynced)
-	isCC = utils.BoolPtr(*input.IsCC)
-	isDraft = utils.BoolPtr(*input.IsDraft)
-	isEasyReader = utils.BoolPtr(*input.IsEasyReader)
-	isLarge = utils.BoolPtr(*input.IsLarge)
+	isAutoSynced = utils.StrToBoolPtr(input.IsAutoSynced)
+	isCC = utils.StrToBoolPtr(input.IsCC)
+	isDraft = utils.StrToBoolPtr(input.IsDraft)
+	isEasyReader = utils.StrToBoolPtr(input.IsEasyReader)
+	isLarge = utils.StrToBoolPtr(input.IsLarge)
 	language = input.Language
 	name = input.Name
 	trackKind = input.TrackKind
