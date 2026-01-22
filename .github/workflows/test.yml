@@ -4,30 +4,30 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - '*'
+      - "*"
     paths:
-      - 'go.*'
-      - '**/*.go'
-      - '**/*.bazel'
-      - 'scripts/**'
-      - '.github/workflows/test.yml'
+      - "go.*"
+      - "**/*.go"
+      - "**/*.bazel"
+      - "scripts/**"
+      - ".github/workflows/test.yml"
     tags-ignore:
-      - '*'
+      - "*"
   pull_request:
     branches:
-      - '*'
+      - "*"
     paths:
-      - 'go.*'
-      - '**/*.go'
-      - '**/*.bazel'
-      - 'scripts/**'
-      - '.github/workflows/test.yml'
+      - "go.*"
+      - "**/*.go"
+      - "**/*.bazel"
+      - "scripts/**"
+      - ".github/workflows/test.yml"
 
 permissions:
   contents: write
 
 env:
-  COVERAGE_FILE: ./cover.out
+  COVERAGE_FILE: ./coverage.out
 
 jobs:
   go-test:
@@ -39,7 +39,7 @@ jobs:
           go-version-file: ./go.mod
       - name: Go test
         run: |
-          go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./pkg/..."
+          go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./..."
       - name: Command tests
         run: |
           ./scripts/command-test.sh

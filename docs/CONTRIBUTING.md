@@ -15,8 +15,8 @@ Here are some commands which may useful.
 
 ## run tests
 ### unit tests
-❯ go test ./... -coverprofile=./cover.out -coverpkg="$(go list || go list -m | head -1)/pkg/..."
-❯ go tool cover -html=cover.out -o=cover.html
+❯ go test ./... -coverprofile=./coverage.out -coverpkg=./...
+❯ go tool cover -html=coverage.out -o=coverage.html
 
 ## build the binary
 ### install goreleaser: https://goreleaser.com/install

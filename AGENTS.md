@@ -2,6 +2,8 @@
 
 Focus mostly on given tasks, avoid unnecessary complexity. Since developers may update code manually, codebase can be different from generated code. Ensure compatibility with existing structures and conventions.
 
+Follow developers instruction first, don't update existing codes unless developer asked explicitly.
+
 ## Commands
 - **Build**: `go build ./...` or `bazel build //...`
 - **Test (All)**: `go test ./...` or `bazel test //...`
