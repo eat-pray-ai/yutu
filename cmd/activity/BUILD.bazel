@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "activity",
@@ -16,5 +16,17 @@ go_library(
         "@com_github_google_jsonschema_go//jsonschema",
         "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_spf13_cobra//:cobra",
+    ],
+)
+
+go_test(
+    name = "activity_test",
+    srcs = ["list_test.go"],
+    embed = [":activity"],
+    deps = [
+        "//pkg/activity",
+        "@com_github_stretchr_testify//assert",
+        "@org_golang_google_api//option",
+        "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

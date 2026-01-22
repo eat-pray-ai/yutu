@@ -44,6 +44,13 @@ func NewActivity(opts ...Option) Activity[youtube.Activity] {
 		opt(a)
 	}
 
+	if service == nil {
+		service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+
 	return a
 }
 
@@ -181,12 +188,6 @@ func WithRegionCode(regionCode string) Option {
 
 func WithService(svc *youtube.Service) Option {
 	return func(_ *activity) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
 		service = svc
 	}
 }

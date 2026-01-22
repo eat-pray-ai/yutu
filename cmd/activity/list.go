@@ -155,8 +155,8 @@ func listHandler(
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func list(writer io.Writer) error {
-	a := activity.NewActivity(
+func list(writer io.Writer, opts ...activity.Option) error {
+	defaultOpts := []activity.Option{
 		activity.WithChannelId(channelId),
 		activity.WithHome(home),
 		activity.WithMaxResults(maxResults),
@@ -165,7 +165,8 @@ func list(writer io.Writer) error {
 		activity.WithPublishedBefore(publishedBefore),
 		activity.WithRegionCode(regionCode),
 		activity.WithService(nil),
-	)
+	}
+	a := activity.NewActivity(append(defaultOpts, opts...)...)
 
 	return a.List(parts, output, jpath, writer)
 }
