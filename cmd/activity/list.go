@@ -14,7 +14,6 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/activity"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -26,9 +25,9 @@ const (
 
 type listIn struct {
 	ChannelId       string   `json:"channelId"`
-	Home            *string  `json:"home,omitempty"`
+	Home            *bool    `json:"home,omitempty"`
 	MaxResults      int64    `json:"maxResults"`
-	Mine            *string  `json:"mine,omitempty"`
+	Mine            *bool    `json:"mine,omitempty"`
 	PublishedAfter  string   `json:"publishedAfter"`
 	PublishedBefore string   `json:"publishedBefore"`
 	RegionCode      string   `json:"regionCode"`
@@ -41,30 +40,20 @@ var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {
-			Type: "string", Description: ciUsage, Default: json.RawMessage(`""`),
-		},
+		"channelId": {Type: "string", Description: ciUsage},
 		"home": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: homeUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Enum: []any{true, false}, Description: homeUsage,
 		},
 		"maxResults": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"), Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mineUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
 		},
-		"publishedAfter": {
-			Type: "string", Description: paUsage, Default: json.RawMessage(`""`),
-		},
-		"publishedBefore": {
-			Type: "string", Description: pbUsage, Default: json.RawMessage(`""`),
-		},
-		"regionCode": {
-			Type: "string", Description: rcUsage, Default: json.RawMessage(`""`),
-		},
+		"publishedAfter":  {Type: "string", Description: paUsage},
+		"publishedBefore": {Type: "string", Description: pbUsage},
+		"regionCode":      {Type: "string", Description: rcUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -74,9 +63,7 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage, Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -117,8 +104,19 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
-		if err != nil {
+		input := &listIn{
+			ChannelId:       channelId,
+			Home:            home,
+			MaxResults:      maxResults,
+			Mine:            mine,
+			PublishedAfter:  publishedAfter,
+			PublishedBefore: publishedAfter,
+			RegionCode:      regionCode,
+			Parts:           parts,
+			Output:          output,
+			Jsonpath:        jsonpath,
+		}
+		if err := input.call(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -135,38 +133,27 @@ func listHandler(
 		),
 	)
 
-	channelId = input.ChannelId
-	home = utils.BoolPtr(*input.Home)
-	maxResults = input.MaxResults
-	mine = utils.BoolPtr(*input.Mine)
-	publishedAfter = input.PublishedAfter
-	publishedBefore = input.PublishedBefore
-	regionCode = input.RegionCode
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
-	if err != nil {
+	if err := input.call(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func list(writer io.Writer, opts ...activity.Option) error {
+func (l *listIn) call(writer io.Writer, opts ...activity.Option) error {
 	defaultOpts := []activity.Option{
-		activity.WithChannelId(channelId),
-		activity.WithHome(home),
-		activity.WithMaxResults(maxResults),
-		activity.WithMine(mine),
-		activity.WithPublishedAfter(publishedAfter),
-		activity.WithPublishedBefore(publishedBefore),
-		activity.WithRegionCode(regionCode),
+		activity.WithChannelId(l.ChannelId),
+		activity.WithHome(l.Home),
+		activity.WithMaxResults(l.MaxResults),
+		activity.WithMine(l.Mine),
+		activity.WithPublishedAfter(l.PublishedAfter),
+		activity.WithPublishedBefore(l.PublishedBefore),
+		activity.WithRegionCode(l.RegionCode),
 		activity.WithService(nil),
 	}
-	a := activity.NewActivity(append(defaultOpts, opts...)...)
+	defaultOpts = append(defaultOpts, opts...)
+	a := activity.NewActivity(defaultOpts...)
 
-	return a.List(parts, output, jsonpath, writer)
+	return a.List(l.Parts, l.Output, l.Jsonpath, writer)
 }

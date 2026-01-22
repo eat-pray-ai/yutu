@@ -22,9 +22,9 @@ const (
 
 var (
 	channelId       string
-	home            = utils.BoolPtr("false")
+	home            = utils.Ptr(false)
 	maxResults      int64
-	mine            = utils.BoolPtr("false")
+	mine            = utils.Ptr(false)
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string
