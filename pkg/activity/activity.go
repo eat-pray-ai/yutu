@@ -16,11 +16,11 @@ import (
 )
 
 var (
-	service        *youtube.Service
 	errGetActivity = errors.New("failed to get activity")
 )
 
 type activity struct {
+	service         *youtube.Service
 	ChannelId       string `yaml:"channel_id" json:"channel_id"`
 	Home            *bool  `yaml:"home" json:"home"`
 	MaxResults      int64  `yaml:"max_results" json:"max_results"`
@@ -44,8 +44,8 @@ func NewActivity(opts ...Option) Activity[youtube.Activity] {
 		opt(a)
 	}
 
-	if service == nil {
-		service = auth.NewY2BService(
+	if a.service == nil {
+		a.service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -55,7 +55,7 @@ func NewActivity(opts ...Option) Activity[youtube.Activity] {
 }
 
 func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
-	call := service.Activities.List(parts)
+	call := a.service.Activities.List(parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
 	}
@@ -187,7 +187,7 @@ func WithRegionCode(regionCode string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(_ *activity) {
-		service = svc
+	return func(c *activity) {
+		c.service = svc
 	}
 }

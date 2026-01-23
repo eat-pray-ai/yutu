@@ -53,7 +53,9 @@ func TestNewActivity(t *testing.T) {
 		{
 			name: "with no options",
 			args: args{
-				opts: []Option{},
+				opts: []Option{
+					WithService(&youtube.Service{}),
+				},
 			},
 			want: &activity{},
 		},
@@ -63,6 +65,7 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(nil),
 					WithMine(nil),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{},
@@ -73,6 +76,7 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(&homeFalse),
 					WithMine(&mineFalse),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{
@@ -85,6 +89,7 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(0),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{
@@ -96,6 +101,7 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(-10),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{
@@ -110,6 +116,7 @@ func TestNewActivity(t *testing.T) {
 					WithPublishedAfter(""),
 					WithPublishedBefore(""),
 					WithRegionCode(""),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{
@@ -126,6 +133,7 @@ func TestNewActivity(t *testing.T) {
 					WithChannelId("partial-channel"),
 					WithMaxResults(25),
 					WithRegionCode("UK"),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &activity{
@@ -139,9 +147,13 @@ func TestNewActivity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(
-					got, tt.want,
-				) {
+				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got.(*activity).ChannelId, tt.want.(*activity).ChannelId) ||
+					!reflect.DeepEqual(got.(*activity).Home, tt.want.(*activity).Home) ||
+					!reflect.DeepEqual(got.(*activity).MaxResults, tt.want.(*activity).MaxResults) ||
+					!reflect.DeepEqual(got.(*activity).Mine, tt.want.(*activity).Mine) ||
+					!reflect.DeepEqual(got.(*activity).PublishedAfter, tt.want.(*activity).PublishedAfter) ||
+					!reflect.DeepEqual(got.(*activity).PublishedBefore, tt.want.(*activity).PublishedBefore) ||
+					!reflect.DeepEqual(got.(*activity).RegionCode, tt.want.(*activity).RegionCode) {
 					t.Errorf("NewActivity() = %v, want %v", got, tt.want)
 				}
 			},
