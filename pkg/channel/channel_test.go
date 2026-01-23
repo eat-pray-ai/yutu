@@ -71,7 +71,9 @@ func TestNewChannel(t *testing.T) {
 		{
 			name: "with no options",
 			args: args{
-				opts: []Option{},
+				opts: []Option{
+					WithService(&youtube.Service{}),
+				},
 			},
 			want: &channel{},
 		},
@@ -82,6 +84,7 @@ func TestNewChannel(t *testing.T) {
 					WithChannelManagedByMe(nil),
 					WithMine(nil),
 					WithMySubscribers(nil),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{},
@@ -93,6 +96,7 @@ func TestNewChannel(t *testing.T) {
 					WithChannelManagedByMe(&managedByMeFalse),
 					WithMine(&mineFalse),
 					WithMySubscribers(&mySubscribersFalse),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
@@ -106,6 +110,7 @@ func TestNewChannel(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(0),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
@@ -117,6 +122,7 @@ func TestNewChannel(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(-5),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
@@ -137,6 +143,7 @@ func TestNewChannel(t *testing.T) {
 					WithDefaultLanguage(""),
 					WithDescription(""),
 					WithTitle(""),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
@@ -160,6 +167,7 @@ func TestNewChannel(t *testing.T) {
 					WithTitle("My Channel"),
 					WithCountry("UK"),
 					WithMaxResults(50),
+					WithService(&youtube.Service{}),
 				},
 			},
 			want: &channel{
@@ -174,7 +182,21 @@ func TestNewChannel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewChannel(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+				if got := NewChannel(tt.args.opts...); !reflect.DeepEqual(got.(*channel).CategoryId, tt.want.(*channel).CategoryId) ||
+					!reflect.DeepEqual(got.(*channel).ForHandle, tt.want.(*channel).ForHandle) ||
+					!reflect.DeepEqual(got.(*channel).ForUsername, tt.want.(*channel).ForUsername) ||
+					!reflect.DeepEqual(got.(*channel).Hl, tt.want.(*channel).Hl) ||
+					!reflect.DeepEqual(got.(*channel).IDs, tt.want.(*channel).IDs) ||
+					!reflect.DeepEqual(got.(*channel).ManagedByMe, tt.want.(*channel).ManagedByMe) ||
+					!reflect.DeepEqual(got.(*channel).MaxResults, tt.want.(*channel).MaxResults) ||
+					!reflect.DeepEqual(got.(*channel).Mine, tt.want.(*channel).Mine) ||
+					!reflect.DeepEqual(got.(*channel).MySubscribers, tt.want.(*channel).MySubscribers) ||
+					!reflect.DeepEqual(got.(*channel).OnBehalfOfContentOwner, tt.want.(*channel).OnBehalfOfContentOwner) ||
+					!reflect.DeepEqual(got.(*channel).Country, tt.want.(*channel).Country) ||
+					!reflect.DeepEqual(got.(*channel).CustomUrl, tt.want.(*channel).CustomUrl) ||
+					!reflect.DeepEqual(got.(*channel).DefaultLanguage, tt.want.(*channel).DefaultLanguage) ||
+					!reflect.DeepEqual(got.(*channel).Description, tt.want.(*channel).Description) ||
+					!reflect.DeepEqual(got.(*channel).Title, tt.want.(*channel).Title) {
 					t.Errorf("NewChannel() = %v, want %v", got, tt.want)
 				}
 			},

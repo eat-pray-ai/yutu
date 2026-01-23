@@ -114,7 +114,17 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		input := &updateIn{
+			Ids:             ids,
+			Country:         country,
+			CustomUrl:       customUrl,
+			DefaultLanguage: defaultLanguage,
+			Description:     description,
+			Title:           title,
+			Output:          output,
+			Jsonpath:        jsonpath,
+		}
+		err := input.call(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -134,17 +144,8 @@ func updateHandler(
 		),
 	)
 
-	ids = input.Ids
-	country = input.Country
-	customUrl = input.CustomUrl
-	defaultLanguage = input.DefaultLanguage
-	description = input.Description
-	title = input.Title
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.call(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
@@ -152,17 +153,20 @@ func updateHandler(
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func update(writer io.Writer) error {
-	c := channel.NewChannel(
-		channel.WithIDs(ids),
-		channel.WithCountry(country),
-		channel.WithCustomUrl(customUrl),
-		channel.WithDefaultLanguage(defaultLanguage),
-		channel.WithDescription(description),
-		channel.WithTitle(title),
+func (u *updateIn) call(writer io.Writer, opts ...channel.Option) error {
+	defaultOpts := []channel.Option{
+		channel.WithIDs(u.Ids),
+		channel.WithCountry(u.Country),
+		channel.WithCustomUrl(u.CustomUrl),
+		channel.WithDefaultLanguage(u.DefaultLanguage),
+		channel.WithDescription(u.Description),
+		channel.WithTitle(u.Title),
 		channel.WithMaxResults(1),
 		channel.WithService(nil),
-	)
+	}
+	defaultOpts = append(defaultOpts, opts...)
 
-	return c.Update(output, jsonpath, writer)
+	c := channel.NewChannel(defaultOpts...)
+
+	return c.Update(u.Output, u.Jsonpath, writer)
 }

@@ -14,7 +14,6 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channel"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -33,10 +32,10 @@ type listIn struct {
 	ForUsername            string   `json:"forUsername"`
 	Hl                     string   `json:"hl"`
 	Ids                    []string `json:"ids"`
-	ManagedByMe            *string  `json:"managedByMe,omitempty"`
+	ManagedByMe            *bool    `json:"managedByMe,omitempty"`
 	MaxResults             int64    `json:"maxResults"`
-	Mine                   *string  `json:"mine,omitempty"`
-	MySubscribers          *string  `json:"mySubscribers,omitempty"`
+	Mine                   *bool    `json:"mine,omitempty"`
+	MySubscribers          *bool    `json:"mySubscribers,omitempty"`
 	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
 	Parts                  []string `json:"parts"`
 	Output                 string   `json:"output"`
@@ -47,32 +46,17 @@ var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"categoryId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"forHandle": {
-			Type: "string", Description: fhUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"forUsername": {
-			Type: "string", Description: fuUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"hl": {
-			Type: "string", Description: hlUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"categoryId":  {Type: "string", Description: cidUsage},
+		"forHandle":   {Type: "string", Description: fhUsage},
+		"forUsername": {Type: "string", Description: fuUsage},
+		"hl":          {Type: "string", Description: hlUsage},
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
+			Type: "array", Items: &jsonschema.Schema{Type: "string"},
 			Description: listIdsUsage,
 			Default:     json.RawMessage(`[]`),
 		},
 		"managedByMe": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mbmUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Enum: []any{true, false}, Description: mbmUsage,
 		},
 		"maxResults": {
 			Type: "number", Description: pkg.MRUsage,
@@ -80,21 +64,14 @@ var listInSchema = &jsonschema.Schema{
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mineUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
 		},
 		"mySubscribers": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: msUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Enum: []any{true, false}, Description: msUsage,
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"onBehalfOfContentOwner": {Type: "string", Description: ""},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
+			Type: "array", Items: &jsonschema.Schema{Type: "string"},
 			Description: pkg.PartsUsage,
 			Default:     json.RawMessage(`["id","snippet","status"]`),
 		},
@@ -102,10 +79,7 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -159,7 +133,22 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := &listIn{
+			CategoryId:             categoryId,
+			ForHandle:              forHandle,
+			ForUsername:            forUsername,
+			Hl:                     hl,
+			Ids:                    ids,
+			ManagedByMe:            managedByMe,
+			MaxResults:             maxResults,
+			Mine:                   mine,
+			MySubscribers:          mySubscribers,
+			OnBehalfOfContentOwner: onBehalfOfContentOwner,
+			Parts:                  parts,
+			Output:                 output,
+			Jsonpath:               jsonpath,
+		}
+		err := input.call(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -177,22 +166,8 @@ func listHandler(
 		),
 	)
 
-	categoryId = input.CategoryId
-	forHandle = input.ForHandle
-	forUsername = input.ForUsername
-	hl = input.Hl
-	ids = input.Ids
-	managedByMe = utils.StrToBoolPtr(input.ManagedByMe)
-	maxResults = input.MaxResults
-	mine = utils.StrToBoolPtr(input.Mine)
-	mySubscribers = utils.StrToBoolPtr(input.MySubscribers)
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.call(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
@@ -200,20 +175,23 @@ func listHandler(
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func list(writer io.Writer) error {
-	c := channel.NewChannel(
-		channel.WithCategoryId(categoryId),
-		channel.WithForHandle(forHandle),
-		channel.WithForUsername(forUsername),
-		channel.WithHl(hl),
-		channel.WithIDs(ids),
-		channel.WithChannelManagedByMe(managedByMe),
-		channel.WithMaxResults(maxResults),
-		channel.WithMine(mine),
-		channel.WithMySubscribers(mySubscribers),
-		channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+func (l *listIn) call(writer io.Writer, opts ...channel.Option) error {
+	defaultOpts := []channel.Option{
+		channel.WithCategoryId(l.CategoryId),
+		channel.WithForHandle(l.ForHandle),
+		channel.WithForUsername(l.ForUsername),
+		channel.WithHl(l.Hl),
+		channel.WithIDs(l.Ids),
+		channel.WithChannelManagedByMe(l.ManagedByMe),
+		channel.WithMaxResults(l.MaxResults),
+		channel.WithMine(l.Mine),
+		channel.WithMySubscribers(l.MySubscribers),
+		channel.WithOnBehalfOfContentOwner(l.OnBehalfOfContentOwner),
 		channel.WithService(nil),
-	)
+	}
+	defaultOpts = append(defaultOpts, opts...)
 
-	return c.List(parts, output, jsonpath, writer)
+	c := channel.NewChannel(defaultOpts...)
+
+	return c.List(l.Parts, l.Output, l.Jsonpath, writer)
 }

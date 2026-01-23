@@ -18,12 +18,12 @@ import (
 )
 
 var (
-	service          *youtube.Service
 	errGetChannel    = errors.New("failed to get channel")
 	errUpdateChannel = errors.New("failed to update channel")
 )
 
 type channel struct {
+	service                *youtube.Service
 	CategoryId             string   `yaml:"category_id" json:"category_id"`
 	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
 	ForUsername            string   `yaml:"for_username" json:"for_username"`
@@ -57,11 +57,18 @@ func NewChannel(opts ...Option) Channel[youtube.Channel] {
 		opt(c)
 	}
 
+	if c.service == nil {
+		c.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+
 	return c
 }
 
 func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
-	call := service.Channels.List(parts)
+	call := c.service.Channels.List(parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
 	}
@@ -168,7 +175,7 @@ func (c *channel) Update(output string, jsonpath string, writer io.Writer) error
 		cha.Snippet.Title = c.Title
 	}
 
-	call := service.Channels.Update(parts, cha)
+	call := c.service.Channels.Update(parts, cha)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)
@@ -288,13 +295,7 @@ func WithTitle(title string) Option {
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(_ *channel) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(c *channel) {
+		c.service = svc
 	}
 }
