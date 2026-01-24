@@ -24,7 +24,7 @@ func TestNewActivity(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Activity[youtube.Activity]
+		want IActivity[youtube.Activity]
 	}{
 		{
 			name: "with all options",
@@ -40,7 +40,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				ChannelId:       "test-channel-123",
 				Home:            &homeTrue,
 				MaxResults:      50,
@@ -57,7 +57,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{},
+			want: &Activity{},
 		},
 		{
 			name: "with nil boolean options",
@@ -68,7 +68,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{},
+			want: &Activity{},
 		},
 		{
 			name: "with false boolean options",
@@ -79,7 +79,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				Home: &homeFalse,
 				Mine: &mineFalse,
 			},
@@ -92,7 +92,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				MaxResults: math.MaxInt64,
 			},
 		},
@@ -104,7 +104,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				MaxResults: 1,
 			},
 		},
@@ -119,7 +119,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				ChannelId:       "",
 				PublishedAfter:  "",
 				PublishedBefore: "",
@@ -136,7 +136,7 @@ func TestNewActivity(t *testing.T) {
 					WithService(&youtube.Service{}),
 				},
 			},
-			want: &activity{
+			want: &Activity{
 				ChannelId:  "partial-channel",
 				MaxResults: 25,
 				RegionCode: "UK",
@@ -147,13 +147,13 @@ func TestNewActivity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got.(*activity).ChannelId, tt.want.(*activity).ChannelId) ||
-					!reflect.DeepEqual(got.(*activity).Home, tt.want.(*activity).Home) ||
-					!reflect.DeepEqual(got.(*activity).MaxResults, tt.want.(*activity).MaxResults) ||
-					!reflect.DeepEqual(got.(*activity).Mine, tt.want.(*activity).Mine) ||
-					!reflect.DeepEqual(got.(*activity).PublishedAfter, tt.want.(*activity).PublishedAfter) ||
-					!reflect.DeepEqual(got.(*activity).PublishedBefore, tt.want.(*activity).PublishedBefore) ||
-					!reflect.DeepEqual(got.(*activity).RegionCode, tt.want.(*activity).RegionCode) {
+				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got.(*Activity).ChannelId, tt.want.(*Activity).ChannelId) ||
+					!reflect.DeepEqual(got.(*Activity).Home, tt.want.(*Activity).Home) ||
+					!reflect.DeepEqual(got.(*Activity).MaxResults, tt.want.(*Activity).MaxResults) ||
+					!reflect.DeepEqual(got.(*Activity).Mine, tt.want.(*Activity).Mine) ||
+					!reflect.DeepEqual(got.(*Activity).PublishedAfter, tt.want.(*Activity).PublishedAfter) ||
+					!reflect.DeepEqual(got.(*Activity).PublishedBefore, tt.want.(*Activity).PublishedBefore) ||
+					!reflect.DeepEqual(got.(*Activity).RegionCode, tt.want.(*Activity).RegionCode) {
 					t.Errorf("NewActivity() = %v, want %v", got, tt.want)
 				}
 			},

@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -23,37 +22,24 @@ const (
 	listTool = "activity-list"
 )
 
-type listIn struct {
-	ChannelId       string   `json:"channelId"`
-	Home            *bool    `json:"home,omitempty"`
-	MaxResults      int64    `json:"maxResults"`
-	Mine            *bool    `json:"mine,omitempty"`
-	PublishedAfter  string   `json:"publishedAfter"`
-	PublishedBefore string   `json:"publishedBefore"`
-	RegionCode      string   `json:"regionCode"`
-	Parts           []string `json:"parts"`
-	Output          string   `json:"output"`
-	Jsonpath        string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {Type: "string", Description: ciUsage},
+		"channel_id": {Type: "string", Description: ciUsage},
 		"home": {
 			Type: "boolean", Enum: []any{true, false}, Description: homeUsage,
 		},
-		"maxResults": {
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"), Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
 			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
 		},
-		"publishedAfter":  {Type: "string", Description: paUsage},
-		"publishedBefore": {Type: "string", Description: pbUsage},
-		"regionCode":      {Type: "string", Description: rcUsage},
+		"published_after":  {Type: "string", Description: paUsage},
+		"published_before": {Type: "string", Description: pbUsage},
+		"region_code":      {Type: "string", Description: rcUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -104,19 +90,20 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := &listIn{
-			ChannelId:       channelId,
-			Home:            home,
-			MaxResults:      maxResults,
-			Mine:            mine,
-			PublishedAfter:  publishedAfter,
-			PublishedBefore: publishedAfter,
-			RegionCode:      regionCode,
-			Parts:           parts,
-			Output:          output,
-			Jsonpath:        jsonpath,
-		}
-		if err := input.call(cmd.OutOrStdout()); err != nil {
+		input := activity.NewActivity(
+			activity.WithChannelId(channelId),
+			activity.WithHome(home),
+			activity.WithMaxResults(maxResults),
+			activity.WithMine(mine),
+			activity.WithPublishedAfter(publishedAfter),
+			activity.WithPublishedBefore(publishedBefore),
+			activity.WithRegionCode(regionCode),
+			activity.WithParts(parts),
+			activity.WithOutput(output),
+			activity.WithJsonpath(jsonpath),
+			activity.WithService(nil),
+		)
+		if err := input.List(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -124,7 +111,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input activity.Activity,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -134,26 +121,9 @@ func listHandler(
 	)
 
 	var writer bytes.Buffer
-	if err := input.call(&writer); err != nil {
+	if err := input.List(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func (l *listIn) call(writer io.Writer, opts ...activity.Option) error {
-	defaultOpts := []activity.Option{
-		activity.WithChannelId(l.ChannelId),
-		activity.WithHome(l.Home),
-		activity.WithMaxResults(l.MaxResults),
-		activity.WithMine(l.Mine),
-		activity.WithPublishedAfter(l.PublishedAfter),
-		activity.WithPublishedBefore(l.PublishedBefore),
-		activity.WithRegionCode(l.RegionCode),
-		activity.WithService(nil),
-	}
-	defaultOpts = append(defaultOpts, opts...)
-	a := activity.NewActivity(defaultOpts...)
-
-	return a.List(l.Parts, l.Output, l.Jsonpath, writer)
 }

@@ -19,7 +19,7 @@ var (
 	errGetActivity = errors.New("failed to get activity")
 )
 
-type activity struct {
+type Activity struct {
 	service         *youtube.Service
 	ChannelId       string `yaml:"channel_id" json:"channel_id"`
 	Home            *bool  `yaml:"home" json:"home"`
@@ -28,34 +28,33 @@ type activity struct {
 	PublishedAfter  string `yaml:"published_after" json:"published_after"`
 	PublishedBefore string `yaml:"published_before" json:"published_before"`
 	RegionCode      string `yaml:"region_code" json:"region_code"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
-type Activity[T any] interface {
-	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*T, error)
+type IActivity[T any] interface {
+	List(io.Writer) error
+	Get() ([]*T, error)
+	preRun()
 }
 
-type Option func(*activity)
+type Option func(*Activity)
 
-func NewActivity(opts ...Option) Activity[youtube.Activity] {
-	a := &activity{}
+func NewActivity(opts ...Option) IActivity[youtube.Activity] {
+	a := &Activity{}
 
 	for _, opt := range opts {
 		opt(a)
 	}
 
-	if a.service == nil {
-		a.service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-
 	return a
 }
 
-func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
-	call := a.service.Activities.List(parts)
+func (a *Activity) Get() ([]*youtube.Activity, error) {
+	a.preRun()
+	call := a.service.Activities.List(a.Parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
 	}
@@ -104,19 +103,17 @@ func (a *activity) Get(parts []string) ([]*youtube.Activity, error) {
 	return items, nil
 }
 
-func (a *activity) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	activities, err := a.Get(parts)
+func (a *Activity) List(writer io.Writer) error {
+	activities, err := a.Get()
 	if err != nil && activities == nil {
 		return err
 	}
 
-	switch output {
+	switch a.Output {
 	case "json":
-		utils.PrintJSON(activities, jsonpath, writer)
+		utils.PrintJSON(activities, a.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(activities, jsonpath, writer)
+		utils.PrintYAML(activities, a.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -135,14 +132,23 @@ func (a *activity) List(
 	return err
 }
 
+func (a *Activity) preRun() {
+	if a.service == nil {
+		a.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
 func WithChannelId(channelId string) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		a.ChannelId = channelId
 	}
 }
 
 func WithHome(home *bool) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		if home != nil {
 			a.Home = home
 		}
@@ -150,7 +156,7 @@ func WithHome(home *bool) Option {
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -161,7 +167,7 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithMine(mine *bool) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		if mine != nil {
 			a.Mine = mine
 		}
@@ -169,25 +175,43 @@ func WithMine(mine *bool) Option {
 }
 
 func WithPublishedAfter(publishedAfter string) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		a.PublishedAfter = publishedAfter
 	}
 }
 
 func WithPublishedBefore(publishedBefore string) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		a.PublishedBefore = publishedBefore
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
-	return func(a *activity) {
+	return func(a *Activity) {
 		a.RegionCode = regionCode
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(a *Activity) {
+		a.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(a *Activity) {
+		a.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(a *Activity) {
+		a.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(c *activity) {
+	return func(c *Activity) {
 		c.service = svc
 	}
 }
