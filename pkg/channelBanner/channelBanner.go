@@ -16,26 +16,30 @@ import (
 )
 
 var (
-	service                *youtube.Service
 	errInsertChannelBanner = errors.New("failed to insert channelBanner")
 )
 
-type channelBanner struct {
+type ChannelBanner struct {
 	ChannelId string `yaml:"channel_id" json:"channel_id"`
 	File      string `yaml:"file" json:"file"`
+	Output    string `yaml:"output" json:"output"`
+	Jsonpath  string `yaml:"jsonpath" json:"jsonpath"`
 
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+
+	service *youtube.Service
 }
 
-type ChannelBanner interface {
-	Insert(string, string, io.Writer) error
+type IChannelBanner interface {
+	Insert(io.Writer) error
+	preRun()
 }
 
-type Option func(banner *channelBanner)
+type Option func(banner *ChannelBanner)
 
-func NewChannelBanner(opts ...Option) ChannelBanner {
-	cb := &channelBanner{}
+func NewChannelBanner(opts ...Option) IChannelBanner {
+	cb := &ChannelBanner{}
 
 	for _, opt := range opts {
 		opt(cb)
@@ -44,9 +48,17 @@ func NewChannelBanner(opts ...Option) ChannelBanner {
 	return cb
 }
 
-func (cb *channelBanner) Insert(
-	output string, jsonpath string, writer io.Writer,
-) error {
+func (cb *ChannelBanner) preRun() {
+	if cb.service == nil {
+		cb.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (cb *ChannelBanner) Insert(writer io.Writer) error {
+	cb.preRun()
 	file, err := pkg.Root.Open(cb.File)
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)
@@ -56,7 +68,7 @@ func (cb *channelBanner) Insert(
 	}(file)
 	cbr := &youtube.ChannelBannerResource{}
 
-	call := service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
+	call := cb.service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
 	if cb.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(cb.OnBehalfOfContentOwner)
 	}
@@ -69,11 +81,11 @@ func (cb *channelBanner) Insert(
 		return errors.Join(errInsertChannelBanner, err)
 	}
 
-	switch output {
+	switch cb.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, cb.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, cb.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)
@@ -82,37 +94,43 @@ func (cb *channelBanner) Insert(
 }
 
 func WithChannelId(channelId string) Option {
-	return func(cb *channelBanner) {
+	return func(cb *ChannelBanner) {
 		cb.ChannelId = channelId
 	}
 }
 
 func WithFile(file string) Option {
-	return func(cb *channelBanner) {
+	return func(cb *ChannelBanner) {
 		cb.File = file
 	}
 }
 
+func WithOutput(output string) Option {
+	return func(cb *ChannelBanner) {
+		cb.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(cb *ChannelBanner) {
+		cb.Jsonpath = jsonpath
+	}
+}
+
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(cb *channelBanner) {
+	return func(cb *ChannelBanner) {
 		cb.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
-	return func(cb *channelBanner) {
+	return func(cb *ChannelBanner) {
 		cb.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
 	}
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(_ *channelBanner) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(cb *ChannelBanner) {
+		cb.service = svc
 	}
 }

@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewChannelBanner(t *testing.T) {
+	svc := &youtube.Service{}
 	type args struct {
 		opts []Option
 	}
@@ -18,7 +19,7 @@ func TestNewChannelBanner(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want ChannelBanner
+		want IChannelBanner
 	}{
 		{
 			name: "with all options",
@@ -28,14 +29,19 @@ func TestNewChannelBanner(t *testing.T) {
 					WithFile("/path/to/banner.jpg"),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
-					WithService(&youtube.Service{}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &channelBanner{
+			want: &ChannelBanner{
 				ChannelId:                     "channel123",
 				File:                          "/path/to/banner.jpg",
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Output:                        "json",
+				Jsonpath:                      "items.id",
+				service:                       svc,
 			},
 		},
 		{
@@ -43,7 +49,7 @@ func TestNewChannelBanner(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &channelBanner{},
+			want: &ChannelBanner{},
 		},
 		{
 			name: "with empty string values",
@@ -53,13 +59,17 @@ func TestNewChannelBanner(t *testing.T) {
 					WithFile(""),
 					WithOnBehalfOfContentOwner(""),
 					WithOnBehalfOfContentOwnerChannel(""),
+					WithOutput(""),
+					WithJsonpath(""),
 				},
 			},
-			want: &channelBanner{
+			want: &ChannelBanner{
 				ChannelId:                     "",
 				File:                          "",
 				OnBehalfOfContentOwner:        "",
 				OnBehalfOfContentOwnerChannel: "",
+				Output:                        "",
+				Jsonpath:                      "",
 			},
 		},
 		{
@@ -68,11 +78,13 @@ func TestNewChannelBanner(t *testing.T) {
 				opts: []Option{
 					WithChannelId("partialChannel"),
 					WithFile("/partial/banner.png"),
+					WithOutput("yaml"),
 				},
 			},
-			want: &channelBanner{
+			want: &ChannelBanner{
 				ChannelId: "partialChannel",
 				File:      "/partial/banner.png",
+				Output:    "yaml",
 			},
 		},
 	}
@@ -83,7 +95,7 @@ func TestNewChannelBanner(t *testing.T) {
 				if got := NewChannelBanner(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewChannelBanner() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewChannelBanner() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

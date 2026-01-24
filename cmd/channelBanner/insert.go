@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -23,43 +22,19 @@ const (
 	insertTool = "channelBanner-insert"
 )
 
-type insertIn struct {
-	ChannelId                     string `json:"channelId"`
-	File                          string `json:"file"`
-	OnBehalfOfContentOwner        string `json:"onBehalfOfContentOwner"`
-	OnBehalfOfContentOwnerChannel string `json:"onBehalfOfContentOwnerChannel"`
-	Output                        string `json:"output"`
-	Jsonpath                      string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"channelId", "file"},
+	Required: []string{"channel_id", "file"},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"file": {
-			Type: "string", Description: fileUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwnerChannel": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"channel_id":                         {Type: "string", Description: cidUsage},
+		"file":                               {Type: "string", Description: fileUsage},
+		"on_behalf_of_content_owner":         {Type: "string"},
+		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -97,7 +72,15 @@ var insertCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := channelBanner.NewChannelBanner(
+			channelBanner.WithChannelId(channelId),
+			channelBanner.WithFile(file),
+			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			channelBanner.WithOutput(output),
+			channelBanner.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -106,7 +89,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input channelBanner.ChannelBanner,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -117,30 +100,11 @@ func insertHandler(
 		),
 	)
 
-	channelId = input.ChannelId
-	file = input.File
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	cb := channelBanner.NewChannelBanner(
-		channelBanner.WithChannelId(channelId),
-		channelBanner.WithFile(file),
-		channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		channelBanner.WithService(nil),
-	)
-
-	return cb.Insert(output, jsonpath, writer)
 }
