@@ -55,11 +55,9 @@ func TestNewActivity(t *testing.T) {
 		{
 			name: "with no options",
 			args: args{
-				opts: []Option{
-					WithService(svc),
-				},
+				opts: []Option{},
 			},
-			want: &Activity{service: svc},
+			want: &Activity{},
 		},
 		{
 			name: "with nil boolean options",
@@ -67,10 +65,9 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(nil),
 					WithMine(nil),
-					WithService(svc),
 				},
 			},
-			want: &Activity{service: svc},
+			want: &Activity{},
 		},
 		{
 			name: "with false boolean options",
@@ -78,13 +75,11 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(&homeFalse),
 					WithMine(&mineFalse),
-					WithService(svc),
 				},
 			},
 			want: &Activity{
-				Home:    &homeFalse,
-				Mine:    &mineFalse,
-				service: svc,
+				Home: &homeFalse,
+				Mine: &mineFalse,
 			},
 		},
 		{
@@ -92,12 +87,10 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(0),
-					WithService(svc),
 				},
 			},
 			want: &Activity{
 				MaxResults: math.MaxInt64,
-				service:    svc,
 			},
 		},
 		{

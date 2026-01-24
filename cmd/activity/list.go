@@ -101,7 +101,6 @@ var listCmd = &cobra.Command{
 			activity.WithParts(parts),
 			activity.WithOutput(output),
 			activity.WithJsonpath(jsonpath),
-			activity.WithService(nil),
 		)
 		if err := input.List(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()

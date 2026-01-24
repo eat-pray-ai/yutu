@@ -125,23 +125,6 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		// input := &insertIn{
-		// 	File:                   file,
-		// 	AudioTrackType:         audioTrackType,
-		// 	IsAutoSynced:           isAutoSynced,
-		// 	IsCC:                   isCC,
-		// 	IsDraft:                isDraft,
-		// 	IsEasyReader:           isEasyReader,
-		// 	IsLarge:                isLarge,
-		// 	Language:               language,
-		// 	Name:                   name,
-		// 	TrackKind:              trackKind,
-		// 	VideoId:                videoId,
-		// 	OnBehalfOf:             onBehalfOf,
-		// 	OnBehalfOfContentOwner: onBehalfOfContentOwner,
-		// 	Output:                 output,
-		// 	Jsonpath:               jsonpath,
-		// }
 		input := caption.NewCation(
 			caption.WithFile(file),
 			caption.WithAudioTrackType(audioTrackType),
