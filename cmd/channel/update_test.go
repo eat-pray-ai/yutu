@@ -52,17 +52,77 @@ func TestUpdate(t *testing.T) {
 		t.Fatalf("failed to create service: %v", err)
 	}
 
-	var buf bytes.Buffer
-	input := &updateIn{
-		Ids:    []string{"test-channel-id"},
-		Title:  "Updated Channel",
-		Output: "json",
+	tests := []struct {
+		name    string
+		input   *updateIn
+		wantErr bool
+		verify  func(t *testing.T, output string)
+	}{
+		{
+			name: "json output",
+			input: &updateIn{
+				Ids:             []string{"test-channel-id"},
+				Country:         "US",
+				CustomUrl:       "my-channel",
+				DefaultLanguage: "en",
+				Title:           "Updated Channel",
+				Output:          "json",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "test-channel-id")
+				assert.Contains(t, output, "Updated Channel")
+			},
+		},
+		{
+			name: "yaml output",
+			input: &updateIn{
+				Ids:         []string{"test-channel-id"},
+				Description: "New Description",
+				Title:       "Updated Channel",
+				Output:      "yaml",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "id: test-channel-id")
+				assert.Contains(t, output, "title: Updated Channel")
+			},
+		},
+		{
+			name: "silent output",
+			input: &updateIn{
+				Ids:    []string{"test-channel-id"},
+				Title:  "Updated Channel",
+				Output: "silent",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Empty(t, output)
+			},
+		},
+		{
+			name: "default output",
+			input: &updateIn{
+				Ids:    []string{"test-channel-id"},
+				Title:  "Updated Channel",
+				Output: "",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "Channel updated: test-channel-id")
+			},
+		},
 	}
 
-	err = input.call(&buf, channel.WithService(svc))
-
-	assert.NoError(t, err)
-	output := buf.String()
-	assert.Contains(t, output, "test-channel-id")
-	assert.Contains(t, output, "Updated Channel")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err = tt.input.call(&buf, channel.WithService(svc))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("updateIn.call() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			tt.verify(t, buf.String())
+		})
+	}
 }

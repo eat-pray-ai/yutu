@@ -46,19 +46,70 @@ func TestList(t *testing.T) {
 		t.Fatalf("failed to create service: %v", err)
 	}
 
-	var buf bytes.Buffer
-	input := &listIn{
-		Home:   jsonschema.Ptr(true),
-		Mine:   jsonschema.Ptr(true),
-		Parts:  []string{"id", "snippet", "contentDetails"},
-		Output: "json",
+	tests := []struct {
+		name    string
+		input   *listIn
+		wantErr bool
+		verify  func(t *testing.T, output string)
+	}{
+		{
+			name: "json output",
+			input: &listIn{
+				ChannelId: "test-channel-id",
+				Parts:     []string{"id", "snippet", "contentDetails"},
+				Output:    "json",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "test-activity-id")
+				assert.Contains(t, output, "Test Activity")
+				assert.Contains(t, output, "upload")
+			},
+		},
+		{
+			name: "table output",
+			input: &listIn{
+				Home:       jsonschema.Ptr(true),
+				MaxResults: 10,
+				RegionCode: "US",
+				Output:     "table",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "ID")
+				assert.Contains(t, output, "TITLE")
+				assert.Contains(t, output, "TYPE")
+				assert.Contains(t, output, "TIME")
+				assert.Contains(t, output, "test-activity-id")
+				assert.Contains(t, output, "Test Activity")
+			},
+		},
+		{
+			name: "yaml output",
+			input: &listIn{
+				Mine:            jsonschema.Ptr(true),
+				PublishedAfter:  "2024-01-01T00:00:00Z",
+				PublishedBefore: "2024-12-31T23:59:59Z",
+				Output:          "yaml",
+			},
+			wantErr: false,
+			verify: func(t *testing.T, output string) {
+				assert.Contains(t, output, "id: test-activity-id")
+				assert.Contains(t, output, "title: Test Activity")
+				assert.Contains(t, output, "type: upload")
+			},
+		},
 	}
 
-	err = input.call(&buf, activity.WithService(svc))
-
-	assert.NoError(t, err)
-	output := buf.String()
-	assert.Contains(t, output, "test-activity-id")
-	assert.Contains(t, output, "Test Activity")
-	assert.Contains(t, output, "upload")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			err = tt.input.call(&buf, activity.WithService(svc))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("listIn.call() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			tt.verify(t, buf.String())
+		})
+	}
 }
