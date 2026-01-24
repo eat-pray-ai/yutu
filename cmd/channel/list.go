@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,39 +25,23 @@ const (
 	listIdsUsage = "Return the channels with the specified IDs"
 )
 
-type listIn struct {
-	CategoryId             string   `json:"categoryId"`
-	ForHandle              string   `json:"forHandle"`
-	ForUsername            string   `json:"forUsername"`
-	Hl                     string   `json:"hl"`
-	Ids                    []string `json:"ids"`
-	ManagedByMe            *bool    `json:"managedByMe,omitempty"`
-	MaxResults             int64    `json:"maxResults"`
-	Mine                   *bool    `json:"mine,omitempty"`
-	MySubscribers          *bool    `json:"mySubscribers,omitempty"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	Parts                  []string `json:"parts"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"categoryId":  {Type: "string", Description: cidUsage},
-		"forHandle":   {Type: "string", Description: fhUsage},
-		"forUsername": {Type: "string", Description: fuUsage},
-		"hl":          {Type: "string", Description: hlUsage},
+		"category_id":  {Type: "string", Description: cidUsage},
+		"for_handle":   {Type: "string", Description: fhUsage},
+		"for_username": {Type: "string", Description: fuUsage},
+		"hl":           {Type: "string", Description: hlUsage},
 		"ids": {
 			Type: "array", Items: &jsonschema.Schema{Type: "string"},
 			Description: listIdsUsage,
 			Default:     json.RawMessage(`[]`),
 		},
-		"managedByMe": {
+		"managed_by_me": {
 			Type: "boolean", Enum: []any{true, false}, Description: mbmUsage,
 		},
-		"maxResults": {
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
@@ -66,10 +49,10 @@ var listInSchema = &jsonschema.Schema{
 		"mine": {
 			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
 		},
-		"mySubscribers": {
+		"my_subscribers": {
 			Type: "boolean", Enum: []any{true, false}, Description: msUsage,
 		},
-		"onBehalfOfContentOwner": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner": {Type: "string", Description: ""},
 		"parts": {
 			Type: "array", Items: &jsonschema.Schema{Type: "string"},
 			Description: pkg.PartsUsage,
@@ -133,22 +116,22 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := &listIn{
-			CategoryId:             categoryId,
-			ForHandle:              forHandle,
-			ForUsername:            forUsername,
-			Hl:                     hl,
-			Ids:                    ids,
-			ManagedByMe:            managedByMe,
-			MaxResults:             maxResults,
-			Mine:                   mine,
-			MySubscribers:          mySubscribers,
-			OnBehalfOfContentOwner: onBehalfOfContentOwner,
-			Parts:                  parts,
-			Output:                 output,
-			Jsonpath:               jsonpath,
-		}
-		err := input.call(cmd.OutOrStdout())
+		input := channel.NewChannel(
+			channel.WithCategoryId(categoryId),
+			channel.WithForHandle(forHandle),
+			channel.WithForUsername(forUsername),
+			channel.WithHl(hl),
+			channel.WithIDs(ids),
+			channel.WithChannelManagedByMe(managedByMe),
+			channel.WithMaxResults(maxResults),
+			channel.WithMine(mine),
+			channel.WithMySubscribers(mySubscribers),
+			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			channel.WithParts(parts),
+			channel.WithOutput(output),
+			channel.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -157,7 +140,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input channel.Channel,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -167,31 +150,10 @@ func listHandler(
 	)
 
 	var writer bytes.Buffer
-	err := input.call(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func (l *listIn) call(writer io.Writer, opts ...channel.Option) error {
-	defaultOpts := []channel.Option{
-		channel.WithCategoryId(l.CategoryId),
-		channel.WithForHandle(l.ForHandle),
-		channel.WithForUsername(l.ForUsername),
-		channel.WithHl(l.Hl),
-		channel.WithIDs(l.Ids),
-		channel.WithChannelManagedByMe(l.ManagedByMe),
-		channel.WithMaxResults(l.MaxResults),
-		channel.WithMine(l.Mine),
-		channel.WithMySubscribers(l.MySubscribers),
-		channel.WithOnBehalfOfContentOwner(l.OnBehalfOfContentOwner),
-		channel.WithService(nil),
-	}
-	defaultOpts = append(defaultOpts, opts...)
-
-	c := channel.NewChannel(defaultOpts...)
-
-	return c.List(l.Parts, l.Output, l.Jsonpath, writer)
 }

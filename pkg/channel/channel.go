@@ -22,7 +22,7 @@ var (
 	errUpdateChannel = errors.New("failed to update channel")
 )
 
-type channel struct {
+type Channel struct {
 	service                *youtube.Service
 	CategoryId             string   `yaml:"category_id" json:"category_id"`
 	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
@@ -40,35 +40,34 @@ type channel struct {
 	DefaultLanguage string `yaml:"default_language" json:"default_language"`
 	Description     string `yaml:"description" json:"description"`
 	Title           string `yaml:"title" json:"title"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
-type Channel[T youtube.Channel] interface {
-	List([]string, string, string, io.Writer) error
-	Update(string, string, io.Writer) error
-	Get([]string) ([]*T, error)
+type IChannel[T youtube.Channel] interface {
+	List(io.Writer) error
+	Update(io.Writer) error
+	Get() ([]*T, error)
+	preRun()
 }
 
-type Option func(*channel)
+type Option func(*Channel)
 
-func NewChannel(opts ...Option) Channel[youtube.Channel] {
-	c := &channel{}
+func NewChannel(opts ...Option) IChannel[youtube.Channel] {
+	c := &Channel{}
 
 	for _, opt := range opts {
 		opt(c)
 	}
 
-	if c.service == nil {
-		c.service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-
 	return c
 }
 
-func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
-	call := c.service.Channels.List(parts)
+func (c *Channel) Get() ([]*youtube.Channel, error) {
+	c.preRun()
+	call := c.service.Channels.List(c.Parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
 	}
@@ -120,19 +119,17 @@ func (c *channel) Get(parts []string) ([]*youtube.Channel, error) {
 	return items, nil
 }
 
-func (c *channel) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	channels, err := c.Get(parts)
+func (c *Channel) List(writer io.Writer) error {
+	channels, err := c.Get()
 	if err != nil && channels == nil {
 		return err
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(channels, jsonpath, writer)
+		utils.PrintJSON(channels, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(channels, jsonpath, writer)
+		utils.PrintYAML(channels, c.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -148,9 +145,9 @@ func (c *channel) List(
 	return err
 }
 
-func (c *channel) Update(output string, jsonpath string, writer io.Writer) error {
-	parts := []string{"snippet"}
-	channels, err := c.Get(parts)
+func (c *Channel) Update(writer io.Writer) error {
+	c.Parts = []string{"snippet"}
+	channels, err := c.Get()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)
 	}
@@ -175,17 +172,17 @@ func (c *channel) Update(output string, jsonpath string, writer io.Writer) error
 		cha.Snippet.Title = c.Title
 	}
 
-	call := c.service.Channels.Update(parts, cha)
+	call := c.service.Channels.Update(c.Parts, cha)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)
@@ -193,38 +190,47 @@ func (c *channel) Update(output string, jsonpath string, writer io.Writer) error
 	return nil
 }
 
+func (c *Channel) preRun() {
+	if c.service == nil {
+		c.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
 func WithCategoryId(categoryId string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.CategoryId = categoryId
 	}
 }
 
 func WithForHandle(handle string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.ForHandle = handle
 	}
 }
 
 func WithForUsername(username string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.ForUsername = username
 	}
 }
 
 func WithHl(hl string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.Hl = hl
 	}
 }
 
 func WithIDs(ids []string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.IDs = ids
 	}
 }
 
 func WithChannelManagedByMe(managedByMe *bool) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		if managedByMe != nil {
 			c.ManagedByMe = managedByMe
 		}
@@ -232,7 +238,7 @@ func WithChannelManagedByMe(managedByMe *bool) Option {
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -243,7 +249,7 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithMine(mine *bool) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		if mine != nil {
 			c.Mine = mine
 		}
@@ -251,7 +257,7 @@ func WithMine(mine *bool) Option {
 }
 
 func WithMySubscribers(mySubscribers *bool) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		if mySubscribers != nil {
 			c.MySubscribers = mySubscribers
 		}
@@ -259,43 +265,61 @@ func WithMySubscribers(mySubscribers *bool) Option {
 }
 
 func WithOnBehalfOfContentOwner(contentOwner string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.OnBehalfOfContentOwner = contentOwner
 	}
 }
 
 func WithCountry(country string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.Country = country
 	}
 }
 
 func WithCustomUrl(url string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.CustomUrl = url
 	}
 }
 
 func WithDefaultLanguage(language string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.DefaultLanguage = language
 	}
 }
 
 func WithDescription(desc string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.Description = desc
 	}
 }
 
 func WithTitle(title string) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.Title = title
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(c *Channel) {
+		c.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(c *Channel) {
+		c.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(c *Channel) {
+		c.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(c *channel) {
+	return func(c *Channel) {
 		c.service = svc
 	}
 }
