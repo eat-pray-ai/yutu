@@ -153,7 +153,7 @@ func updateHandler(
 
 func update(writer io.Writer) error {
 	p := playlist.NewPlaylist(
-		playlist.WithIDs(ids),
+		playlist.WithIds(ids),
 		playlist.WithTitle(title),
 		playlist.WithDescription(description),
 		playlist.WithTags(tags),

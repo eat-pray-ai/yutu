@@ -109,7 +109,7 @@ func deleteHandler(
 
 func del(writer io.Writer) error {
 	p := playlist.NewPlaylist(
-		playlist.WithIDs(ids),
+		playlist.WithIds(ids),
 		playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		playlist.WithService(nil),
 	)

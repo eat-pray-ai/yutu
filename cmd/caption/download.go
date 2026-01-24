@@ -77,7 +77,7 @@ var downloadCmd = &cobra.Command{
 	Long:  downloadLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCation(
-			caption.WithIDs(ids),
+			caption.WithIds(ids),
 			caption.WithFile(file),
 			caption.WithTfmt(tfmt),
 			caption.WithTlang(tlang),

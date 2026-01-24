@@ -98,7 +98,7 @@ func deleteHandler(
 
 func del(writer io.Writer) error {
 	s := subscription.NewSubscription(
-		subscription.WithIDs(ids), subscription.WithService(nil),
+		subscription.WithIds(ids), subscription.WithService(nil),
 	)
 
 	return s.Delete(writer)

@@ -124,7 +124,7 @@ func getRatingHandler(
 
 func getRating(writer io.Writer) error {
 	v := video.NewVideo(
-		video.WithIDs(ids),
+		video.WithIds(ids),
 		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		video.WithService(nil),
 	)

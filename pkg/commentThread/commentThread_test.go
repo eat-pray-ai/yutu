@@ -25,7 +25,7 @@ func TestNewCommentThread(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"thread1", "thread2"}),
+					WithIds([]string{"thread1", "thread2"}),
 					WithAllThreadsRelatedToChannelId("relatedChannel123"),
 					WithAuthorChannelId("author123"),
 					WithChannelId("channel123"),
@@ -40,7 +40,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &commentThread{
-				IDs:                          []string{"thread1", "thread2"},
+				Ids:                          []string{"thread1", "thread2"},
 				AllThreadsRelatedToChannelId: "relatedChannel123",
 				AuthorChannelId:              "author123",
 				ChannelId:                    "channel123",
@@ -113,14 +113,14 @@ func TestNewCommentThread(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"thread1"}),
+					WithIds([]string{"thread1"}),
 					WithVideoId("video456"),
 					WithTextOriginal("Partial comment thread"),
 					WithMaxResults(50),
 				},
 			},
 			want: &commentThread{
-				IDs:          []string{"thread1"},
+				Ids:          []string{"thread1"},
 				VideoId:      "video456",
 				TextOriginal: "Partial comment thread",
 				MaxResults:   50,

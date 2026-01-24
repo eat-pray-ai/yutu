@@ -33,7 +33,7 @@ var (
 )
 
 type video struct {
-	IDs               []string `yaml:"ids" json:"ids"`
+	Ids               []string `yaml:"ids" json:"ids"`
 	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
 	File              string   `yaml:"file" json:"file"`
 	Title             string   `yaml:"title" json:"title"`
@@ -93,8 +93,8 @@ func NewVideo(opts ...Option) Video[youtube.Video] {
 
 func (v *video) Get(parts []string) ([]*youtube.Video, error) {
 	call := service.Videos.List(parts)
-	if len(v.IDs) > 0 {
-		call = call.Id(v.IDs...)
+	if len(v.Ids) > 0 {
+		call = call.Id(v.Ids...)
 	}
 	if v.Chart != "" {
 		call = call.Chart(v.Chart)
@@ -370,7 +370,7 @@ func (v *video) Update(output string, jsonpath string, writer io.Writer) error {
 }
 
 func (v *video) Rate(writer io.Writer) error {
-	for _, id := range v.IDs {
+	for _, id := range v.Ids {
 		call := service.Videos.Rate(id, v.Rating)
 		err := call.Do()
 		if err != nil {
@@ -382,7 +382,7 @@ func (v *video) Rate(writer io.Writer) error {
 }
 
 func (v *video) GetRating(output string, jsonpath string, writer io.Writer) error {
-	call := service.Videos.GetRating(v.IDs)
+	call := service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
 	}
@@ -410,7 +410,7 @@ func (v *video) GetRating(output string, jsonpath string, writer io.Writer) erro
 }
 
 func (v *video) Delete(writer io.Writer) error {
-	for _, id := range v.IDs {
+	for _, id := range v.Ids {
 		call := service.Videos.Delete(id)
 		if v.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
@@ -426,7 +426,7 @@ func (v *video) Delete(writer io.Writer) error {
 }
 
 func (v *video) ReportAbuse(writer io.Writer) error {
-	for _, id := range v.IDs {
+	for _, id := range v.Ids {
 		videoAbuseReport := &youtube.VideoAbuseReport{
 			Comments:          v.Comments,
 			Language:          v.Language,
@@ -450,9 +450,9 @@ func (v *video) ReportAbuse(writer io.Writer) error {
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(v *video) {
-		v.IDs = ids
+		v.Ids = ids
 	}
 }
 

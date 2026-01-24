@@ -145,7 +145,7 @@ func updateHandler(
 
 func update(writer io.Writer) error {
 	pi := playlistItem.NewPlaylistItem(
-		playlistItem.WithIDs(ids),
+		playlistItem.WithIds(ids),
 		playlistItem.WithTitle(title),
 		playlistItem.WithDescription(description),
 		playlistItem.WithPrivacy(privacy),

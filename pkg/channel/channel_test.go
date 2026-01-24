@@ -36,7 +36,7 @@ func TestNewChannel(t *testing.T) {
 					WithForHandle("@testhandle"),
 					WithForUsername("testuser"),
 					WithHl("en"),
-					WithIDs([]string{"channel1", "channel2"}),
+					WithIds([]string{"channel1", "channel2"}),
 					WithChannelManagedByMe(&managedByMeTrue),
 					WithMaxResults(100),
 					WithMine(&mineTrue),
@@ -55,7 +55,7 @@ func TestNewChannel(t *testing.T) {
 				ForHandle:              "@testhandle",
 				ForUsername:            "testuser",
 				Hl:                     "en",
-				IDs:                    []string{"channel1", "channel2"},
+				Ids:                    []string{"channel1", "channel2"},
 				ManagedByMe:            &managedByMeTrue,
 				MaxResults:             100,
 				Mine:                   &mineTrue,
@@ -163,7 +163,7 @@ func TestNewChannel(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"channel1"}),
+					WithIds([]string{"channel1"}),
 					WithTitle("My Channel"),
 					WithCountry("UK"),
 					WithMaxResults(50),
@@ -171,7 +171,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				IDs:        []string{"channel1"},
+				Ids:        []string{"channel1"},
 				Title:      "My Channel",
 				Country:    "UK",
 				MaxResults: 50,
@@ -186,7 +186,7 @@ func TestNewChannel(t *testing.T) {
 					!reflect.DeepEqual(got.(*Channel).ForHandle, tt.want.(*Channel).ForHandle) ||
 					!reflect.DeepEqual(got.(*Channel).ForUsername, tt.want.(*Channel).ForUsername) ||
 					!reflect.DeepEqual(got.(*Channel).Hl, tt.want.(*Channel).Hl) ||
-					!reflect.DeepEqual(got.(*Channel).IDs, tt.want.(*Channel).IDs) ||
+					!reflect.DeepEqual(got.(*Channel).Ids, tt.want.(*Channel).Ids) ||
 					!reflect.DeepEqual(got.(*Channel).ManagedByMe, tt.want.(*Channel).ManagedByMe) ||
 					!reflect.DeepEqual(got.(*Channel).MaxResults, tt.want.(*Channel).MaxResults) ||
 					!reflect.DeepEqual(got.(*Channel).Mine, tt.want.(*Channel).Mine) ||

@@ -23,7 +23,7 @@ var (
 )
 
 type commentThread struct {
-	IDs                          []string `yaml:"ids" json:"ids"`
+	Ids                          []string `yaml:"ids" json:"ids"`
 	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
 	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
 	ChannelId                    string   `yaml:"channel_id" json:"channel_id"`
@@ -56,8 +56,8 @@ func NewCommentThread(opts ...Option) CommentThread[youtube.CommentThread] {
 
 func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 	call := service.CommentThreads.List(parts)
-	if len(c.IDs) > 0 {
-		call = call.Id(c.IDs...)
+	if len(c.Ids) > 0 {
+		call = call.Id(c.Ids...)
 	}
 	if c.AllThreadsRelatedToChannelId != "" {
 		call = call.AllThreadsRelatedToChannelId(c.AllThreadsRelatedToChannelId)
@@ -191,9 +191,9 @@ func WithChannelId(channelId string) Option {
 	}
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(c *commentThread) {
-		c.IDs = ids
+		c.Ids = ids
 	}
 }
 

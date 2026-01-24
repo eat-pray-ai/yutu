@@ -70,7 +70,7 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channelSection.NewChannelSection(
-			channelSection.WithIDs(ids),
+			channelSection.WithIds(ids),
 			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
 		err := input.Delete(cmd.OutOrStdout())

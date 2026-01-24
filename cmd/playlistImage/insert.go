@@ -143,7 +143,7 @@ func insertHandler(
 func insert(writer io.Writer) error {
 	pi := playlistImage.NewPlaylistImage(
 		playlistImage.WithFile(file),
-		playlistImage.WithPlaylistID(playlistId),
+		playlistImage.WithPlaylistId(playlistId),
 		playlistImage.WithType(type_),
 		playlistImage.WithHeight(height),
 		playlistImage.WithWidth(width),

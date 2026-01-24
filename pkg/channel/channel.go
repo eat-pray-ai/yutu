@@ -28,7 +28,7 @@ type Channel struct {
 	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
 	ForUsername            string   `yaml:"for_username" json:"for_username"`
 	Hl                     string   `yaml:"hl" json:"hl"`
-	IDs                    []string `yaml:"ids" json:"ids"`
+	Ids                    []string `yaml:"ids" json:"ids"`
 	ManagedByMe            *bool    `yaml:"managed_by_me" json:"managed_by_me"`
 	MaxResults             int64    `yaml:"max_results" json:"max_results"`
 	Mine                   *bool    `yaml:"mine" json:"mine"`
@@ -80,8 +80,8 @@ func (c *Channel) Get() ([]*youtube.Channel, error) {
 	if c.Hl != "" {
 		call = call.Hl(c.Hl)
 	}
-	if len(c.IDs) > 0 {
-		call = call.Id(c.IDs...)
+	if len(c.Ids) > 0 {
+		call = call.Id(c.Ids...)
 	}
 	if c.ManagedByMe != nil {
 		call = call.ManagedByMe(*c.ManagedByMe)
@@ -223,9 +223,9 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(c *Channel) {
-		c.IDs = ids
+		c.Ids = ids
 	}
 }
 

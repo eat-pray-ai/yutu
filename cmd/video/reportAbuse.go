@@ -146,7 +146,7 @@ func reportAbuseHandler(
 
 func reportAbuse(writer io.Writer) error {
 	v := video.NewVideo(
-		video.WithIDs(ids),
+		video.WithIds(ids),
 		video.WithReasonId(reasonId),
 		video.WithSecondaryReasonId(secondaryReasonId),
 		video.WithComments(comments),

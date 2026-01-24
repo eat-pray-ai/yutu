@@ -65,7 +65,7 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCation(
-			caption.WithIDs(ids),
+			caption.WithIds(ids),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)

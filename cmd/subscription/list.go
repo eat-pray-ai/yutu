@@ -197,7 +197,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	s := subscription.NewSubscription(
-		subscription.WithIDs(ids),
+		subscription.WithIds(ids),
 		subscription.WithChannelId(channelId),
 		subscription.WithForChannelId(forChannelId),
 		subscription.WithMaxResults(maxResults),

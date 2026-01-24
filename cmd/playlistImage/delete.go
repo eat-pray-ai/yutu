@@ -108,7 +108,7 @@ func deleteHandler(
 
 func del(writer io.Writer) error {
 	pi := playlistImage.NewPlaylistImage(
-		playlistImage.WithIDs(ids),
+		playlistImage.WithIds(ids),
 		playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		playlistImage.WithService(nil),
 	)

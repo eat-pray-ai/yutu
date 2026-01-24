@@ -27,7 +27,7 @@ const (
 )
 
 type listIn struct {
-	IDs        []string `json:"ids"`
+	Ids        []string `json:"ids"`
 	MaxResults int64    `json:"maxResults"`
 	ParentId   string   `json:"parentId"`
 	TextFormat string   `json:"textFormat"`
@@ -130,7 +130,7 @@ func listHandler(
 		),
 	)
 
-	ids = input.IDs
+	ids = input.Ids
 	maxResults = input.MaxResults
 	parentId = input.ParentId
 	textFormat = input.TextFormat
@@ -149,7 +149,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	c := comment.NewComment(
-		comment.WithIDs(ids),
+		comment.WithIds(ids),
 		comment.WithMaxResults(maxResults),
 		comment.WithParentId(parentId),
 		comment.WithTextFormat(textFormat),

@@ -36,7 +36,7 @@ func TestNewCation(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"caption1", "caption2"}),
+					WithIds([]string{"caption1", "caption2"}),
 					WithFile("/path/to/file.srt"),
 					WithAudioTrackType("primary"),
 					WithIsAutoSynced(&isAutoSyncedTrue),
@@ -57,7 +57,7 @@ func TestNewCation(t *testing.T) {
 			},
 			want: &Caption{
 				service:                svc,
-				IDs:                    []string{"caption1", "caption2"},
+				Ids:                    []string{"caption1", "caption2"},
 				File:                   "/path/to/file.srt",
 				AudioTrackType:         "primary",
 				IsAutoSynced:           &isAutoSyncedTrue,
@@ -147,14 +147,14 @@ func TestNewCation(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"caption1"}),
+					WithIds([]string{"caption1"}),
 					WithLanguage("fr"),
 					WithVideoId("video456"),
 					WithIsCC(&isCCTrue),
 				},
 			},
 			want: &Caption{
-				IDs:      []string{"caption1"},
+				Ids:      []string{"caption1"},
 				Language: "fr",
 				VideoId:  "video456",
 				IsCC:     &isCCTrue,

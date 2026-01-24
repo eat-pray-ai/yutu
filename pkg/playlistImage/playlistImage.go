@@ -26,9 +26,9 @@ var (
 )
 
 type playlistImage struct {
-	IDs        []string `yaml:"ids" json:"ids"`
+	Ids        []string `yaml:"ids" json:"ids"`
 	Height     int64    `yaml:"height" json:"height"`
-	PlaylistID string   `yaml:"playlistId" json:"playlistId"`
+	PlaylistId string   `yaml:"playlistId" json:"playlistId"`
 	Type       string   `yaml:"type" json:"type"`
 	Width      int64    `yaml:"width" json:"width"`
 	File       string   `yaml:"file" json:"file"`
@@ -137,7 +137,7 @@ func (pi *playlistImage) Insert(
 	playlistImage := &youtube.PlaylistImage{
 		Kind: "youtube#playlistImages",
 		Snippet: &youtube.PlaylistImageSnippet{
-			PlaylistId: pi.PlaylistID,
+			PlaylistId: pi.PlaylistId,
 			Type:       pi.Type,
 			Height:     pi.Height,
 			Width:      pi.Width,
@@ -182,8 +182,8 @@ func (pi *playlistImage) Update(
 	}
 
 	playlistImage := playlistImages[0]
-	if pi.PlaylistID != "" {
-		playlistImage.Snippet.PlaylistId = pi.PlaylistID
+	if pi.PlaylistId != "" {
+		playlistImage.Snippet.PlaylistId = pi.PlaylistId
 	}
 	if pi.Type != "" {
 		playlistImage.Snippet.Type = pi.Type
@@ -229,7 +229,7 @@ func (pi *playlistImage) Update(
 }
 
 func (pi *playlistImage) Delete(writer io.Writer) error {
-	for _, id := range pi.IDs {
+	for _, id := range pi.Ids {
 		call := service.PlaylistImages.Delete()
 		call = call.Id(id)
 		if pi.OnBehalfOfContentOwner != "" {
@@ -245,9 +245,9 @@ func (pi *playlistImage) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(pi *playlistImage) {
-		pi.IDs = ids
+		pi.Ids = ids
 	}
 }
 
@@ -257,9 +257,9 @@ func WithHeight(height int64) Option {
 	}
 }
 
-func WithPlaylistID(playlistID string) Option {
+func WithPlaylistId(playlistId string) Option {
 	return func(pi *playlistImage) {
-		pi.PlaylistID = playlistID
+		pi.PlaylistId = playlistId
 	}
 }
 

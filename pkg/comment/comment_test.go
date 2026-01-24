@@ -30,7 +30,7 @@ func TestNewComment(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"comment1", "comment2"}),
+					WithIds([]string{"comment1", "comment2"}),
 					WithAuthorChannelId("author123"),
 					WithCanRate(&canRateTrue),
 					WithChannelId("channel123"),
@@ -46,7 +46,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &comment{
-				IDs:              []string{"comment1", "comment2"},
+				Ids:              []string{"comment1", "comment2"},
 				AuthorChannelId:  "author123",
 				CanRate:          &canRateTrue,
 				ChannelId:        "channel123",
@@ -141,14 +141,14 @@ func TestNewComment(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"comment1"}),
+					WithIds([]string{"comment1"}),
 					WithTextOriginal("Partial comment"),
 					WithVideoId("video456"),
 					WithMaxResults(25),
 				},
 			},
 			want: &comment{
-				IDs:          []string{"comment1"},
+				Ids:          []string{"comment1"},
 				TextOriginal: "Partial comment",
 				VideoId:      "video456",
 				MaxResults:   25,

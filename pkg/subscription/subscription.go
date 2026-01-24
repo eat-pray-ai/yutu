@@ -24,7 +24,7 @@ var (
 )
 
 type subscription struct {
-	IDs                           []string `yaml:"ids" json:"ids"`
+	Ids                           []string `yaml:"ids" json:"ids"`
 	SubscriberChannelId           string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
 	Description                   string   `yaml:"description" json:"description"`
 	ChannelId                     string   `yaml:"channel_id" json:"channel_id"`
@@ -60,8 +60,8 @@ func NewSubscription(opts ...Option) Subscription[youtube.Subscription] {
 
 func (s *subscription) Get(parts []string) ([]*youtube.Subscription, error) {
 	call := service.Subscriptions.List(parts)
-	if len(s.IDs) > 0 {
-		call = call.Id(s.IDs...)
+	if len(s.Ids) > 0 {
+		call = call.Id(s.Ids...)
 	}
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
@@ -183,7 +183,7 @@ func (s *subscription) Insert(
 }
 
 func (s *subscription) Delete(writer io.Writer) error {
-	for _, id := range s.IDs {
+	for _, id := range s.Ids {
 		call := service.Subscriptions.Delete(id)
 		err := call.Do()
 		if err != nil {
@@ -195,9 +195,9 @@ func (s *subscription) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(s *subscription) {
-		s.IDs = ids
+		s.Ids = ids
 	}
 }
 

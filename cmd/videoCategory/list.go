@@ -85,7 +85,7 @@ func categoriesHandler(
 
 func list(writer io.Writer) error {
 	vc := videoCategory.NewVideoCategory(
-		videoCategory.WithIDs(ids),
+		videoCategory.WithIds(ids),
 		videoCategory.WithHl(hl),
 		videoCategory.WithRegionCode(regionCode),
 		videoCategory.WithService(nil),

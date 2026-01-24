@@ -112,7 +112,7 @@ func markAsSpamHandler(
 
 func markAsSpam(writer io.Writer) error {
 	c := comment.NewComment(
-		comment.WithIDs(ids),
+		comment.WithIds(ids),
 		comment.WithService(nil),
 	)
 

@@ -25,7 +25,7 @@ var (
 )
 
 type playlistItem struct {
-	IDs         []string `yaml:"ids" json:"ids"`
+	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
 	Kind        string   `yaml:"kind" json:"kind"`
@@ -63,8 +63,8 @@ func NewPlaylistItem(opts ...Option) PlaylistItem[youtube.PlaylistItem] {
 
 func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 	call := service.PlaylistItems.List(parts)
-	if len(pi.IDs) > 0 {
-		call = call.Id(pi.IDs...)
+	if len(pi.Ids) > 0 {
+		call = call.Id(pi.Ids...)
 	}
 	if pi.PlaylistId != "" {
 		call = call.PlaylistId(pi.PlaylistId)
@@ -245,7 +245,7 @@ func (pi *playlistItem) Update(
 }
 
 func (pi *playlistItem) Delete(writer io.Writer) error {
-	for _, id := range pi.IDs {
+	for _, id := range pi.Ids {
 		call := service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
@@ -261,9 +261,9 @@ func (pi *playlistItem) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(p *playlistItem) {
-		p.IDs = ids
+		p.Ids = ids
 	}
 }
 

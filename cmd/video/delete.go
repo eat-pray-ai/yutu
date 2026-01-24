@@ -97,7 +97,7 @@ func deleteHandler(
 }
 
 func del(writer io.Writer) error {
-	v := video.NewVideo(video.WithIDs(ids))
+	v := video.NewVideo(video.WithIds(ids))
 
 	return v.Delete(writer)
 }

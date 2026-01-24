@@ -134,7 +134,7 @@ func updateHandler(
 
 func update(writer io.Writer) error {
 	pi := playlistImage.NewPlaylistImage(
-		playlistImage.WithPlaylistID(playlistId),
+		playlistImage.WithPlaylistId(playlistId),
 		playlistImage.WithType(type_),
 		playlistImage.WithHeight(height),
 		playlistImage.WithWidth(width),

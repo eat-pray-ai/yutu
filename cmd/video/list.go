@@ -199,7 +199,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	v := video.NewVideo(
-		video.WithIDs(ids),
+		video.WithIds(ids),
 		video.WithChart(chart),
 		video.WithHl(hl),
 		video.WithLocale(locale),

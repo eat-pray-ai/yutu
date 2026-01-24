@@ -155,7 +155,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	pi := playlistItem.NewPlaylistItem(
-		playlistItem.WithIDs(ids),
+		playlistItem.WithIds(ids),
 		playlistItem.WithPlaylistId(playlistId),
 		playlistItem.WithMaxResults(maxResults),
 		playlistItem.WithVideoId(videoId),

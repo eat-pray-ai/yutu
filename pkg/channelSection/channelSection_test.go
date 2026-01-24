@@ -28,7 +28,7 @@ func TestNewChannelSection(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"section1", "section2"}),
+					WithIds([]string{"section1", "section2"}),
 					WithChannelId("channel123"),
 					WithHl("en"),
 					WithMine(&mineTrue),
@@ -37,7 +37,7 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				IDs:                    []string{"section1", "section2"},
+				Ids:                    []string{"section1", "section2"},
 				ChannelId:              "channel123",
 				Hl:                     "en",
 				Mine:                   &mineTrue,
@@ -91,13 +91,13 @@ func TestNewChannelSection(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"section1"}),
+					WithIds([]string{"section1"}),
 					WithChannelId("partialChannel"),
 					WithHl("fr"),
 				},
 			},
 			want: &ChannelSection{
-				IDs:       []string{"section1"},
+				Ids:       []string{"section1"},
 				ChannelId: "partialChannel",
 				Hl:        "fr",
 			},

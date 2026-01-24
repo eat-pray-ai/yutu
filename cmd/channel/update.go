@@ -82,7 +82,7 @@ var updateCmd = &cobra.Command{
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channel.NewChannel(
-			channel.WithIDs(ids),
+			channel.WithIds(ids),
 			channel.WithCountry(country),
 			channel.WithCustomUrl(customUrl),
 			channel.WithDefaultLanguage(defaultLanguage),

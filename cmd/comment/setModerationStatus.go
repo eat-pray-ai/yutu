@@ -139,7 +139,7 @@ func setModerationStatusHandler(
 
 func setModerationStatus(writer io.Writer) error {
 	c := comment.NewComment(
-		comment.WithIDs(ids),
+		comment.WithIds(ids),
 		comment.WithModerationStatus(moderationStatus),
 		comment.WithBanAuthor(banAuthor),
 		comment.WithService(nil),

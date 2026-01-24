@@ -27,7 +27,7 @@ var (
 )
 
 type comment struct {
-	IDs              []string `yaml:"ids" json:"ids"`
+	Ids              []string `yaml:"ids" json:"ids"`
 	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
 	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
 	ChannelId        string   `yaml:"channel_id" json:"channel_id"`
@@ -65,8 +65,8 @@ func NewComment(opts ...Option) Comment[youtube.Comment] {
 
 func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 	call := service.Comments.List(parts)
-	if c.IDs[0] != "" {
-		call = call.Id(c.IDs...)
+	if c.Ids[0] != "" {
+		call = call.Id(c.Ids...)
 	}
 	if c.ParentId != "" {
 		call = call.ParentId(c.ParentId)
@@ -208,7 +208,7 @@ func (c *comment) Update(output string, jsonpath string, writer io.Writer) error
 func (c *comment) MarkAsSpam(
 	output string, jsonpath string, writer io.Writer,
 ) error {
-	call := service.Comments.MarkAsSpam(c.IDs)
+	call := service.Comments.MarkAsSpam(c.Ids)
 	err := call.Do()
 	if err != nil {
 		return errors.Join(errMarkAsSpam, err)
@@ -221,7 +221,7 @@ func (c *comment) MarkAsSpam(
 		utils.PrintYAML(c, jsonpath, writer)
 	case "silent":
 	default:
-		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.IDs)
+		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.Ids)
 	}
 	return nil
 }
@@ -229,7 +229,7 @@ func (c *comment) MarkAsSpam(
 func (c *comment) SetModerationStatus(
 	output string, jsonpath string, writer io.Writer,
 ) error {
-	call := service.Comments.SetModerationStatus(c.IDs, c.ModerationStatus)
+	call := service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
 		call = call.BanAuthor(*c.BanAuthor)
@@ -249,14 +249,14 @@ func (c *comment) SetModerationStatus(
 	default:
 		_, _ = fmt.Fprintf(
 			writer, "Comment moderation status set to %s: %s\n",
-			c.ModerationStatus, c.IDs,
+			c.ModerationStatus, c.Ids,
 		)
 	}
 	return nil
 }
 
 func (c *comment) Delete(writer io.Writer) error {
-	for _, id := range c.IDs {
+	for _, id := range c.Ids {
 		call := service.Comments.Delete(id)
 		err := call.Do()
 		if err != nil {
@@ -267,9 +267,9 @@ func (c *comment) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(c *comment) {
-		c.IDs = ids
+		c.Ids = ids
 	}
 }
 

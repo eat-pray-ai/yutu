@@ -141,7 +141,7 @@ func updateHandler(
 
 func update(writer io.Writer) error {
 	c := comment.NewComment(
-		comment.WithIDs(ids),
+		comment.WithIds(ids),
 		comment.WithCanRate(canRate),
 		comment.WithTextOriginal(textOriginal),
 		comment.WithViewerRating(viewerRating),

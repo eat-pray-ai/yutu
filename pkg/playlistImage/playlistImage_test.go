@@ -25,9 +25,9 @@ func TestNewPlaylistImage(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"image1", "image2"}),
+					WithIds([]string{"image1", "image2"}),
 					WithHeight(1080),
-					WithPlaylistID("playlist123"),
+					WithPlaylistId("playlist123"),
 					WithType("hero"),
 					WithWidth(1920),
 					WithFile("/path/to/image.jpg"),
@@ -39,9 +39,9 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &playlistImage{
-				IDs:                           []string{"image1", "image2"},
+				Ids:                           []string{"image1", "image2"},
 				Height:                        1080,
-				PlaylistID:                    "playlist123",
+				PlaylistId:                    "playlist123",
 				Type:                          "hero",
 				Width:                         1920,
 				File:                          "/path/to/image.jpg",
@@ -84,7 +84,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			name: "with empty string values",
 			args: args{
 				opts: []Option{
-					WithPlaylistID(""),
+					WithPlaylistId(""),
 					WithType(""),
 					WithFile(""),
 					WithParent(""),
@@ -93,7 +93,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &playlistImage{
-				PlaylistID:                    "",
+				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
 				Parent:                        "",
@@ -105,14 +105,14 @@ func TestNewPlaylistImage(t *testing.T) {
 			name: "with partial options",
 			args: args{
 				opts: []Option{
-					WithPlaylistID("myPlaylist"),
+					WithPlaylistId("myPlaylist"),
 					WithType("hero"),
 					WithFile("/images/hero.png"),
 					WithMaxResults(25),
 				},
 			},
 			want: &playlistImage{
-				PlaylistID: "myPlaylist",
+				PlaylistId: "myPlaylist",
 				Type:       "hero",
 				File:       "/images/hero.png",
 				MaxResults: 25,

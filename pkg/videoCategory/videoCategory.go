@@ -20,7 +20,7 @@ var (
 )
 
 type videoCategory struct {
-	IDs        []string `yaml:"ids" json:"ids"`
+	Ids        []string `yaml:"ids" json:"ids"`
 	Hl         string   `yaml:"hl" json:"hl"`
 	RegionCode string   `yaml:"region_code" json:"region_code"`
 }
@@ -42,8 +42,8 @@ func NewVideoCategory(opt ...Option) VideoCategory[youtube.VideoCategory] {
 
 func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
 	call := service.VideoCategories.List(parts)
-	if len(vc.IDs) > 0 {
-		call = call.Id(vc.IDs...)
+	if len(vc.Ids) > 0 {
+		call = call.Id(vc.Ids...)
 	}
 	if vc.Hl != "" {
 		call = call.Hl(vc.Hl)
@@ -86,9 +86,9 @@ func (vc *videoCategory) List(
 	return nil
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(vc *videoCategory) {
-		vc.IDs = ids
+		vc.Ids = ids
 	}
 }
 

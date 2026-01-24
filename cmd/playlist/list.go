@@ -24,7 +24,7 @@ const (
 	listTool     = "playlist-list"
 	listShort    = "List playlist's info"
 	listLong     = "List playlist's info, such as title, description, etc"
-	listIdsUsage = "Return the playlists with the given IDs for Stubby or Apiary"
+	listIdsUsage = "Return the playlists with the given Ids for Stubby or Apiary"
 	listCidUsage = "Return the playlists owned by the specified channel id"
 )
 
@@ -172,7 +172,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	p := playlist.NewPlaylist(
-		playlist.WithIDs(ids),
+		playlist.WithIds(ids),
 		playlist.WithChannelId(channelId),
 		playlist.WithHl(hl),
 		playlist.WithMaxResults(maxResults),

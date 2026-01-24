@@ -25,7 +25,7 @@ const (
 )
 
 type deleteIn struct {
-	IDs []string `json:"ids"`
+	Ids []string `json:"ids"`
 }
 
 var deleteInSchema = &jsonschema.Schema{
@@ -85,7 +85,7 @@ func deleteHandler(
 		),
 	)
 
-	ids = input.IDs
+	ids = input.Ids
 	var writer bytes.Buffer
 	err := del(&writer)
 	if err != nil {
@@ -97,7 +97,7 @@ func deleteHandler(
 
 func del(writer io.Writer) error {
 	c := comment.NewComment(
-		comment.WithIDs(ids),
+		comment.WithIds(ids),
 		comment.WithService(nil),
 	)
 

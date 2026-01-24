@@ -192,7 +192,7 @@ func updateHandler(
 
 func update(writer io.Writer) error {
 	v := video.NewVideo(
-		video.WithIDs(ids),
+		video.WithIds(ids),
 		video.WithTitle(title),
 		video.WithDescription(description),
 		video.WithTags(tags),

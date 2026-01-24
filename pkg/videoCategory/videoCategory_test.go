@@ -24,14 +24,14 @@ func TestNewVideoCategory(t *testing.T) {
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithIDs([]string{"cat1", "cat2"}),
+					WithIds([]string{"cat1", "cat2"}),
 					WithHl("en"),
 					WithRegionCode("US"),
 					WithService(&youtube.Service{}),
 				},
 			},
 			want: &videoCategory{
-				IDs:        []string{"cat1", "cat2"},
+				Ids:        []string{"cat1", "cat2"},
 				Hl:         "en",
 				RegionCode: "US",
 			},

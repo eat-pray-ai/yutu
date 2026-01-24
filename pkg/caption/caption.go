@@ -26,7 +26,7 @@ var (
 
 type Caption struct {
 	service                *youtube.Service
-	IDs                    []string `yaml:"ids" json:"ids"`
+	Ids                    []string `yaml:"ids" json:"ids"`
 	File                   string   `yaml:"file" json:"file"`
 	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
 	IsAutoSynced           *bool    `yaml:"is_auto_synced" json:"is_auto_synced"`
@@ -71,8 +71,8 @@ func NewCation(opts ...Option) ICaption[youtube.Caption] {
 func (c *Caption) Get() ([]*youtube.Caption, error) {
 	c.preRun()
 	call := c.service.Captions.List(c.Parts, c.VideoId)
-	if len(c.IDs) > 0 {
-		call = call.Id(c.IDs...)
+	if len(c.Ids) > 0 {
+		call = call.Id(c.Ids...)
 	}
 	if c.OnBehalfOf != "" {
 		call = call.OnBehalfOf(c.OnBehalfOf)
@@ -248,7 +248,7 @@ func (c *Caption) Update(writer io.Writer) error {
 
 func (c *Caption) Delete(writer io.Writer) error {
 	c.preRun()
-	for _, id := range c.IDs {
+	for _, id := range c.Ids {
 		call := c.service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
 			call = call.OnBehalfOf(c.OnBehalfOf)
@@ -269,7 +269,7 @@ func (c *Caption) Delete(writer io.Writer) error {
 
 func (c *Caption) Download(writer io.Writer) error {
 	c.preRun()
-	call := c.service.Captions.Download(c.IDs[0])
+	call := c.service.Captions.Download(c.Ids[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
 	}
@@ -309,7 +309,7 @@ func (c *Caption) Download(writer io.Writer) error {
 		return errors.Join(errDownloadCaption, err)
 	}
 
-	_, _ = fmt.Fprintf(writer, "Caption %s downloaded to %s\n", c.IDs[0], c.File)
+	_, _ = fmt.Fprintf(writer, "Caption %s downloaded to %s\n", c.Ids[0], c.File)
 	return nil
 }
 
@@ -322,9 +322,9 @@ func (c *Caption) preRun() {
 	}
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(c *Caption) {
-		c.IDs = ids
+		c.Ids = ids
 	}
 }
 

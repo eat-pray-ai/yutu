@@ -22,7 +22,7 @@ const (
 	listTool     = "channel-list"
 	listShort    = "List channel's info"
 	listLong     = "List channel's info, such as title, description, etc."
-	listIdsUsage = "Return the channels with the specified IDs"
+	listIdsUsage = "Return the channels with the specified Ids"
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -121,7 +121,7 @@ var listCmd = &cobra.Command{
 			channel.WithForHandle(forHandle),
 			channel.WithForUsername(forUsername),
 			channel.WithHl(hl),
-			channel.WithIDs(ids),
+			channel.WithIds(ids),
 			channel.WithChannelManagedByMe(managedByMe),
 			channel.WithMaxResults(maxResults),
 			channel.WithMine(mine),

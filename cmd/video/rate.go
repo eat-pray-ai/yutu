@@ -107,7 +107,7 @@ func rateHandler(
 
 func rate(writer io.Writer) error {
 	v := video.NewVideo(
-		video.WithIDs(ids),
+		video.WithIds(ids),
 		video.WithRating(rating),
 		video.WithService(nil),
 	)

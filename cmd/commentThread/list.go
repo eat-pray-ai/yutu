@@ -186,7 +186,7 @@ func listHandler(
 
 func list(writer io.Writer) error {
 	ct := commentThread.NewCommentThread(
-		commentThread.WithIDs(ids),
+		commentThread.WithIds(ids),
 		commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
 		commentThread.WithChannelId(channelId),
 		commentThread.WithMaxResults(maxResults),

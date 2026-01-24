@@ -22,7 +22,7 @@ var (
 
 type ChannelSection struct {
 	service                *youtube.Service
-	IDs                    []string `yaml:"ids" json:"ids"`
+	Ids                    []string `yaml:"ids" json:"ids"`
 	ChannelId              string   `yaml:"channel_id" json:"channel_id"`
 	Hl                     string   `yaml:"hl" json:"hl"`
 	Mine                   *bool    `yaml:"mine" json:"mine"`
@@ -58,8 +58,8 @@ func (cs *ChannelSection) Get() (
 ) {
 	cs.preRun()
 	call := cs.service.ChannelSections.List(cs.Parts)
-	if len(cs.IDs) > 0 {
-		call = call.Id(cs.IDs...)
+	if len(cs.Ids) > 0 {
+		call = call.Id(cs.Ids...)
 	}
 	if cs.ChannelId != "" {
 		call = call.ChannelId(cs.ChannelId)
@@ -107,7 +107,7 @@ func (cs *ChannelSection) List(writer io.Writer) error {
 
 func (cs *ChannelSection) Delete(writer io.Writer) error {
 	cs.preRun()
-	for _, id := range cs.IDs {
+	for _, id := range cs.Ids {
 		call := cs.service.ChannelSections.Delete(id)
 		if cs.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
@@ -132,9 +132,9 @@ func (cs *ChannelSection) preRun() {
 	}
 }
 
-func WithIDs(ids []string) Option {
+func WithIds(ids []string) Option {
 	return func(cs *ChannelSection) {
-		cs.IDs = ids
+		cs.Ids = ids
 	}
 }
 
