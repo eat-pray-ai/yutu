@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	service            *youtube.Service
 	errGetCaption      = errors.New("failed to get caption")
 	errUpdateCaption   = errors.New("failed to update caption")
 	errDeleteCaption   = errors.New("failed to delete caption")
@@ -25,7 +24,8 @@ var (
 	errDownloadCaption = errors.New("failed to download caption")
 )
 
-type caption struct {
+type Caption struct {
+	service                *youtube.Service
 	IDs                    []string `yaml:"ids" json:"ids"`
 	File                   string   `yaml:"file" json:"file"`
 	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
@@ -42,29 +42,35 @@ type caption struct {
 	VideoId                string   `yaml:"video_id" json:"video_id"`
 	Tfmt                   string   `yaml:"tfmt" json:"tfmt"`
 	Tlang                  string   `yaml:"tlang" json:"tlang"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
-type Caption[T youtube.Caption] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
-	Insert(string, string, io.Writer) error
-	Update(string, string, io.Writer) error
+type ICaption[T youtube.Caption] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	Insert(io.Writer) error
+	Update(io.Writer) error
 	Delete(io.Writer) error
 	Download(io.Writer) error
+	preRun()
 }
 
-type Option func(*caption)
+type Option func(*Caption)
 
-func NewCation(opts ...Option) Caption[youtube.Caption] {
-	c := &caption{}
+func NewCation(opts ...Option) ICaption[youtube.Caption] {
+	c := &Caption{}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *caption) Get(parts []string) ([]*youtube.Caption, error) {
-	call := service.Captions.List(parts, c.VideoId)
+func (c *Caption) Get() ([]*youtube.Caption, error) {
+	c.preRun()
+	call := c.service.Captions.List(c.Parts, c.VideoId)
 	if len(c.IDs) > 0 {
 		call = call.Id(c.IDs...)
 	}
@@ -83,19 +89,17 @@ func (c *caption) Get(parts []string) ([]*youtube.Caption, error) {
 	return res.Items, nil
 }
 
-func (c *caption) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	captions, err := c.Get(parts)
+func (c *Caption) List(writer io.Writer) error {
+	captions, err := c.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(captions, jsonpath, writer)
+		utils.PrintJSON(captions, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(captions, jsonpath, writer)
+		utils.PrintYAML(captions, c.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
@@ -114,9 +118,8 @@ func (c *caption) List(
 	return nil
 }
 
-func (c *caption) Insert(
-	output string, jsonpath string, writer io.Writer,
-) error {
+func (c *Caption) Insert(writer io.Writer) error {
+	c.preRun()
 	file, err := pkg.Root.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
@@ -140,7 +143,7 @@ func (c *caption) Insert(
 		},
 	}
 
-	call := service.Captions.Insert([]string{"snippet"}, caption).Media(file)
+	call := c.service.Captions.Insert([]string{"snippet"}, caption).Media(file)
 	if c.OnBehalfOf != "" {
 		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
@@ -153,11 +156,11 @@ func (c *caption) Insert(
 		return errors.Join(errInsertCaption, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
@@ -165,10 +168,10 @@ func (c *caption) Insert(
 	return nil
 }
 
-func (c *caption) Update(
-	output string, jsonpath string, writer io.Writer,
-) error {
-	captions, err := c.Get([]string{"snippet"})
+func (c *Caption) Update(writer io.Writer) error {
+	c.preRun()
+	c.Parts = []string{"snippet"}
+	captions, err := c.Get()
 	if err != nil {
 		return errors.Join(errUpdateCaption, err)
 	}
@@ -208,7 +211,7 @@ func (c *caption) Update(
 		caption.Snippet.VideoId = c.VideoId
 	}
 
-	call := service.Captions.Update([]string{"snippet"}, caption)
+	call := c.service.Captions.Update([]string{"snippet"}, caption)
 	if c.File != "" {
 		file, err := pkg.Root.Open(c.File)
 		if err != nil {
@@ -231,11 +234,11 @@ func (c *caption) Update(
 		return errors.Join(errUpdateCaption, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)
@@ -243,9 +246,10 @@ func (c *caption) Update(
 	return nil
 }
 
-func (c *caption) Delete(writer io.Writer) error {
+func (c *Caption) Delete(writer io.Writer) error {
+	c.preRun()
 	for _, id := range c.IDs {
-		call := service.Captions.Delete(id)
+		call := c.service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
 			call = call.OnBehalfOf(c.OnBehalfOf)
 		}
@@ -263,8 +267,9 @@ func (c *caption) Delete(writer io.Writer) error {
 	return nil
 }
 
-func (c *caption) Download(writer io.Writer) error {
-	call := service.Captions.Download(c.IDs[0])
+func (c *Caption) Download(writer io.Writer) error {
+	c.preRun()
+	call := c.service.Captions.Download(c.IDs[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
 	}
@@ -308,26 +313,35 @@ func (c *caption) Download(writer io.Writer) error {
 	return nil
 }
 
+func (c *Caption) preRun() {
+	if c.service == nil {
+		c.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
 func WithIDs(ids []string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.IDs = ids
 	}
 }
 
 func WithFile(file string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.File = file
 	}
 }
 
 func WithAudioTrackType(audioTrackType string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.AudioTrackType = audioTrackType
 	}
 }
 
 func WithIsAutoSynced(isAutoSynced *bool) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		if isAutoSynced != nil {
 			c.IsAutoSynced = isAutoSynced
 		}
@@ -335,7 +349,7 @@ func WithIsAutoSynced(isAutoSynced *bool) Option {
 }
 
 func WithIsCC(isCC *bool) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		if isCC != nil {
 			c.IsCC = isCC
 		}
@@ -343,7 +357,7 @@ func WithIsCC(isCC *bool) Option {
 }
 
 func WithIsDraft(isDraft *bool) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		if isDraft != nil {
 			c.IsDraft = isDraft
 		}
@@ -351,7 +365,7 @@ func WithIsDraft(isDraft *bool) Option {
 }
 
 func WithIsEasyReader(isEasyReader *bool) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		if isEasyReader != nil {
 			c.IsEasyReader = isEasyReader
 		}
@@ -359,7 +373,7 @@ func WithIsEasyReader(isEasyReader *bool) Option {
 }
 
 func WithIsLarge(isLarge *bool) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		if isLarge != nil {
 			c.IsLarge = isLarge
 		}
@@ -367,61 +381,73 @@ func WithIsLarge(isLarge *bool) Option {
 }
 
 func WithLanguage(language string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.Language = language
 	}
 }
 
 func WithName(name string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.Name = name
 	}
 }
 
 func WithTrackKind(trackKind string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.TrackKind = trackKind
 	}
 }
 
 func WithOnBehalfOf(onBehalfOf string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.OnBehalfOf = onBehalfOf
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithVideoId(videoId string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.VideoId = videoId
 	}
 }
 
 func WithTfmt(tfmt string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.Tfmt = tfmt
 	}
 }
 
 func WithTlang(tlang string) Option {
-	return func(c *caption) {
+	return func(c *Caption) {
 		c.Tlang = tlang
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(c *Caption) {
+		c.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(c *Caption) {
+		c.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(c *Caption) {
+		c.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *caption) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(c *Caption) {
+		c.service = svc
 	}
 }

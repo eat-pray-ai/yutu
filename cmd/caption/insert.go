@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -25,67 +24,49 @@ const (
 	insertLong  = "Insert caption to a video"
 )
 
-type insertIn struct {
-	File                   string `json:"file"`
-	AudioTrackType         string `json:"audioTrackType"`
-	IsAutoSynced           *bool  `json:"isAutoSynced,omitempty"`
-	IsCC                   *bool  `json:"isCC,omitempty"`
-	IsDraft                *bool  `json:"isDraft,omitempty"`
-	IsEasyReader           *bool  `json:"isEasyReader,omitempty"`
-	IsLarge                *bool  `json:"isLarge,omitempty"`
-	Language               string `json:"language"`
-	Name                   string `json:"name"`
-	TrackKind              string `json:"trackKind"`
-	VideoId                string `json:"videoId"`
-	OnBehalfOf             string `json:"onBehalfOf"`
-	OnBehalfOfContentOwner string `json:"onBehalfOfContentOwner"`
-	Output                 string `json:"output"`
-	Jsonpath               string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"file", "videoId"},
 	Properties: map[string]*jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
-		"audioTrackType": {
+		"audio_track_type": {
 			Type: "string", Description: attUsage,
 			Enum:    []any{"unknown", "primary", "commentary", "descriptive"},
 			Default: json.RawMessage(`"unknown"`),
 		},
-		"isAutoSynced": {
+		"is_auto_synced": {
 			Type: "boolean", Description: iasUsage,
 			Enum: []any{true, false},
 		},
-		"isCC": {
+		"is_cc": {
 			Type: "boolean", Description: iscUsage,
 			Enum: []any{true, false},
 		},
-		"isDraft": {
+		"is_draft": {
 			Type: "boolean", Description: isdUsage,
 			Enum: []any{true, false},
 		},
-		"isEasyReader": {
+		"is_easy_reader": {
 			Type: "boolean", Description: iserUsage,
 			Enum: []any{true, false},
 		},
-		"isLarge": {
+		"is_large": {
 			Type: "boolean", Description: islUsage,
 			Enum: []any{true, false},
 		},
 		"language": {Type: "string", Description: languageUsage},
 		"name":     {Type: "string", Description: nameUsage},
-		"trackKind": {
+		"track_kind": {
 			Type: "string", Description: tkUsage,
 			Enum:    []any{"standard", "ASR", "forced"},
 			Default: json.RawMessage(`"standard"`),
 		},
-		"videoId": {
+		"video_id": {
 			Type: "string", Description: vidUsage,
 			Default: json.RawMessage(`""`),
 		},
-		"onBehalfOf":             {Type: "string"},
-		"onBehalfOfContentOwner": {Type: "string"},
+		"on_behalf_of":               {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"output": {
 			Type: "string", Description: pkg.SilentUsage,
 			Enum:    []any{"json", "yaml", "silent", ""},
@@ -144,24 +125,41 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := &insertIn{
-			File:                   file,
-			AudioTrackType:         audioTrackType,
-			IsAutoSynced:           isAutoSynced,
-			IsCC:                   isCC,
-			IsDraft:                isDraft,
-			IsEasyReader:           isEasyReader,
-			IsLarge:                isLarge,
-			Language:               language,
-			Name:                   name,
-			TrackKind:              trackKind,
-			VideoId:                videoId,
-			OnBehalfOf:             onBehalfOf,
-			OnBehalfOfContentOwner: onBehalfOfContentOwner,
-			Output:                 output,
-			Jsonpath:               jsonpath,
-		}
-		if err := input.call(cmd.OutOrStdout()); err != nil {
+		// input := &insertIn{
+		// 	File:                   file,
+		// 	AudioTrackType:         audioTrackType,
+		// 	IsAutoSynced:           isAutoSynced,
+		// 	IsCC:                   isCC,
+		// 	IsDraft:                isDraft,
+		// 	IsEasyReader:           isEasyReader,
+		// 	IsLarge:                isLarge,
+		// 	Language:               language,
+		// 	Name:                   name,
+		// 	TrackKind:              trackKind,
+		// 	VideoId:                videoId,
+		// 	OnBehalfOf:             onBehalfOf,
+		// 	OnBehalfOfContentOwner: onBehalfOfContentOwner,
+		// 	Output:                 output,
+		// 	Jsonpath:               jsonpath,
+		// }
+		input := caption.NewCation(
+			caption.WithFile(file),
+			caption.WithAudioTrackType(audioTrackType),
+			caption.WithIsAutoSynced(isAutoSynced),
+			caption.WithIsCC(isCC),
+			caption.WithIsDraft(isDraft),
+			caption.WithIsEasyReader(isEasyReader),
+			caption.WithIsLarge(isLarge),
+			caption.WithLanguage(language),
+			caption.WithName(name),
+			caption.WithTrackKind(trackKind),
+			caption.WithVideoId(videoId),
+			caption.WithOnBehalfOf(onBehalfOf),
+			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			caption.WithOutput(output),
+			caption.WithJsonpath(jsonpath),
+		)
+		if err := input.Insert(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -169,7 +167,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input caption.Caption,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -181,33 +179,9 @@ func insertHandler(
 	)
 
 	var writer bytes.Buffer
-	if err := input.call(&writer); err != nil {
+	if err := input.Insert(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func (i *insertIn) call(writer io.Writer, opts ...caption.Option) error {
-	defaultOpts := []caption.Option{
-		caption.WithFile(i.File),
-		caption.WithAudioTrackType(i.AudioTrackType),
-		caption.WithIsAutoSynced(i.IsAutoSynced),
-		caption.WithIsCC(i.IsCC),
-		caption.WithIsDraft(i.IsDraft),
-		caption.WithIsEasyReader(i.IsEasyReader),
-		caption.WithIsLarge(i.IsLarge),
-		caption.WithLanguage(i.Language),
-		caption.WithName(i.Name),
-		caption.WithTrackKind(i.TrackKind),
-		caption.WithOnBehalfOf(i.OnBehalfOf),
-		caption.WithOnBehalfOfContentOwner(i.OnBehalfOfContentOwner),
-		caption.WithVideoId(i.VideoId),
-		caption.WithService(nil),
-	}
-	defaultOpts = append(defaultOpts, opts...)
-
-	c := caption.NewCation(defaultOpts...)
-
-	return c.Insert(i.Output, i.Jsonpath, writer)
 }

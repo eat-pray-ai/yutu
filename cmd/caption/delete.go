@@ -6,7 +6,6 @@ package caption
 import (
 	"bytes"
 	"context"
-	"io"
 	"log/slog"
 	"time"
 
@@ -24,12 +23,6 @@ const (
 	deleteIdsUsage = "IDs of the captions to delete"
 )
 
-type deleteIn struct {
-	Ids                    []string `json:"ids"`
-	OnBehalfOf             string   `json:"onBehalfOf"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-}
-
 var deleteInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
@@ -38,8 +31,8 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"onBehalfOf":             {Type: "string"},
-		"onBehalfOfContentOwner": {Type: "string"},
+		"on_behalf_of":               {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string"},
 	},
 }
 
@@ -71,12 +64,12 @@ var deleteCmd = &cobra.Command{
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := &deleteIn{
-			Ids:                    ids,
-			OnBehalfOf:             onBehalfOf,
-			OnBehalfOfContentOwner: onBehalfOfContentOwner,
-		}
-		if err := input.call(cmd.OutOrStdout()); err != nil {
+		input := caption.NewCation(
+			caption.WithIDs(ids),
+			caption.WithOnBehalfOf(onBehalfOf),
+			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		)
+		if err := input.Delete(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -84,7 +77,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input deleteIn,
+	ctx context.Context, req *mcp.CallToolRequest, input caption.Caption,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -96,23 +89,9 @@ func deleteHandler(
 	)
 
 	var writer bytes.Buffer
-	if err := input.call(&writer); err != nil {
+	if err := input.Delete(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func (d *deleteIn) call(writer io.Writer, opts ...caption.Option) error {
-	defaultOpts := []caption.Option{
-		caption.WithIDs(d.Ids),
-		caption.WithOnBehalfOf(d.OnBehalfOf),
-		caption.WithOnBehalfOfContentOwner(d.OnBehalfOfContentOwner),
-		caption.WithService(nil),
-	}
-	defaultOpts = append(defaultOpts, opts...)
-
-	c := caption.NewCation(defaultOpts...)
-
-	return c.Delete(writer)
 }

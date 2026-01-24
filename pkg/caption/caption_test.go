@@ -15,6 +15,7 @@ func TestNewCation(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
 	isAutoSyncedTrue := true
 	isAutoSyncedFalse := false
 	isCCTrue := true
@@ -29,7 +30,7 @@ func TestNewCation(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Caption[youtube.Caption]
+		want ICaption[youtube.Caption]
 	}{
 		{
 			name: "with all options",
@@ -51,10 +52,11 @@ func TestNewCation(t *testing.T) {
 					WithVideoId("video123"),
 					WithTfmt("srt"),
 					WithTlang("es"),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &caption{
+			want: &Caption{
+				service:                svc,
 				IDs:                    []string{"caption1", "caption2"},
 				File:                   "/path/to/file.srt",
 				AudioTrackType:         "primary",
@@ -78,7 +80,7 @@ func TestNewCation(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &caption{},
+			want: &Caption{},
 		},
 		{
 			name: "with nil boolean options",
@@ -91,7 +93,7 @@ func TestNewCation(t *testing.T) {
 					WithIsLarge(nil),
 				},
 			},
-			want: &caption{},
+			want: &Caption{},
 		},
 		{
 			name: "with false boolean options",
@@ -104,7 +106,7 @@ func TestNewCation(t *testing.T) {
 					WithIsLarge(&isLargeFalse),
 				},
 			},
-			want: &caption{
+			want: &Caption{
 				IsAutoSynced: &isAutoSyncedFalse,
 				IsCC:         &isCCFalse,
 				IsDraft:      &isDraftFalse,
@@ -128,7 +130,7 @@ func TestNewCation(t *testing.T) {
 					WithTlang(""),
 				},
 			},
-			want: &caption{
+			want: &Caption{
 				File:                   "",
 				AudioTrackType:         "",
 				Language:               "",
@@ -151,7 +153,7 @@ func TestNewCation(t *testing.T) {
 					WithIsCC(&isCCTrue),
 				},
 			},
-			want: &caption{
+			want: &Caption{
 				IDs:      []string{"caption1"},
 				Language: "fr",
 				VideoId:  "video456",
@@ -164,7 +166,7 @@ func TestNewCation(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				if got := NewCation(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("NewCation() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewCation() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

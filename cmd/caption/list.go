@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,16 +25,6 @@ const (
 	listIdsUsage = "IDs of the captions to list"
 )
 
-type listIn struct {
-	Ids                    []string `json:"ids"`
-	VideoId                string   `json:"videoId"`
-	OnBehalfOf             string   `json:"onBehalfOf"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	Parts                  []string `json:"parts"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
@@ -44,9 +33,9 @@ var listInSchema = &jsonschema.Schema{
 			Type: "array", Description: listIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"videoId":                {Type: "string", Description: vidUsage},
-		"onBehalfOf":             {Type: "string"},
-		"onBehalfOfContentOwner": {Type: "string"},
+		"video_id":                   {Type: "string", Description: vidUsage},
+		"on_behalf_of":               {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -93,16 +82,16 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := &listIn{
-			Ids:                    ids,
-			VideoId:                videoId,
-			OnBehalfOf:             onBehalfOf,
-			OnBehalfOfContentOwner: onBehalfOfContentOwner,
-			Parts:                  parts,
-			Output:                 output,
-			Jsonpath:               jsonpath,
-		}
-		if err := input.call(cmd.OutOrStdout()); err != nil {
+		input := caption.NewCation(
+			caption.WithIDs(ids),
+			caption.WithVideoId(videoId),
+			caption.WithOnBehalfOf(onBehalfOf),
+			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			caption.WithParts(parts),
+			caption.WithOutput(output),
+			caption.WithJsonpath(jsonpath),
+		)
+		if err := input.List(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -110,7 +99,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input caption.Caption,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -120,24 +109,9 @@ func listHandler(
 	)
 
 	var writer bytes.Buffer
-	if err := input.call(&writer); err != nil {
+	if err := input.List(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func (l *listIn) call(writer io.Writer, opts ...caption.Option) error {
-	defaultOpts := []caption.Option{
-		caption.WithIDs(l.Ids),
-		caption.WithVideoId(l.VideoId),
-		caption.WithOnBehalfOf(l.OnBehalfOf),
-		caption.WithOnBehalfOfContentOwner(l.OnBehalfOfContentOwner),
-		caption.WithService(nil),
-	}
-	defaultOpts = append(defaultOpts, opts...)
-
-	c := caption.NewCation(defaultOpts...)
-
-	return c.List(l.Parts, l.Output, l.Jsonpath, writer)
 }
