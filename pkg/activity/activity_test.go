@@ -16,6 +16,7 @@ func TestNewActivity(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
 	homeTrue := true
 	homeFalse := false
 	mineTrue := true
@@ -37,10 +38,11 @@ func TestNewActivity(t *testing.T) {
 					WithPublishedAfter("2024-01-01T00:00:00Z"),
 					WithPublishedBefore("2024-12-31T23:59:59Z"),
 					WithRegionCode("US"),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Activity{
+				service:         svc,
 				ChannelId:       "test-channel-123",
 				Home:            &homeTrue,
 				MaxResults:      50,
@@ -54,10 +56,10 @@ func TestNewActivity(t *testing.T) {
 			name: "with no options",
 			args: args{
 				opts: []Option{
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &Activity{},
+			want: &Activity{service: svc},
 		},
 		{
 			name: "with nil boolean options",
@@ -65,10 +67,10 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(nil),
 					WithMine(nil),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &Activity{},
+			want: &Activity{service: svc},
 		},
 		{
 			name: "with false boolean options",
@@ -76,12 +78,13 @@ func TestNewActivity(t *testing.T) {
 				opts: []Option{
 					WithHome(&homeFalse),
 					WithMine(&mineFalse),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Activity{
-				Home: &homeFalse,
-				Mine: &mineFalse,
+				Home:    &homeFalse,
+				Mine:    &mineFalse,
+				service: svc,
 			},
 		},
 		{
@@ -89,11 +92,12 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(0),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Activity{
 				MaxResults: math.MaxInt64,
+				service:    svc,
 			},
 		},
 		{
@@ -101,7 +105,6 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(-10),
-					WithService(&youtube.Service{}),
 				},
 			},
 			want: &Activity{
@@ -116,7 +119,6 @@ func TestNewActivity(t *testing.T) {
 					WithPublishedAfter(""),
 					WithPublishedBefore(""),
 					WithRegionCode(""),
-					WithService(&youtube.Service{}),
 				},
 			},
 			want: &Activity{
@@ -133,7 +135,6 @@ func TestNewActivity(t *testing.T) {
 					WithChannelId("partial-channel"),
 					WithMaxResults(25),
 					WithRegionCode("UK"),
-					WithService(&youtube.Service{}),
 				},
 			},
 			want: &Activity{
@@ -147,14 +148,8 @@ func TestNewActivity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got.(*Activity).ChannelId, tt.want.(*Activity).ChannelId) ||
-					!reflect.DeepEqual(got.(*Activity).Home, tt.want.(*Activity).Home) ||
-					!reflect.DeepEqual(got.(*Activity).MaxResults, tt.want.(*Activity).MaxResults) ||
-					!reflect.DeepEqual(got.(*Activity).Mine, tt.want.(*Activity).Mine) ||
-					!reflect.DeepEqual(got.(*Activity).PublishedAfter, tt.want.(*Activity).PublishedAfter) ||
-					!reflect.DeepEqual(got.(*Activity).PublishedBefore, tt.want.(*Activity).PublishedBefore) ||
-					!reflect.DeepEqual(got.(*Activity).RegionCode, tt.want.(*Activity).RegionCode) {
-					t.Errorf("NewActivity() = %v, want %v", got, tt.want)
+				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("%s\nNewActivity() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)
