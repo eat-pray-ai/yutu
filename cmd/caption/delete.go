@@ -6,7 +6,6 @@ package caption
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	"log/slog"
 	"time"
@@ -36,22 +35,11 @@ var deleteInSchema = &jsonschema.Schema{
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: deleteIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: deleteIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"onBehalfOf": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
+		"onBehalfOf":             {Type: "string"},
+		"onBehalfOfContentOwner": {Type: "string"},
 	},
 }
 
@@ -83,8 +71,12 @@ var deleteCmd = &cobra.Command{
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := del(cmd.OutOrStdout())
-		if err != nil {
+		input := &deleteIn{
+			Ids:                    ids,
+			OnBehalfOf:             onBehalfOf,
+			OnBehalfOfContentOwner: onBehalfOfContentOwner,
+		}
+		if err := input.call(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -103,26 +95,24 @@ func deleteHandler(
 		),
 	)
 
-	ids = input.Ids
-	onBehalfOf = input.OnBehalfOf
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
 	var writer bytes.Buffer
-	err := del(&writer)
-	if err != nil {
+	if err := input.call(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func del(writer io.Writer) error {
-	c := caption.NewCation(
-		caption.WithIDs(ids),
-		caption.WithOnBehalfOf(onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+func (d *deleteIn) call(writer io.Writer, opts ...caption.Option) error {
+	defaultOpts := []caption.Option{
+		caption.WithIDs(d.Ids),
+		caption.WithOnBehalfOf(d.OnBehalfOf),
+		caption.WithOnBehalfOfContentOwner(d.OnBehalfOfContentOwner),
 		caption.WithService(nil),
-	)
+	}
+	defaultOpts = append(defaultOpts, opts...)
+
+	c := caption.NewCation(defaultOpts...)
 
 	return c.Delete(writer)
 }

@@ -41,45 +41,23 @@ var listInSchema = &jsonschema.Schema{
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: listIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: listIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"videoId": {
-			Type:        "string",
-			Description: vidUsage,
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOf": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
+		"videoId":                {Type: "string", Description: vidUsage},
+		"onBehalfOf":             {Type: "string"},
+		"onBehalfOfContentOwner": {Type: "string"},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
-			Type:        "string",
-			Enum:        []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage,
-			Default:     json.RawMessage(`"yaml"`),
+			Type: "string", Description: pkg.TableUsage,
+			Enum:    []any{"json", "yaml", "table"},
+			Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type:        "string",
-			Description: pkg.JPUsage,
-			Default:     json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -115,8 +93,16 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
-		if err != nil {
+		input := &listIn{
+			Ids:                    ids,
+			VideoId:                videoId,
+			OnBehalfOf:             onBehalfOf,
+			OnBehalfOfContentOwner: onBehalfOfContentOwner,
+			Parts:                  parts,
+			Output:                 output,
+			Jsonpath:               jsonpath,
+		}
+		if err := input.call(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -133,31 +119,25 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	videoId = input.VideoId
-	onBehalfOf = input.OnBehalfOf
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
-	if err != nil {
+	if err := input.call(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func list(writer io.Writer) error {
-	c := caption.NewCation(
-		caption.WithIDs(ids),
-		caption.WithVideoId(videoId),
-		caption.WithOnBehalfOf(onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+func (l *listIn) call(writer io.Writer, opts ...caption.Option) error {
+	defaultOpts := []caption.Option{
+		caption.WithIDs(l.Ids),
+		caption.WithVideoId(l.VideoId),
+		caption.WithOnBehalfOf(l.OnBehalfOf),
+		caption.WithOnBehalfOfContentOwner(l.OnBehalfOfContentOwner),
 		caption.WithService(nil),
-	)
+	}
+	defaultOpts = append(defaultOpts, opts...)
 
-	return c.List(parts, output, jsonpath, writer)
+	c := caption.NewCation(defaultOpts...)
+
+	return c.List(l.Parts, l.Output, l.Jsonpath, writer)
 }

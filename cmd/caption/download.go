@@ -6,7 +6,6 @@ package caption
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	"log/slog"
 	"time"
@@ -39,38 +38,17 @@ var downloadInSchema = &jsonschema.Schema{
 	Required: []string{"ids", "file"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: downloadIdUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: downloadIdUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"file": {
-			Type:        "string",
-			Description: fileUsage,
-			Default:     json.RawMessage(`""`),
-		},
+		"file": {Type: "string", Description: fileUsage},
 		"tfmt": {
-			Type:        "string",
-			Enum:        []any{"sbv", "srt", "vtt", ""},
-			Description: tfmtUsage,
-			Default:     json.RawMessage(`""`),
+			Type: "string", Description: tfmtUsage,
+			Enum: []any{"sbv", "srt", "vtt", ""},
 		},
-		"tlang": {
-			Type:        "string",
-			Description: tlangUsage,
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOf": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
+		"tlang":                  {Type: "string", Description: tlangUsage},
+		"onBehalfOf":             {Type: "string"},
+		"onBehalfOfContentOwner": {Type: "string"},
 	},
 }
 
@@ -108,8 +86,15 @@ var downloadCmd = &cobra.Command{
 	Short: downloadShort,
 	Long:  downloadLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := download(cmd.OutOrStdout())
-		if err != nil {
+		input := &downloadIn{
+			Ids:                    ids,
+			File:                   file,
+			Tfmt:                   tfmt,
+			Tlang:                  tlang,
+			OnBehalfOf:             onBehalfOf,
+			OnBehalfOfContentOwner: onBehalfOfContentOwner,
+		}
+		if err := input.call(cmd.OutOrStdout()); err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
 		}
@@ -128,32 +113,27 @@ func downloadHandler(
 		),
 	)
 
-	ids = input.Ids
-	file = input.File
-	tfmt = input.Tfmt
-	tlang = input.Tlang
-	onBehalfOf = input.OnBehalfOf
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
 	var writer bytes.Buffer
-	err := download(&writer)
-	if err != nil {
+	if err := input.call(&writer); err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
 
-func download(writer io.Writer) error {
-	c := caption.NewCation(
-		caption.WithIDs(ids),
-		caption.WithFile(file),
-		caption.WithTfmt(tfmt),
-		caption.WithTlang(tlang),
-		caption.WithOnBehalfOf(onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+func (d *downloadIn) call(writer io.Writer, opts ...caption.Option) error {
+	defaultOpts := []caption.Option{
+		caption.WithIDs(d.Ids),
+		caption.WithFile(d.File),
+		caption.WithTfmt(d.Tfmt),
+		caption.WithTlang(d.Tlang),
+		caption.WithOnBehalfOf(d.OnBehalfOf),
+		caption.WithOnBehalfOfContentOwner(d.OnBehalfOfContentOwner),
 		caption.WithService(nil),
-	)
+	}
+	defaultOpts = append(defaultOpts, opts...)
+
+	c := caption.NewCation(defaultOpts...)
 
 	return c.Download(writer)
 }
