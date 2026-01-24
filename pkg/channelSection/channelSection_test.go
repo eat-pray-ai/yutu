@@ -17,11 +17,12 @@ func TestNewChannelSection(t *testing.T) {
 
 	mineTrue := true
 	mineFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want ChannelSection[youtube.ChannelSection]
+		want IChannelSection[youtube.ChannelSection]
 	}{
 		{
 			name: "with all options",
@@ -32,15 +33,16 @@ func TestNewChannelSection(t *testing.T) {
 					WithHl("en"),
 					WithMine(&mineTrue),
 					WithOnBehalfOfContentOwner("owner123"),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &channelSection{
+			want: &ChannelSection{
 				IDs:                    []string{"section1", "section2"},
 				ChannelId:              "channel123",
 				Hl:                     "en",
 				Mine:                   &mineTrue,
 				OnBehalfOfContentOwner: "owner123",
+				service:                svc,
 			},
 		},
 		{
@@ -48,7 +50,7 @@ func TestNewChannelSection(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &channelSection{},
+			want: &ChannelSection{},
 		},
 		{
 			name: "with nil boolean options",
@@ -57,7 +59,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &channelSection{},
+			want: &ChannelSection{},
 		},
 		{
 			name: "with false boolean options",
@@ -66,7 +68,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithMine(&mineFalse),
 				},
 			},
-			want: &channelSection{
+			want: &ChannelSection{
 				Mine: &mineFalse,
 			},
 		},
@@ -79,7 +81,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithOnBehalfOfContentOwner(""),
 				},
 			},
-			want: &channelSection{
+			want: &ChannelSection{
 				ChannelId:              "",
 				Hl:                     "",
 				OnBehalfOfContentOwner: "",
@@ -94,7 +96,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithHl("fr"),
 				},
 			},
-			want: &channelSection{
+			want: &ChannelSection{
 				IDs:       []string{"section1"},
 				ChannelId: "partialChannel",
 				Hl:        "fr",
@@ -108,7 +110,7 @@ func TestNewChannelSection(t *testing.T) {
 				if got := NewChannelSection(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewChannelSection() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewChannelSection() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

@@ -16,31 +16,36 @@ import (
 )
 
 var (
-	service                 *youtube.Service
 	errGetChannelSection    = errors.New("failed to get channel section")
 	errDeleteChannelSection = errors.New("failed to delete channel section")
 )
 
-type channelSection struct {
+type ChannelSection struct {
+	service                *youtube.Service
 	IDs                    []string `yaml:"ids" json:"ids"`
 	ChannelId              string   `yaml:"channel_id" json:"channel_id"`
 	Hl                     string   `yaml:"hl" json:"hl"`
 	Mine                   *bool    `yaml:"mine" json:"mine"`
 	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
-type ChannelSection[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
-	Delete(writer io.Writer) error
+type IChannelSection[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	Delete(io.Writer) error
+	preRun()
 	// Update()
 	// Insert()
 }
 
-type Option func(*channelSection)
+type Option func(*ChannelSection)
 
-func NewChannelSection(opts ...Option) ChannelSection[youtube.ChannelSection] {
-	cs := &channelSection{}
+func NewChannelSection(opts ...Option) IChannelSection[youtube.ChannelSection] {
+	cs := &ChannelSection{}
 
 	for _, opt := range opts {
 		opt(cs)
@@ -48,10 +53,11 @@ func NewChannelSection(opts ...Option) ChannelSection[youtube.ChannelSection] {
 	return cs
 }
 
-func (cs *channelSection) Get(parts []string) (
+func (cs *ChannelSection) Get() (
 	[]*youtube.ChannelSection, error,
 ) {
-	call := service.ChannelSections.List(parts)
+	cs.preRun()
+	call := cs.service.ChannelSections.List(cs.Parts)
 	if len(cs.IDs) > 0 {
 		call = call.Id(cs.IDs...)
 	}
@@ -75,19 +81,17 @@ func (cs *channelSection) Get(parts []string) (
 	return res.Items, nil
 }
 
-func (cs *channelSection) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	channelSections, err := cs.Get(parts)
+func (cs *ChannelSection) List(writer io.Writer) error {
+	channelSections, err := cs.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch cs.Output {
 	case "json":
-		utils.PrintJSON(channelSections, jsonpath, writer)
+		utils.PrintJSON(channelSections, cs.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(channelSections, jsonpath, writer)
+		utils.PrintYAML(channelSections, cs.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -101,9 +105,10 @@ func (cs *channelSection) List(
 	return nil
 }
 
-func (cs *channelSection) Delete(writer io.Writer) error {
+func (cs *ChannelSection) Delete(writer io.Writer) error {
+	cs.preRun()
 	for _, id := range cs.IDs {
-		call := service.ChannelSections.Delete(id)
+		call := cs.service.ChannelSections.Delete(id)
 		if cs.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
 		}
@@ -118,26 +123,35 @@ func (cs *channelSection) Delete(writer io.Writer) error {
 	return nil
 }
 
+func (cs *ChannelSection) preRun() {
+	if cs.service == nil {
+		cs.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
 func WithIDs(ids []string) Option {
-	return func(cs *channelSection) {
+	return func(cs *ChannelSection) {
 		cs.IDs = ids
 	}
 }
 
 func WithChannelId(channelId string) Option {
-	return func(cs *channelSection) {
+	return func(cs *ChannelSection) {
 		cs.ChannelId = channelId
 	}
 }
 
 func WithHl(hl string) Option {
-	return func(cs *channelSection) {
+	return func(cs *ChannelSection) {
 		cs.Hl = hl
 	}
 }
 
 func WithMine(mine *bool) Option {
-	return func(cs *channelSection) {
+	return func(cs *ChannelSection) {
 		if mine != nil {
 			cs.Mine = mine
 		}
@@ -145,19 +159,31 @@ func WithMine(mine *bool) Option {
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(cs *channelSection) {
+	return func(cs *ChannelSection) {
 		cs.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(cs *ChannelSection) {
+		cs.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(cs *ChannelSection) {
+		cs.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(cs *ChannelSection) {
+		cs.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *channelSection) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(cs *ChannelSection) {
+		cs.service = svc
 	}
 }
