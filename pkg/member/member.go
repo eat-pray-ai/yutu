@@ -16,26 +16,31 @@ import (
 )
 
 var (
-	service      *youtube.Service
 	errGetMember = errors.New("failed to get member")
 )
 
-type member struct {
-	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id"`
-	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level"`
-	MaxResults       int64  `yaml:"max_results" json:"max_results"`
-	Mode             string `yaml:"mode" json:"mode"`
+type Member struct {
+	MemberChannelId  string   `yaml:"member_channel_id" json:"member_channel_id"`
+	HasAccessToLevel string   `yaml:"has_access_to_level" json:"has_access_to_level"`
+	MaxResults       int64    `yaml:"max_results" json:"max_results"`
+	Mode             string   `yaml:"mode" json:"mode"`
+	Parts            []string `yaml:"parts" json:"parts"`
+	Output           string   `yaml:"output" json:"output"`
+	Jsonpath         string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type Member[T any] interface {
-	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*T, error)
+type IMember[T any] interface {
+	List(io.Writer) error
+	Get() ([]*T, error)
+	preRun()
 }
 
-type Option func(*member)
+type Option func(*Member)
 
-func NewMember(opts ...Option) Member[youtube.Member] {
-	m := &member{}
+func NewMember(opts ...Option) IMember[youtube.Member] {
+	m := &Member{}
 
 	for _, opt := range opts {
 		opt(m)
@@ -44,8 +49,18 @@ func NewMember(opts ...Option) Member[youtube.Member] {
 	return m
 }
 
-func (m *member) Get(parts []string) ([]*youtube.Member, error) {
-	call := service.Members.List(parts)
+func (m *Member) preRun() {
+	if m.service == nil {
+		m.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (m *Member) Get() ([]*youtube.Member, error) {
+	m.preRun()
+	call := m.service.Members.List(m.Parts)
 	if m.MemberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.MemberChannelId)
 	}
@@ -80,19 +95,17 @@ func (m *member) Get(parts []string) ([]*youtube.Member, error) {
 	return items, nil
 }
 
-func (m *member) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	members, err := m.Get(parts)
+func (m *Member) List(writer io.Writer) error {
+	members, err := m.Get()
 	if err != nil && members == nil {
 		return err
 	}
 
-	switch output {
+	switch m.Output {
 	case "json":
-		utils.PrintJSON(members, jsonpath, writer)
+		utils.PrintJSON(members, m.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(members, jsonpath, writer)
+		utils.PrintYAML(members, m.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -112,19 +125,19 @@ func (m *member) List(
 }
 
 func WithMemberChannelId(channelId string) Option {
-	return func(m *member) {
+	return func(m *Member) {
 		m.MemberChannelId = channelId
 	}
 }
 
 func WithHasAccessToLevel(level string) Option {
-	return func(m *member) {
+	return func(m *Member) {
 		m.HasAccessToLevel = level
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(m *member) {
+	return func(m *Member) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -135,19 +148,31 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithMode(mode string) Option {
-	return func(m *member) {
+	return func(m *Member) {
 		m.Mode = mode
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(m *Member) {
+		m.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(m *Member) {
+		m.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(m *Member) {
+		m.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *member) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(m *Member) {
+		m.service = svc
 	}
 }

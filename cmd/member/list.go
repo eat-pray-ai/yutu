@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -23,53 +22,32 @@ const (
 	listTool = "member-list"
 )
 
-type listIn struct {
-	MemberChannelId  string   `json:"memberChannelId"`
-	HasAccessToLevel string   `json:"hasAccessToLevel"`
-	MaxResults       int64    `json:"maxResults"`
-	Mode             string   `json:"mode"`
-	Parts            []string `json:"parts"`
-	Output           string   `json:"output"`
-	Jsonpath         string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"memberChannelId": {
-			Type: "string", Description: mcidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"hasAccessToLevel": {
-			Type: "string", Description: hatlUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"member_channel_id":   {Type: "string", Description: mcidUsage},
+		"has_access_to_level": {Type: "string", Description: hatlUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mode": {
-			Type:        "string",
-			Enum:        []any{"listMembersModeUnknown", "updates", "all_current"},
-			Description: mmUsage, Default: json.RawMessage(`"all_current"`),
+			Type: "string", Description: mmUsage,
+			Enum:    []any{"listMembersModeUnknown", "updates", "all_current"},
+			Default: json.RawMessage(`"all_current"`),
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -107,7 +85,16 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := member.NewMember(
+			member.WithMemberChannelId(memberChannelId),
+			member.WithHasAccessToLevel(hasAccessToLevel),
+			member.WithMaxResults(maxResults),
+			member.WithMode(mode),
+			member.WithParts(parts),
+			member.WithOutput(output),
+			member.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -116,7 +103,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input member.Member,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -125,31 +112,11 @@ func listHandler(
 		),
 	)
 
-	memberChannelId = input.MemberChannelId
-	hasAccessToLevel = input.HasAccessToLevel
-	maxResults = input.MaxResults
-	mode = input.Mode
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	m := member.NewMember(
-		member.WithMemberChannelId(memberChannelId),
-		member.WithHasAccessToLevel(hasAccessToLevel),
-		member.WithMaxResults(maxResults),
-		member.WithMode(mode),
-		member.WithService(nil),
-	)
-
-	return m.List(parts, output, jsonpath, writer)
 }

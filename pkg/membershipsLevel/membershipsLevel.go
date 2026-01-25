@@ -15,21 +15,26 @@ import (
 )
 
 var (
-	service                *youtube.Service
 	errGetMembershipsLevel = errors.New("failed to get memberships level")
 )
 
-type membershipsLevel struct{}
-
-type MembershipsLevel[T any] interface {
-	List([]string, string, string, io.Writer) error
-	Get([]string) ([]*T, error)
+type MembershipsLevel struct {
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+	service  *youtube.Service
 }
 
-type Option func(*membershipsLevel)
+type IMembershipsLevel[T any] interface {
+	List(io.Writer) error
+	Get() ([]*T, error)
+	preRun()
+}
 
-func NewMembershipsLevel(opts ...Option) MembershipsLevel[youtube.MembershipsLevel] {
-	m := &membershipsLevel{}
+type Option func(*MembershipsLevel)
+
+func NewMembershipsLevel(opts ...Option) IMembershipsLevel[youtube.MembershipsLevel] {
+	m := &MembershipsLevel{}
 
 	for _, opt := range opts {
 		opt(m)
@@ -38,10 +43,11 @@ func NewMembershipsLevel(opts ...Option) MembershipsLevel[youtube.MembershipsLev
 	return m
 }
 
-func (m *membershipsLevel) Get(parts []string) (
+func (m *MembershipsLevel) Get() (
 	[]*youtube.MembershipsLevel, error,
 ) {
-	call := service.MembershipsLevels.List(parts)
+	m.preRun()
+	call := m.service.MembershipsLevels.List(m.Parts)
 	res, err := call.Do()
 	if err != nil {
 		return nil, errors.Join(errGetMembershipsLevel, err)
@@ -50,19 +56,17 @@ func (m *membershipsLevel) Get(parts []string) (
 	return res.Items, nil
 }
 
-func (m *membershipsLevel) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	membershipsLevels, err := m.Get(parts)
+func (m *MembershipsLevel) List(writer io.Writer) error {
+	membershipsLevels, err := m.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch m.Output {
 	case "json":
-		utils.PrintJSON(membershipsLevels, jsonpath, writer)
+		utils.PrintJSON(membershipsLevels, m.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels, jsonpath, writer)
+		utils.PrintYAML(membershipsLevels, m.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -76,14 +80,35 @@ func (m *membershipsLevel) List(
 	return nil
 }
 
+func (m *MembershipsLevel) preRun() {
+	if m.service == nil {
+		m.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *membershipsLevel) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(m *MembershipsLevel) {
+		m.service = svc
+	}
+}
+
+func WithParts(parts []string) Option {
+	return func(m *MembershipsLevel) {
+		m.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(m *MembershipsLevel) {
+		m.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(m *MembershipsLevel) {
+		m.Jsonpath = jsonpath
 	}
 }

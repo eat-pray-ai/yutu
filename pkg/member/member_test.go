@@ -16,10 +16,12 @@ func TestNewMember(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want Member[youtube.Member]
+		want IMember[youtube.Member]
 	}{
 		{
 			name: "with all options",
@@ -29,14 +31,21 @@ func TestNewMember(t *testing.T) {
 					WithHasAccessToLevel("level1"),
 					WithMaxResults(100),
 					WithMode("all_current"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &member{
+			want: &Member{
 				MemberChannelId:  "member123",
 				HasAccessToLevel: "level1",
 				MaxResults:       100,
 				Mode:             "all_current",
+				Parts:            []string{"snippet"},
+				Output:           "json",
+				Jsonpath:         "items.id",
+				service:          svc,
 			},
 		},
 		{
@@ -44,7 +53,7 @@ func TestNewMember(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &member{},
+			want: &Member{},
 		},
 		{
 			name: "with zero max results",
@@ -53,9 +62,7 @@ func TestNewMember(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &member{
-				MaxResults: math.MaxInt64,
-			},
+			want: &Member{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -64,9 +71,7 @@ func TestNewMember(t *testing.T) {
 					WithMaxResults(-15),
 				},
 			},
-			want: &member{
-				MaxResults: 1,
-			},
+			want: &Member{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -77,7 +82,7 @@ func TestNewMember(t *testing.T) {
 					WithMode(""),
 				},
 			},
-			want: &member{
+			want: &Member{
 				MemberChannelId:  "",
 				HasAccessToLevel: "",
 				Mode:             "",
@@ -89,11 +94,13 @@ func TestNewMember(t *testing.T) {
 				opts: []Option{
 					WithMemberChannelId("channel456"),
 					WithMaxResults(50),
+					WithParts([]string{"id"}),
 				},
 			},
-			want: &member{
+			want: &Member{
 				MemberChannelId: "channel456",
 				MaxResults:      50,
+				Parts:           []string{"id"},
 			},
 		},
 	}
@@ -102,7 +109,7 @@ func TestNewMember(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				if got := NewMember(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("NewMember() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewMember() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

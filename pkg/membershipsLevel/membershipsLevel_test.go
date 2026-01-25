@@ -15,26 +15,36 @@ func TestNewMembershipsLevel(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want MembershipsLevel[youtube.MembershipsLevel]
+		want IMembershipsLevel[youtube.MembershipsLevel]
 	}{
 		{
 			name: "with all options",
 			args: args{
 				opts: []Option{
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items"),
+					WithService(svc),
 				},
 			},
-			want: &membershipsLevel{},
+			want: &MembershipsLevel{
+				Parts:    []string{"snippet"},
+				Output:   "json",
+				Jsonpath: "items",
+				service:  svc,
+			},
 		},
 		{
 			name: "with no options",
 			args: args{
 				opts: []Option{},
 			},
-			want: &membershipsLevel{},
+			want: &MembershipsLevel{},
 		},
 	}
 
@@ -44,7 +54,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 				if got := NewMembershipsLevel(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewMembershipsLevel() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewMembershipsLevel() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)
