@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	service                *youtube.Service
 	errGetComment          = errors.New("failed to get comment")
 	errMarkAsSpam          = errors.New("failed to mark comment as spam")
 	errDeleteComment       = errors.New("failed to delete comment")
@@ -26,7 +25,7 @@ var (
 	errSetModerationStatus = errors.New("failed to set comment moderation status")
 )
 
-type comment struct {
+type Comment struct {
 	Ids              []string `yaml:"ids" json:"ids"`
 	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
 	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
@@ -39,22 +38,30 @@ type comment struct {
 	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author"`
 	VideoId          string   `yaml:"video_id" json:"video_id"`
 	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating"`
+
+	// Operation parameters
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type Comment[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
-	Insert(string, string, io.Writer) error
-	Update(string, string, io.Writer) error
+type IComment[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	Insert(io.Writer) error
+	Update(io.Writer) error
 	Delete(io.Writer) error
-	MarkAsSpam(string, string, io.Writer) error
-	SetModerationStatus(string, string, io.Writer) error
+	MarkAsSpam(io.Writer) error
+	SetModerationStatus(io.Writer) error
+	preRun()
 }
 
-type Option func(*comment)
+type Option func(*Comment)
 
-func NewComment(opts ...Option) Comment[youtube.Comment] {
-	c := &comment{}
+func NewComment(opts ...Option) IComment[youtube.Comment] {
+	c := &Comment{}
 
 	for _, opt := range opts {
 		opt(c)
@@ -63,9 +70,19 @@ func NewComment(opts ...Option) Comment[youtube.Comment] {
 	return c
 }
 
-func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
-	call := service.Comments.List(parts)
-	if c.Ids[0] != "" {
+func (c *Comment) preRun() {
+	if c.service == nil {
+		c.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (c *Comment) Get() ([]*youtube.Comment, error) {
+	c.preRun()
+	call := c.service.Comments.List(c.Parts)
+	if len(c.Ids) > 0 && c.Ids[0] != "" {
 		call = call.Id(c.Ids...)
 	}
 	if c.ParentId != "" {
@@ -99,19 +116,17 @@ func (c *comment) Get(parts []string) ([]*youtube.Comment, error) {
 	return items, nil
 }
 
-func (c *comment) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	comments, err := c.Get(parts)
+func (c *Comment) List(writer io.Writer) error {
+	comments, err := c.Get()
 	if err != nil && comments == nil {
 		return err
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(comments, jsonpath, writer)
+		utils.PrintJSON(comments, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(comments, jsonpath, writer)
+		utils.PrintYAML(comments, c.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -130,7 +145,8 @@ func (c *comment) List(
 	return err
 }
 
-func (c *comment) Insert(output string, jsonpath string, writer io.Writer) error {
+func (c *Comment) Insert(writer io.Writer) error {
+	c.preRun()
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -147,17 +163,17 @@ func (c *comment) Insert(output string, jsonpath string, writer io.Writer) error
 		comment.Snippet.CanRate = *c.CanRate
 	}
 
-	call := service.Comments.Insert([]string{"snippet"}, comment)
+	call := c.service.Comments.Insert([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errInsertComment, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment inserted: %s\n", res.Id)
@@ -165,8 +181,13 @@ func (c *comment) Insert(output string, jsonpath string, writer io.Writer) error
 	return nil
 }
 
-func (c *comment) Update(output string, jsonpath string, writer io.Writer) error {
-	comments, err := c.Get([]string{"id", "snippet"})
+func (c *Comment) Update(writer io.Writer) error {
+	c.preRun()
+	originalParts := c.Parts
+	c.Parts = []string{"id", "snippet"}
+	comments, err := c.Get()
+	c.Parts = originalParts
+
 	if err != nil {
 		return errors.Join(errUpdateComment, err)
 	}
@@ -187,17 +208,17 @@ func (c *comment) Update(output string, jsonpath string, writer io.Writer) error
 		comment.Snippet.ViewerRating = c.ViewerRating
 	}
 
-	call := service.Comments.Update([]string{"snippet"}, comment)
+	call := c.service.Comments.Update([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdateComment, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment updated: %s\n", res.Id)
@@ -205,20 +226,19 @@ func (c *comment) Update(output string, jsonpath string, writer io.Writer) error
 	return nil
 }
 
-func (c *comment) MarkAsSpam(
-	output string, jsonpath string, writer io.Writer,
-) error {
-	call := service.Comments.MarkAsSpam(c.Ids)
+func (c *Comment) MarkAsSpam(writer io.Writer) error {
+	c.preRun()
+	call := c.service.Comments.MarkAsSpam(c.Ids)
 	err := call.Do()
 	if err != nil {
 		return errors.Join(errMarkAsSpam, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(c, jsonpath, writer)
+		utils.PrintJSON(c, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(c, jsonpath, writer)
+		utils.PrintYAML(c, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.Ids)
@@ -226,10 +246,9 @@ func (c *comment) MarkAsSpam(
 	return nil
 }
 
-func (c *comment) SetModerationStatus(
-	output string, jsonpath string, writer io.Writer,
-) error {
-	call := service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
+func (c *Comment) SetModerationStatus(writer io.Writer) error {
+	c.preRun()
+	call := c.service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
 		call = call.BanAuthor(*c.BanAuthor)
@@ -240,11 +259,11 @@ func (c *comment) SetModerationStatus(
 		return errors.Join(errSetModerationStatus, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(c, jsonpath, writer)
+		utils.PrintJSON(c, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(c, jsonpath, writer)
+		utils.PrintYAML(c, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(
@@ -255,9 +274,10 @@ func (c *comment) SetModerationStatus(
 	return nil
 }
 
-func (c *comment) Delete(writer io.Writer) error {
+func (c *Comment) Delete(writer io.Writer) error {
+	c.preRun()
 	for _, id := range c.Ids {
-		call := service.Comments.Delete(id)
+		call := c.service.Comments.Delete(id)
 		err := call.Do()
 		if err != nil {
 			return errors.Join(errDeleteComment, err)
@@ -268,19 +288,19 @@ func (c *comment) Delete(writer io.Writer) error {
 }
 
 func WithIds(ids []string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.Ids = ids
 	}
 }
 
 func WithAuthorChannelId(authorChannelId string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.AuthorChannelId = authorChannelId
 	}
 }
 
 func WithCanRate(canRate *bool) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		if canRate != nil {
 			c.CanRate = canRate
 		}
@@ -288,13 +308,13 @@ func WithCanRate(canRate *bool) Option {
 }
 
 func WithChannelId(channelId string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.ChannelId = channelId
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -305,31 +325,31 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithParentId(parentId string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.ParentId = parentId
 	}
 }
 
 func WithTextFormat(textFormat string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.TextFormat = textFormat
 	}
 }
 
 func WithTextOriginal(textOriginal string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.TextOriginal = textOriginal
 	}
 }
 
 func WithModerationStatus(moderationStatus string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.ModerationStatus = moderationStatus
 	}
 }
 
 func WithBanAuthor(banAuthor *bool) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		if banAuthor != nil {
 			c.BanAuthor = banAuthor
 		}
@@ -337,25 +357,37 @@ func WithBanAuthor(banAuthor *bool) Option {
 }
 
 func WithVideoId(videoId string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.VideoId = videoId
 	}
 }
 
 func WithViewerRating(viewerRating string) Option {
-	return func(c *comment) {
+	return func(c *Comment) {
 		c.ViewerRating = viewerRating
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(c *Comment) {
+		c.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(c *Comment) {
+		c.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(c *Comment) {
+		c.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *comment) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(c *Comment) {
+		c.service = svc
 	}
 }

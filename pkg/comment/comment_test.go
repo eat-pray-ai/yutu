@@ -20,11 +20,12 @@ func TestNewComment(t *testing.T) {
 	canRateFalse := false
 	banAuthorTrue := true
 	banAuthorFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want Comment[youtube.Comment]
+		want IComment[youtube.Comment]
 	}{
 		{
 			name: "with all options",
@@ -42,10 +43,13 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(&banAuthorTrue),
 					WithVideoId("video123"),
 					WithViewerRating("like"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				Ids:              []string{"comment1", "comment2"},
 				AuthorChannelId:  "author123",
 				CanRate:          &canRateTrue,
@@ -58,6 +62,10 @@ func TestNewComment(t *testing.T) {
 				BanAuthor:        &banAuthorTrue,
 				VideoId:          "video123",
 				ViewerRating:     "like",
+				Parts:            []string{"id", "snippet"},
+				Output:           "json",
+				Jsonpath:         "items.id",
+				service:          svc,
 			},
 		},
 		{
@@ -65,7 +73,7 @@ func TestNewComment(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &comment{},
+			want: &Comment{},
 		},
 		{
 			name: "with nil boolean options",
@@ -75,7 +83,7 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(nil),
 				},
 			},
-			want: &comment{},
+			want: &Comment{},
 		},
 		{
 			name: "with false boolean options",
@@ -85,7 +93,7 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(&banAuthorFalse),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				CanRate:   &canRateFalse,
 				BanAuthor: &banAuthorFalse,
 			},
@@ -97,7 +105,7 @@ func TestNewComment(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				MaxResults: math.MaxInt64,
 			},
 		},
@@ -108,7 +116,7 @@ func TestNewComment(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				MaxResults: 1,
 			},
 		},
@@ -126,7 +134,7 @@ func TestNewComment(t *testing.T) {
 					WithViewerRating(""),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				AuthorChannelId:  "",
 				ChannelId:        "",
 				ParentId:         "",
@@ -145,13 +153,15 @@ func TestNewComment(t *testing.T) {
 					WithTextOriginal("Partial comment"),
 					WithVideoId("video456"),
 					WithMaxResults(25),
+					WithService(svc),
 				},
 			},
-			want: &comment{
+			want: &Comment{
 				Ids:          []string{"comment1"},
 				TextOriginal: "Partial comment",
 				VideoId:      "video456",
 				MaxResults:   25,
+				service:      svc,
 			},
 		},
 	}
@@ -159,8 +169,9 @@ func TestNewComment(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewComment(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("NewComment() = %v, want %v", got, tt.want)
+				got := NewComment(tt.args.opts...)
+				if !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("%s\nNewComment() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

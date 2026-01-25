@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -27,46 +25,27 @@ const (
 	updateIdUsage = "ID of the comment"
 )
 
-type updateIn struct {
-	Ids          []string `json:"ids"`
-	CanRate      string   `json:"canRate"`
-	TextOriginal string   `json:"textOriginal"`
-	ViewerRating string   `json:"viewerRating"`
-	Output       string   `json:"output"`
-	Jsonpath     string   `json:"jsonpath"`
-}
-
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: updateIdUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: updateIdUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"canRate": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: crUsage, Default: json.RawMessage(`""`),
+		"can_rate": {
+			Type: "boolean", Description: crUsage, Enum: []any{true, false},
 		},
-		"textOriginal": {
-			Type: "string", Description: toUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"viewerRating": {
-			Type: "string", Enum: []any{"none", "like", "dislike", ""},
-			Description: vrUsage, Default: json.RawMessage(`""`),
+		"text_original": {Type: "string", Description: toUsage},
+		"viewer_rating": {
+			Type: "string", Description: vrUsage,
+			Enum: []any{"none", "like", "dislike", ""},
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -103,7 +82,15 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		input := comment.NewComment(
+			comment.WithIds(ids),
+			comment.WithCanRate(canRate),
+			comment.WithTextOriginal(textOriginal),
+			comment.WithViewerRating(viewerRating),
+			comment.WithOutput(output),
+			comment.WithJsonpath(jsonpath),
+		)
+		err := input.Update(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -112,7 +99,7 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input comment.Comment,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -123,31 +110,11 @@ func updateHandler(
 		),
 	)
 
-	ids = input.Ids
-	canRate = utils.StrToBoolPtr(&input.CanRate)
-	textOriginal = input.TextOriginal
-	viewerRating = input.ViewerRating
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.Update(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func update(writer io.Writer) error {
-	c := comment.NewComment(
-		comment.WithIds(ids),
-		comment.WithCanRate(canRate),
-		comment.WithTextOriginal(textOriginal),
-		comment.WithViewerRating(viewerRating),
-		comment.WithMaxResults(1),
-		comment.WithService(nil),
-	)
-
-	return c.Update(output, jsonpath, writer)
 }

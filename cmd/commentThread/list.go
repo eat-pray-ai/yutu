@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,46 +25,25 @@ const (
 	listVidUsage = "Returns the comment threads of the specified video"
 )
 
-type listIn struct {
-	Ids                          []string `json:"ids"`
-	AllThreadsRelatedToChannelId string   `json:"allThreadsRelatedToChannelId"`
-	ChannelId                    string   `json:"channelId"`
-	MaxResults                   int64    `json:"maxResults"`
-	ModerationStatus             string   `json:"moderationStatus"`
-	Order                        string   `json:"order"`
-	SearchTerms                  string   `json:"searchTerms"`
-	TextFormat                   string   `json:"textFormat"`
-	VideoId                      string   `json:"videoId"`
-	Parts                        []string `json:"parts"`
-	Output                       string   `json:"output"`
-	Jsonpath                     string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: idsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: idsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"allThreadsRelatedToChannelId": {
-			Type: "string", Description: atrtcidUsage,
-			Default: json.RawMessage(`""`),
+		"all_threads_related_to_channel_id": {
+			Type:        "string",
+			Description: atrtcidUsage,
 		},
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"channel_id": {Type: "string", Description: cidUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"moderationStatus": {
+		"moderation_status": {
 			Type:        "string",
 			Enum:        []any{"published", "heldForReview", "likelySpam", "rejected"},
 			Description: msUsage, Default: json.RawMessage(`"published"`),
@@ -74,33 +52,22 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"orderUnspecified", "time", "relevance"},
 			Description: orderUsage, Default: json.RawMessage(`"time"`),
 		},
-		"searchTerms": {
-			Type: "string", Description: stUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"textFormat": {
+		"search_terms": {Type: "string", Description: stUsage},
+		"text_format": {
 			Type: "string", Enum: []any{"textFormatUnspecified", "html"},
 			Description: tfUsage, Default: json.RawMessage(`"html"`),
 		},
-		"videoId": {
-			Type: "string", Description: listVidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"video_id": {Type: "string", Description: listVidUsage},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -144,7 +111,21 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := commentThread.NewCommentThread(
+			commentThread.WithIds(ids),
+			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
+			commentThread.WithChannelId(channelId),
+			commentThread.WithMaxResults(maxResults),
+			commentThread.WithModerationStatus(moderationStatus),
+			commentThread.WithOrder(order),
+			commentThread.WithSearchTerms(searchTerms),
+			commentThread.WithTextFormat(textFormat),
+			commentThread.WithVideoId(videoId),
+			commentThread.WithParts(parts),
+			commentThread.WithOutput(output),
+			commentThread.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -153,7 +134,8 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input commentThread.CommentThread,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -162,41 +144,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	allThreadsRelatedToChannelId = input.AllThreadsRelatedToChannelId
-	channelId = input.ChannelId
-	maxResults = input.MaxResults
-	moderationStatus = input.ModerationStatus
-	order = input.Order
-	searchTerms = input.SearchTerms
-	textFormat = input.TextFormat
-	videoId = input.VideoId
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	ct := commentThread.NewCommentThread(
-		commentThread.WithIds(ids),
-		commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
-		commentThread.WithChannelId(channelId),
-		commentThread.WithMaxResults(maxResults),
-		commentThread.WithModerationStatus(moderationStatus),
-		commentThread.WithOrder(order),
-		commentThread.WithSearchTerms(searchTerms),
-		commentThread.WithTextFormat(textFormat),
-		commentThread.WithVideoId(videoId),
-		commentThread.WithService(nil),
-	)
-
-	return ct.List(parts, output, jsonpath, writer)
 }

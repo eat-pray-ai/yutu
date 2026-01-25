@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -25,31 +24,19 @@ const (
 	masLong  = "Mark YouTube comments as spam by ids"
 )
 
-type markAsSpamIn struct {
-	Ids      []string `json:"ids"`
-	Output   string   `json:"output"`
-	Jsonpath string   `json:"jsonpath"`
-}
-
 var markAsSpamInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: idsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: idsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -79,7 +66,12 @@ var markAsSpamCmd = &cobra.Command{
 	Short: masShort,
 	Long:  masLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := markAsSpam(cmd.OutOrStdout())
+		input := comment.NewComment(
+			comment.WithIds(ids),
+			comment.WithOutput(output),
+			comment.WithJsonpath(jsonpath),
+		)
+		err := input.MarkAsSpam(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -88,7 +80,7 @@ var markAsSpamCmd = &cobra.Command{
 }
 
 func markAsSpamHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input markAsSpamIn,
+	ctx context.Context, req *mcp.CallToolRequest, input comment.Comment,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -97,24 +89,11 @@ func markAsSpamHandler(
 		),
 	)
 
-	ids = input.Ids
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := markAsSpam(&writer)
+	err := input.MarkAsSpam(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func markAsSpam(writer io.Writer) error {
-	c := comment.NewComment(
-		comment.WithIds(ids),
-		comment.WithService(nil),
-	)
-
-	return c.MarkAsSpam(output, jsonpath, writer)
 }

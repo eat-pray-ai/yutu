@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -27,55 +25,26 @@ const (
 	insertPidUsage = "ID of the parent comment"
 )
 
-type insertIn struct {
-	AuthorChannelId string `json:"authorChannelId"`
-	ChannelId       string `json:"channelId"`
-	CanRate         string `json:"canRate"`
-	ParentId        string `json:"parentId"`
-	TextOriginal    string `json:"textOriginal"`
-	VideoId         string `json:"videoId"`
-	Output          string `json:"output"`
-	Jsonpath        string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type: "object",
 	Required: []string{
-		"authorChannelId", "channelId", "parentId", "textOriginal", "videoId",
+		"author_channel_id", "channel_id", "parent_id", "text_original", "video_id",
 	},
 	Properties: map[string]*jsonschema.Schema{
-		"authorChannelId": {
-			Type: "string", Description: acidUsage,
-			Default: json.RawMessage(`""`),
+		"author_channel_id": {Type: "string", Description: acidUsage},
+		"channel_id":        {Type: "string", Description: cidUsage},
+		"can_rate": {
+			Type:        "boolean",
+			Description: crUsage, Default: json.RawMessage(`false`),
 		},
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"canRate": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: crUsage, Default: json.RawMessage(`""`),
-		},
-		"parentId": {
-			Type: "string", Description: insertPidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"textOriginal": {
-			Type: "string", Description: toUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoId": {
-			Type: "string", Description: vidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"parent_id":     {Type: "string", Description: insertPidUsage},
+		"text_original": {Type: "string", Description: toUsage},
+		"video_id":      {Type: "string", Description: vidUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -122,7 +91,17 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := comment.NewComment(
+			comment.WithAuthorChannelId(authorChannelId),
+			comment.WithChannelId(channelId),
+			comment.WithCanRate(canRate),
+			comment.WithParentId(parentId),
+			comment.WithTextOriginal(textOriginal),
+			comment.WithVideoId(videoId),
+			comment.WithOutput(output),
+			comment.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -131,7 +110,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input comment.Comment,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -142,34 +121,11 @@ func insertHandler(
 		),
 	)
 
-	authorChannelId = input.AuthorChannelId
-	channelId = input.ChannelId
-	canRate = utils.StrToBoolPtr(&input.CanRate)
-	parentId = input.ParentId
-	textOriginal = input.TextOriginal
-	videoId = input.VideoId
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	c := comment.NewComment(
-		comment.WithAuthorChannelId(authorChannelId),
-		comment.WithChannelId(channelId),
-		comment.WithCanRate(canRate),
-		comment.WithParentId(parentId),
-		comment.WithTextOriginal(textOriginal),
-		comment.WithVideoId(videoId),
-		comment.WithService(nil),
-	)
-
-	return c.Insert(output, jsonpath, writer)
 }

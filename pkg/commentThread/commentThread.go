@@ -17,12 +17,11 @@ import (
 )
 
 var (
-	service                *youtube.Service
 	errGetCommentThread    = errors.New("failed to get comment thread")
 	errInsertCommentThread = errors.New("failed to insert comment thread")
 )
 
-type commentThread struct {
+type CommentThread struct {
 	Ids                          []string `yaml:"ids" json:"ids"`
 	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
 	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
@@ -34,18 +33,22 @@ type commentThread struct {
 	TextFormat                   string   `yaml:"text_format" json:"text_format"`
 	TextOriginal                 string   `yaml:"text_original" json:"text_original"`
 	VideoId                      string   `yaml:"video_id" json:"video_id"`
+	Parts                        []string `yaml:"parts" json:"parts"`
+	Output                       string   `yaml:"output" json:"output"`
+	Jsonpath                     string   `yaml:"jsonpath" json:"jsonpath"`
+	service                      *youtube.Service
 }
 
-type CommentThread[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
-	Insert(output string, s string, writer io.Writer) error
+type ICommentThread[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	Insert(io.Writer) error
 }
 
-type Option func(*commentThread)
+type Option func(*CommentThread)
 
-func NewCommentThread(opts ...Option) CommentThread[youtube.CommentThread] {
-	c := &commentThread{}
+func NewCommentThread(opts ...Option) ICommentThread[youtube.CommentThread] {
+	c := &CommentThread{}
 
 	for _, opt := range opts {
 		opt(c)
@@ -54,8 +57,18 @@ func NewCommentThread(opts ...Option) CommentThread[youtube.CommentThread] {
 	return c
 }
 
-func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
-	call := service.CommentThreads.List(parts)
+func (c *CommentThread) preRun() {
+	if c.service == nil {
+		c.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
+	c.preRun()
+	call := c.service.CommentThreads.List(c.Parts)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
 	}
@@ -105,19 +118,17 @@ func (c *commentThread) Get(parts []string) ([]*youtube.CommentThread, error) {
 	return items, nil
 }
 
-func (c *commentThread) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	commentThreads, err := c.Get(parts)
+func (c *CommentThread) List(writer io.Writer) error {
+	commentThreads, err := c.Get()
 	if err != nil && commentThreads == nil {
 		return err
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(commentThreads, jsonpath, writer)
+		utils.PrintJSON(commentThreads, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(commentThreads, jsonpath, writer)
+		utils.PrintYAML(commentThreads, c.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -137,9 +148,8 @@ func (c *commentThread) List(
 	return err
 }
 
-func (c *commentThread) Insert(
-	output string, jsonpath string, writer io.Writer,
-) error {
+func (c *CommentThread) Insert(writer io.Writer) error {
+	c.preRun()
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
 			ChannelId: c.ChannelId,
@@ -156,16 +166,16 @@ func (c *commentThread) Insert(
 		},
 	}
 
-	res, err := service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
+	res, err := c.service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
 	if err != nil {
 		return errors.Join(errInsertCommentThread, err)
 	}
 
-	switch output {
+	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, c.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, c.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "CommentThread inserted: %s\n", res.Id)
@@ -174,31 +184,31 @@ func (c *commentThread) Insert(
 }
 
 func WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.AllThreadsRelatedToChannelId = allThreadsRelatedToChannelId
 	}
 }
 
 func WithAuthorChannelId(authorChannelId string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.AuthorChannelId = authorChannelId
 	}
 }
 
 func WithChannelId(channelId string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.ChannelId = channelId
 	}
 }
 
 func WithIds(ids []string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.Ids = ids
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -209,49 +219,61 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithModerationStatus(moderationStatus string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.ModerationStatus = moderationStatus
 	}
 }
 
 func WithOrder(order string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.Order = order
 	}
 }
 
 func WithSearchTerms(searchTerms string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.SearchTerms = searchTerms
 	}
 }
 
 func WithTextFormat(textFormat string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.TextFormat = textFormat
 	}
 }
 
 func WithTextOriginal(textOriginal string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.TextOriginal = textOriginal
 	}
 }
 
 func WithVideoId(videoId string) Option {
-	return func(c *commentThread) {
+	return func(c *CommentThread) {
 		c.VideoId = videoId
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(c *CommentThread) {
+		c.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(c *CommentThread) {
+		c.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(c *CommentThread) {
+		c.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *commentThread) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(c *CommentThread) {
+		c.service = svc
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,55 +25,34 @@ const (
 	listPidUsage = "Returns replies to the specified comment"
 )
 
-type listIn struct {
-	Ids        []string `json:"ids"`
-	MaxResults int64    `json:"maxResults"`
-	ParentId   string   `json:"parentId"`
-	TextFormat string   `json:"textFormat"`
-	Parts      []string `json:"parts"`
-	Output     string   `json:"output"`
-	Jsonpath   string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: idsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: idsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"maxResults": {
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"parentId": {
-			Type: "string", Description: listPidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"textFormat": {
+		"parent_id": {Type: "string", Description: listPidUsage},
+		"text_format": {
 			Type: "string", Enum: []any{"textFormatUnspecified", "html", "plainText"},
 			Description: tfUsage, Default: json.RawMessage(`"html"`),
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -112,7 +90,16 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := comment.NewComment(
+			comment.WithIds(ids),
+			comment.WithMaxResults(maxResults),
+			comment.WithParentId(parentId),
+			comment.WithTextFormat(textFormat),
+			comment.WithParts(parts),
+			comment.WithOutput(output),
+			comment.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -121,7 +108,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input comment.Comment,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -130,31 +117,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	maxResults = input.MaxResults
-	parentId = input.ParentId
-	textFormat = input.TextFormat
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	c := comment.NewComment(
-		comment.WithIds(ids),
-		comment.WithMaxResults(maxResults),
-		comment.WithParentId(parentId),
-		comment.WithTextFormat(textFormat),
-		comment.WithService(nil),
-	)
-
-	return c.List(parts, output, jsonpath, writer)
 }

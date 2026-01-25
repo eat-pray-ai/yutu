@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewCommentThread(t *testing.T) {
+	svc := &youtube.Service{}
 	type args struct {
 		opts []Option
 	}
@@ -19,7 +20,7 @@ func TestNewCommentThread(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want CommentThread[youtube.CommentThread]
+		want ICommentThread[youtube.CommentThread]
 	}{
 		{
 			name: "with all options",
@@ -36,10 +37,13 @@ func TestNewCommentThread(t *testing.T) {
 					WithTextFormat("html"),
 					WithTextOriginal("This is a comment thread"),
 					WithVideoId("video123"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &commentThread{
+			want: &CommentThread{
 				Ids:                          []string{"thread1", "thread2"},
 				AllThreadsRelatedToChannelId: "relatedChannel123",
 				AuthorChannelId:              "author123",
@@ -51,6 +55,10 @@ func TestNewCommentThread(t *testing.T) {
 				TextFormat:                   "html",
 				TextOriginal:                 "This is a comment thread",
 				VideoId:                      "video123",
+				Parts:                        []string{"id", "snippet"},
+				Output:                       "json",
+				Jsonpath:                     "items.id",
+				service:                      svc,
 			},
 		},
 		{
@@ -58,7 +66,7 @@ func TestNewCommentThread(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &commentThread{},
+			want: &CommentThread{},
 		},
 		{
 			name: "with zero max results",
@@ -67,7 +75,7 @@ func TestNewCommentThread(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &commentThread{
+			want: &CommentThread{
 				MaxResults: math.MaxInt64,
 			},
 		},
@@ -78,7 +86,7 @@ func TestNewCommentThread(t *testing.T) {
 					WithMaxResults(-20),
 				},
 			},
-			want: &commentThread{
+			want: &CommentThread{
 				MaxResults: 1,
 			},
 		},
@@ -95,9 +103,12 @@ func TestNewCommentThread(t *testing.T) {
 					WithTextFormat(""),
 					WithTextOriginal(""),
 					WithVideoId(""),
+					WithParts(nil),
+					WithOutput(""),
+					WithJsonpath(""),
 				},
 			},
-			want: &commentThread{
+			want: &CommentThread{
 				AllThreadsRelatedToChannelId: "",
 				AuthorChannelId:              "",
 				ChannelId:                    "",
@@ -107,6 +118,9 @@ func TestNewCommentThread(t *testing.T) {
 				TextFormat:                   "",
 				TextOriginal:                 "",
 				VideoId:                      "",
+				Parts:                        nil,
+				Output:                       "",
+				Jsonpath:                     "",
 			},
 		},
 		{
@@ -117,13 +131,15 @@ func TestNewCommentThread(t *testing.T) {
 					WithVideoId("video456"),
 					WithTextOriginal("Partial comment thread"),
 					WithMaxResults(50),
+					WithOutput("yaml"),
 				},
 			},
-			want: &commentThread{
+			want: &CommentThread{
 				Ids:          []string{"thread1"},
 				VideoId:      "video456",
 				TextOriginal: "Partial comment thread",
 				MaxResults:   50,
+				Output:       "yaml",
 			},
 		},
 	}
@@ -134,7 +150,7 @@ func TestNewCommentThread(t *testing.T) {
 				if got := NewCommentThread(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewCommentThread() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewCommentThread() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

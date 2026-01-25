@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,43 +25,21 @@ const (
 	insertVidUsage = "ID of the video"
 )
 
-type insertIn struct {
-	AuthorChannelId string `json:"authorChannelId"`
-	ChannelId       string `json:"channelId"`
-	TextOriginal    string `json:"textOriginal"`
-	VideoId         string `json:"videoId"`
-	Output          string `json:"output"`
-	Jsonpath        string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
-	Type:     "object",
-	Required: []string{"authorChannelId", "channelId", "textOriginal", "videoId"},
+	Type: "object",
+	Required: []string{
+		"author_channel_id", "channel_id", "text_original", "video_id",
+	},
 	Properties: map[string]*jsonschema.Schema{
-		"authorChannelId": {
-			Type: "string", Description: acidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"textOriginal": {
-			Type: "string", Description: toUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoId": {
-			Type: "string", Description: insertVidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"author_channel_id": {Type: "string", Description: acidUsage},
+		"channel_id":        {Type: "string", Description: cidUsage},
+		"text_original":     {Type: "string", Description: toUsage},
+		"video_id":          {Type: "string", Description: insertVidUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -99,7 +76,15 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := commentThread.NewCommentThread(
+			commentThread.WithAuthorChannelId(authorChannelId),
+			commentThread.WithChannelId(channelId),
+			commentThread.WithTextOriginal(textOriginal),
+			commentThread.WithVideoId(videoId),
+			commentThread.WithOutput(output),
+			commentThread.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -108,7 +93,8 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input commentThread.CommentThread,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -119,30 +105,11 @@ func insertHandler(
 		),
 	)
 
-	authorChannelId = input.AuthorChannelId
-	channelId = input.ChannelId
-	textOriginal = input.TextOriginal
-	videoId = input.VideoId
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	ct := commentThread.NewCommentThread(
-		commentThread.WithAuthorChannelId(authorChannelId),
-		commentThread.WithChannelId(channelId),
-		commentThread.WithTextOriginal(textOriginal),
-		commentThread.WithVideoId(videoId),
-		commentThread.WithService(nil),
-	)
-
-	return ct.Insert(output, jsonpath, writer)
 }

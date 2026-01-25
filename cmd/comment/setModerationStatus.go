@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/comment"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -26,41 +24,26 @@ const (
 	smsLong  = "Set YouTube comments moderation status by ids"
 )
 
-type setModerationStatusIn struct {
-	Ids              []string `json:"ids"`
-	ModerationStatus string   `json:"moderationStatus"`
-	BanAuthor        string   `json:"banAuthor"`
-	Output           string   `json:"output"`
-	Jsonpath         string   `json:"jsonpath"`
-}
-
 var setModerationStatusInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"ids", "moderationStatus"},
+	Required: []string{"ids", "moderation_status"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: idsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: idsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"moderationStatus": {
-			Type: "string", Enum: []any{"heldForReview", "published", "rejected", ""},
-			Description: msUsage, Default: json.RawMessage(`""`),
+		"moderation_status": {
+			Type: "string", Description: msUsage,
+			Enum: []any{"heldForReview", "published", "rejected", ""},
 		},
-		"banAuthor": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: baUsage, Default: json.RawMessage(`""`),
+		"ban_author": {
+			Type: "boolean", Description: baUsage, Default: json.RawMessage(`false`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -104,7 +87,14 @@ var setModerationStatusCmd = &cobra.Command{
 	Short: smsShort,
 	Long:  smsLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := setModerationStatus(cmd.OutOrStdout())
+		input := comment.NewComment(
+			comment.WithIds(ids),
+			comment.WithModerationStatus(moderationStatus),
+			comment.WithBanAuthor(banAuthor),
+			comment.WithOutput(output),
+			comment.WithJsonpath(jsonpath),
+		)
+		err := input.SetModerationStatus(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -113,7 +103,7 @@ var setModerationStatusCmd = &cobra.Command{
 }
 
 func setModerationStatusHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input setModerationStatusIn,
+	ctx context.Context, req *mcp.CallToolRequest, input comment.Comment,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -122,28 +112,11 @@ func setModerationStatusHandler(
 		),
 	)
 
-	ids = input.Ids
-	moderationStatus = input.ModerationStatus
-	banAuthor = utils.StrToBoolPtr(&input.BanAuthor)
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := setModerationStatus(&writer)
+	err := input.SetModerationStatus(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func setModerationStatus(writer io.Writer) error {
-	c := comment.NewComment(
-		comment.WithIds(ids),
-		comment.WithModerationStatus(moderationStatus),
-		comment.WithBanAuthor(banAuthor),
-		comment.WithService(nil),
-	)
-
-	return c.SetModerationStatus(output, jsonpath, writer)
 }
