@@ -49,70 +49,40 @@ var listInSchema = &jsonschema.Schema{
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: listIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: listIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"chart": {
-			Type: "string", Enum: []any{"chartUnspecified", "mostPopular", ""},
-			Description: chartUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: chartUsage,
+			Enum: []any{"chartUnspecified", "mostPopular", ""},
 		},
-		"hl": {
-			Type: "string", Description: hlUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"locale": {
-			Type: "string", Description: localUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoCategoryId": {
-			Type: "string", Description: caidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"regionCode": {
-			Type: "string", Description: rcUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"hl":              {Type: "string", Description: hlUsage},
+		"locale":          {Type: "string", Description: localUsage},
+		"videoCategoryId": {Type: "string", Description: caidUsage},
+		"regionCode":      {Type: "string", Description: rcUsage},
 		"maxHeight": {
-			Type: "number", Description: mhUsage,
-			Default: json.RawMessage("0"),
-			Minimum: jsonschema.Ptr(float64(0)),
+			Type: "number", Description: mhUsage, Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"maxWidth": {
-			Type: "number", Description: mwUsage,
-			Default: json.RawMessage("0"),
-			Minimum: jsonschema.Ptr(float64(0)),
+			Type: "number", Description: mwUsage, Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"maxResults": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
-		"myRating": {
-			Type: "string", Description: listMrUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"onBehalfOfContentOwner": {Type: "string"},
+		"myRating":               {Type: "string", Description: listMrUsage},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet","status"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

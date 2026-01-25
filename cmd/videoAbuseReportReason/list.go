@@ -34,30 +34,18 @@ var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"hl": {
-			Type:        "string",
-			Description: hlUsage,
-			Default:     json.RawMessage(`""`),
-		},
+		"hl": {Type: "string", Description: hlUsage},
 		"parts": {
-			Type: "array",
-			Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
-			Type:        "string",
-			Enum:        []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage,
-			Default:     json.RawMessage(`"yaml"`),
+			Type: "string", Description: pkg.TableUsage,
+			Enum:    []any{"json", "yaml", "table"},
+			Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type:        "string",
-			Description: pkg.JPUsage,
-			Default:     json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

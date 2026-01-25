@@ -33,13 +33,10 @@ var insertInSchema = &jsonschema.Schema{
 	Properties: map[string]*jsonschema.Schema{
 		"author_channel_id": {Type: "string", Description: acidUsage},
 		"channel_id":        {Type: "string", Description: cidUsage},
-		"can_rate": {
-			Type:        "boolean",
-			Description: crUsage, Default: json.RawMessage(`false`),
-		},
-		"parent_id":     {Type: "string", Description: insertPidUsage},
-		"text_original": {Type: "string", Description: toUsage},
-		"video_id":      {Type: "string", Description: vidUsage},
+		"can_rate":          {Type: "boolean", Description: crUsage},
+		"parent_id":         {Type: "string", Description: insertPidUsage},
+		"text_original":     {Type: "string", Description: toUsage},
+		"video_id":          {Type: "string", Description: vidUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),

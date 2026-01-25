@@ -35,20 +35,11 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"none", "upcoming", "live", "completed"},
 			Description: etUsage, Default: json.RawMessage(`"none"`),
 		},
-		"for_content_owner": {
-			Type: "boolean", Description: fcoUsage,
-			Enum: []any{true, false},
-		},
-		"for_developer": {
-			Type: "boolean", Description: fdUsage,
-			Enum: []any{true, false},
-		},
-		"for_mine": {
-			Type: "boolean", Description: fmUsage,
-			Enum: []any{true, false},
-		},
-		"location":        {Type: "string", Description: locationUsage},
-		"location_radius": {Type: "string", Description: lrUsage},
+		"for_content_owner": {Type: "boolean", Description: fcoUsage},
+		"for_developer":     {Type: "boolean", Description: fdUsage},
+		"for_mine":          {Type: "boolean", Description: fmUsage},
+		"location":          {Type: "string", Description: locationUsage},
+		"location_radius":   {Type: "string", Description: lrUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),

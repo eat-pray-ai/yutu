@@ -38,25 +38,19 @@ var listInSchema = &jsonschema.Schema{
 			Description: listIdsUsage,
 			Default:     json.RawMessage(`[]`),
 		},
-		"managed_by_me": {
-			Type: "boolean", Enum: []any{true, false}, Description: mbmUsage,
-		},
+		"managed_by_me": {Type: "boolean", Description: mbmUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"mine": {
-			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
-		},
-		"my_subscribers": {
-			Type: "boolean", Enum: []any{true, false}, Description: msUsage,
-		},
-		"on_behalf_of_content_owner": {Type: "string", Description: ""},
+		"mine":                       {Type: "boolean", Description: mineUsage},
+		"my_subscribers":             {Type: "boolean", Description: msUsage},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{Type: "string"},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet","status"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},

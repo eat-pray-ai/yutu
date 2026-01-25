@@ -39,8 +39,8 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "number", Description: widthUsage,
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
-		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner":         {Type: "string"},
+		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),

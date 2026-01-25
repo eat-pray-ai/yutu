@@ -38,24 +38,15 @@ var getRatingInSchema = &jsonschema.Schema{
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: grIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: grIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"onBehalfOfContentOwner": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

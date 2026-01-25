@@ -27,16 +27,12 @@ var listInSchema = &jsonschema.Schema{
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"channel_id": {Type: "string", Description: ciUsage},
-		"home": {
-			Type: "boolean", Enum: []any{true, false}, Description: homeUsage,
-		},
+		"home":       {Type: "boolean", Description: homeUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"), Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"mine": {
-			Type: "boolean", Enum: []any{true, false}, Description: mineUsage,
-		},
+		"mine":             {Type: "boolean", Description: mineUsage},
 		"published_after":  {Type: "string", Description: paUsage},
 		"published_before": {Type: "string", Description: pbUsage},
 		"region_code":      {Type: "string", Description: rcUsage},

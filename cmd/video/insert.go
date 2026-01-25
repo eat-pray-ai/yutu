@@ -57,96 +57,58 @@ var insertInSchema = &jsonschema.Schema{
 	Required: []string{"file", "categoryId", "privacy"},
 	Properties: map[string]*jsonschema.Schema{
 		"autoLevels": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: alUsage, Default: json.RawMessage(`""`),
+			Type: "string", Enum: []any{"true", "false", ""}, Description: alUsage,
 		},
-		"file": {
-			Type: "string", Description: fileUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"file":        {Type: "string", Description: fileUsage},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"tags": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: tagsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: tagsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"language": {
-			Type: "string", Description: insertLangUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"language": {Type: "string", Description: insertLangUsage},
 		"license": {
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
 			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
 		},
-		"thumbnail": {
-			Type: "string", Description: thumbnailUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelId": {
-			Type: "string", Description: chidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"playlistId": {
-			Type: "string", Description: pidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"categoryId": {
-			Type: "string", Description: caidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"thumbnail":  {Type: "string", Description: thumbnailUsage},
+		"channelId":  {Type: "string", Description: chidUsage},
+		"playlistId": {Type: "string", Description: pidUsage},
+		"categoryId": {Type: "string", Description: caidUsage},
 		"privacy": {
 			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Description: privacyUsage,
 		},
 		"forKids": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: fkUsage, Default: json.RawMessage(`""`),
+			Description: fkUsage,
 		},
 		"embeddable": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: embeddableUsage, Default: json.RawMessage(`""`),
+			Description: embeddableUsage,
 		},
 		"publishAt": {
 			Type: "string", Description: paUsage,
-			Default: json.RawMessage(`""`),
 		},
 		"stabilize": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: stabilizeUsage, Default: json.RawMessage(`""`),
+			Description: stabilizeUsage,
 		},
 		"notifySubscribers": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: nsUsage, Default: json.RawMessage(`""`),
+			Description: nsUsage,
 		},
 		"publicStatsViewable": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: psvUsage, Default: json.RawMessage(`""`),
+			Description: psvUsage,
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwnerChannel": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"onBehalfOfContentOwner":        {Type: "string"},
+		"onBehalfOfContentOwnerChannel": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

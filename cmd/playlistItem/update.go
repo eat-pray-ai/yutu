@@ -39,7 +39,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Description: privacyUsage,
 			Enum: []any{"public", "private", "unlisted", ""},
 		},
-		"on_behalf_of_content_owner": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),

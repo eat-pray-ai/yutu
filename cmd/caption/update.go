@@ -33,28 +33,13 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Description: attUsage,
 			Default: json.RawMessage(`"unknown"`),
 		},
-		"is_auto_synced": {
-			Type: "boolean", Description: iasUsage,
-			Enum: []any{true, false},
-		},
-		"is_cc": {
-			Type: "boolean", Description: iscUsage,
-			Enum: []any{true, false},
-		},
-		"is_draft": {
-			Type: "boolean", Description: isdUsage,
-			Enum: []any{true, false},
-		},
-		"is_easy_reader": {
-			Type: "boolean", Description: iserUsage,
-			Enum: []any{true, false},
-		},
-		"is_large": {
-			Type: "boolean", Description: islUsage,
-			Enum: []any{true, false},
-		},
-		"language": {Type: "string", Description: languageUsage},
-		"name":     {Type: "string", Description: nameUsage},
+		"is_auto_synced": {Type: "boolean", Description: iasUsage},
+		"is_cc":          {Type: "boolean", Description: iscUsage},
+		"is_draft":       {Type: "boolean", Description: isdUsage},
+		"is_easy_reader": {Type: "boolean", Description: iserUsage},
+		"is_large":       {Type: "boolean", Description: islUsage},
+		"language":       {Type: "string", Description: languageUsage},
+		"name":           {Type: "string", Description: nameUsage},
 		"track_kind": {
 			Type: "string", Description: tkUsage,
 			Enum:    []any{"standard", "ASR", "forced"},

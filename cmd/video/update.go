@@ -49,63 +49,36 @@ var updateInSchema = &jsonschema.Schema{
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: updateIdUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: updateIdUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"tags": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: tagsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: tagsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"language": {
-			Type: "string", Description: updateLangUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"language": {Type: "string", Description: updateLangUsage},
 		"license": {
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
 			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
 		},
-		"thumbnail": {
-			Type: "string", Description: thumbnailUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"playlistId": {
-			Type: "string", Description: pidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"categoryId": {
-			Type: "string", Description: caidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"thumbnail":  {Type: "string", Description: thumbnailUsage},
+		"playlistId": {Type: "string", Description: pidUsage},
+		"categoryId": {Type: "string", Description: caidUsage},
 		"privacy": {
 			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Description: privacyUsage,
 		},
 		"embeddable": {
 			Type: "string", Enum: []any{"true", "false", ""},
-			Description: embeddableUsage, Default: json.RawMessage(`""`),
+			Description: embeddableUsage,
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

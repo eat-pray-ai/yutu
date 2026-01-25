@@ -6,7 +6,6 @@ package channelSection
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"log/slog"
 	"time"
 
@@ -29,16 +28,10 @@ var deleteInSchema = &jsonschema.Schema{
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: deleteIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: deleteIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"on_behalf_of_content_owner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string"},
 	},
 }
 
@@ -82,7 +75,8 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input channelSection.ChannelSection,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input channelSection.ChannelSection,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(

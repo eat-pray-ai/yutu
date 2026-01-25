@@ -33,12 +33,9 @@ var listInSchema = &jsonschema.Schema{
 			Type: "array", Description: listIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"channel_id": {Type: "string", Description: cidUsage},
-		"hl":         {Type: "string", Description: hlUsage},
-		"mine": {
-			Type: "boolean", Description: mineUsage,
-			Enum: []any{true, false},
-		},
+		"channel_id":                 {Type: "string", Description: cidUsage},
+		"hl":                         {Type: "string", Description: hlUsage},
+		"mine":                       {Type: "boolean", Description: mineUsage},
 		"on_behalf_of_content_owner": {Type: "string"},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -105,7 +102,8 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input channelSection.ChannelSection,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input channelSection.ChannelSection,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(

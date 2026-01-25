@@ -6,7 +6,6 @@ package video
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	"log/slog"
 	"time"
@@ -36,15 +35,12 @@ var rateInSchema = &jsonschema.Schema{
 	Required: []string{"ids", "rating"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: rateIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: rateIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"rating": {
-			Type: "string", Enum: []any{"like", "dislike", "none", ""},
-			Description: rateRUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: rateRUsage,
+			Enum: []any{"like", "dislike", "none", ""},
 		},
 	},
 }

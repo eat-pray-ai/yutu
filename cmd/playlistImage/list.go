@@ -34,8 +34,8 @@ var listInSchema = &jsonschema.Schema{
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
-		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner":         {Type: "string"},
+		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},

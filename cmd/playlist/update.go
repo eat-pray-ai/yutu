@@ -34,39 +34,23 @@ var updateInSchema = &jsonschema.Schema{
 				Type: "string",
 			},
 			Description: updateIdUsage,
-			Default:     json.RawMessage(`[]`),
 		},
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"tags": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: tagsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: tagsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"language": {
-			Type: "string", Description: languageUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"language": {Type: "string", Description: languageUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 

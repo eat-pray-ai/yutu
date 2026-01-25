@@ -41,7 +41,7 @@ var listInSchema = &jsonschema.Schema{
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
-		"on_behalf_of_content_owner": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},

@@ -46,26 +46,11 @@ var reportAbuseInSchema = &jsonschema.Schema{
 			Description: raIdsUsage,
 			Default:     json.RawMessage(`[]`),
 		},
-		"reasonId": {
-			Type: "string", Description: ridUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"secondaryReasonId": {
-			Type: "string", Description: sridUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"comments": {
-			Type: "string", Description: commentsUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"language": {
-			Type: "string", Description: raLangUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"reasonId":               {Type: "string", Description: ridUsage},
+		"secondaryReasonId":      {Type: "string", Description: sridUsage},
+		"comments":               {Type: "string", Description: commentsUsage},
+		"language":               {Type: "string", Description: raLangUsage},
+		"onBehalfOfContentOwner": {Type: "string"},
 	},
 }
 

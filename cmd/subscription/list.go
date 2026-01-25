@@ -43,23 +43,21 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"mine": {
 			Type: "boolean", Description: mineUsage,
-			Enum: []any{true, false},
 		},
 		"my_recent_subscribers": {
 			Type: "boolean", Description: mrsUsage,
-			Enum: []any{true, false},
 		},
 		"my_subscribers": {
 			Type: "boolean", Description: msUsage,
-			Enum: []any{true, false},
 		},
-		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
-		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
+		"on_behalf_of_content_owner":         {Type: "string"},
+		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"order": {
-			Type: "string", Enum: []any{
+			Type: "string", Description: orderUsage,
+			Enum: []any{
 				"subscriptionOrderUnspecified", "relevance", "unread", "alphabetical",
 			},
-			Description: orderUsage, Default: json.RawMessage(`"relevance"`),
+			Default: json.RawMessage(`"relevance"`),
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,

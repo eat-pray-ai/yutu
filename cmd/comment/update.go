@@ -33,9 +33,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "array", Description: updateIdUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"can_rate": {
-			Type: "boolean", Description: crUsage, Enum: []any{true, false},
-		},
+		"can_rate":      {Type: "boolean", Description: crUsage},
 		"text_original": {Type: "string", Description: toUsage},
 		"viewer_rating": {
 			Type: "string", Description: vrUsage,
