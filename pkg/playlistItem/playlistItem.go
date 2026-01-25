@@ -24,7 +24,7 @@ var (
 	errDeletePlaylistItem = errors.New("failed to delete playlist item")
 )
 
-type playlistItem struct {
+type PlaylistItem struct {
 	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
@@ -39,20 +39,27 @@ type playlistItem struct {
 	MaxResults  int64    `yaml:"max_results" json:"max_results"`
 
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type PlaylistItem[T any] interface {
-	List([]string, string, string, io.Writer) error
-	Insert(string, string, io.Writer) error
-	Update(string, string, io.Writer) error
+type IPlaylistItem[T any] interface {
+	List(io.Writer) error
+	Insert(io.Writer) error
+	Update(io.Writer) error
 	Delete(io.Writer) error
-	Get([]string) ([]*T, error)
+	Get() ([]*T, error)
+	preRun()
 }
 
-type Option func(*playlistItem)
+type Option func(*PlaylistItem)
 
-func NewPlaylistItem(opts ...Option) PlaylistItem[youtube.PlaylistItem] {
-	p := &playlistItem{}
+func NewPlaylistItem(opts ...Option) IPlaylistItem[youtube.PlaylistItem] {
+	p := &PlaylistItem{}
 
 	for _, opt := range opts {
 		opt(p)
@@ -61,8 +68,18 @@ func NewPlaylistItem(opts ...Option) PlaylistItem[youtube.PlaylistItem] {
 	return p
 }
 
-func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
-	call := service.PlaylistItems.List(parts)
+func (pi *PlaylistItem) preRun() {
+	if pi.service == nil {
+		pi.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
+	pi.preRun()
+	call := pi.service.PlaylistItems.List(pi.Parts)
 	if len(pi.Ids) > 0 {
 		call = call.Id(pi.Ids...)
 	}
@@ -100,19 +117,17 @@ func (pi *playlistItem) Get(parts []string) ([]*youtube.PlaylistItem, error) {
 	return items, nil
 }
 
-func (pi *playlistItem) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	playlistItems, err := pi.Get(parts)
+func (pi *PlaylistItem) List(writer io.Writer) error {
+	playlistItems, err := pi.Get()
 	if err != nil && playlistItems == nil {
 		return err
 	}
 
-	switch output {
+	switch pi.Output {
 	case "json":
-		utils.PrintJSON(playlistItems, jsonpath, writer)
+		utils.PrintJSON(playlistItems, pi.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlistItems, jsonpath, writer)
+		utils.PrintYAML(playlistItems, pi.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -139,9 +154,8 @@ func (pi *playlistItem) List(
 	return err
 }
 
-func (pi *playlistItem) Insert(
-	output string, jsonpath string, writer io.Writer,
-) error {
+func (pi *PlaylistItem) Insert(writer io.Writer) error {
+	pi.preRun()
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
 	case "video":
@@ -174,7 +188,7 @@ func (pi *playlistItem) Insert(
 		},
 	}
 
-	call := service.PlaylistItems.Insert(
+	call := pi.service.PlaylistItems.Insert(
 		[]string{"snippet", "status"}, playlistItem,
 	)
 	if pi.OnBehalfOfContentOwner != "" {
@@ -186,11 +200,11 @@ func (pi *playlistItem) Insert(
 		return errors.Join(errInsertPlaylistItem, err)
 	}
 
-	switch output {
+	switch pi.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, pi.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, pi.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist Item inserted: %s\n", res.Id)
@@ -198,10 +212,11 @@ func (pi *playlistItem) Insert(
 	return nil
 }
 
-func (pi *playlistItem) Update(
-	output string, jsonpath string, writer io.Writer,
-) error {
-	playlistItems, err := pi.Get([]string{"id", "snippet", "status"})
+func (pi *PlaylistItem) Update(writer io.Writer) error {
+	pi.preRun()
+	pi.Parts = []string{"id", "snippet", "status"}
+	playlistItems, err := pi.Get()
+
 	if err != nil {
 		return errors.Join(errUpdatePlaylistItem, err)
 	}
@@ -220,7 +235,7 @@ func (pi *playlistItem) Update(
 		playlistItem.Status.PrivacyStatus = pi.Privacy
 	}
 
-	call := service.PlaylistItems.Update(
+	call := pi.service.PlaylistItems.Update(
 		[]string{"snippet", "status"}, playlistItem,
 	)
 	if pi.OnBehalfOfContentOwner != "" {
@@ -232,11 +247,11 @@ func (pi *playlistItem) Update(
 		return errors.Join(errUpdatePlaylistItem, err)
 	}
 
-	switch output {
+	switch pi.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, pi.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, pi.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist Item updated: %s\n", res.Id)
@@ -244,9 +259,10 @@ func (pi *playlistItem) Update(
 	return nil
 }
 
-func (pi *playlistItem) Delete(writer io.Writer) error {
+func (pi *PlaylistItem) Delete(writer io.Writer) error {
+	pi.preRun()
 	for _, id := range pi.Ids {
-		call := service.PlaylistItems.Delete(id)
+		call := pi.service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 		}
@@ -262,73 +278,73 @@ func (pi *playlistItem) Delete(writer io.Writer) error {
 }
 
 func WithIds(ids []string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.Ids = ids
 	}
 }
 
 func WithTitle(title string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.Title = title
 	}
 }
 
 func WithDescription(description string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.Description = description
 	}
 }
 
 func WithKind(kind string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.Kind = kind
 	}
 }
 
 func WithKVideoId(kVideoId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.KVideoId = kVideoId
 	}
 }
 
 func WithKChannelId(kChannelId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.KChannelId = kChannelId
 	}
 }
 
 func WithKPlaylistId(kPlaylistId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.KPlaylistId = kPlaylistId
 	}
 }
 
 func WithVideoId(videoId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.VideoId = videoId
 	}
 }
 
 func WithPlaylistId(playlistId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.PlaylistId = playlistId
 	}
 }
 
 func WithChannelId(channelId string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.ChannelId = channelId
 	}
 }
 
 func WithPrivacy(privacy string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.Privacy = privacy
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -339,19 +355,31 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(p *playlistItem) {
+	return func(p *PlaylistItem) {
 		p.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(p *PlaylistItem) {
+		p.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(p *PlaylistItem) {
+		p.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(p *PlaylistItem) {
+		p.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *playlistItem) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(p *PlaylistItem) {
+		p.service = svc
 	}
 }

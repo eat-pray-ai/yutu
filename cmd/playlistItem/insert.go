@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,73 +25,31 @@ const (
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 )
 
-type insertIn struct {
-	Title                  string `json:"title"`
-	Description            string `json:"description"`
-	Kind                   string `json:"kind"`
-	KVideoId               string `json:"kVideoId"`
-	KChannelId             string `json:"kChannelId"`
-	KPlaylistId            string `json:"kPlaylistId"`
-	PlaylistId             string `json:"playlistId"`
-	ChannelId              string `json:"channelId"`
-	Privacy                string `json:"privacy"`
-	OnBehalfOfContentOwner string `json:"onBehalfOfContentOwner"`
-	Output                 string `json:"output"`
-	Jsonpath               string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"kind", "playlistId", "channelId"},
+	Required: []string{"kind", "playlist_id", "channel_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"kind": {
-			Type: "string", Enum: []any{"video", "channel", "playlist", ""},
-			Description: kindUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: kindUsage,
+			Enum: []any{"video", "channel", "playlist", ""},
 		},
-		"kVideoId": {
-			Type: "string", Description: kvidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"kChannelId": {
-			Type: "string", Description: kcidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"kPlaylistId": {
-			Type: "string", Description: kpidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"playlistId": {
-			Type: "string", Description: insertPidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"k_video_id":    {Type: "string", Description: kvidUsage},
+		"k_channel_id":  {Type: "string", Description: kcidUsage},
+		"k_playlist_id": {Type: "string", Description: kpidUsage},
+		"playlist_id":   {Type: "string", Description: insertPidUsage},
+		"channel_id":    {Type: "string", Description: cidUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -137,7 +94,21 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := playlistItem.NewPlaylistItem(
+			playlistItem.WithTitle(title),
+			playlistItem.WithDescription(description),
+			playlistItem.WithKind(kind),
+			playlistItem.WithKVideoId(kVideoId),
+			playlistItem.WithKChannelId(kChannelId),
+			playlistItem.WithKPlaylistId(kPlaylistId),
+			playlistItem.WithPlaylistId(playlistId),
+			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithChannelId(channelId),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlistItem.WithOutput(output),
+			playlistItem.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -146,7 +117,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlistItem.PlaylistItem,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -157,42 +128,11 @@ func insertHandler(
 		),
 	)
 
-	title = input.Title
-	description = input.Description
-	kind = input.Kind
-	kVideoId = input.KVideoId
-	kChannelId = input.KChannelId
-	kPlaylistId = input.KPlaylistId
-	playlistId = input.PlaylistId
-	channelId = input.ChannelId
-	privacy = input.Privacy
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	pi := playlistItem.NewPlaylistItem(
-		playlistItem.WithTitle(title),
-		playlistItem.WithDescription(description),
-		playlistItem.WithKind(kind),
-		playlistItem.WithKVideoId(kVideoId),
-		playlistItem.WithKChannelId(kChannelId),
-		playlistItem.WithKPlaylistId(kPlaylistId),
-		playlistItem.WithPlaylistId(playlistId),
-		playlistItem.WithPrivacy(privacy),
-		playlistItem.WithChannelId(channelId),
-		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		playlistItem.WithService(nil),
-	)
-
-	return pi.Insert(output, jsonpath, writer)
 }

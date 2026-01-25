@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -28,70 +26,37 @@ const (
 	listCidUsage = "Return the playlists owned by the specified channel id"
 )
 
-type listIn struct {
-	Ids                           []string `json:"ids"`
-	ChannelId                     string   `json:"channelId"`
-	Hl                            string   `json:"hl"`
-	MaxResults                    int64    `json:"maxResults"`
-	Mine                          *string  `json:"mine,omitempty"`
-	OnBehalfOfContentOwner        string   `json:"onBehalfOfContentOwner"`
-	OnBehalfOfContentOwnerChannel string   `json:"onBehalfOfContentOwnerChannel"`
-	Parts                         []string `json:"parts"`
-	Output                        string   `json:"output"`
-	Jsonpath                      string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: listIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: listIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"channelId": {
-			Type: "string", Description: listCidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"hl": {
-			Type: "string", Description: hlUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"channel_id": {Type: "string", Description: listCidUsage},
+		"hl":         {Type: "string", Description: hlUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mineUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Description: mineUsage,
+			Enum: []any{true, false},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwnerChannel": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet","status"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -132,7 +97,19 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := playlist.NewPlaylist(
+			playlist.WithIds(ids),
+			playlist.WithChannelId(channelId),
+			playlist.WithHl(hl),
+			playlist.WithMaxResults(maxResults),
+			playlist.WithMine(mine),
+			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			playlist.WithParts(parts),
+			playlist.WithOutput(output),
+			playlist.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -141,7 +118,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlist.Playlist,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -150,37 +127,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	channelId = input.ChannelId
-	hl = input.Hl
-	maxResults = input.MaxResults
-	mine = utils.StrToBoolPtr(input.Mine)
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	p := playlist.NewPlaylist(
-		playlist.WithIds(ids),
-		playlist.WithChannelId(channelId),
-		playlist.WithHl(hl),
-		playlist.WithMaxResults(maxResults),
-		playlist.WithMine(mine),
-		playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		playlist.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		playlist.WithService(nil),
-	)
-
-	return p.List(parts, output, jsonpath, writer)
 }

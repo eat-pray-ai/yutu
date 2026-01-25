@@ -18,11 +18,12 @@ func TestNewPlaylist(t *testing.T) {
 
 	mineTrue := true
 	mineFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want Playlist[youtube.Playlist]
+		want IPlaylist[youtube.Playlist]
 	}{
 		{
 			name: "with all options",
@@ -40,10 +41,13 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(&mineTrue),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[0].snippet.title"),
+					WithService(svc),
 				},
 			},
-			want: &playlist{
+			want: &Playlist{
 				Ids:                           []string{"playlist1", "playlist2"},
 				Title:                         "Test Playlist",
 				Description:                   "Test playlist description",
@@ -56,6 +60,10 @@ func TestNewPlaylist(t *testing.T) {
 				Mine:                          &mineTrue,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Parts:                         []string{"id", "snippet"},
+				Output:                        "json",
+				Jsonpath:                      "$.items[0].snippet.title",
+				service:                       svc,
 			},
 		},
 		{
@@ -63,7 +71,7 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &playlist{},
+			want: &Playlist{},
 		},
 		{
 			name: "with nil boolean options",
@@ -72,7 +80,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &playlist{},
+			want: &Playlist{},
 		},
 		{
 			name: "with false boolean options",
@@ -81,9 +89,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(&mineFalse),
 				},
 			},
-			want: &playlist{
-				Mine: &mineFalse,
-			},
+			want: &Playlist{Mine: &mineFalse},
 		},
 		{
 			name: "with zero max results",
@@ -92,9 +98,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &playlist{
-				MaxResults: math.MaxInt64,
-			},
+			want: &Playlist{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -103,9 +107,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &playlist{
-				MaxResults: 1,
-			},
+			want: &Playlist{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -121,7 +123,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel(""),
 				},
 			},
-			want: &playlist{
+			want: &Playlist{
 				Title:                         "",
 				Description:                   "",
 				Language:                      "",
@@ -142,7 +144,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMaxResults(25),
 				},
 			},
-			want: &playlist{
+			want: &Playlist{
 				Title:       "My Playlist",
 				Description: "A great playlist",
 				Privacy:     "private",
@@ -157,7 +159,7 @@ func TestNewPlaylist(t *testing.T) {
 				if got := NewPlaylist(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewPlaylist() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewPlaylist() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

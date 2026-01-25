@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -27,60 +26,32 @@ const (
 	listPidUsage = "Return the playlist items within the given playlist"
 )
 
-type listIn struct {
-	Ids                    []string `json:"ids"`
-	PlaylistId             string   `json:"playlistId"`
-	MaxResults             int64    `json:"maxResults"`
-	VideoId                string   `json:"videoId"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	Parts                  []string `json:"parts"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: listIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: listIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"playlistId": {
-			Type: "string", Description: listPidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"playlist_id": {Type: "string", Description: listPidUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"videoId": {
-			Type: "string", Description: vidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"video_id":                   {Type: "string", Description: vidUsage},
+		"on_behalf_of_content_owner": {Type: "string", Description: ""},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet","status"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -117,7 +88,17 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := playlistItem.NewPlaylistItem(
+			playlistItem.WithIds(ids),
+			playlistItem.WithPlaylistId(playlistId),
+			playlistItem.WithMaxResults(maxResults),
+			playlistItem.WithVideoId(videoId),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlistItem.WithParts(parts),
+			playlistItem.WithOutput(output),
+			playlistItem.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -126,7 +107,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlistItem.PlaylistItem,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -135,33 +116,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	playlistId = input.PlaylistId
-	maxResults = input.MaxResults
-	videoId = input.VideoId
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	pi := playlistItem.NewPlaylistItem(
-		playlistItem.WithIds(ids),
-		playlistItem.WithPlaylistId(playlistId),
-		playlistItem.WithMaxResults(maxResults),
-		playlistItem.WithVideoId(videoId),
-		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		playlistItem.WithService(nil),
-	)
-
-	return pi.List(parts, output, jsonpath, writer)
 }

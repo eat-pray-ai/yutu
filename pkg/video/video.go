@@ -267,9 +267,11 @@ func (v *video) Insert(output string, jsonpath string, writer io.Writer) error {
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
+			playlistItem.WithOutput("silent"),
+			playlistItem.WithJsonpath(""),
 		)
 
-		_ = pi.Insert("silent", "", writer)
+		_ = pi.Insert(writer)
 	}
 
 	switch output {
@@ -352,9 +354,11 @@ func (v *video) Update(output string, jsonpath string, writer io.Writer) error {
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(service),
+			playlistItem.WithOutput("silent"),
+			playlistItem.WithJsonpath(""),
 		)
 
-		_ = pi.Insert("silent", "", writer)
+		_ = pi.Insert(writer)
 	}
 
 	switch output {
@@ -381,7 +385,9 @@ func (v *video) Rate(writer io.Writer) error {
 	return nil
 }
 
-func (v *video) GetRating(output string, jsonpath string, writer io.Writer) error {
+func (v *video) GetRating(
+	output string, jsonpath string, writer io.Writer,
+) error {
 	call := service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)

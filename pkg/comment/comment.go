@@ -183,10 +183,8 @@ func (c *Comment) Insert(writer io.Writer) error {
 
 func (c *Comment) Update(writer io.Writer) error {
 	c.preRun()
-	originalParts := c.Parts
 	c.Parts = []string{"id", "snippet"}
 	comments, err := c.Get()
-	c.Parts = originalParts
 
 	if err != nil {
 		return errors.Join(errUpdateComment, err)

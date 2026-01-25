@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewPlaylistImage(t *testing.T) {
+	svc := &youtube.Service{}
 	type args struct {
 		opts []Option
 	}
@@ -19,7 +20,7 @@ func TestNewPlaylistImage(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want PlaylistImage[youtube.PlaylistImage]
+		want IPlaylistImage[youtube.PlaylistImage]
 	}{
 		{
 			name: "with all options",
@@ -35,10 +36,13 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(50),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[*].id"),
+					WithService(svc),
 				},
 			},
-			want: &playlistImage{
+			want: &PlaylistImage{
 				Ids:                           []string{"image1", "image2"},
 				Height:                        1080,
 				PlaylistId:                    "playlist123",
@@ -49,6 +53,10 @@ func TestNewPlaylistImage(t *testing.T) {
 				MaxResults:                    50,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Parts:                         []string{"id", "snippet"},
+				Output:                        "json",
+				Jsonpath:                      "$.items[*].id",
+				service:                       svc,
 			},
 		},
 		{
@@ -56,7 +64,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &playlistImage{},
+			want: &PlaylistImage{},
 		},
 		{
 			name: "with zero max results",
@@ -65,9 +73,7 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &playlistImage{
-				MaxResults: math.MaxInt64,
-			},
+			want: &PlaylistImage{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -76,9 +82,7 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(-20),
 				},
 			},
-			want: &playlistImage{
-				MaxResults: 1,
-			},
+			want: &PlaylistImage{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -92,7 +96,7 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel(""),
 				},
 			},
-			want: &playlistImage{
+			want: &PlaylistImage{
 				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
@@ -111,7 +115,7 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(25),
 				},
 			},
-			want: &playlistImage{
+			want: &PlaylistImage{
 				PlaylistId: "myPlaylist",
 				Type:       "hero",
 				File:       "/images/hero.png",
@@ -126,7 +130,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				if got := NewPlaylistImage(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewPlaylistImage() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewPlaylistImage() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

@@ -17,14 +17,13 @@ import (
 )
 
 var (
-	service           *youtube.Service
 	errGetPlaylist    = errors.New("failed to get playlist")
 	errInsertPlaylist = errors.New("failed to insert playlist")
 	errUpdatePlaylist = errors.New("failed to update playlist")
 	errDeletePlaylist = errors.New("failed to delete playlist")
 )
 
-type playlist struct {
+type Playlist struct {
 	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
@@ -38,20 +37,27 @@ type playlist struct {
 
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type Playlist[T any] interface {
-	List([]string, string, string, io.Writer) error
-	Insert(string, string, io.Writer) error
-	Update(string, string, io.Writer) error
+type IPlaylist[T any] interface {
+	List(io.Writer) error
+	Insert(io.Writer) error
+	Update(io.Writer) error
 	Delete(io.Writer) error
-	Get([]string) ([]*T, error)
+	Get() ([]*T, error)
+	preRun()
 }
 
-type Option func(*playlist)
+type Option func(*Playlist)
 
-func NewPlaylist(opts ...Option) Playlist[youtube.Playlist] {
-	p := &playlist{}
+func NewPlaylist(opts ...Option) IPlaylist[youtube.Playlist] {
+	p := &Playlist{}
 
 	for _, opt := range opts {
 		opt(p)
@@ -60,8 +66,18 @@ func NewPlaylist(opts ...Option) Playlist[youtube.Playlist] {
 	return p
 }
 
-func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
-	call := service.Playlists.List(parts)
+func (p *Playlist) preRun() {
+	if p.service == nil {
+		p.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (p *Playlist) Get() ([]*youtube.Playlist, error) {
+	p.preRun()
+	call := p.service.Playlists.List(p.Parts)
 
 	if len(p.Ids) > 0 {
 		call = call.Id(p.Ids...)
@@ -103,19 +119,17 @@ func (p *playlist) Get(parts []string) ([]*youtube.Playlist, error) {
 	return items, nil
 }
 
-func (p *playlist) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	playlists, err := p.Get(parts)
+func (p *Playlist) List(writer io.Writer) error {
+	playlists, err := p.Get()
 	if err != nil && playlists == nil {
 		return err
 	}
 
-	switch output {
+	switch p.Output {
 	case "json":
-		utils.PrintJSON(playlists, jsonpath, writer)
+		utils.PrintJSON(playlists, p.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(playlists, jsonpath, writer)
+		utils.PrintYAML(playlists, p.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -129,7 +143,8 @@ func (p *playlist) List(
 	return err
 }
 
-func (p *playlist) Insert(output string, jsonpath string, writer io.Writer) error {
+func (p *Playlist) Insert(writer io.Writer) error {
+	p.preRun()
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -143,17 +158,17 @@ func (p *playlist) Insert(output string, jsonpath string, writer io.Writer) erro
 		},
 	}
 
-	call := service.Playlists.Insert([]string{"snippet", "status"}, upload)
+	call := p.service.Playlists.Insert([]string{"snippet", "status"}, upload)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errInsertPlaylist, err)
 	}
 
-	switch output {
+	switch p.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, p.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, p.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
@@ -161,8 +176,9 @@ func (p *playlist) Insert(output string, jsonpath string, writer io.Writer) erro
 	return nil
 }
 
-func (p *playlist) Update(output string, jsonpath string, writer io.Writer) error {
-	playlists, err := p.Get([]string{"id", "snippet", "status"})
+func (p *Playlist) Update(writer io.Writer) error {
+	p.preRun()
+	playlists, err := p.Get()
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
 	}
@@ -187,17 +203,17 @@ func (p *playlist) Update(output string, jsonpath string, writer io.Writer) erro
 		playlist.Status.PrivacyStatus = p.Privacy
 	}
 
-	call := service.Playlists.Update([]string{"snippet", "status"}, playlist)
+	call := p.service.Playlists.Update([]string{"snippet", "status"}, playlist)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
 	}
 
-	switch output {
+	switch p.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, p.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, p.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)
@@ -205,9 +221,10 @@ func (p *playlist) Update(output string, jsonpath string, writer io.Writer) erro
 	return nil
 }
 
-func (p *playlist) Delete(writer io.Writer) error {
+func (p *Playlist) Delete(writer io.Writer) error {
+	p.preRun()
 	for _, id := range p.Ids {
-		call := service.Playlists.Delete(id)
+		call := p.service.Playlists.Delete(id)
 		if p.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
 		}
@@ -222,55 +239,55 @@ func (p *playlist) Delete(writer io.Writer) error {
 }
 
 func WithIds(ids []string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Ids = ids
 	}
 }
 
 func WithTitle(title string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Title = title
 	}
 }
 
 func WithDescription(description string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Description = description
 	}
 }
 
 func WithTags(tags []string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Tags = tags
 	}
 }
 
 func WithLanguage(language string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Language = language
 	}
 }
 
 func WithChannelId(channelId string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.ChannelId = channelId
 	}
 }
 
 func WithPrivacy(privacy string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Privacy = privacy
 	}
 }
 
 func WithHl(hl string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.Hl = hl
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -281,7 +298,7 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithMine(mine *bool) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		if mine != nil {
 			p.Mine = mine
 		}
@@ -289,25 +306,37 @@ func WithMine(mine *bool) Option {
 }
 
 func WithOnBehalfOfContentOwner(contentOwner string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.OnBehalfOfContentOwner = contentOwner
 	}
 }
 
 func WithOnBehalfOfContentOwnerChannel(channel string) Option {
-	return func(p *playlist) {
+	return func(p *Playlist) {
 		p.OnBehalfOfContentOwnerChannel = channel
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(p *Playlist) {
+		p.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(p *Playlist) {
+		p.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(p *Playlist) {
+		p.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *playlist) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(p *Playlist) {
+		p.service = svc
 	}
 }

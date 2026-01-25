@@ -6,8 +6,6 @@ package playlistImage
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -24,26 +22,15 @@ const (
 	deleteLong  = "Delete YouTube playlist images by ids"
 )
 
-type deleteIn struct {
-	Ids                    []string `json:"ids"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-}
-
 var deleteInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: idsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: idsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string"},
 	},
 }
 
@@ -74,7 +61,11 @@ var deleteCmd = &cobra.Command{
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := del(cmd.OutOrStdout())
+		input := playlistImage.NewPlaylistImage(
+			playlistImage.WithIds(ids),
+			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		)
+		err := input.Delete(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -83,7 +74,8 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input deleteIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input playlistImage.PlaylistImage,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -94,24 +86,11 @@ func deleteHandler(
 		),
 	)
 
-	ids = input.Ids
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
 	var writer bytes.Buffer
-	err := del(&writer)
+	err := input.Delete(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func del(writer io.Writer) error {
-	pi := playlistImage.NewPlaylistImage(
-		playlistImage.WithIds(ids),
-		playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		playlistImage.WithService(nil),
-	)
-
-	return pi.Delete(writer)
 }

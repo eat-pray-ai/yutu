@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -25,45 +24,27 @@ const (
 	updateLong  = "Update a playlist image for a given playlist id"
 )
 
-type updateIn struct {
-	PlaylistId string `json:"playlistId"`
-	Type       string `json:"type"`
-	Height     int64  `json:"height"`
-	Width      int64  `json:"width"`
-	Output     string `json:"output"`
-	Jsonpath   string `json:"jsonpath"`
-}
-
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"playlistId"},
+	Required: []string{"playlist_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"playlistId": {
-			Type: "string", Description: pidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"type": {
-			Type: "string", Description: typeUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"playlist_id": {Type: "string", Description: pidUsage},
+		"type":        {Type: "string", Description: typeUsage},
 		"height": {
 			Type: "number", Description: heightUsage,
-			Default: json.RawMessage("0"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"width": {
 			Type: "number", Description: widthUsage,
-			Default: json.RawMessage("0"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
+		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -87,6 +68,12 @@ func init() {
 	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
+	updateCmd.Flags().StringVarP(
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+	)
+	updateCmd.Flags().StringVarP(
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+	)
 
 	_ = updateCmd.MarkFlagRequired("playlistId")
 }
@@ -96,7 +83,18 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		input := playlistImage.NewPlaylistImage(
+			playlistImage.WithPlaylistId(playlistId),
+			playlistImage.WithType(type_),
+			playlistImage.WithHeight(height),
+			playlistImage.WithWidth(width),
+			playlistImage.WithMaxResults(1),
+			playlistImage.WithOutput(output),
+			playlistImage.WithJsonpath(jsonpath),
+			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+		)
+		err := input.Update(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -105,7 +103,8 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input playlistImage.PlaylistImage,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -116,31 +115,11 @@ func updateHandler(
 		),
 	)
 
-	playlistId = input.PlaylistId
-	type_ = input.Type
-	height = input.Height
-	width = input.Width
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.Update(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func update(writer io.Writer) error {
-	pi := playlistImage.NewPlaylistImage(
-		playlistImage.WithPlaylistId(playlistId),
-		playlistImage.WithType(type_),
-		playlistImage.WithHeight(height),
-		playlistImage.WithWidth(width),
-		playlistImage.WithMaxResults(1),
-		playlistImage.WithService(nil),
-	)
-
-	return pi.Update(output, jsonpath, writer)
 }

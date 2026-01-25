@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,51 +25,26 @@ const (
 	updateIdUsage = "ID of the playlist item to update"
 )
 
-type updateIn struct {
-	Ids                    []string `json:"ids"`
-	Title                  string   `json:"title"`
-	Description            string   `json:"description"`
-	Privacy                string   `json:"privacy"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: updateIdUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: updateIdUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string", Description: ""},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -106,7 +80,16 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		input := playlistItem.NewPlaylistItem(
+			playlistItem.WithIds(ids),
+			playlistItem.WithTitle(title),
+			playlistItem.WithDescription(description),
+			playlistItem.WithPrivacy(privacy),
+			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlistItem.WithOutput(output),
+			playlistItem.WithJsonpath(jsonpath),
+		)
+		err := input.Update(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -115,7 +98,7 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlistItem.PlaylistItem,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -126,33 +109,11 @@ func updateHandler(
 		),
 	)
 
-	ids = input.Ids
-	title = input.Title
-	description = input.Description
-	privacy = input.Privacy
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.Update(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func update(writer io.Writer) error {
-	pi := playlistItem.NewPlaylistItem(
-		playlistItem.WithIds(ids),
-		playlistItem.WithTitle(title),
-		playlistItem.WithDescription(description),
-		playlistItem.WithPrivacy(privacy),
-		playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		playlistItem.WithMaxResults(1),
-		playlistItem.WithService(nil),
-	)
-
-	return pi.Update(output, jsonpath, writer)
 }

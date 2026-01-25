@@ -16,10 +16,12 @@ func TestNewPlaylistItem(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want PlaylistItem[youtube.PlaylistItem]
+		want IPlaylistItem[youtube.PlaylistItem]
 	}{
 		{
 			name: "with all options",
@@ -38,10 +40,13 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithPrivacy("public"),
 					WithMaxResults(50),
 					WithOnBehalfOfContentOwner("owner123"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet", "status"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &playlistItem{
+			want: &PlaylistItem{
 				Ids:                    []string{"item1", "item2"},
 				Title:                  "Test Item",
 				Description:            "Test item description",
@@ -55,6 +60,10 @@ func TestNewPlaylistItem(t *testing.T) {
 				Privacy:                "public",
 				MaxResults:             50,
 				OnBehalfOfContentOwner: "owner123",
+				Parts:                  []string{"snippet", "status"},
+				Output:                 "json",
+				Jsonpath:               "items.id",
+				service:                svc,
 			},
 		},
 		{
@@ -62,7 +71,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &playlistItem{},
+			want: &PlaylistItem{},
 		},
 		{
 			name: "with zero max results",
@@ -71,9 +80,7 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &playlistItem{
-				MaxResults: math.MaxInt64,
-			},
+			want: &PlaylistItem{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -82,9 +89,7 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithMaxResults(-15),
 				},
 			},
-			want: &playlistItem{
-				MaxResults: 1,
-			},
+			want: &PlaylistItem{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -101,9 +106,11 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithChannelId(""),
 					WithPrivacy(""),
 					WithOnBehalfOfContentOwner(""),
+					WithOutput(""),
+					WithJsonpath(""),
 				},
 			},
-			want: &playlistItem{
+			want: &PlaylistItem{
 				Title:                  "",
 				Description:            "",
 				Kind:                   "",
@@ -115,6 +122,8 @@ func TestNewPlaylistItem(t *testing.T) {
 				ChannelId:              "",
 				Privacy:                "",
 				OnBehalfOfContentOwner: "",
+				Output:                 "",
+				Jsonpath:               "",
 			},
 		},
 		{
@@ -126,14 +135,16 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithKVideoId("myVideo123"),
 					WithPlaylistId("myPlaylist"),
 					WithMaxResults(25),
+					WithParts([]string{"id"}),
 				},
 			},
-			want: &playlistItem{
+			want: &PlaylistItem{
 				Title:      "My Video",
 				Kind:       "video",
 				KVideoId:   "myVideo123",
 				PlaylistId: "myPlaylist",
 				MaxResults: 25,
+				Parts:      []string{"id"},
 			},
 		},
 	}
@@ -144,7 +155,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				if got := NewPlaylistItem(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewPlaylistItem() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewPlaylistItem() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

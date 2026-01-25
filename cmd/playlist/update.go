@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -25,17 +24,6 @@ const (
 	updateLong    = "Update an existing playlist, with the specified title, description, tags, etc"
 	updateIdUsage = "ID of the playlist to update"
 )
-
-type updateIn struct {
-	Ids         []string `json:"ids"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Tags        []string `json:"tags"`
-	Language    string   `json:"language"`
-	Privacy     string   `json:"privacy"`
-	Output      string   `json:"output"`
-	Jsonpath    string   `json:"jsonpath"`
-}
 
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
@@ -113,7 +101,17 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		p := playlist.NewPlaylist(
+			playlist.WithIds(ids),
+			playlist.WithTitle(title),
+			playlist.WithDescription(description),
+			playlist.WithTags(tags),
+			playlist.WithLanguage(language),
+			playlist.WithPrivacy(privacy),
+			playlist.WithOutput(output),
+			playlist.WithJsonpath(jsonpath),
+		)
+		err := p.Update(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -122,7 +120,7 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlist.Playlist,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -133,35 +131,11 @@ func updateHandler(
 		),
 	)
 
-	ids = input.Ids
-	title = input.Title
-	description = input.Description
-	tags = input.Tags
-	language = input.Language
-	privacy = input.Privacy
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.Update(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func update(writer io.Writer) error {
-	p := playlist.NewPlaylist(
-		playlist.WithIds(ids),
-		playlist.WithTitle(title),
-		playlist.WithDescription(description),
-		playlist.WithTags(tags),
-		playlist.WithLanguage(language),
-		playlist.WithPrivacy(privacy),
-		playlist.WithMaxResults(1),
-		playlist.WithService(nil),
-	)
-
-	return p.Update(output, jsonpath, writer)
 }

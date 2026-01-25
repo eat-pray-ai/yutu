@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,56 +25,27 @@ const (
 	insertCidUsage = "Channel id of the playlist"
 )
 
-type insertIn struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Tags        []string `json:"tags"`
-	Language    string   `json:"language"`
-	ChannelId   string   `json:"channelId"`
-	Privacy     string   `json:"privacy"`
-	Output      string   `json:"output"`
-	Jsonpath    string   `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"title", "channelId", "privacy"},
+	Required: []string{"title", "channel_id", "privacy"},
 	Properties: map[string]*jsonschema.Schema{
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"title":       {Type: "string", Description: titleUsage},
+		"description": {Type: "string", Description: descUsage},
 		"tags": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: tagsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: tagsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"language": {
-			Type: "string", Description: languageUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelId": {
-			Type: "string", Description: insertCidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"language":   {Type: "string", Description: languageUsage},
+		"channel_id": {Type: "string", Description: insertCidUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage, Default: json.RawMessage(`""`),
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -112,7 +82,17 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := playlist.NewPlaylist(
+			playlist.WithTitle(title),
+			playlist.WithDescription(description),
+			playlist.WithTags(tags),
+			playlist.WithLanguage(language),
+			playlist.WithChannelId(channelId),
+			playlist.WithPrivacy(privacy),
+			playlist.WithOutput(output),
+			playlist.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -121,7 +101,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input playlist.Playlist,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -132,34 +112,11 @@ func insertHandler(
 		),
 	)
 
-	title = input.Title
-	description = input.Description
-	tags = input.Tags
-	language = input.Language
-	channelId = input.ChannelId
-	privacy = input.Privacy
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	p := playlist.NewPlaylist(
-		playlist.WithTitle(title),
-		playlist.WithDescription(description),
-		playlist.WithTags(tags),
-		playlist.WithLanguage(language),
-		playlist.WithChannelId(channelId),
-		playlist.WithPrivacy(privacy),
-		playlist.WithService(nil),
-	)
-
-	return p.Insert(output, jsonpath, writer)
 }
