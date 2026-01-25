@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/search"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -24,195 +22,112 @@ const (
 	listTool = "search-list"
 )
 
-type listIn struct {
-	ChannelId                 string   `json:"channelId"`
-	ChannelType               string   `json:"channelType"`
-	EventType                 string   `json:"eventType"`
-	ForContentOwner           *string  `json:"forContentOwner,omitempty"`
-	ForDeveloper              *string  `json:"forDeveloper,omitempty"`
-	ForMine                   *string  `json:"forMine,omitempty"`
-	Location                  string   `json:"location"`
-	LocationRadius            string   `json:"locationRadius"`
-	MaxResults                int64    `json:"maxResults"`
-	OnBehalfOfContentOwner    string   `json:"onBehalfOfContentOwner"`
-	Order                     string   `json:"order"`
-	PublishedAfter            string   `json:"publishedAfter"`
-	PublishedBefore           string   `json:"publishedBefore"`
-	Q                         string   `json:"q"`
-	RegionCode                string   `json:"regionCode"`
-	RelevanceLanguage         string   `json:"relevanceLanguage"`
-	SafeSearch                string   `json:"safeSearch"`
-	TopicId                   string   `json:"topicId"`
-	Types                     []string `json:"types"`
-	VideoCaption              string   `json:"videoCaption"`
-	VideoCategoryId           string   `json:"videoCategoryId"`
-	VideoDefinition           string   `json:"videoDefinition"`
-	VideoDimension            string   `json:"videoDimension"`
-	VideoDuration             string   `json:"videoDuration"`
-	VideoEmbeddable           string   `json:"videoEmbeddable"`
-	VideoLicense              string   `json:"videoLicense"`
-	VideoPaidProductPlacement string   `json:"videoPaidProductPlacement"`
-	VideoSyndicated           string   `json:"videoSyndicated"`
-	VideoType                 string   `json:"videoType"`
-	Parts                     []string `json:"parts"`
-	Output                    string   `json:"output"`
-	Jsonpath                  string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {
-			Type: "string", Description: cidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelType": {
+		"channel_id": {Type: "string", Description: cidUsage},
+		"channel_type": {
 			Type: "string", Enum: []any{"channelTypeUnspecified", "any", "show"},
 			Description: ctUsage, Default: json.RawMessage(`"channelTypeUnspecified"`),
 		},
-		"eventType": {
+		"event_type": {
 			Type: "string", Enum: []any{"none", "upcoming", "live", "completed"},
 			Description: etUsage, Default: json.RawMessage(`"none"`),
 		},
-		"forContentOwner": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: fcoUsage, Default: json.RawMessage(`""`),
+		"for_content_owner": {
+			Type: "boolean", Description: fcoUsage,
+			Enum: []any{true, false},
 		},
-		"forDeveloper": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: fdUsage, Default: json.RawMessage(`""`),
+		"for_developer": {
+			Type: "boolean", Description: fdUsage,
+			Enum: []any{true, false},
 		},
-		"forMine": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: fmUsage, Default: json.RawMessage(`""`),
+		"for_mine": {
+			Type: "boolean", Description: fmUsage,
+			Enum: []any{true, false},
 		},
-		"location": {
-			Type: "string", Description: locationUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"locationRadius": {
-			Type: "string", Description: lrUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"location":        {Type: "string", Description: locationUsage},
+		"location_radius": {Type: "string", Description: lrUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"order": {
 			Type: "string", Description: orderUsage,
 			Default: json.RawMessage(`"relevance"`),
 		},
-		"publishedAfter": {
-			Type: "string", Description: paUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"publishedBefore": {
-			Type: "string", Description: pbUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"q": {
-			Type: "string", Description: qUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"regionCode": {
-			Type: "string", Description: rcUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"relevanceLanguage": {
-			Type: "string", Description: rlUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"safeSearch": {
-			Type: "string",
+		"published_after":    {Type: "string", Description: paUsage},
+		"published_before":   {Type: "string", Description: pbUsage},
+		"q":                  {Type: "string", Description: qUsage},
+		"region_code":        {Type: "string", Description: rcUsage},
+		"relevance_language": {Type: "string", Description: rlUsage},
+		"safe_search": {
+			Type: "string", Description: ssUsage,
 			Enum: []any{
 				"safeSearchSettingUnspecified", "none", "moderate", "strict",
 			},
-			Description: ssUsage, Default: json.RawMessage(`"moderate"`),
+			Default: json.RawMessage(`"moderate"`),
 		},
-		"topicId": {
-			Type: "string", Description: tidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"topic_id": {Type: "string", Description: tidUsage},
 		"types": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: typesUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: typesUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"videoCaption": {
-			Type: "string",
+		"video_caption": {
+			Type: "string", Description: vcUsage,
 			Enum: []any{
 				"videoCaptionUnspecified", "any", "closedCaption", "none",
 			},
-			Description: vcUsage, Default: json.RawMessage(`"any"`),
+			Default: json.RawMessage(`"any"`),
 		},
-		"videoCategoryId": {
-			Type: "string", Description: vcidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoDefinition": {
-			Type: "string", Description: vdeUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoDimension": {
+		"video_category_id": {Type: "string", Description: vcidUsage},
+		"video_definition":  {Type: "string", Description: vdeUsage},
+		"video_dimension": {
 			Type: "string", Enum: []any{"any", "2d", "3d"},
 			Description: vdiUsage, Default: json.RawMessage(`"any"`),
 		},
-		"videoDuration": {
-			Type: "string",
+		"video_duration": {
+			Type: "string", Description: vduUsage,
 			Enum: []any{
 				"videoDurationUnspecified", "any", "short", "medium", "long",
 			},
-			Description: vduUsage, Default: json.RawMessage(`"any"`),
+			Default: json.RawMessage(`"any"`),
 		},
-		"videoEmbeddable": {
-			Type:        "string",
-			Enum:        []any{"videoEmbeddableUnspecified", "any", "true", ""},
-			Description: veUsage, Default: json.RawMessage(`""`),
+		"video_embeddable": {
+			Type: "string", Description: veUsage,
+			Enum: []any{"videoEmbeddableUnspecified", "any", "true", ""},
 		},
-		"videoLicense": {
-			Type: "string", Enum: []any{"any", "youtube", "creativeCommon", ""},
-			Description: vlUsage, Default: json.RawMessage(`""`),
+		"video_license": {
+			Type: "string", Description: vlUsage,
+			Enum: []any{"any", "youtube", "creativeCommon", ""},
 		},
-		"videoPaidProductPlacement": {
-			Type: "string",
+		"video_paid_product_placement": {
+			Type: "string", Description: vpppUsage,
 			Enum: []any{
 				"videoPaidProductPlacementUnspecified", "any", "true", "",
 			},
-			Description: vpppUsage, Default: json.RawMessage(`""`),
 		},
-		"videoSyndicated": {
-			Type:        "string",
-			Enum:        []any{"videoSyndicatedUnspecified", "any", "true", ""},
-			Description: vsUsage, Default: json.RawMessage(`""`),
+		"video_syndicated": {
+			Type: "string", Description: vsUsage,
+			Enum: []any{"videoSyndicatedUnspecified", "any", "true", ""},
 		},
-		"videoType": {
-			Type:        "string",
-			Enum:        []any{"videoTypeUnspecified", "any", "movie", "episode", ""},
-			Description: vtUsage, Default: json.RawMessage(`""`),
+		"video_type": {
+			Type: "string", Description: vtUsage,
+			Enum: []any{"videoTypeUnspecified", "any", "movie", "episode", ""},
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -279,7 +194,42 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := search.NewSearch(
+			search.WithChannelId(channelId),
+			search.WithChannelType(channelType),
+			search.WithEventType(eventType),
+			search.WithForContentOwner(forContentOwner),
+			search.WithForDeveloper(forDeveloper),
+			search.WithForMine(forMine),
+			search.WithLocation(location),
+			search.WithLocationRadius(locationRadius),
+			search.WithMaxResults(maxResults),
+			search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			search.WithOrder(order),
+			search.WithPublishedAfter(publishedAfter),
+			search.WithPublishedBefore(publishedBefore),
+			search.WithQ(q),
+			search.WithRegionCode(regionCode),
+			search.WithRelevanceLanguage(relevanceLanguage),
+			search.WithSafeSearch(safeSearch),
+			search.WithTopicId(topicId),
+			search.WithTypes(types),
+			search.WithVideoCaption(videoCaption),
+			search.WithVideoCategoryId(videoCategoryId),
+			search.WithVideoDefinition(videoDefinition),
+			search.WithVideoDimension(videoDimension),
+			search.WithVideoDuration(videoDuration),
+			search.WithVideoEmbeddable(videoEmbeddable),
+			search.WithVideoLicense(videoLicense),
+			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
+			search.WithVideoSyndicated(videoSyndicated),
+			search.WithVideoType(videoType),
+			search.WithParts(parts),
+			search.WithOutput(output),
+			search.WithJsonpath(jsonpath),
+		)
+
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -288,7 +238,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input search.Search,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -297,81 +247,11 @@ func listHandler(
 		),
 	)
 
-	channelId = input.ChannelId
-	channelType = input.ChannelType
-	eventType = input.EventType
-	forContentOwner = utils.StrToBoolPtr(input.ForContentOwner)
-	forDeveloper = utils.StrToBoolPtr(input.ForDeveloper)
-	forMine = utils.StrToBoolPtr(input.ForMine)
-	location = input.Location
-	locationRadius = input.LocationRadius
-	maxResults = input.MaxResults
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	order = input.Order
-	publishedAfter = input.PublishedAfter
-	publishedBefore = input.PublishedBefore
-	q = input.Q
-	regionCode = input.RegionCode
-	relevanceLanguage = input.RelevanceLanguage
-	safeSearch = input.SafeSearch
-	topicId = input.TopicId
-	types = input.Types
-	videoCaption = input.VideoCaption
-	videoCategoryId = input.VideoCategoryId
-	videoDefinition = input.VideoDefinition
-	videoDimension = input.VideoDimension
-	videoDuration = input.VideoDuration
-	videoEmbeddable = input.VideoEmbeddable
-	videoLicense = input.VideoLicense
-	videoPaidProductPlacement = input.VideoPaidProductPlacement
-	videoSyndicated = input.VideoSyndicated
-	videoType = input.VideoType
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	s := search.NewSearch(
-		search.WithChannelId(channelId),
-		search.WithChannelType(channelType),
-		search.WithEventType(eventType),
-		search.WithForContentOwner(forContentOwner),
-		search.WithForDeveloper(forDeveloper),
-		search.WithForMine(forMine),
-		search.WithLocation(location),
-		search.WithLocationRadius(locationRadius),
-		search.WithMaxResults(maxResults),
-		search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		search.WithOrder(order),
-		search.WithPublishedAfter(publishedAfter),
-		search.WithPublishedBefore(publishedBefore),
-		search.WithQ(q),
-		search.WithRegionCode(regionCode),
-		search.WithRelevanceLanguage(relevanceLanguage),
-		search.WithSafeSearch(safeSearch),
-		search.WithTopicId(topicId),
-		search.WithTypes(types),
-		search.WithVideoCaption(videoCaption),
-		search.WithVideoCategoryId(videoCategoryId),
-		search.WithVideoDefinition(videoDefinition),
-		search.WithVideoDimension(videoDimension),
-		search.WithVideoDuration(videoDuration),
-		search.WithVideoEmbeddable(videoEmbeddable),
-		search.WithVideoLicense(videoLicense),
-		search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
-		search.WithVideoSyndicated(videoSyndicated),
-		search.WithVideoType(videoType),
-		search.WithService(nil),
-	)
-
-	return s.List(parts, output, jsonpath, writer)
 }

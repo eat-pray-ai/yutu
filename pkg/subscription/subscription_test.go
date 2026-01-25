@@ -22,11 +22,12 @@ func TestNewSubscription(t *testing.T) {
 	myRecentSubscribersFalse := false
 	mySubscribersTrue := true
 	mySubscribersFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want Subscription[youtube.Subscription]
+		want ISubscription[youtube.Subscription]
 	}{
 		{
 			name: "with all options",
@@ -45,10 +46,13 @@ func TestNewSubscription(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
 					WithOrder("relevance"),
 					WithTitle("Test Subscription"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet", "contentDetails"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[0].id"),
+					WithService(svc),
 				},
 			},
-			want: &subscription{
+			want: &Subscription{
 				Ids:                           []string{"sub1", "sub2"},
 				SubscriberChannelId:           "subscriber123",
 				Description:                   "Test subscription description",
@@ -62,6 +66,10 @@ func TestNewSubscription(t *testing.T) {
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
 				Order:                         "relevance",
 				Title:                         "Test Subscription",
+				Parts:                         []string{"snippet", "contentDetails"},
+				Output:                        "json",
+				Jsonpath:                      "$.items[0].id",
+				service:                       svc,
 			},
 		},
 		{
@@ -69,7 +77,7 @@ func TestNewSubscription(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &subscription{},
+			want: &Subscription{},
 		},
 		{
 			name: "with nil boolean options",
@@ -80,7 +88,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMySubscribers(nil),
 				},
 			},
-			want: &subscription{},
+			want: &Subscription{},
 		},
 		{
 			name: "with false boolean options",
@@ -91,7 +99,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMySubscribers(&mySubscribersFalse),
 				},
 			},
-			want: &subscription{
+			want: &Subscription{
 				Mine:                &mineFalse,
 				MyRecentSubscribers: &myRecentSubscribersFalse,
 				MySubscribers:       &mySubscribersFalse,
@@ -104,9 +112,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &subscription{
-				MaxResults: math.MaxInt64,
-			},
+			want: &Subscription{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -115,9 +121,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &subscription{
-				MaxResults: 1,
-			},
+			want: &Subscription{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -133,7 +137,7 @@ func TestNewSubscription(t *testing.T) {
 					WithTitle(""),
 				},
 			},
-			want: &subscription{
+			want: &Subscription{
 				SubscriberChannelId:           "",
 				Description:                   "",
 				ChannelId:                     "",
@@ -155,7 +159,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMine(&mineTrue),
 				},
 			},
-			want: &subscription{
+			want: &Subscription{
 				ChannelId:  "myChannel",
 				Title:      "My Subscription",
 				MaxResults: 25,
@@ -171,7 +175,7 @@ func TestNewSubscription(t *testing.T) {
 				if got := NewSubscription(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewSubscription() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewSubscription() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

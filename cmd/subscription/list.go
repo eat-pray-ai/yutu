@@ -7,14 +7,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -28,66 +26,35 @@ const (
 	listCidUsage = "Return the subscriptions of the given channel owner"
 )
 
-type listIn struct {
-	Ids                           []string `json:"ids"`
-	ChannelId                     string   `json:"channelId"`
-	ForChannelId                  string   `json:"forChannelId"`
-	MaxResults                    int64    `json:"maxResults"`
-	Mine                          *string  `json:"mine,omitempty"`
-	MyRecentSubscribers           *string  `json:"myRecentSubscribers,omitempty"`
-	MySubscribers                 *string  `json:"mySubscribers,omitempty"`
-	OnBehalfOfContentOwner        string   `json:"onBehalfOfContentOwner"`
-	OnBehalfOfContentOwnerChannel string   `json:"onBehalfOfContentOwnerChannel"`
-	Order                         string   `json:"order"`
-	Parts                         []string `json:"parts"`
-	Output                        string   `json:"output"`
-	Jsonpath                      string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: listIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: listIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"channelId": {
-			Type: "string", Description: listCidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"forChannelId": {
-			Type: "string", Description: fcidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"channel_id":     {Type: "string", Description: listCidUsage},
+		"for_channel_id": {Type: "string", Description: fcidUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"mine": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mineUsage, Default: json.RawMessage(`""`),
+			Type: "boolean", Description: mineUsage,
+			Enum: []any{true, false},
 		},
-		"myRecentSubscribers": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: mrsUsage, Default: json.RawMessage(`""`),
+		"my_recent_subscribers": {
+			Type: "boolean", Description: mrsUsage,
+			Enum: []any{true, false},
 		},
-		"mySubscribers": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: msUsage, Default: json.RawMessage(`""`),
+		"my_subscribers": {
+			Type: "boolean", Description: msUsage,
+			Enum: []any{true, false},
 		},
-		"onBehalfOfContentOwner": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwnerChannel": {
-			Type: "string", Description: "",
-			Default: json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner":         {Type: "string", Description: ""},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: ""},
 		"order": {
 			Type: "string", Enum: []any{
 				"subscriptionOrderUnspecified", "relevance", "unread", "alphabetical",
@@ -95,20 +62,15 @@ var listInSchema = &jsonschema.Schema{
 			Description: orderUsage, Default: json.RawMessage(`"relevance"`),
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -154,7 +116,22 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := subscription.NewSubscription(
+			subscription.WithIds(ids),
+			subscription.WithChannelId(channelId),
+			subscription.WithForChannelId(forChannelId),
+			subscription.WithMaxResults(maxResults),
+			subscription.WithMine(mine),
+			subscription.WithMyRecentSubscribers(myRecentSubscribers),
+			subscription.WithMySubscribers(mySubscribers),
+			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			subscription.WithOrder(order),
+			subscription.WithParts(parts),
+			subscription.WithOutput(output),
+			subscription.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -163,7 +140,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input subscription.Subscription,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -172,43 +149,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	channelId = input.ChannelId
-	forChannelId = input.ForChannelId
-	maxResults = input.MaxResults
-	mine = utils.StrToBoolPtr(input.Mine)
-	myRecentSubscribers = utils.StrToBoolPtr(input.MyRecentSubscribers)
-	mySubscribers = utils.StrToBoolPtr(input.MySubscribers)
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
-	order = input.Order
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	s := subscription.NewSubscription(
-		subscription.WithIds(ids),
-		subscription.WithChannelId(channelId),
-		subscription.WithForChannelId(forChannelId),
-		subscription.WithMaxResults(maxResults),
-		subscription.WithMine(mine),
-		subscription.WithMyRecentSubscribers(myRecentSubscribers),
-		subscription.WithMySubscribers(mySubscribers),
-		subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		subscription.WithOrder(order),
-		subscription.WithService(nil),
-	)
-
-	return s.List(parts, output, jsonpath, writer)
 }

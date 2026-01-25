@@ -6,8 +6,6 @@ package subscription
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -25,20 +23,13 @@ const (
 	deleteIdsUsage = "IDs of the subscriptions to delete"
 )
 
-type deleteIn struct {
-	Ids []string `json:"ids"`
-}
-
 var deleteInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: deleteIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: deleteIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
 	},
 }
@@ -66,7 +57,10 @@ var deleteCmd = &cobra.Command{
 	Short: deleteShort,
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := del(cmd.OutOrStdout())
+		input := subscription.NewSubscription(
+			subscription.WithIds(ids),
+		)
+		err := input.Delete(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -75,7 +69,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func deleteHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input deleteIn,
+	ctx context.Context, req *mcp.CallToolRequest, input subscription.Subscription,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -86,20 +80,11 @@ func deleteHandler(
 		),
 	)
 
-	ids = input.Ids
 	var writer bytes.Buffer
-	err := del(&writer)
+	err := input.Delete(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func del(writer io.Writer) error {
-	s := subscription.NewSubscription(
-		subscription.WithIds(ids), subscription.WithService(nil),
-	)
-
-	return s.Delete(writer)
 }

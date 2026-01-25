@@ -16,11 +16,10 @@ import (
 )
 
 var (
-	service      *youtube.Service
 	errGetSearch = errors.New("failed to get search")
 )
 
-type search struct {
+type Search struct {
 	ChannelId                 string   `yaml:"channel_id" json:"channel_id"`
 	ChannelType               string   `yaml:"channel_type" json:"channel_type"`
 	EventType                 string   `yaml:"event_type" json:"event_type"`
@@ -50,17 +49,25 @@ type search struct {
 	VideoPaidProductPlacement string   `yaml:"video_paid_product_placement" json:"video_paid_product_placement"`
 	VideoSyndicated           string   `yaml:"video_syndicated" json:"video_syndicated"`
 	VideoType                 string   `yaml:"video_type" json:"video_type"`
+
+	// Operation options
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type Search[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type ISearch[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*search)
+type Option func(*Search)
 
-func NewSearch(opts ...Option) Search[youtube.SearchResult] {
-	s := &search{}
+func NewSearch(opts ...Option) ISearch[youtube.SearchResult] {
+	s := &Search{}
 
 	for _, opt := range opts {
 		opt(s)
@@ -69,8 +76,18 @@ func NewSearch(opts ...Option) Search[youtube.SearchResult] {
 	return s
 }
 
-func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
-	call := service.Search.List(parts)
+func (s *Search) preRun() {
+	if s.service == nil {
+		s.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (s *Search) Get() ([]*youtube.SearchResult, error) {
+	s.preRun()
+	call := s.service.Search.List(s.Parts)
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
 	}
@@ -180,19 +197,17 @@ func (s *search) Get(parts []string) ([]*youtube.SearchResult, error) {
 	return items, nil
 }
 
-func (s *search) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	results, err := s.Get(parts)
+func (s *Search) List(writer io.Writer) error {
+	results, err := s.Get()
 	if err != nil && results == nil {
 		return err
 	}
 
-	switch output {
+	switch s.Output {
 	case "json":
-		utils.PrintJSON(results, jsonpath, writer)
+		utils.PrintJSON(results, s.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(results, jsonpath, writer)
+		utils.PrintYAML(results, s.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -218,25 +233,25 @@ func (s *search) List(
 }
 
 func WithChannelId(channelId string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.ChannelId = channelId
 	}
 }
 
 func WithChannelType(channelType string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.ChannelType = channelType
 	}
 }
 
 func WithEventType(eventType string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.EventType = eventType
 	}
 }
 
 func WithForContentOwner(forContentOwner *bool) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		if forContentOwner != nil {
 			s.ForContentOwner = forContentOwner
 		}
@@ -244,7 +259,7 @@ func WithForContentOwner(forContentOwner *bool) Option {
 }
 
 func WithForDeveloper(forDeveloper *bool) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		if forDeveloper != nil {
 			s.ForDeveloper = forDeveloper
 		}
@@ -252,7 +267,7 @@ func WithForDeveloper(forDeveloper *bool) Option {
 }
 
 func WithForMine(forMine *bool) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		if forMine != nil {
 			s.ForMine = forMine
 		}
@@ -260,19 +275,19 @@ func WithForMine(forMine *bool) Option {
 }
 
 func WithLocation(location string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.Location = location
 	}
 }
 
 func WithLocationRadius(locationRadius string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.LocationRadius = locationRadius
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -283,133 +298,145 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithOrder(order string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.Order = order
 	}
 }
 
 func WithPublishedAfter(publishedAfter string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.PublishedAfter = publishedAfter
 	}
 }
 
 func WithPublishedBefore(publishedBefore string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.PublishedBefore = publishedBefore
 	}
 }
 
 func WithQ(q string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.Q = q
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.RegionCode = regionCode
 	}
 }
 
 func WithRelevanceLanguage(relevanceLanguage string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.RelevanceLanguage = relevanceLanguage
 	}
 }
 
 func WithSafeSearch(safeSearch string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.SafeSearch = safeSearch
 	}
 }
 
 func WithTopicId(topicId string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.TopicId = topicId
 	}
 }
 
 func WithTypes(types []string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.Types = types
 	}
 }
 
 func WithVideoCaption(videoCaption string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoCaption = videoCaption
 	}
 }
 
 func WithVideoCategoryId(videoCategoryId string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoCategoryId = videoCategoryId
 	}
 }
 
 func WithVideoDefinition(videoDefinition string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoDefinition = videoDefinition
 	}
 }
 
 func WithVideoDimension(videoDimension string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoDimension = videoDimension
 	}
 }
 
 func WithVideoDuration(videoDuration string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoDuration = videoDuration
 	}
 }
 
 func WithVideoEmbeddable(videoEmbeddable string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoEmbeddable = videoEmbeddable
 	}
 }
 
 func WithVideoLicense(videoLicense string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoLicense = videoLicense
 	}
 }
 
 func WithVideoPaidProductPlacement(videoPaidProductPlacement string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoPaidProductPlacement = videoPaidProductPlacement
 	}
 }
 
 func WithVideoSyndicated(videoSyndicated string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoSyndicated = videoSyndicated
 	}
 }
 
 func WithVideoType(videoType string) Option {
-	return func(s *search) {
+	return func(s *Search) {
 		s.VideoType = videoType
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(s *Search) {
+		s.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(s *Search) {
+		s.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(s *Search) {
+		s.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *search) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(s *Search) {
+		s.service = svc
 	}
 }

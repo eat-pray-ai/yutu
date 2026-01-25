@@ -22,11 +22,12 @@ func TestNewSearch(t *testing.T) {
 	forDeveloperFalse := false
 	forMineTrue := true
 	forMineFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want Search[youtube.SearchResult]
+		want ISearch[youtube.SearchResult]
 	}{
 		{
 			name: "with all options",
@@ -61,10 +62,13 @@ func TestNewSearch(t *testing.T) {
 					WithVideoPaidProductPlacement("true"),
 					WithVideoSyndicated("true"),
 					WithVideoType("movie"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &search{
+			want: &Search{
 				ChannelId:                 "channel123",
 				ChannelType:               "any",
 				EventType:                 "live",
@@ -94,6 +98,10 @@ func TestNewSearch(t *testing.T) {
 				VideoPaidProductPlacement: "true",
 				VideoSyndicated:           "true",
 				VideoType:                 "movie",
+				Parts:                     []string{"snippet"},
+				Output:                    "json",
+				Jsonpath:                  "items.id",
+				service:                   svc,
 			},
 		},
 		{
@@ -101,7 +109,7 @@ func TestNewSearch(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &search{},
+			want: &Search{},
 		},
 		{
 			name: "with nil boolean options",
@@ -112,7 +120,7 @@ func TestNewSearch(t *testing.T) {
 					WithForMine(nil),
 				},
 			},
-			want: &search{},
+			want: &Search{},
 		},
 		{
 			name: "with false boolean options",
@@ -123,7 +131,7 @@ func TestNewSearch(t *testing.T) {
 					WithForMine(&forMineFalse),
 				},
 			},
-			want: &search{
+			want: &Search{
 				ForContentOwner: &forContentOwnerFalse,
 				ForDeveloper:    &forDeveloperFalse,
 				ForMine:         &forMineFalse,
@@ -136,9 +144,7 @@ func TestNewSearch(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &search{
-				MaxResults: math.MaxInt64,
-			},
+			want: &Search{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -147,9 +153,7 @@ func TestNewSearch(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &search{
-				MaxResults: 1,
-			},
+			want: &Search{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -181,7 +185,7 @@ func TestNewSearch(t *testing.T) {
 					WithVideoType(""),
 				},
 			},
-			want: &search{
+			want: &Search{
 				ChannelId:                 "",
 				ChannelType:               "",
 				EventType:                 "",
@@ -219,7 +223,7 @@ func TestNewSearch(t *testing.T) {
 					WithTypes([]string{"video"}),
 				},
 			},
-			want: &search{
+			want: &Search{
 				Q:          "golang tutorial",
 				MaxResults: 25,
 				Order:      "date",
@@ -233,7 +237,7 @@ func TestNewSearch(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				if got := NewSearch(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("NewSearch() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewSearch() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

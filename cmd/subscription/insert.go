@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,43 +25,19 @@ const (
 	insertCidUsage = "ID of the channel to be subscribed"
 )
 
-type insertIn struct {
-	SubscriberChannelId string `json:"subscriberChannelId"`
-	Description         string `json:"description"`
-	ChannelId           string `json:"channelId"`
-	Title               string `json:"title"`
-	Output              string `json:"output"`
-	Jsonpath            string `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"subscriberChannelId", "channelId"},
+	Required: []string{"subscriber_channel_id", "channel_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"subscriberChannelId": {
-			Type: "string", Description: scidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"description": {
-			Type: "string", Description: descUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"channelId": {
-			Type: "string", Description: insertCidUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"title": {
-			Type: "string", Description: titleUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"subscriber_channel_id": {Type: "string", Description: scidUsage},
+		"description":           {Type: "string", Description: descUsage},
+		"channel_id":            {Type: "string", Description: insertCidUsage},
+		"title":                 {Type: "string", Description: titleUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -98,7 +73,15 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := subscription.NewSubscription(
+			subscription.WithSubscriberChannelId(subscriberChannelId),
+			subscription.WithDescription(description),
+			subscription.WithChannelId(channelId),
+			subscription.WithTitle(title),
+			subscription.WithOutput(output),
+			subscription.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -107,7 +90,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input subscription.Subscription,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -118,30 +101,11 @@ func insertHandler(
 		),
 	)
 
-	subscriberChannelId = input.SubscriberChannelId
-	description = input.Description
-	channelId = input.ChannelId
-	title = input.Title
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	s := subscription.NewSubscription(
-		subscription.WithSubscriberChannelId(subscriberChannelId),
-		subscription.WithDescription(description),
-		subscription.WithChannelId(channelId),
-		subscription.WithTitle(title),
-		subscription.WithService(nil),
-	)
-
-	return s.Insert(output, jsonpath, writer)
 }
