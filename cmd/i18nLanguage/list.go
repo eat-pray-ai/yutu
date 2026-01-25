@@ -6,7 +6,6 @@ package i18nLanguage
 import (
 	"bytes"
 	"context"
-	"io"
 	"log/slog"
 	"time"
 
@@ -55,7 +54,13 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := i18nLanguage.NewI18nLanguage(
+			i18nLanguage.WithHl(hl),
+			i18nLanguage.WithParts(parts),
+			i18nLanguage.WithOutput(output),
+			i18nLanguage.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -73,12 +78,13 @@ func hlHandler(
 		),
 	)
 
-	parts = defaultParts
-	output = "json"
-	jsonpath = "$.*.snippet.hl"
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	input := i18nLanguage.NewI18nLanguage(
+		i18nLanguage.WithParts(defaultParts),
+		i18nLanguage.WithOutput("json"),
+		i18nLanguage.WithJsonpath("$.*.snippet.hl"),
+	)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 		return nil, err
@@ -103,12 +109,15 @@ func langsHandler(
 		),
 	)
 
-	parts = defaultParts
-	hl = utils.ExtractHl(req.Params.URI)
-	output = "json"
-
+	hl := utils.ExtractHl(req.Params.URI)
 	var writer bytes.Buffer
-	err := list(&writer)
+	input := i18nLanguage.NewI18nLanguage(
+		i18nLanguage.WithHl(hl),
+		i18nLanguage.WithParts(defaultParts),
+		i18nLanguage.WithOutput("json"),
+	)
+
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 		return nil, err
@@ -119,12 +128,4 @@ func langsHandler(
 			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
 		},
 	}, nil
-}
-
-func list(writer io.Writer) error {
-	i := i18nLanguage.NewI18nLanguage(
-		i18nLanguage.WithHl(hl), i18nLanguage.WithService(nil),
-	)
-
-	return i.List(parts, output, jsonpath, writer)
 }

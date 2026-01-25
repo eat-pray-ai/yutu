@@ -15,23 +15,27 @@ import (
 )
 
 var (
-	service            *youtube.Service
 	errGetI18nLanguage = errors.New("failed to get i18n language")
 )
 
-type i18nLanguage struct {
-	Hl string `yaml:"hl" json:"hl"`
+type I18nLanguage struct {
+	Hl       string   `yaml:"hl" json:"hl"`
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+	service  *youtube.Service
 }
 
-type I18nLanguage[T youtube.I18nLanguage] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type II18nLanguage[T youtube.I18nLanguage] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*i18nLanguage)
+type Option func(*I18nLanguage)
 
-func NewI18nLanguage(opts ...Option) I18nLanguage[youtube.I18nLanguage] {
-	i := &i18nLanguage{}
+func NewI18nLanguage(opts ...Option) II18nLanguage[youtube.I18nLanguage] {
+	i := &I18nLanguage{}
 
 	for _, opt := range opts {
 		opt(i)
@@ -40,10 +44,20 @@ func NewI18nLanguage(opts ...Option) I18nLanguage[youtube.I18nLanguage] {
 	return i
 }
 
-func (i *i18nLanguage) Get(parts []string) (
+func (i *I18nLanguage) preRun() {
+	if i.service == nil {
+		i.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (i *I18nLanguage) Get() (
 	[]*youtube.I18nLanguage, error,
 ) {
-	call := service.I18nLanguages.List(parts)
+	i.preRun()
+	call := i.service.I18nLanguages.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
 	}
@@ -56,19 +70,17 @@ func (i *i18nLanguage) Get(parts []string) (
 	return res.Items, nil
 }
 
-func (i *i18nLanguage) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	i18nLanguages, err := i.Get(parts)
+func (i *I18nLanguage) List(writer io.Writer) error {
+	i18nLanguages, err := i.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch i.Output {
 	case "json":
-		utils.PrintJSON(i18nLanguages, jsonpath, writer)
+		utils.PrintJSON(i18nLanguages, i.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages, jsonpath, writer)
+		utils.PrintYAML(i18nLanguages, i.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -83,19 +95,31 @@ func (i *i18nLanguage) List(
 }
 
 func WithHl(hl string) Option {
-	return func(i *i18nLanguage) {
+	return func(i *I18nLanguage) {
 		i.Hl = hl
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(i *I18nLanguage) {
+		i.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(i *I18nLanguage) {
+		i.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(i *I18nLanguage) {
+		i.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *i18nLanguage) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(i *I18nLanguage) {
+		i.service = svc
 	}
 }

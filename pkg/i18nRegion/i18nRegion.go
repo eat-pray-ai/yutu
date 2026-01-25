@@ -15,23 +15,27 @@ import (
 )
 
 var (
-	service          *youtube.Service
 	errGetI18nRegion = errors.New("failed to get i18n region")
 )
 
-type i18nRegion struct {
-	Hl string `yaml:"hl" json:"hl"`
+type I18nRegion struct {
+	Hl       string   `yaml:"hl" json:"hl"`
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+	service  *youtube.Service
 }
 
-type I18nRegion[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type II18nRegion[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*i18nRegion)
+type Option func(*I18nRegion)
 
-func NewI18nRegion(opts ...Option) I18nRegion[youtube.I18nRegion] {
-	i := &i18nRegion{}
+func NewI18nRegion(opts ...Option) II18nRegion[youtube.I18nRegion] {
+	i := &I18nRegion{}
 
 	for _, opt := range opts {
 		opt(i)
@@ -40,8 +44,18 @@ func NewI18nRegion(opts ...Option) I18nRegion[youtube.I18nRegion] {
 	return i
 }
 
-func (i *i18nRegion) Get(parts []string) ([]*youtube.I18nRegion, error) {
-	call := service.I18nRegions.List(parts)
+func (i *I18nRegion) preRun() {
+	if i.service == nil {
+		i.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (i *I18nRegion) Get() ([]*youtube.I18nRegion, error) {
+	i.preRun()
+	call := i.service.I18nRegions.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
 	}
@@ -54,19 +68,17 @@ func (i *i18nRegion) Get(parts []string) ([]*youtube.I18nRegion, error) {
 	return res.Items, nil
 }
 
-func (i *i18nRegion) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	i18nRegions, err := i.Get(parts)
+func (i *I18nRegion) List(writer io.Writer) error {
+	i18nRegions, err := i.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch i.Output {
 	case "json":
-		utils.PrintJSON(i18nRegions, jsonpath, writer)
+		utils.PrintJSON(i18nRegions, i.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(i18nRegions, jsonpath, writer)
+		utils.PrintYAML(i18nRegions, i.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -81,19 +93,31 @@ func (i *i18nRegion) List(
 }
 
 func WithHl(hl string) Option {
-	return func(i *i18nRegion) {
+	return func(i *I18nRegion) {
 		i.Hl = hl
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(i *I18nRegion) {
+		i.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(i *I18nRegion) {
+		i.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(i *I18nRegion) {
+		i.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *i18nRegion) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(i *I18nRegion) {
+		i.service = svc
 	}
 }

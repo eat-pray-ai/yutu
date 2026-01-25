@@ -15,21 +15,30 @@ func TestNewI18nRegion(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want I18nRegion[youtube.I18nRegion]
+		want II18nRegion[youtube.I18nRegion]
 	}{
 		{
 			name: "with all options",
 			args: args{
 				opts: []Option{
 					WithHl("en"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[*].id"),
+					WithService(svc),
 				},
 			},
-			want: &i18nRegion{
-				Hl: "en",
+			want: &I18nRegion{
+				Hl:       "en",
+				Parts:    []string{"id", "snippet"},
+				Output:   "json",
+				Jsonpath: "$.items[*].id",
+				service:  svc,
 			},
 		},
 		{
@@ -37,7 +46,7 @@ func TestNewI18nRegion(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &i18nRegion{},
+			want: &I18nRegion{},
 		},
 		{
 			name: "with empty string value",
@@ -46,9 +55,7 @@ func TestNewI18nRegion(t *testing.T) {
 					WithHl(""),
 				},
 			},
-			want: &i18nRegion{
-				Hl: "",
-			},
+			want: &I18nRegion{Hl: ""},
 		},
 	}
 
@@ -58,7 +65,7 @@ func TestNewI18nRegion(t *testing.T) {
 				if got := NewI18nRegion(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewI18nRegion() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewI18nRegion() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

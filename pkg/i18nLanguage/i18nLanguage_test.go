@@ -15,21 +15,30 @@ func TestNewI18nLanguage(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want I18nLanguage[youtube.I18nLanguage]
+		want II18nLanguage[youtube.I18nLanguage]
 	}{
 		{
 			name: "with all options",
 			args: args{
 				opts: []Option{
 					WithHl("en"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$"),
+					WithService(svc),
 				},
 			},
-			want: &i18nLanguage{
-				Hl: "en",
+			want: &I18nLanguage{
+				Hl:       "en",
+				Parts:    []string{"snippet"},
+				Output:   "json",
+				Jsonpath: "$",
+				service:  &youtube.Service{},
 			},
 		},
 		{
@@ -37,7 +46,7 @@ func TestNewI18nLanguage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &i18nLanguage{},
+			want: &I18nLanguage{},
 		},
 		{
 			name: "with empty string value",
@@ -46,9 +55,7 @@ func TestNewI18nLanguage(t *testing.T) {
 					WithHl(""),
 				},
 			},
-			want: &i18nLanguage{
-				Hl: "",
-			},
+			want: &I18nLanguage{Hl: ""},
 		},
 	}
 
@@ -58,7 +65,7 @@ func TestNewI18nLanguage(t *testing.T) {
 				if got := NewI18nLanguage(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewI18nLanguage() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewI18nLanguage() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)
