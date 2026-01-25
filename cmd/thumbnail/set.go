@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -23,33 +22,17 @@ const (
 	setTool = "thumbnail-set"
 )
 
-type setIn struct {
-	File     string `json:"file"`
-	VideoId  string `json:"videoId"`
-	Output   string `json:"output"`
-	Jsonpath string `json:"jsonpath"`
-}
-
 var setInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"file", "videoId"},
+	Required: []string{"file", "video_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"file": {
-			Type: "string", Description: fileUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"videoId": {
-			Type: "string", Description: vidUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"file":     {Type: "string", Description: fileUsage},
+		"video_id": {Type: "string", Description: vidUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -81,7 +64,13 @@ var setCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := set(cmd.OutOrStdout())
+		input := thumbnail.NewThumbnail(
+			thumbnail.WithFile(file),
+			thumbnail.WithVideoId(videoId),
+			thumbnail.WithOutput(output),
+			thumbnail.WithJsonpath(jsonpath),
+		)
+		err := input.Set(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -90,7 +79,7 @@ var setCmd = &cobra.Command{
 }
 
 func setHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input setIn,
+	ctx context.Context, req *mcp.CallToolRequest, input thumbnail.Thumbnail,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -99,26 +88,11 @@ func setHandler(
 		),
 	)
 
-	file = input.File
-	videoId = input.VideoId
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := set(&writer)
+	err := input.Set(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func set(writer io.Writer) error {
-	t := thumbnail.NewThumbnail(
-		thumbnail.WithFile(file),
-		thumbnail.WithVideoId(videoId),
-		thumbnail.WithService(nil),
-	)
-
-	return t.Set(output, jsonpath, writer)
 }

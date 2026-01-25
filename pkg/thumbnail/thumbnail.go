@@ -15,46 +15,60 @@ import (
 )
 
 var (
-	service         *youtube.Service
 	errSetThumbnail = errors.New("failed to set thumbnail")
 )
 
-type thumbnail struct {
-	File    string `yaml:"file" json:"file"`
-	VideoId string `yaml:"video_id" json:"video_id"`
+type Thumbnail struct {
+	File     string `yaml:"file" json:"file"`
+	VideoId  string `yaml:"video_id" json:"video_id"`
+	Output   string `yaml:"output" json:"output"`
+	Jsonpath string `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type Thumbnail interface {
-	Set(string, string, io.Writer) error
+type IThumbnail interface {
+	Set(io.Writer) error
+	preRun()
 }
 
-type Option func(*thumbnail)
+type Option func(*Thumbnail)
 
-func NewThumbnail(opts ...Option) Thumbnail {
-	t := &thumbnail{}
+func NewThumbnail(opts ...Option) IThumbnail {
+	t := &Thumbnail{}
 	for _, opt := range opts {
 		opt(t)
 	}
 	return t
 }
 
-func (t *thumbnail) Set(output string, jsonpath string, writer io.Writer) error {
+func (t *Thumbnail) preRun() {
+	if t.service == nil {
+		t.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (t *Thumbnail) Set(writer io.Writer) error {
+	t.preRun()
 	file, err := pkg.Root.Open(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
 	}
 
-	call := service.Thumbnails.Set(t.VideoId).Media(file)
+	call := t.service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
 	}
 
-	switch output {
+	switch t.Output {
 	case "json":
-		utils.PrintJSON(res, jsonpath, writer)
+		utils.PrintJSON(res, t.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(res, jsonpath, writer)
+		utils.PrintYAML(res, t.Jsonpath, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Thumbnail set for video %s", t.VideoId)
@@ -63,25 +77,31 @@ func (t *thumbnail) Set(output string, jsonpath string, writer io.Writer) error 
 }
 
 func WithVideoId(videoId string) Option {
-	return func(t *thumbnail) {
+	return func(t *Thumbnail) {
 		t.VideoId = videoId
 	}
 }
 
 func WithFile(file string) Option {
-	return func(t *thumbnail) {
+	return func(t *Thumbnail) {
 		t.File = file
 	}
 }
 
+func WithOutput(output string) Option {
+	return func(t *Thumbnail) {
+		t.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(t *Thumbnail) {
+		t.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *thumbnail) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(t *Thumbnail) {
+		t.service = svc
 	}
 }

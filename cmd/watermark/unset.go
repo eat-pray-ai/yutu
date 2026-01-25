@@ -6,8 +6,6 @@ package watermark
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -24,19 +22,11 @@ const (
 	unsetLong  = "Unset watermark for channel's video by channel id"
 )
 
-type unsetIn struct {
-	ChannelId string `json:"channelId"`
-}
-
 var unsetInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"channelId"},
+	Required: []string{"channel_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {
-			Type:        "string",
-			Description: cidUsage,
-			Default:     json.RawMessage(`""`),
-		},
+		"channel_id": {Type: "string", Description: cidUsage},
 	},
 }
 
@@ -63,7 +53,10 @@ var unsetCmd = &cobra.Command{
 	Short: unsetShort,
 	Long:  unsetLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := unset(cmd.OutOrStdout())
+		input := watermark.NewWatermark(
+			watermark.WithChannelId(channelId),
+		)
+		err := input.Unset(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -72,7 +65,7 @@ var unsetCmd = &cobra.Command{
 }
 
 func unsetHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input unsetIn,
+	ctx context.Context, req *mcp.CallToolRequest, input watermark.Watermark,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -83,21 +76,11 @@ func unsetHandler(
 		),
 	)
 
-	channelId = input.ChannelId
 	var writer bytes.Buffer
-	err := unset(&writer)
+	err := input.Unset(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func unset(writer io.Writer) error {
-	w := watermark.NewWatermark(
-		watermark.WithChannelId(channelId),
-		watermark.WithService(nil),
-	)
-
-	return w.Unset(writer)
 }

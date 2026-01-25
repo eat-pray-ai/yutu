@@ -15,12 +15,11 @@ import (
 )
 
 var (
-	service           *youtube.Service
 	errSetWatermark   = errors.New("failed to set watermark")
 	errUnsetWatermark = errors.New("failed to unset watermark")
 )
 
-type watermark struct {
+type Watermark struct {
 	ChannelId              string `yaml:"channel_id" json:"channel_id"`
 	File                   string `yaml:"file" json:"file"`
 	InVideoPosition        string `yaml:"in_video_position" json:"in_video_position"`
@@ -28,17 +27,20 @@ type watermark struct {
 	OffsetMs               uint64 `yaml:"offset_ms" json:"offset_ms"`
 	OffsetType             string `yaml:"offset_type" json:"offset_type"`
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+
+	service *youtube.Service
 }
 
-type Watermark interface {
+type IWatermark interface {
 	Set(io.Writer) error
 	Unset(io.Writer) error
+	preRun()
 }
 
-type Option func(*watermark)
+type Option func(*Watermark)
 
-func NewWatermark(opts ...Option) Watermark {
-	w := &watermark{}
+func NewWatermark(opts ...Option) IWatermark {
+	w := &Watermark{}
 
 	for _, opt := range opts {
 		opt(w)
@@ -47,7 +49,17 @@ func NewWatermark(opts ...Option) Watermark {
 	return w
 }
 
-func (w *watermark) Set(writer io.Writer) error {
+func (w *Watermark) preRun() {
+	if w.service == nil {
+		w.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (w *Watermark) Set(writer io.Writer) error {
+	w.preRun()
 	file, err := pkg.Root.Open(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)
@@ -74,7 +86,7 @@ func (w *watermark) Set(writer io.Writer) error {
 		inVideoBranding.Timing.Type = w.OffsetType
 	}
 
-	call := service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
+	call := w.service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
@@ -88,8 +100,9 @@ func (w *watermark) Set(writer io.Writer) error {
 	return nil
 }
 
-func (w *watermark) Unset(writer io.Writer) error {
-	call := service.Watermarks.Unset(w.ChannelId)
+func (w *Watermark) Unset(writer io.Writer) error {
+	w.preRun()
+	call := w.service.Watermarks.Unset(w.ChannelId)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
@@ -104,55 +117,49 @@ func (w *watermark) Unset(writer io.Writer) error {
 }
 
 func WithChannelId(channelId string) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.ChannelId = channelId
 	}
 }
 
 func WithFile(file string) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.File = file
 	}
 }
 
 func WithInVideoPosition(inVideoPosition string) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.InVideoPosition = inVideoPosition
 	}
 }
 
 func WithDurationMs(durationMs uint64) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.DurationMs = durationMs
 	}
 }
 
 func WithOffsetMs(offsetMs uint64) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.OffsetMs = offsetMs
 	}
 }
 
 func WithOffsetType(offsetType string) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.OffsetType = offsetType
 	}
 }
 
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(w *watermark) {
+	return func(w *Watermark) {
 		w.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(_ *watermark) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(w *Watermark) {
+		w.service = svc
 	}
 }

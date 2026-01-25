@@ -16,10 +16,12 @@ func TestNewSuperChatEvent(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want SuperChatEvent[youtube.SuperChatEvent]
+		want ISuperChatEvent[youtube.SuperChatEvent]
 	}{
 		{
 			name: "with all options",
@@ -27,12 +29,19 @@ func TestNewSuperChatEvent(t *testing.T) {
 				opts: []Option{
 					WithHl("en"),
 					WithMaxResults(50),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[*].id"),
+					WithService(svc),
 				},
 			},
-			want: &superChatEvent{
+			want: &SuperChatEvent{
 				Hl:         "en",
 				MaxResults: 50,
+				Parts:      []string{"id", "snippet"},
+				Output:     "json",
+				Jsonpath:   "$.items[*].id",
+				service:    svc,
 			},
 		},
 		{
@@ -40,7 +49,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &superChatEvent{},
+			want: &SuperChatEvent{},
 		},
 		{
 			name: "with zero max results",
@@ -49,9 +58,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &superChatEvent{
-				MaxResults: math.MaxInt64,
-			},
+			want: &SuperChatEvent{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -60,20 +67,17 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &superChatEvent{
-				MaxResults: 1,
-			},
+			want: &SuperChatEvent{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
 			args: args{
 				opts: []Option{
 					WithHl(""),
+					WithOutput(""),
 				},
 			},
-			want: &superChatEvent{
-				Hl: "",
-			},
+			want: &SuperChatEvent{Hl: "", Output: ""},
 		},
 		{
 			name: "with partial options",
@@ -81,11 +85,13 @@ func TestNewSuperChatEvent(t *testing.T) {
 				opts: []Option{
 					WithHl("ja"),
 					WithMaxResults(25),
+					WithOutput("yaml"),
 				},
 			},
-			want: &superChatEvent{
+			want: &SuperChatEvent{
 				Hl:         "ja",
 				MaxResults: 25,
+				Output:     "yaml",
 			},
 		},
 	}
@@ -96,7 +102,9 @@ func TestNewSuperChatEvent(t *testing.T) {
 				if got := NewSuperChatEvent(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewSuperChatEvent() = %v, want %v", got, tt.want)
+					t.Errorf(
+						"%s\nNewSuperChatEvent() = %v\nwant %v", tt.name, got, tt.want,
+					)
 				}
 			},
 		)

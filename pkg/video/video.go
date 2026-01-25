@@ -253,8 +253,10 @@ func (v *video) Insert(output string, jsonpath string, writer io.Writer) error {
 			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
+			thumbnail.WithOutput("silent"),
+			thumbnail.WithJsonpath(""),
 		)
-		_ = t.Set("silent", "", nil)
+		_ = t.Set(nil)
 	}
 
 	if v.PlaylistId != "" {
@@ -340,8 +342,10 @@ func (v *video) Update(output string, jsonpath string, writer io.Writer) error {
 			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(service),
+			thumbnail.WithOutput("silent"),
+			thumbnail.WithJsonpath(""),
 		)
-		_ = t.Set("silent", "", nil)
+		_ = t.Set(nil)
 	}
 
 	if v.PlaylistId != "" {

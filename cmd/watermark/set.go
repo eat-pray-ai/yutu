@@ -6,8 +6,6 @@ package watermark
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -24,57 +22,23 @@ const (
 	setLong  = "Set watermark for channel's video by channel id"
 )
 
-type setIn struct {
-	ChannelId              string `json:"channelId"`
-	File                   string `json:"file"`
-	InVideoPosition        string `json:"inVideoPosition"`
-	DurationMs             int64  `json:"durationMs"`
-	OffsetMs               int64  `json:"offsetMs"`
-	OffsetType             string `json:"offsetType"`
-	OnBehalfOfContentOwner string `json:"onBehalfOfContentOwner"`
-}
-
 var setInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"channelId", "file"},
+	Required: []string{"channel_id", "file"},
 	Properties: map[string]*jsonschema.Schema{
-		"channelId": {
-			Type:        "string",
-			Description: cidUsage,
-			Default:     json.RawMessage(`""`),
+		"channel_id": {Type: "string", Description: cidUsage},
+		"file":       {Type: "string", Description: fileUsage},
+		"in_video_position": {
+			Type: "string", Description: ivpUsage,
+			Enum: []any{"topLeft", "topRight", "bottomLeft", "bottomRight", ""},
 		},
-		"file": {
-			Type:        "string",
-			Description: fileUsage,
-			Default:     json.RawMessage(`""`),
+		"duration_ms": {Type: "number", Description: dmUsage},
+		"offset_ms":   {Type: "number", Description: omUsage},
+		"offset_type": {
+			Type: "string", Description: otUsage,
+			Enum: []any{"offsetFromStart", "offsetFromEnd", ""},
 		},
-		"inVideoPosition": {
-			Type:        "string",
-			Enum:        []any{"topLeft", "topRight", "bottomLeft", "bottomRight", ""},
-			Description: ivpUsage,
-			Default:     json.RawMessage(`""`),
-		},
-		"durationMs": {
-			Type:        "number",
-			Description: dmUsage,
-			Default:     json.RawMessage("0"),
-		},
-		"offsetMs": {
-			Type:        "number",
-			Description: omUsage,
-			Default:     json.RawMessage("0"),
-		},
-		"offsetType": {
-			Type:        "string",
-			Enum:        []any{"offsetFromStart", "offsetFromEnd", ""},
-			Description: otUsage,
-			Default:     json.RawMessage(`""`),
-		},
-		"onBehalfOfContentOwner": {
-			Type:        "string",
-			Description: "",
-			Default:     json.RawMessage(`""`),
-		},
+		"on_behalf_of_content_owner": {Type: "string"},
 	},
 }
 
@@ -116,7 +80,16 @@ var setCmd = &cobra.Command{
 	Short: setShort,
 	Long:  setLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := set(cmd.OutOrStdout())
+		input := watermark.NewWatermark(
+			watermark.WithChannelId(channelId),
+			watermark.WithFile(file),
+			watermark.WithInVideoPosition(inVideoPosition),
+			watermark.WithDurationMs(durationMs),
+			watermark.WithOffsetMs(offsetMs),
+			watermark.WithOffsetType(offsetType),
+			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		)
+		err := input.Set(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -125,7 +98,7 @@ var setCmd = &cobra.Command{
 }
 
 func setHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input setIn,
+	ctx context.Context, req *mcp.CallToolRequest, input watermark.Watermark,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -134,34 +107,11 @@ func setHandler(
 		),
 	)
 
-	channelId = input.ChannelId
-	file = input.File
-	inVideoPosition = input.InVideoPosition
-	durationMs = uint64(input.DurationMs)
-	offsetMs = uint64(input.OffsetMs)
-	offsetType = input.OffsetType
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
 	var writer bytes.Buffer
-	err := set(&writer)
+	err := input.Set(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func set(writer io.Writer) error {
-	w := watermark.NewWatermark(
-		watermark.WithChannelId(channelId),
-		watermark.WithFile(file),
-		watermark.WithInVideoPosition(inVideoPosition),
-		watermark.WithDurationMs(durationMs),
-		watermark.WithOffsetMs(offsetMs),
-		watermark.WithOffsetType(offsetType),
-		watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		watermark.WithService(nil),
-	)
-
-	return w.Set(writer)
 }

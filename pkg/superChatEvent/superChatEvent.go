@@ -16,24 +16,28 @@ import (
 )
 
 var (
-	service              *youtube.Service
 	errGetSuperChatEvent = errors.New("failed to get super chat event")
 )
 
-type superChatEvent struct {
-	Hl         string `yaml:"hl" json:"hl"`
-	MaxResults int64  `yaml:"max_results" json:"max_results"`
+type SuperChatEvent struct {
+	Hl         string   `yaml:"hl" json:"hl"`
+	MaxResults int64    `yaml:"max_results" json:"max_results"`
+	Parts      []string `yaml:"parts" json:"parts"`
+	Output     string   `yaml:"output" json:"output"`
+	Jsonpath   string   `yaml:"jsonpath" json:"jsonpath"`
+	service    *youtube.Service
 }
 
-type SuperChatEvent[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type ISuperChatEvent[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*superChatEvent)
+type Option func(*SuperChatEvent)
 
-func NewSuperChatEvent(opts ...Option) SuperChatEvent[youtube.SuperChatEvent] {
-	s := &superChatEvent{}
+func NewSuperChatEvent(opts ...Option) ISuperChatEvent[youtube.SuperChatEvent] {
+	s := &SuperChatEvent{}
 
 	for _, opt := range opts {
 		opt(s)
@@ -42,8 +46,18 @@ func NewSuperChatEvent(opts ...Option) SuperChatEvent[youtube.SuperChatEvent] {
 	return s
 }
 
-func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) {
-	call := service.SuperChatEvents.List(parts)
+func (s *SuperChatEvent) preRun() {
+	if s.service == nil {
+		s.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
+	s.preRun()
+	call := s.service.SuperChatEvents.List(s.Parts)
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
 	}
@@ -72,19 +86,17 @@ func (s *superChatEvent) Get(parts []string) ([]*youtube.SuperChatEvent, error) 
 	return items, nil
 }
 
-func (s *superChatEvent) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	events, err := s.Get(parts)
+func (s *SuperChatEvent) List(writer io.Writer) error {
+	events, err := s.Get()
 	if err != nil && events == nil {
 		return err
 	}
 
-	switch output {
+	switch s.Output {
 	case "json":
-		utils.PrintJSON(events, jsonpath, writer)
+		utils.PrintJSON(events, s.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(events, jsonpath, writer)
+		utils.PrintYAML(events, s.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -104,13 +116,13 @@ func (s *superChatEvent) List(
 }
 
 func WithHl(hl string) Option {
-	return func(s *superChatEvent) {
+	return func(s *SuperChatEvent) {
 		s.Hl = hl
 	}
 }
 
 func WithMaxResults(maxResults int64) Option {
-	return func(s *superChatEvent) {
+	return func(s *SuperChatEvent) {
 		if maxResults < 0 {
 			maxResults = 1
 		} else if maxResults == 0 {
@@ -120,14 +132,26 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(s *SuperChatEvent) {
+		s.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(s *SuperChatEvent) {
+		s.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(s *SuperChatEvent) {
+		s.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *superChatEvent) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(s *SuperChatEvent) {
+		s.service = svc
 	}
 }

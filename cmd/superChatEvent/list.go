@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -23,42 +22,26 @@ const (
 	listTool = "superChatEvent-list"
 )
 
-type listIn struct {
-	Hl         string   `json:"hl"`
-	MaxResults int64    `json:"maxResults"`
-	Parts      []string `json:"parts"`
-	Output     string   `json:"output"`
-	Jsonpath   string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"hl": {
-			Type: "string", Description: hlUsage,
-			Default: json.RawMessage(`""`),
-		},
-		"maxResults": {
+		"hl": {Type: "string", Description: hlUsage},
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
 		"parts": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: pkg.PartsUsage,
-			Default:     json.RawMessage(`["id","snippet"]`),
+			Type: "array", Description: pkg.PartsUsage,
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: json.RawMessage(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {
-			Type: "string", Description: pkg.JPUsage,
-			Default: json.RawMessage(`""`),
-		},
+		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -90,7 +73,14 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := superChatEvent.NewSuperChatEvent(
+			superChatEvent.WithHl(hl),
+			superChatEvent.WithMaxResults(maxResults),
+			superChatEvent.WithParts(parts),
+			superChatEvent.WithOutput(output),
+			superChatEvent.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -99,7 +89,8 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input superChatEvent.SuperChatEvent,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -108,27 +99,13 @@ func listHandler(
 		),
 	)
 
-	hl = input.Hl
-	maxResults = input.MaxResults
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	sc := superChatEvent.NewSuperChatEvent(
-		superChatEvent.WithHl(hl),
-		superChatEvent.WithMaxResults(maxResults),
-		superChatEvent.WithService(nil),
-	)
-
-	return sc.List(parts, output, jsonpath, writer)
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}},
+	}, nil, nil
 }

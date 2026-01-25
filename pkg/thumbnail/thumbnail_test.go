@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewThumbnail(t *testing.T) {
+	svc := &youtube.Service{}
 	type args struct {
 		opts []Option
 	}
@@ -18,7 +19,7 @@ func TestNewThumbnail(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Thumbnail
+		want IThumbnail
 	}{
 		{
 			name: "with all options",
@@ -26,12 +27,17 @@ func TestNewThumbnail(t *testing.T) {
 				opts: []Option{
 					WithVideoId("video123"),
 					WithFile("/path/to/thumbnail.jpg"),
-					WithService(&youtube.Service{}),
+					WithOutput("json"),
+					WithJsonpath("id"),
+					WithService(svc),
 				},
 			},
-			want: &thumbnail{
-				VideoId: "video123",
-				File:    "/path/to/thumbnail.jpg",
+			want: &Thumbnail{
+				VideoId:  "video123",
+				File:     "/path/to/thumbnail.jpg",
+				Output:   "json",
+				Jsonpath: "id",
+				service:  svc,
 			},
 		},
 		{
@@ -39,7 +45,7 @@ func TestNewThumbnail(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &thumbnail{},
+			want: &Thumbnail{},
 		},
 		{
 			name: "with empty string values",
@@ -47,11 +53,15 @@ func TestNewThumbnail(t *testing.T) {
 				opts: []Option{
 					WithVideoId(""),
 					WithFile(""),
+					WithOutput(""),
+					WithJsonpath(""),
 				},
 			},
-			want: &thumbnail{
-				VideoId: "",
-				File:    "",
+			want: &Thumbnail{
+				VideoId:  "",
+				File:     "",
+				Output:   "",
+				Jsonpath: "",
 			},
 		},
 		{
@@ -62,7 +72,7 @@ func TestNewThumbnail(t *testing.T) {
 					WithFile("/images/thumb.png"),
 				},
 			},
-			want: &thumbnail{
+			want: &Thumbnail{
 				VideoId: "myVideo123",
 				File:    "/images/thumb.png",
 			},
@@ -72,7 +82,7 @@ func TestNewThumbnail(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewThumbnail(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewThumbnail() = %v, want %v", got, tt.want)
+				t.Errorf("%s\nNewThumbnail() = %v\nwant %v", tt.name, got, tt.want)
 			}
 		})
 	}

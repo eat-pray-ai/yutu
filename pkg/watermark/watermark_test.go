@@ -15,10 +15,12 @@ func TestNewWatermark(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want Watermark
+		want IWatermark
 	}{
 		{
 			name: "with all options",
@@ -31,10 +33,10 @@ func TestNewWatermark(t *testing.T) {
 					WithOffsetMs(1000),
 					WithOffsetType("offsetFromStart"),
 					WithOnBehalfOfContentOwner("owner123"),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &watermark{
+			want: &Watermark{
 				ChannelId:              "channel123",
 				File:                   "/path/to/watermark.png",
 				InVideoPosition:        "topRight",
@@ -42,6 +44,7 @@ func TestNewWatermark(t *testing.T) {
 				OffsetMs:               1000,
 				OffsetType:             "offsetFromStart",
 				OnBehalfOfContentOwner: "owner123",
+				service:                svc,
 			},
 		},
 		{
@@ -49,7 +52,7 @@ func TestNewWatermark(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &watermark{},
+			want: &Watermark{},
 		},
 		{
 			name: "with zero values",
@@ -59,10 +62,7 @@ func TestNewWatermark(t *testing.T) {
 					WithOffsetMs(0),
 				},
 			},
-			want: &watermark{
-				DurationMs: 0,
-				OffsetMs:   0,
-			},
+			want: &Watermark{DurationMs: 0, OffsetMs: 0},
 		},
 		{
 			name: "with empty string values",
@@ -75,7 +75,7 @@ func TestNewWatermark(t *testing.T) {
 					WithOnBehalfOfContentOwner(""),
 				},
 			},
-			want: &watermark{
+			want: &Watermark{
 				ChannelId:              "",
 				File:                   "",
 				InVideoPosition:        "",
@@ -93,7 +93,7 @@ func TestNewWatermark(t *testing.T) {
 					WithDurationMs(10000),
 				},
 			},
-			want: &watermark{
+			want: &Watermark{
 				ChannelId:       "myChannel",
 				File:            "/watermarks/logo.png",
 				InVideoPosition: "bottomLeft",
@@ -103,10 +103,14 @@ func TestNewWatermark(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewWatermark(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewWatermark() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := NewWatermark(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
+					t.Errorf("%s\nNewWatermark() = %v\nwant %v", tt.name, got, tt.want)
+				}
+			},
+		)
 	}
 }
