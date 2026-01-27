@@ -6,7 +6,6 @@ package videoCategory
 import (
 	"bytes"
 	"context"
-	"io"
 	"log/slog"
 	"time"
 
@@ -47,7 +46,15 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := videoCategory.NewVideoCategory(
+			videoCategory.WithIds(ids),
+			videoCategory.WithHl(hl),
+			videoCategory.WithRegionCode(regionCode),
+			videoCategory.WithParts(parts),
+			videoCategory.WithOutput(output),
+			videoCategory.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -65,12 +72,15 @@ func categoriesHandler(
 		),
 	)
 
-	parts = defaultParts
 	hl = utils.ExtractHl(req.Params.URI)
-	output = "json"
+	vc := videoCategory.NewVideoCategory(
+		videoCategory.WithHl(hl),
+		videoCategory.WithParts(defaultParts),
+		videoCategory.WithOutput("json"),
+	)
 
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := vc.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 		return nil, err
@@ -81,15 +91,4 @@ func categoriesHandler(
 			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
 		},
 	}, nil
-}
-
-func list(writer io.Writer) error {
-	vc := videoCategory.NewVideoCategory(
-		videoCategory.WithIds(ids),
-		videoCategory.WithHl(hl),
-		videoCategory.WithRegionCode(regionCode),
-		videoCategory.WithService(nil),
-	)
-
-	return vc.List(parts, output, jsonpath, writer)
 }

@@ -15,33 +15,48 @@ import (
 )
 
 var (
-	service             *youtube.Service
 	errGetVideoCategory = errors.New("failed to get video categoryId")
 )
 
-type videoCategory struct {
+type VideoCategory struct {
 	Ids        []string `yaml:"ids" json:"ids"`
 	Hl         string   `yaml:"hl" json:"hl"`
 	RegionCode string   `yaml:"region_code" json:"region_code"`
+	Parts      []string `yaml:"parts" json:"parts"`
+	Output     string   `yaml:"output" json:"output"`
+	Jsonpath   string   `yaml:"jsonpath" json:"jsonpath"`
+
+	service *youtube.Service
 }
 
-type VideoCategory[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type IVideoCategory[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*videoCategory)
+type Option func(*VideoCategory)
 
-func NewVideoCategory(opt ...Option) VideoCategory[youtube.VideoCategory] {
-	vc := &videoCategory{}
+func NewVideoCategory(opt ...Option) IVideoCategory[youtube.VideoCategory] {
+	vc := &VideoCategory{}
 	for _, o := range opt {
 		o(vc)
 	}
 	return vc
 }
 
-func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
-	call := service.VideoCategories.List(parts)
+func (vc *VideoCategory) preRun() {
+	if vc.service == nil {
+		vc.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (vc *VideoCategory) Get() ([]*youtube.VideoCategory, error) {
+	vc.preRun()
+	call := vc.service.VideoCategories.List(vc.Parts)
 	if len(vc.Ids) > 0 {
 		call = call.Id(vc.Ids...)
 	}
@@ -60,19 +75,17 @@ func (vc *videoCategory) Get(parts []string) ([]*youtube.VideoCategory, error) {
 	return res.Items, nil
 }
 
-func (vc *videoCategory) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	videoCategories, err := vc.Get(parts)
+func (vc *VideoCategory) List(writer io.Writer) error {
+	videoCategories, err := vc.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch vc.Output {
 	case "json":
-		utils.PrintJSON(videoCategories, jsonpath, writer)
+		utils.PrintJSON(videoCategories, vc.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoCategories, jsonpath, writer)
+		utils.PrintYAML(videoCategories, vc.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -87,31 +100,43 @@ func (vc *videoCategory) List(
 }
 
 func WithIds(ids []string) Option {
-	return func(vc *videoCategory) {
+	return func(vc *VideoCategory) {
 		vc.Ids = ids
 	}
 }
 
 func WithHl(hl string) Option {
-	return func(vc *videoCategory) {
+	return func(vc *VideoCategory) {
 		vc.Hl = hl
 	}
 }
 
 func WithRegionCode(regionCode string) Option {
-	return func(vc *videoCategory) {
+	return func(vc *VideoCategory) {
 		vc.RegionCode = regionCode
 	}
 }
 
+func WithParts(parts []string) Option {
+	return func(vc *VideoCategory) {
+		vc.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(vc *VideoCategory) {
+		vc.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(vc *VideoCategory) {
+		vc.Jsonpath = jsonpath
+	}
+}
+
 func WithService(svc *youtube.Service) Option {
-	return func(_ *videoCategory) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(vc *VideoCategory) {
+		vc.service = svc
 	}
 }

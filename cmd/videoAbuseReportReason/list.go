@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -22,13 +21,6 @@ import (
 const (
 	listTool = "videoAbuseReportReason-list"
 )
-
-type listIn struct {
-	Hl       string   `json:"hl"`
-	Parts    []string `json:"parts"`
-	Output   string   `json:"output"`
-	Jsonpath string   `json:"jsonpath"`
-}
 
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
@@ -76,7 +68,13 @@ var listCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := videoAbuseReportReason.NewVideoAbuseReportReason(
+			videoAbuseReportReason.WithHL(hl),
+			videoAbuseReportReason.WithParts(parts),
+			videoAbuseReportReason.WithOutput(output),
+			videoAbuseReportReason.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -85,7 +83,8 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest,
+	input videoAbuseReportReason.VideoAbuseReportReason,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -94,25 +93,11 @@ func listHandler(
 		),
 	)
 
-	hl = input.Hl
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	va := videoAbuseReportReason.NewVideoAbuseReportReason(
-		videoAbuseReportReason.WithHL(hl),
-		videoAbuseReportReason.WithService(nil),
-	)
-
-	return va.List(parts, output, jsonpath, writer)
 }

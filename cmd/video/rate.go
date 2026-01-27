@@ -6,7 +6,6 @@ package video
 import (
 	"bytes"
 	"context"
-	"io"
 	"log/slog"
 	"time"
 
@@ -24,11 +23,6 @@ const (
 	rateIdsUsage = "IDs of the videos to rate"
 	rateRUsage   = "like|dislike|none"
 )
-
-type rateIn struct {
-	Ids    []string `json:"ids"`
-	Rating string   `json:"rating"`
-}
 
 var rateInSchema = &jsonschema.Schema{
 	Type:     "object",
@@ -71,7 +65,11 @@ var rateCmd = &cobra.Command{
 	Short: rateShort,
 	Long:  rateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := rate(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithIds(ids),
+			video.WithRating(rating),
+		)
+		err := input.Rate(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -80,7 +78,7 @@ var rateCmd = &cobra.Command{
 }
 
 func rateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input rateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -89,24 +87,11 @@ func rateHandler(
 		),
 	)
 
-	ids = input.Ids
-	rating = input.Rating
-
 	var writer bytes.Buffer
-	err := rate(&writer)
+	err := input.Rate(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func rate(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithIds(ids),
-		video.WithRating(rating),
-		video.WithService(nil),
-	)
-
-	return v.Rate(writer)
 }

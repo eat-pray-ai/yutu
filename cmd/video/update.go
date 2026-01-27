@@ -7,13 +7,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -27,22 +25,6 @@ const (
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
 )
-
-type updateIn struct {
-	Ids         []string `json:"ids"`
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Tags        []string `json:"tags"`
-	Language    string   `json:"language"`
-	License     string   `json:"license"`
-	Thumbnail   string   `json:"thumbnail"`
-	PlaylistId  string   `json:"playlistId"`
-	CategoryId  string   `json:"categoryId"`
-	Privacy     string   `json:"privacy"`
-	Embeddable  *string  `json:"embeddable,omitempty"`
-	Output      string   `json:"output"`
-	Jsonpath    string   `json:"jsonpath"`
-}
 
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
@@ -63,17 +45,14 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
 			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
 		},
-		"thumbnail":  {Type: "string", Description: thumbnailUsage},
-		"playlistId": {Type: "string", Description: pidUsage},
-		"categoryId": {Type: "string", Description: caidUsage},
+		"thumbnail":   {Type: "string", Description: thumbnailUsage},
+		"playlist_id": {Type: "string", Description: pidUsage},
+		"category_id": {Type: "string", Description: caidUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage,
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
-		"embeddable": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: embeddableUsage,
-		},
+		"embeddable": {Type: "boolean", Description: embeddableUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -120,7 +99,22 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithIds(ids),
+			video.WithTitle(title),
+			video.WithDescription(description),
+			video.WithTags(tags),
+			video.WithLanguage(language),
+			video.WithLicense(license),
+			video.WithPlaylistId(playListId),
+			video.WithThumbnail(thumbnail),
+			video.WithCategory(categoryId),
+			video.WithPrivacy(privacy),
+			video.WithEmbeddable(embeddable),
+			video.WithOutput(output),
+			video.WithJsonpath(jsonpath),
+		)
+		err := input.Update(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -129,7 +123,7 @@ var updateCmd = &cobra.Command{
 }
 
 func updateHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input updateIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -140,45 +134,11 @@ func updateHandler(
 		),
 	)
 
-	ids = input.Ids
-	title = input.Title
-	description = input.Description
-	tags = input.Tags
-	language = input.Language
-	license = input.License
-	thumbnail = input.Thumbnail
-	playListId = input.PlaylistId
-	categoryId = input.CategoryId
-	privacy = input.Privacy
-	embeddable = utils.StrToBoolPtr(input.Embeddable)
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := update(&writer)
+	err := input.Update(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func update(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithIds(ids),
-		video.WithTitle(title),
-		video.WithDescription(description),
-		video.WithTags(tags),
-		video.WithLanguage(language),
-		video.WithLicense(license),
-		video.WithPlaylistId(playListId),
-		video.WithThumbnail(thumbnail),
-		video.WithCategory(categoryId),
-		video.WithPrivacy(privacy),
-		video.WithEmbeddable(embeddable),
-		video.WithMaxResults(1),
-		video.WithService(nil),
-	)
-
-	return v.Update(output, jsonpath, writer)
 }

@@ -15,21 +15,30 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want VideoAbuseReportReason[youtube.VideoAbuseReportReason]
+		want IVideoAbuseReportReason[youtube.VideoAbuseReportReason]
 	}{
 		{
 			name: "with all options",
 			args: args{
 				opts: []Option{
 					WithHL("en"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"id", "snippet"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[*].id"),
+					WithService(svc),
 				},
 			},
-			want: &videoAbuseReportReason{
-				Hl: "en",
+			want: &VideoAbuseReportReason{
+				Hl:       "en",
+				Parts:    []string{"id", "snippet"},
+				Output:   "json",
+				Jsonpath: "$.items[*].id",
+				service:  svc,
 			},
 		},
 		{
@@ -37,17 +46,21 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &videoAbuseReportReason{},
+			want: &VideoAbuseReportReason{},
 		},
 		{
 			name: "with empty string values",
 			args: args{
 				opts: []Option{
 					WithHL(""),
+					WithOutput(""),
+					WithJsonpath(""),
 				},
 			},
-			want: &videoAbuseReportReason{
-				Hl: "",
+			want: &VideoAbuseReportReason{
+				Hl:       "",
+				Output:   "",
+				Jsonpath: "",
 			},
 		},
 		{
@@ -55,10 +68,12 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithHL("ja"),
+					WithParts([]string{"snippet"}),
 				},
 			},
-			want: &videoAbuseReportReason{
-				Hl: "ja",
+			want: &VideoAbuseReportReason{
+				Hl:    "ja",
+				Parts: []string{"snippet"},
 			},
 		},
 	}
@@ -69,7 +84,10 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				if got := NewVideoAbuseReportReason(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewVideoAbuseReportReason() = %v, want %v", got, tt.want)
+					t.Errorf(
+						"%s\nNewVideoAbuseReportReason() = %v\nwant %v",
+						tt.name, got, tt.want,
+					)
 				}
 			},
 		)

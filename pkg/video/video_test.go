@@ -28,11 +28,12 @@ func TestNewVideo(t *testing.T) {
 	notifySubscribersFalse := false
 	publicStatsViewableTrue := true
 	publicStatsViewableFalse := false
+	svc := &youtube.Service{}
 
 	tests := []struct {
 		name string
 		args args
-		want Video[youtube.Video]
+		want IVideo[youtube.Video]
 	}{
 		{
 			name: "with all options",
@@ -70,10 +71,13 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(&publicStatsViewableTrue),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet", "contentDetails"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &video{
+			want: &Video{
 				Ids:                           []string{"video1", "video2"},
 				AutoLevels:                    &autoLevelsTrue,
 				File:                          "/path/to/video.mp4",
@@ -106,6 +110,10 @@ func TestNewVideo(t *testing.T) {
 				PublicStatsViewable:           &publicStatsViewableTrue,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Parts:                         []string{"snippet", "contentDetails"},
+				Output:                        "json",
+				Jsonpath:                      "items.id",
+				service:                       svc,
 			},
 		},
 		{
@@ -113,7 +121,7 @@ func TestNewVideo(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &video{},
+			want: &Video{},
 		},
 		{
 			name: "with nil boolean options",
@@ -127,7 +135,7 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(nil),
 				},
 			},
-			want: &video{},
+			want: &Video{},
 		},
 		{
 			name: "with false boolean options",
@@ -141,7 +149,7 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(&publicStatsViewableFalse),
 				},
 			},
-			want: &video{
+			want: &Video{
 				AutoLevels:          &autoLevelsFalse,
 				ForKids:             &forKidsFalse,
 				Embeddable:          &embeddableFalse,
@@ -157,9 +165,7 @@ func TestNewVideo(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &video{
-				MaxResults: math.MaxInt64,
-			},
+			want: &Video{MaxResults: math.MaxInt64},
 		},
 		{
 			name: "with negative max results",
@@ -168,9 +174,7 @@ func TestNewVideo(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &video{
-				MaxResults: 1,
-			},
+			want: &Video{MaxResults: 1},
 		},
 		{
 			name: "with empty string values",
@@ -199,7 +203,7 @@ func TestNewVideo(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel(""),
 				},
 			},
-			want: &video{
+			want: &Video{
 				File:                          "",
 				Title:                         "",
 				Description:                   "",
@@ -235,7 +239,7 @@ func TestNewVideo(t *testing.T) {
 					WithForKids(&forKidsFalse),
 				},
 			},
-			want: &video{
+			want: &Video{
 				Title:       "My Video",
 				Description: "A great video",
 				Tags:        []string{"tutorial", "golang"},
@@ -250,7 +254,7 @@ func TestNewVideo(t *testing.T) {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				if got := NewVideo(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("NewVideo() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewVideo() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

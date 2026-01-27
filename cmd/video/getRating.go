@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,13 +25,6 @@ const (
 	grIdsUsage     = "IDs of the videos to get the rating for"
 )
 
-type getRatingIn struct {
-	Ids                    []string `json:"ids"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var getRatingInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"ids"},
@@ -41,7 +33,7 @@ var getRatingInSchema = &jsonschema.Schema{
 			Type: "array", Description: grIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"onBehalfOfContentOwner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
@@ -79,7 +71,14 @@ var getRatingCmd = &cobra.Command{
 	Short: getRatingShort,
 	Long:  getRatingLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := getRating(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithIds(ids),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			video.WithOutput(output),
+			video.WithJsonpath(jsonpath),
+			video.WithService(nil),
+		)
+		err := input.GetRating(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -88,7 +87,7 @@ var getRatingCmd = &cobra.Command{
 }
 
 func getRatingHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input getRatingIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -99,26 +98,11 @@ func getRatingHandler(
 		),
 	)
 
-	ids = input.Ids
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := getRating(&writer)
+	err := input.GetRating(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func getRating(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithIds(ids),
-		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		video.WithService(nil),
-	)
-
-	return v.GetRating(output, jsonpath, writer)
 }

@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -27,23 +26,6 @@ const (
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 )
 
-type listIn struct {
-	Ids                    []string `json:"ids"`
-	Chart                  string   `json:"chart"`
-	Hl                     string   `json:"hl"`
-	Locale                 string   `json:"locale"`
-	VideoCategoryId        string   `json:"videoCategoryId"`
-	RegionCode             string   `json:"regionCode"`
-	MaxHeight              int64    `json:"maxHeight"`
-	MaxWidth               int64    `json:"maxWidth"`
-	MaxResults             int64    `json:"maxResults"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-	MyRating               string   `json:"myRating"`
-	Parts                  []string `json:"parts"`
-	Output                 string   `json:"output"`
-	Jsonpath               string   `json:"jsonpath"`
-}
-
 var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
@@ -56,23 +38,23 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Description: chartUsage,
 			Enum: []any{"chartUnspecified", "mostPopular", ""},
 		},
-		"hl":              {Type: "string", Description: hlUsage},
-		"locale":          {Type: "string", Description: localUsage},
-		"videoCategoryId": {Type: "string", Description: caidUsage},
-		"regionCode":      {Type: "string", Description: rcUsage},
-		"maxHeight": {
+		"hl":          {Type: "string", Description: hlUsage},
+		"locale":      {Type: "string", Description: localUsage},
+		"category_id": {Type: "string", Description: caidUsage},
+		"region_code": {Type: "string", Description: rcUsage},
+		"max_height": {
 			Type: "number", Description: mhUsage, Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"maxWidth": {
+		"max_width": {
 			Type: "number", Description: mwUsage, Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"maxResults": {
+		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: jsonschema.Ptr(float64(0)),
 		},
-		"onBehalfOfContentOwner": {Type: "string"},
-		"myRating":               {Type: "string", Description: listMrUsage},
+		"on_behalf_of_content_owner": {Type: "string"},
+		"rating":                     {Type: "string", Description: listMrUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -125,7 +107,23 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := list(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithIds(ids),
+			video.WithChart(chart),
+			video.WithHl(hl),
+			video.WithLocale(locale),
+			video.WithCategory(categoryId),
+			video.WithRegionCode(regionCode),
+			video.WithMaxHeight(maxHeight),
+			video.WithMaxWidth(maxWidth),
+			video.WithMaxResults(maxResults),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			video.WithRating(rating),
+			video.WithParts(parts),
+			video.WithOutput(output),
+			video.WithJsonpath(jsonpath),
+		)
+		err := input.List(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -134,7 +132,7 @@ var listCmd = &cobra.Command{
 }
 
 func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input listIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -143,45 +141,11 @@ func listHandler(
 		),
 	)
 
-	ids = input.Ids
-	chart = input.Chart
-	hl = input.Hl
-	locale = input.Locale
-	categoryId = input.VideoCategoryId
-	regionCode = input.RegionCode
-	maxHeight = input.MaxHeight
-	maxWidth = input.MaxWidth
-	maxResults = input.MaxResults
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	rating = input.MyRating
-	parts = input.Parts
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := list(&writer)
+	err := input.List(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func list(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithIds(ids),
-		video.WithChart(chart),
-		video.WithHl(hl),
-		video.WithLocale(locale),
-		video.WithCategory(categoryId),
-		video.WithRegionCode(regionCode),
-		video.WithMaxHeight(maxHeight),
-		video.WithMaxWidth(maxWidth),
-		video.WithMaxResults(maxResults),
-		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		video.WithRating(rating),
-		video.WithService(nil),
-	)
-
-	return v.List(parts, output, jsonpath, writer)
 }

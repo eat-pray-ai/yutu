@@ -15,10 +15,12 @@ func TestNewVideoCategory(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
+
 	tests := []struct {
 		name string
 		args args
-		want VideoCategory[youtube.VideoCategory]
+		want IVideoCategory[youtube.VideoCategory]
 	}{
 		{
 			name: "with all options",
@@ -27,13 +29,20 @@ func TestNewVideoCategory(t *testing.T) {
 					WithIds([]string{"cat1", "cat2"}),
 					WithHl("en"),
 					WithRegionCode("US"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet"}),
+					WithOutput("json"),
+					WithJsonpath("items.id"),
+					WithService(svc),
 				},
 			},
-			want: &videoCategory{
+			want: &VideoCategory{
 				Ids:        []string{"cat1", "cat2"},
 				Hl:         "en",
 				RegionCode: "US",
+				Parts:      []string{"snippet"},
+				Output:     "json",
+				Jsonpath:   "items.id",
+				service:    svc,
 			},
 		},
 		{
@@ -41,7 +50,7 @@ func TestNewVideoCategory(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &videoCategory{},
+			want: &VideoCategory{},
 		},
 		{
 			name: "with empty string values",
@@ -51,7 +60,7 @@ func TestNewVideoCategory(t *testing.T) {
 					WithRegionCode(""),
 				},
 			},
-			want: &videoCategory{
+			want: &VideoCategory{
 				Hl:         "",
 				RegionCode: "",
 			},
@@ -64,7 +73,7 @@ func TestNewVideoCategory(t *testing.T) {
 					WithRegionCode("JP"),
 				},
 			},
-			want: &videoCategory{
+			want: &VideoCategory{
 				Hl:         "ja",
 				RegionCode: "JP",
 			},
@@ -77,7 +86,7 @@ func TestNewVideoCategory(t *testing.T) {
 				if got := NewVideoCategory(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("NewVideoCategory() = %v, want %v", got, tt.want)
+					t.Errorf("%s\nNewVideoCategory() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)

@@ -7,13 +7,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -27,38 +25,11 @@ const (
 	insertLangUsage = "Language of the video"
 )
 
-type insertIn struct {
-	AutoLevels                    *string  `json:"autoLevels,omitempty"`
-	File                          string   `json:"file"`
-	Title                         string   `json:"title"`
-	Description                   string   `json:"description"`
-	Tags                          []string `json:"tags"`
-	Language                      string   `json:"language"`
-	License                       string   `json:"license"`
-	Thumbnail                     string   `json:"thumbnail"`
-	ChannelId                     string   `json:"channelId"`
-	PlaylistId                    string   `json:"playlistId"`
-	CategoryId                    string   `json:"categoryId"`
-	Privacy                       string   `json:"privacy"`
-	ForKids                       *string  `json:"forKids,omitempty"`
-	Embeddable                    *string  `json:"embeddable,omitempty"`
-	PublishAt                     string   `json:"publishAt"`
-	Stabilize                     *string  `json:"stabilize,omitempty"`
-	NotifySubscribers             *string  `json:"notifySubscribers,omitempty"`
-	PublicStatsViewable           *string  `json:"publicStatsViewable,omitempty"`
-	OnBehalfOfContentOwner        string   `json:"onBehalfOfContentOwner"`
-	OnBehalfOfContentOwnerChannel string   `json:"onBehalfOfContentOwnerChannel"`
-	Output                        string   `json:"output"`
-	Jsonpath                      string   `json:"jsonpath"`
-}
-
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"file", "categoryId", "privacy"},
+	Required: []string{"file", "category_id", "privacy"},
 	Properties: map[string]*jsonschema.Schema{
-		"autoLevels": {
-			Type: "string", Enum: []any{"true", "false", ""}, Description: alUsage,
-		},
+		"auto_levels": {Type: "boolean", Description: alUsage},
 		"file":        {Type: "string", Description: fileUsage},
 		"title":       {Type: "string", Description: titleUsage},
 		"description": {Type: "string", Description: descUsage},
@@ -71,39 +42,25 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
 			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
 		},
-		"thumbnail":  {Type: "string", Description: thumbnailUsage},
-		"channelId":  {Type: "string", Description: chidUsage},
-		"playlistId": {Type: "string", Description: pidUsage},
-		"categoryId": {Type: "string", Description: caidUsage},
+		"thumbnail":   {Type: "string", Description: thumbnailUsage},
+		"channel_id":  {Type: "string", Description: chidUsage},
+		"playlist_id": {Type: "string", Description: pidUsage},
+		"category_id": {Type: "string", Description: caidUsage},
 		"privacy": {
-			Type: "string", Enum: []any{"public", "private", "unlisted", ""},
-			Description: privacyUsage,
+			Type: "string", Description: privacyUsage,
+			Enum: []any{"public", "private", "unlisted", ""},
 		},
-		"forKids": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: fkUsage,
+		"for_kids": {
+			Type: "boolean", Description: fkUsage,
 		},
-		"embeddable": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: embeddableUsage,
-		},
-		"publishAt": {
-			Type: "string", Description: paUsage,
-		},
-		"stabilize": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: stabilizeUsage,
-		},
-		"notifySubscribers": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: nsUsage,
-		},
-		"publicStatsViewable": {
-			Type: "string", Enum: []any{"true", "false", ""},
-			Description: psvUsage,
-		},
-		"onBehalfOfContentOwner":        {Type: "string"},
-		"onBehalfOfContentOwnerChannel": {Type: "string"},
+		"embeddable":            {Type: "boolean", Description: embeddableUsage},
+		"publish_at":            {Type: "string", Description: paUsage},
+		"stabilize":             {Type: "boolean", Description: stabilizeUsage},
+		"notify_subscribers":    {Type: "boolean", Description: nsUsage},
+		"public_stats_viewable": {Type: "boolean", Description: psvUsage},
+
+		"on_behalf_of_content_owner":         {Type: "string"},
+		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -171,7 +128,31 @@ var insertCmd = &cobra.Command{
 	Short: insertShort,
 	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := insert(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithAutoLevels(autoLevels),
+			video.WithFile(file),
+			video.WithTitle(title),
+			video.WithDescription(description),
+			video.WithTags(tags),
+			video.WithLanguage(language),
+			video.WithLicense(license),
+			video.WithThumbnail(thumbnail),
+			video.WithChannelId(channelId),
+			video.WithPlaylistId(playListId),
+			video.WithCategory(categoryId),
+			video.WithPrivacy(privacy),
+			video.WithForKids(forKids),
+			video.WithEmbeddable(embeddable),
+			video.WithPublishAt(publishAt),
+			video.WithStabilize(stabilize),
+			video.WithNotifySubscribers(notifySubscribers),
+			video.WithPublicStatsViewable(publicStatsViewable),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
+			video.WithOutput(output),
+			video.WithJsonpath(jsonpath),
+		)
+		err := input.Insert(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -180,7 +161,7 @@ var insertCmd = &cobra.Command{
 }
 
 func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input insertIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -191,62 +172,11 @@ func insertHandler(
 		),
 	)
 
-	autoLevels = utils.StrToBoolPtr(input.AutoLevels)
-	file = input.File
-	title = input.Title
-	description = input.Description
-	tags = input.Tags
-	language = input.Language
-	license = input.License
-	thumbnail = input.Thumbnail
-	channelId = input.ChannelId
-	playListId = input.PlaylistId
-	categoryId = input.CategoryId
-	privacy = input.Privacy
-	forKids = utils.StrToBoolPtr(input.ForKids)
-	embeddable = utils.StrToBoolPtr(input.Embeddable)
-	publishAt = input.PublishAt
-	stabilize = utils.StrToBoolPtr(input.Stabilize)
-	notifySubscribers = utils.StrToBoolPtr(input.NotifySubscribers)
-	publicStatsViewable = utils.StrToBoolPtr(input.PublicStatsViewable)
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-	onBehalfOfContentOwnerChannel = input.OnBehalfOfContentOwnerChannel
-	output = input.Output
-	jsonpath = input.Jsonpath
-
 	var writer bytes.Buffer
-	err := insert(&writer)
+	err := input.Insert(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func insert(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithAutoLevels(autoLevels),
-		video.WithFile(file),
-		video.WithTitle(title),
-		video.WithDescription(description),
-		video.WithTags(tags),
-		video.WithLanguage(language),
-		video.WithLicense(license),
-		video.WithThumbnail(thumbnail),
-		video.WithChannelId(channelId),
-		video.WithPlaylistId(playListId),
-		video.WithCategory(categoryId),
-		video.WithPrivacy(privacy),
-		video.WithForKids(forKids),
-		video.WithEmbeddable(embeddable),
-		video.WithPublishAt(publishAt),
-		video.WithStabilize(stabilize),
-		video.WithNotifySubscribers(notifySubscribers),
-		video.WithPublicStatsViewable(publicStatsViewable),
-		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		video.WithService(nil),
-	)
-
-	return v.Insert(output, jsonpath, writer)
 }

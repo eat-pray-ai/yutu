@@ -6,8 +6,6 @@ package video
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"io"
 	"log/slog"
 	"time"
 
@@ -26,31 +24,19 @@ const (
 	raLangUsage      = "Language that the content was viewed in"
 )
 
-type reportAbuseIn struct {
-	Ids                    []string `json:"ids"`
-	ReasonId               string   `json:"reasonId"`
-	SecondaryReasonId      string   `json:"secondaryReasonId"`
-	Comments               string   `json:"comments"`
-	Language               string   `json:"language"`
-	OnBehalfOfContentOwner string   `json:"onBehalfOfContentOwner"`
-}
-
 var reportAbuseInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"ids", "reasonId"},
+	Required: []string{"ids", "reason_id"},
 	Properties: map[string]*jsonschema.Schema{
 		"ids": {
-			Type: "array", Items: &jsonschema.Schema{
-				Type: "string",
-			},
-			Description: raIdsUsage,
-			Default:     json.RawMessage(`[]`),
+			Type: "array", Description: raIdsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"reasonId":               {Type: "string", Description: ridUsage},
-		"secondaryReasonId":      {Type: "string", Description: sridUsage},
-		"comments":               {Type: "string", Description: commentsUsage},
-		"language":               {Type: "string", Description: raLangUsage},
-		"onBehalfOfContentOwner": {Type: "string"},
+		"reason_id":                  {Type: "string", Description: ridUsage},
+		"secondary_reason_id":        {Type: "string", Description: sridUsage},
+		"comments":                   {Type: "string", Description: commentsUsage},
+		"language":                   {Type: "string", Description: raLangUsage},
+		"on_behalf_of_content_owner": {Type: "string"},
 	},
 }
 
@@ -93,7 +79,15 @@ var reportAbuseCmd = &cobra.Command{
 	Short: reportAbuseShort,
 	Long:  reportAbuseLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := reportAbuse(cmd.OutOrStdout())
+		input := video.NewVideo(
+			video.WithIds(ids),
+			video.WithReasonId(reasonId),
+			video.WithSecondaryReasonId(secondaryReasonId),
+			video.WithComments(comments),
+			video.WithLanguage(language),
+			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+		)
+		err := input.ReportAbuse(cmd.OutOrStdout())
 		if err != nil {
 			_ = cmd.Help()
 			cmd.PrintErrf("Error: %v\n", err)
@@ -102,7 +96,7 @@ var reportAbuseCmd = &cobra.Command{
 }
 
 func reportAbuseHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input reportAbuseIn,
+	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
 ) (*mcp.CallToolResult, any, error) {
 	logger := slog.New(
 		mcp.NewLoggingHandler(
@@ -113,32 +107,11 @@ func reportAbuseHandler(
 		),
 	)
 
-	ids = input.Ids
-	reasonId = input.ReasonId
-	secondaryReasonId = input.SecondaryReasonId
-	comments = input.Comments
-	language = input.Language
-	onBehalfOfContentOwner = input.OnBehalfOfContentOwner
-
 	var writer bytes.Buffer
-	err := reportAbuse(&writer)
+	err := input.ReportAbuse(&writer)
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error(), "input", input)
 		return nil, nil, err
 	}
 	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
-}
-
-func reportAbuse(writer io.Writer) error {
-	v := video.NewVideo(
-		video.WithIds(ids),
-		video.WithReasonId(reasonId),
-		video.WithSecondaryReasonId(secondaryReasonId),
-		video.WithComments(comments),
-		video.WithLanguage(language),
-		video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		video.WithService(nil),
-	)
-
-	return v.ReportAbuse(writer)
 }

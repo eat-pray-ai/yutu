@@ -15,33 +15,47 @@ import (
 )
 
 var (
-	service                      *youtube.Service
 	errGetVideoAbuseReportReason = errors.New("failed to get video abuse report reason")
 )
 
-type videoAbuseReportReason struct {
-	Hl string `yaml:"hl" json:"hl"`
+type VideoAbuseReportReason struct {
+	Hl       string   `yaml:"hl" json:"hl"`
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+	service  *youtube.Service
 }
 
-type VideoAbuseReportReason[T any] interface {
-	Get([]string) ([]*T, error)
-	List([]string, string, string, io.Writer) error
+type IVideoAbuseReportReason[T any] interface {
+	Get() ([]*T, error)
+	List(io.Writer) error
+	preRun()
 }
 
-type Option func(*videoAbuseReportReason)
+type Option func(*VideoAbuseReportReason)
 
-func NewVideoAbuseReportReason(opt ...Option) VideoAbuseReportReason[youtube.VideoAbuseReportReason] {
-	va := &videoAbuseReportReason{}
+func NewVideoAbuseReportReason(opt ...Option) IVideoAbuseReportReason[youtube.VideoAbuseReportReason] {
+	va := &VideoAbuseReportReason{}
 	for _, o := range opt {
 		o(va)
 	}
 	return va
 }
 
-func (va *videoAbuseReportReason) Get(parts []string) (
+func (va *VideoAbuseReportReason) preRun() {
+	if va.service == nil {
+		va.service = auth.NewY2BService(
+			auth.WithCredential("", pkg.Root.FS()),
+			auth.WithCacheToken("", pkg.Root.FS()),
+		).GetService()
+	}
+}
+
+func (va *VideoAbuseReportReason) Get() (
 	[]*youtube.VideoAbuseReportReason, error,
 ) {
-	call := service.VideoAbuseReportReasons.List(parts)
+	va.preRun()
+	call := va.service.VideoAbuseReportReasons.List(va.Parts)
 	if va.Hl != "" {
 		call = call.Hl(va.Hl)
 	}
@@ -54,19 +68,17 @@ func (va *videoAbuseReportReason) Get(parts []string) (
 	return res.Items, nil
 }
 
-func (va *videoAbuseReportReason) List(
-	parts []string, output string, jsonpath string, writer io.Writer,
-) error {
-	videoAbuseReportReasons, err := va.Get(parts)
+func (va *VideoAbuseReportReason) List(writer io.Writer) error {
+	videoAbuseReportReasons, err := va.Get()
 	if err != nil {
 		return err
 	}
 
-	switch output {
+	switch va.Output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons, jsonpath, writer)
+		utils.PrintJSON(videoAbuseReportReasons, va.Jsonpath, writer)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons, jsonpath, writer)
+		utils.PrintYAML(videoAbuseReportReasons, va.Jsonpath, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -81,19 +93,31 @@ func (va *videoAbuseReportReason) List(
 }
 
 func WithHL(hl string) Option {
-	return func(vc *videoAbuseReportReason) {
-		vc.Hl = hl
+	return func(va *VideoAbuseReportReason) {
+		va.Hl = hl
+	}
+}
+
+func WithParts(parts []string) Option {
+	return func(va *VideoAbuseReportReason) {
+		va.Parts = parts
+	}
+}
+
+func WithOutput(output string) Option {
+	return func(va *VideoAbuseReportReason) {
+		va.Output = output
+	}
+}
+
+func WithJsonpath(jsonpath string) Option {
+	return func(va *VideoAbuseReportReason) {
+		va.Jsonpath = jsonpath
 	}
 }
 
 func WithService(svc *youtube.Service) Option {
-	return func(_ *videoAbuseReportReason) {
-		if svc == nil {
-			svc = auth.NewY2BService(
-				auth.WithCredential("", pkg.Root.FS()),
-				auth.WithCacheToken("", pkg.Root.FS()),
-			).GetService()
-		}
-		service = svc
+	return func(va *VideoAbuseReportReason) {
+		va.service = svc
 	}
 }
