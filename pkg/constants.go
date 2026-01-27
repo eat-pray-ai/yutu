@@ -3,7 +3,10 @@
 
 package pkg
 
-import "github.com/jedib0t/go-pretty/v6/table"
+import (
+	"github.com/jedib0t/go-pretty/v6/table"
+	"google.golang.org/api/youtube/v3"
+)
 
 const (
 	PartsUsage  = "Comma separated parts"
@@ -36,3 +39,38 @@ var (
 		Title: table.TitleOptionsDefault,
 	}
 )
+
+type DefaultFields struct {
+	Service  *youtube.Service
+	Parts    []string `yaml:"parts" json:"parts"`
+	Output   string   `yaml:"output" json:"output"`
+	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+}
+
+type HasDefaultFields interface {
+	GetDefaultFields() *DefaultFields
+}
+
+func WithParts[T HasDefaultFields](parts []string) func(T) {
+	return func(t T) {
+		t.GetDefaultFields().Parts = parts
+	}
+}
+
+func WithOutput[T HasDefaultFields](output string) func(T) {
+	return func(t T) {
+		t.GetDefaultFields().Output = output
+	}
+}
+
+func WithJsonpath[T HasDefaultFields](jsonpath string) func(T) {
+	return func(t T) {
+		t.GetDefaultFields().Jsonpath = jsonpath
+	}
+}
+
+func WithService[T HasDefaultFields](svc *youtube.Service) func(T) {
+	return func(t T) {
+		t.GetDefaultFields().Service = svc
+	}
+}

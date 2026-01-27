@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -37,6 +38,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
+				DefaultFields:          &pkg.DefaultFields{Service: svc},
 				ChannelId:              "channel123",
 				File:                   "/path/to/watermark.png",
 				InVideoPosition:        "topRight",
@@ -44,7 +46,6 @@ func TestNewWatermark(t *testing.T) {
 				OffsetMs:               1000,
 				OffsetType:             "offsetFromStart",
 				OnBehalfOfContentOwner: "owner123",
-				service:                svc,
 			},
 		},
 		{
@@ -52,7 +53,7 @@ func TestNewWatermark(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Watermark{},
+			want: &Watermark{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with zero values",
@@ -62,7 +63,11 @@ func TestNewWatermark(t *testing.T) {
 					WithOffsetMs(0),
 				},
 			},
-			want: &Watermark{DurationMs: 0, OffsetMs: 0},
+			want: &Watermark{
+				DefaultFields: &pkg.DefaultFields{},
+				DurationMs:    0,
+				OffsetMs:      0,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -76,6 +81,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
+				DefaultFields:          &pkg.DefaultFields{},
 				ChannelId:              "",
 				File:                   "",
 				InVideoPosition:        "",
@@ -94,6 +100,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
+				DefaultFields:   &pkg.DefaultFields{},
 				ChannelId:       "myChannel",
 				File:            "/watermarks/logo.png",
 				InVideoPosition: "bottomLeft",

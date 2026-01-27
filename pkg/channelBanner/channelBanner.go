@@ -20,37 +20,37 @@ var (
 )
 
 type ChannelBanner struct {
+	*pkg.DefaultFields
 	ChannelId string `yaml:"channel_id" json:"channel_id"`
 	File      string `yaml:"file" json:"file"`
-	Output    string `yaml:"output" json:"output"`
-	Jsonpath  string `yaml:"jsonpath" json:"jsonpath"`
 
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
-
-	service *youtube.Service
 }
 
 type IChannelBanner interface {
 	Insert(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(banner *ChannelBanner)
 
 func NewChannelBanner(opts ...Option) IChannelBanner {
-	cb := &ChannelBanner{}
-
+	cb := &ChannelBanner{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(cb)
 	}
-
 	return cb
 }
 
+func (cb *ChannelBanner) GetDefaultFields() *pkg.DefaultFields {
+	return cb.DefaultFields
+}
+
 func (cb *ChannelBanner) preRun() {
-	if cb.service == nil {
-		cb.service = auth.NewY2BService(
+	if cb.Service == nil {
+		cb.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -68,7 +68,7 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 	}(file)
 	cbr := &youtube.ChannelBannerResource{}
 
-	call := cb.service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
+	call := cb.Service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
 	if cb.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(cb.OnBehalfOfContentOwner)
 	}
@@ -105,18 +105,6 @@ func WithFile(file string) Option {
 	}
 }
 
-func WithOutput(output string) Option {
-	return func(cb *ChannelBanner) {
-		cb.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(cb *ChannelBanner) {
-		cb.Jsonpath = jsonpath
-	}
-}
-
 func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	return func(cb *ChannelBanner) {
 		cb.OnBehalfOfContentOwner = onBehalfOfContentOwner
@@ -129,8 +117,8 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 	}
 }
 
-func WithService(svc *youtube.Service) Option {
-	return func(cb *ChannelBanner) {
-		cb.service = svc
-	}
-}
+var (
+	WithOutput   = pkg.WithOutput[*ChannelBanner]
+	WithJsonpath = pkg.WithJsonpath[*ChannelBanner]
+	WithService  = pkg.WithService[*ChannelBanner]
+)

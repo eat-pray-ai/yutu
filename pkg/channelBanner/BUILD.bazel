@@ -17,5 +17,8 @@ go_test(
     name = "channelBanner_test",
     srcs = ["channelBanner_test.go"],
     embed = [":channelBanner"],
-    deps = ["@org_golang_google_api//youtube/v3:youtube"],
+    deps = [
+        "//pkg",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
 )

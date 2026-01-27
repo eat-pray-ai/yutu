@@ -9,7 +9,6 @@ go_library(
         "//pkg",
         "//pkg/auth",
         "//pkg/utils",
-        "@org_golang_google_api//youtube/v3:youtube",
     ],
 )
 
@@ -17,5 +16,8 @@ go_test(
     name = "thumbnail_test",
     srcs = ["thumbnail_test.go"],
     embed = [":thumbnail"],
-    deps = ["@org_golang_google_api//youtube/v3:youtube"],
+    deps = [
+        "//pkg",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
 )

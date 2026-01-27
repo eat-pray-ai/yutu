@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -34,11 +35,13 @@ func TestNewI18nLanguage(t *testing.T) {
 				},
 			},
 			want: &I18nLanguage{
-				Hl:       "en",
-				Parts:    []string{"snippet"},
-				Output:   "json",
-				Jsonpath: "$",
-				service:  &youtube.Service{},
+				DefaultFields: &pkg.DefaultFields{
+					Service:  &youtube.Service{},
+					Parts:    []string{"snippet"},
+					Output:   "json",
+					Jsonpath: "$",
+				},
+				Hl: "en",
 			},
 		},
 		{
@@ -46,7 +49,7 @@ func TestNewI18nLanguage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &I18nLanguage{},
+			want: &I18nLanguage{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with empty string value",
@@ -55,7 +58,10 @@ func TestNewI18nLanguage(t *testing.T) {
 					WithHl(""),
 				},
 			},
-			want: &I18nLanguage{Hl: ""},
+			want: &I18nLanguage{
+				DefaultFields: &pkg.DefaultFields{},
+				Hl:            "",
+			},
 		},
 	}
 

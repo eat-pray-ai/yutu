@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -50,6 +51,12 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "items.id",
+				},
 				Ids:              []string{"comment1", "comment2"},
 				AuthorChannelId:  "author123",
 				CanRate:          &canRateTrue,
@@ -62,10 +69,6 @@ func TestNewComment(t *testing.T) {
 				BanAuthor:        &banAuthorTrue,
 				VideoId:          "video123",
 				ViewerRating:     "like",
-				Parts:            []string{"id", "snippet"},
-				Output:           "json",
-				Jsonpath:         "items.id",
-				service:          svc,
 			},
 		},
 		{
@@ -73,7 +76,7 @@ func TestNewComment(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Comment{},
+			want: &Comment{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -83,7 +86,7 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(nil),
 				},
 			},
-			want: &Comment{},
+			want: &Comment{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -94,8 +97,9 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				CanRate:   &canRateFalse,
-				BanAuthor: &banAuthorFalse,
+				DefaultFields: &pkg.DefaultFields{},
+				CanRate:       &canRateFalse,
+				BanAuthor:     &banAuthorFalse,
 			},
 		},
 		{
@@ -106,7 +110,8 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				MaxResults: math.MaxInt64,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
 			},
 		},
 		{
@@ -117,7 +122,8 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				MaxResults: 1,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
 			},
 		},
 		{
@@ -135,6 +141,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
+				DefaultFields:    &pkg.DefaultFields{},
 				AuthorChannelId:  "",
 				ChannelId:        "",
 				ParentId:         "",
@@ -157,11 +164,11 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Ids:          []string{"comment1"},
-				TextOriginal: "Partial comment",
-				VideoId:      "video456",
-				MaxResults:   25,
-				service:      svc,
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+				Ids:           []string{"comment1"},
+				TextOriginal:  "Partial comment",
+				VideoId:       "video456",
+				MaxResults:    25,
 			},
 		},
 	}

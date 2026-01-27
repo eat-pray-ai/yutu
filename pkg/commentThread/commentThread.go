@@ -22,6 +22,7 @@ var (
 )
 
 type CommentThread struct {
+	*pkg.DefaultFields
 	Ids                          []string `yaml:"ids" json:"ids"`
 	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
 	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
@@ -33,33 +34,33 @@ type CommentThread struct {
 	TextFormat                   string   `yaml:"text_format" json:"text_format"`
 	TextOriginal                 string   `yaml:"text_original" json:"text_original"`
 	VideoId                      string   `yaml:"video_id" json:"video_id"`
-	Parts                        []string `yaml:"parts" json:"parts"`
-	Output                       string   `yaml:"output" json:"output"`
-	Jsonpath                     string   `yaml:"jsonpath" json:"jsonpath"`
-	service                      *youtube.Service
 }
 
 type ICommentThread[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
 	Insert(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
+	preRun()
 }
 
 type Option func(*CommentThread)
 
 func NewCommentThread(opts ...Option) ICommentThread[youtube.CommentThread] {
-	c := &CommentThread{}
-
+	c := &CommentThread{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
-
 	return c
 }
 
+func (c *CommentThread) GetDefaultFields() *pkg.DefaultFields {
+	return c.DefaultFields
+}
+
 func (c *CommentThread) preRun() {
-	if c.service == nil {
-		c.service = auth.NewY2BService(
+	if c.Service == nil {
+		c.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -68,7 +69,7 @@ func (c *CommentThread) preRun() {
 
 func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
 	c.preRun()
-	call := c.service.CommentThreads.List(c.Parts)
+	call := c.Service.CommentThreads.List(c.Parts)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
 	}
@@ -166,7 +167,7 @@ func (c *CommentThread) Insert(writer io.Writer) error {
 		},
 	}
 
-	res, err := c.service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
+	res, err := c.Service.CommentThreads.Insert([]string{"snippet"}, ct).Do()
 	if err != nil {
 		return errors.Join(errInsertCommentThread, err)
 	}
@@ -254,26 +255,9 @@ func WithVideoId(videoId string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(c *CommentThread) {
-		c.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(c *CommentThread) {
-		c.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(c *CommentThread) {
-		c.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(c *CommentThread) {
-		c.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*CommentThread]
+	WithOutput   = pkg.WithOutput[*CommentThread]
+	WithJsonpath = pkg.WithJsonpath[*CommentThread]
+	WithService  = pkg.WithService[*CommentThread]
+)

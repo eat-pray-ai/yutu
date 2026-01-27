@@ -25,7 +25,7 @@ var (
 )
 
 type Caption struct {
-	service                *youtube.Service
+	*pkg.DefaultFields
 	Ids                    []string `yaml:"ids" json:"ids"`
 	File                   string   `yaml:"file" json:"file"`
 	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
@@ -42,10 +42,6 @@ type Caption struct {
 	VideoId                string   `yaml:"video_id" json:"video_id"`
 	Tfmt                   string   `yaml:"tfmt" json:"tfmt"`
 	Tlang                  string   `yaml:"tlang" json:"tlang"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
 type ICaption[T youtube.Caption] interface {
@@ -55,22 +51,27 @@ type ICaption[T youtube.Caption] interface {
 	Update(io.Writer) error
 	Delete(io.Writer) error
 	Download(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Caption)
 
 func NewCation(opts ...Option) ICaption[youtube.Caption] {
-	c := &Caption{}
+	c := &Caption{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
+func (c *Caption) GetDefaultFields() *pkg.DefaultFields {
+	return c.DefaultFields
+}
+
 func (c *Caption) Get() ([]*youtube.Caption, error) {
 	c.preRun()
-	call := c.service.Captions.List(c.Parts, c.VideoId)
+	call := c.Service.Captions.List(c.Parts, c.VideoId)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
 	}
@@ -143,7 +144,7 @@ func (c *Caption) Insert(writer io.Writer) error {
 		},
 	}
 
-	call := c.service.Captions.Insert([]string{"snippet"}, caption).Media(file)
+	call := c.Service.Captions.Insert([]string{"snippet"}, caption).Media(file)
 	if c.OnBehalfOf != "" {
 		call = call.OnBehalfOf(c.OnBehalfOf)
 	}
@@ -211,7 +212,7 @@ func (c *Caption) Update(writer io.Writer) error {
 		caption.Snippet.VideoId = c.VideoId
 	}
 
-	call := c.service.Captions.Update([]string{"snippet"}, caption)
+	call := c.Service.Captions.Update([]string{"snippet"}, caption)
 	if c.File != "" {
 		file, err := pkg.Root.Open(c.File)
 		if err != nil {
@@ -249,7 +250,7 @@ func (c *Caption) Update(writer io.Writer) error {
 func (c *Caption) Delete(writer io.Writer) error {
 	c.preRun()
 	for _, id := range c.Ids {
-		call := c.service.Captions.Delete(id)
+		call := c.Service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
 			call = call.OnBehalfOf(c.OnBehalfOf)
 		}
@@ -269,7 +270,7 @@ func (c *Caption) Delete(writer io.Writer) error {
 
 func (c *Caption) Download(writer io.Writer) error {
 	c.preRun()
-	call := c.service.Captions.Download(c.Ids[0])
+	call := c.Service.Captions.Download(c.Ids[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
 	}
@@ -314,8 +315,8 @@ func (c *Caption) Download(writer io.Writer) error {
 }
 
 func (c *Caption) preRun() {
-	if c.service == nil {
-		c.service = auth.NewY2BService(
+	if c.Service == nil {
+		c.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -428,26 +429,9 @@ func WithTlang(tlang string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(c *Caption) {
-		c.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(c *Caption) {
-		c.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(c *Caption) {
-		c.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(c *Caption) {
-		c.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Caption]
+	WithOutput   = pkg.WithOutput[*Caption]
+	WithJsonpath = pkg.WithJsonpath[*Caption]
+	WithService  = pkg.WithService[*Caption]
+)

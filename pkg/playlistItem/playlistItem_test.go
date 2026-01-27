@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -47,6 +48,12 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"snippet", "status"},
+					Output:   "json",
+					Jsonpath: "items.id",
+				},
 				Ids:                    []string{"item1", "item2"},
 				Title:                  "Test Item",
 				Description:            "Test item description",
@@ -60,10 +67,6 @@ func TestNewPlaylistItem(t *testing.T) {
 				Privacy:                "public",
 				MaxResults:             50,
 				OnBehalfOfContentOwner: "owner123",
-				Parts:                  []string{"snippet", "status"},
-				Output:                 "json",
-				Jsonpath:               "items.id",
-				service:                svc,
 			},
 		},
 		{
@@ -71,7 +74,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistItem{},
+			want: &PlaylistItem{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with zero max results",
@@ -80,7 +83,10 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &PlaylistItem{MaxResults: math.MaxInt64},
+			want: &PlaylistItem{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -89,7 +95,10 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithMaxResults(-15),
 				},
 			},
-			want: &PlaylistItem{MaxResults: 1},
+			want: &PlaylistItem{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -111,6 +120,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
+				DefaultFields:          &pkg.DefaultFields{Output: "", Jsonpath: ""},
 				Title:                  "",
 				Description:            "",
 				Kind:                   "",
@@ -122,8 +132,6 @@ func TestNewPlaylistItem(t *testing.T) {
 				ChannelId:              "",
 				Privacy:                "",
 				OnBehalfOfContentOwner: "",
-				Output:                 "",
-				Jsonpath:               "",
 			},
 		},
 		{
@@ -139,12 +147,12 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Title:      "My Video",
-				Kind:       "video",
-				KVideoId:   "myVideo123",
-				PlaylistId: "myPlaylist",
-				MaxResults: 25,
-				Parts:      []string{"id"},
+				DefaultFields: &pkg.DefaultFields{Parts: []string{"id"}},
+				Title:         "My Video",
+				Kind:          "video",
+				KVideoId:      "myVideo123",
+				PlaylistId:    "myPlaylist",
+				MaxResults:    25,
 			},
 		},
 	}

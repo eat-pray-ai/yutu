@@ -19,34 +19,34 @@ var (
 )
 
 type I18nLanguage struct {
-	Hl       string   `yaml:"hl" json:"hl"`
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-	service  *youtube.Service
+	*pkg.DefaultFields
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type II18nLanguage[T youtube.I18nLanguage] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*I18nLanguage)
 
 func NewI18nLanguage(opts ...Option) II18nLanguage[youtube.I18nLanguage] {
-	i := &I18nLanguage{}
-
+	i := &I18nLanguage{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(i)
 	}
-
 	return i
 }
 
+func (i *I18nLanguage) GetDefaultFields() *pkg.DefaultFields {
+	return i.DefaultFields
+}
+
 func (i *I18nLanguage) preRun() {
-	if i.service == nil {
-		i.service = auth.NewY2BService(
+	if i.Service == nil {
+		i.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -57,7 +57,7 @@ func (i *I18nLanguage) Get() (
 	[]*youtube.I18nLanguage, error,
 ) {
 	i.preRun()
-	call := i.service.I18nLanguages.List(i.Parts)
+	call := i.Service.I18nLanguages.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
 	}
@@ -100,26 +100,9 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(i *I18nLanguage) {
-		i.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(i *I18nLanguage) {
-		i.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(i *I18nLanguage) {
-		i.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(i *I18nLanguage) {
-		i.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*I18nLanguage]
+	WithOutput   = pkg.WithOutput[*I18nLanguage]
+	WithJsonpath = pkg.WithJsonpath[*I18nLanguage]
+	WithService  = pkg.WithService[*I18nLanguage]
+)

@@ -11,7 +11,6 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"google.golang.org/api/youtube/v3"
 )
 
 var (
@@ -19,32 +18,34 @@ var (
 )
 
 type Thumbnail struct {
-	File     string `yaml:"file" json:"file"`
-	VideoId  string `yaml:"video_id" json:"video_id"`
-	Output   string `yaml:"output" json:"output"`
-	Jsonpath string `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
+	*pkg.DefaultFields
+	File    string `yaml:"file" json:"file"`
+	VideoId string `yaml:"video_id" json:"video_id"`
 }
 
 type IThumbnail interface {
 	Set(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Thumbnail)
 
 func NewThumbnail(opts ...Option) IThumbnail {
-	t := &Thumbnail{}
+	t := &Thumbnail{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(t)
 	}
 	return t
 }
 
+func (t *Thumbnail) GetDefaultFields() *pkg.DefaultFields {
+	return t.DefaultFields
+}
+
 func (t *Thumbnail) preRun() {
-	if t.service == nil {
-		t.service = auth.NewY2BService(
+	if t.Service == nil {
+		t.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -58,7 +59,7 @@ func (t *Thumbnail) Set(writer io.Writer) error {
 		return errors.Join(errSetThumbnail, err)
 	}
 
-	call := t.service.Thumbnails.Set(t.VideoId).Media(file)
+	call := t.Service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
@@ -88,20 +89,8 @@ func WithFile(file string) Option {
 	}
 }
 
-func WithOutput(output string) Option {
-	return func(t *Thumbnail) {
-		t.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(t *Thumbnail) {
-		t.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(t *Thumbnail) {
-		t.service = svc
-	}
-}
+var (
+	WithOutput   = pkg.WithOutput[*Thumbnail]
+	WithJsonpath = pkg.WithJsonpath[*Thumbnail]
+	WithService  = pkg.WithService[*Thumbnail]
+)

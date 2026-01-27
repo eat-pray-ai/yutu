@@ -19,35 +19,35 @@ var (
 )
 
 type MembershipsLevel struct {
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-	service  *youtube.Service
+	*pkg.DefaultFields
 }
 
 type IMembershipsLevel[T any] interface {
 	List(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*MembershipsLevel)
 
 func NewMembershipsLevel(opts ...Option) IMembershipsLevel[youtube.MembershipsLevel] {
-	m := &MembershipsLevel{}
-
+	m := &MembershipsLevel{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(m)
 	}
-
 	return m
+}
+
+func (m *MembershipsLevel) GetDefaultFields() *pkg.DefaultFields {
+	return m.DefaultFields
 }
 
 func (m *MembershipsLevel) Get() (
 	[]*youtube.MembershipsLevel, error,
 ) {
 	m.preRun()
-	call := m.service.MembershipsLevels.List(m.Parts)
+	call := m.Service.MembershipsLevels.List(m.Parts)
 	res, err := call.Do()
 	if err != nil {
 		return nil, errors.Join(errGetMembershipsLevel, err)
@@ -81,34 +81,17 @@ func (m *MembershipsLevel) List(writer io.Writer) error {
 }
 
 func (m *MembershipsLevel) preRun() {
-	if m.service == nil {
-		m.service = auth.NewY2BService(
+	if m.Service == nil {
+		m.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
 	}
 }
 
-func WithService(svc *youtube.Service) Option {
-	return func(m *MembershipsLevel) {
-		m.service = svc
-	}
-}
-
-func WithParts(parts []string) Option {
-	return func(m *MembershipsLevel) {
-		m.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(m *MembershipsLevel) {
-		m.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(m *MembershipsLevel) {
-		m.Jsonpath = jsonpath
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*MembershipsLevel]
+	WithOutput   = pkg.WithOutput[*MembershipsLevel]
+	WithJsonpath = pkg.WithJsonpath[*MembershipsLevel]
+	WithService  = pkg.WithService[*MembershipsLevel]
+)

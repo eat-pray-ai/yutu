@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -37,12 +38,12 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
+				DefaultFields:          &pkg.DefaultFields{Service: svc},
 				Ids:                    []string{"section1", "section2"},
 				ChannelId:              "channel123",
 				Hl:                     "en",
 				Mine:                   &mineTrue,
 				OnBehalfOfContentOwner: "owner123",
-				service:                svc,
 			},
 		},
 		{
@@ -50,7 +51,7 @@ func TestNewChannelSection(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &ChannelSection{},
+			want: &ChannelSection{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -59,7 +60,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &ChannelSection{},
+			want: &ChannelSection{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -69,7 +70,8 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				Mine: &mineFalse,
+				DefaultFields: &pkg.DefaultFields{},
+				Mine:          &mineFalse,
 			},
 		},
 		{
@@ -82,6 +84,7 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
+				DefaultFields:          &pkg.DefaultFields{},
 				ChannelId:              "",
 				Hl:                     "",
 				OnBehalfOfContentOwner: "",
@@ -97,9 +100,10 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				Ids:       []string{"section1"},
-				ChannelId: "partialChannel",
-				Hl:        "fr",
+				DefaultFields: &pkg.DefaultFields{},
+				Ids:           []string{"section1"},
+				ChannelId:     "partialChannel",
+				Hl:            "fr",
 			},
 		},
 	}
@@ -110,7 +114,9 @@ func TestNewChannelSection(t *testing.T) {
 				if got := NewChannelSection(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("%s\nNewChannelSection() = %v\nwant %v", tt.name, got, tt.want)
+					t.Errorf(
+						"%s\nNewChannelSection() = %v\nwant %v", tt.name, got, tt.want,
+					)
 				}
 			},
 		)

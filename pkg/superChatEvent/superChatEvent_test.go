@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -36,12 +37,14 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "$.items[*].id",
+				},
 				Hl:         "en",
 				MaxResults: 50,
-				Parts:      []string{"id", "snippet"},
-				Output:     "json",
-				Jsonpath:   "$.items[*].id",
-				service:    svc,
 			},
 		},
 		{
@@ -49,7 +52,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &SuperChatEvent{},
+			want: &SuperChatEvent{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with zero max results",
@@ -58,7 +61,10 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &SuperChatEvent{MaxResults: math.MaxInt64},
+			want: &SuperChatEvent{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -67,7 +73,10 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &SuperChatEvent{MaxResults: 1},
+			want: &SuperChatEvent{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -77,7 +86,10 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithOutput(""),
 				},
 			},
-			want: &SuperChatEvent{Hl: "", Output: ""},
+			want: &SuperChatEvent{
+				DefaultFields: &pkg.DefaultFields{Output: ""},
+				Hl:            "",
+			},
 		},
 		{
 			name: "with partial options",
@@ -89,9 +101,9 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Hl:         "ja",
-				MaxResults: 25,
-				Output:     "yaml",
+				DefaultFields: &pkg.DefaultFields{Output: "yaml"},
+				Hl:            "ja",
+				MaxResults:    25,
 			},
 		},
 	}

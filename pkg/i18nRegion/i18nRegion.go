@@ -19,34 +19,34 @@ var (
 )
 
 type I18nRegion struct {
-	Hl       string   `yaml:"hl" json:"hl"`
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-	service  *youtube.Service
+	*pkg.DefaultFields
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type II18nRegion[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*I18nRegion)
 
 func NewI18nRegion(opts ...Option) II18nRegion[youtube.I18nRegion] {
-	i := &I18nRegion{}
-
+	i := &I18nRegion{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(i)
 	}
-
 	return i
 }
 
+func (i *I18nRegion) GetDefaultFields() *pkg.DefaultFields {
+	return i.DefaultFields
+}
+
 func (i *I18nRegion) preRun() {
-	if i.service == nil {
-		i.service = auth.NewY2BService(
+	if i.Service == nil {
+		i.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -55,7 +55,7 @@ func (i *I18nRegion) preRun() {
 
 func (i *I18nRegion) Get() ([]*youtube.I18nRegion, error) {
 	i.preRun()
-	call := i.service.I18nRegions.List(i.Parts)
+	call := i.Service.I18nRegions.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
 	}
@@ -98,26 +98,9 @@ func WithHl(hl string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(i *I18nRegion) {
-		i.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(i *I18nRegion) {
-		i.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(i *I18nRegion) {
-		i.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(i *I18nRegion) {
-		i.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*I18nRegion]
+	WithOutput   = pkg.WithOutput[*I18nRegion]
+	WithJsonpath = pkg.WithJsonpath[*I18nRegion]
+	WithService  = pkg.WithService[*I18nRegion]
+)

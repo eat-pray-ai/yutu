@@ -18,5 +18,8 @@ go_test(
     name = "playlistImage_test",
     srcs = ["playlistImage_test.go"],
     embed = [":playlistImage"],
-    deps = ["@org_golang_google_api//youtube/v3:youtube"],
+    deps = [
+        "//pkg",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
 )

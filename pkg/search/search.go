@@ -20,6 +20,7 @@ var (
 )
 
 type Search struct {
+	*pkg.DefaultFields
 	ChannelId                 string   `yaml:"channel_id" json:"channel_id"`
 	ChannelType               string   `yaml:"channel_type" json:"channel_type"`
 	EventType                 string   `yaml:"event_type" json:"event_type"`
@@ -49,36 +50,32 @@ type Search struct {
 	VideoPaidProductPlacement string   `yaml:"video_paid_product_placement" json:"video_paid_product_placement"`
 	VideoSyndicated           string   `yaml:"video_syndicated" json:"video_syndicated"`
 	VideoType                 string   `yaml:"video_type" json:"video_type"`
-
-	// Operation options
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type ISearch[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Search)
 
 func NewSearch(opts ...Option) ISearch[youtube.SearchResult] {
-	s := &Search{}
-
+	s := &Search{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
-
 	return s
 }
 
+func (s *Search) GetDefaultFields() *pkg.DefaultFields {
+	return s.DefaultFields
+}
+
 func (s *Search) preRun() {
-	if s.service == nil {
-		s.service = auth.NewY2BService(
+	if s.Service == nil {
+		s.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -87,7 +84,7 @@ func (s *Search) preRun() {
 
 func (s *Search) Get() ([]*youtube.SearchResult, error) {
 	s.preRun()
-	call := s.service.Search.List(s.Parts)
+	call := s.Service.Search.List(s.Parts)
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
 	}
@@ -417,26 +414,9 @@ func WithVideoType(videoType string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(s *Search) {
-		s.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(s *Search) {
-		s.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(s *Search) {
-		s.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(s *Search) {
-		s.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Search]
+	WithOutput   = pkg.WithOutput[*Search]
+	WithJsonpath = pkg.WithJsonpath[*Search]
+	WithService  = pkg.WithService[*Search]
+)

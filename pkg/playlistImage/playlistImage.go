@@ -25,6 +25,7 @@ var (
 )
 
 type PlaylistImage struct {
+	*pkg.DefaultFields
 	Ids        []string `yaml:"ids" json:"ids"`
 	Height     int64    `yaml:"height" json:"height"`
 	PlaylistId string   `yaml:"playlist_id" json:"playlist_id"`
@@ -37,12 +38,6 @@ type PlaylistImage struct {
 
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type IPlaylistImage[T any] interface {
@@ -51,22 +46,27 @@ type IPlaylistImage[T any] interface {
 	Insert(io.Writer) error
 	Update(io.Writer) error
 	Delete(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*PlaylistImage)
 
 func NewPlaylistImage(opts ...Option) IPlaylistImage[youtube.PlaylistImage] {
-	pi := &PlaylistImage{}
+	pi := &PlaylistImage{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(pi)
 	}
 	return pi
 }
 
+func (pi *PlaylistImage) GetDefaultFields() *pkg.DefaultFields {
+	return pi.DefaultFields
+}
+
 func (pi *PlaylistImage) preRun() {
-	if pi.service == nil {
-		pi.service = auth.NewY2BService(
+	if pi.Service == nil {
+		pi.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -75,7 +75,7 @@ func (pi *PlaylistImage) preRun() {
 
 func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
 	pi.preRun()
-	call := pi.service.PlaylistImages.List()
+	call := pi.Service.PlaylistImages.List()
 	call = call.Part(pi.Parts...)
 	if pi.Parent != "" {
 		call = call.Parent(pi.Parent)
@@ -157,7 +157,7 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 		},
 	}
 
-	call := pi.service.PlaylistImages.Insert(playlistImage)
+	call := pi.Service.PlaylistImages.Insert(playlistImage)
 	if pi.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
@@ -208,7 +208,7 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 		playlistImage.Snippet.Width = pi.Width
 	}
 
-	call := pi.service.PlaylistImages.Update(playlistImage)
+	call := pi.Service.PlaylistImages.Update(playlistImage)
 	if pi.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
@@ -244,7 +244,7 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 func (pi *PlaylistImage) Delete(writer io.Writer) error {
 	pi.preRun()
 	for _, id := range pi.Ids {
-		call := pi.service.PlaylistImages.Delete()
+		call := pi.Service.PlaylistImages.Delete()
 		call = call.Id(id)
 		if pi.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
@@ -324,26 +324,9 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(pi *PlaylistImage) {
-		pi.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(pi *PlaylistImage) {
-		pi.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(pi *PlaylistImage) {
-		pi.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(pi *PlaylistImage) {
-		pi.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*PlaylistImage]
+	WithOutput   = pkg.WithOutput[*PlaylistImage]
+	WithJsonpath = pkg.WithJsonpath[*PlaylistImage]
+	WithService  = pkg.WithService[*PlaylistImage]
+)

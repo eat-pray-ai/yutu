@@ -20,35 +20,35 @@ var (
 )
 
 type SuperChatEvent struct {
-	Hl         string   `yaml:"hl" json:"hl"`
-	MaxResults int64    `yaml:"max_results" json:"max_results"`
-	Parts      []string `yaml:"parts" json:"parts"`
-	Output     string   `yaml:"output" json:"output"`
-	Jsonpath   string   `yaml:"jsonpath" json:"jsonpath"`
-	service    *youtube.Service
+	*pkg.DefaultFields
+	Hl         string `yaml:"hl" json:"hl"`
+	MaxResults int64  `yaml:"max_results" json:"max_results"`
 }
 
 type ISuperChatEvent[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*SuperChatEvent)
 
 func NewSuperChatEvent(opts ...Option) ISuperChatEvent[youtube.SuperChatEvent] {
-	s := &SuperChatEvent{}
-
+	s := &SuperChatEvent{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
-
 	return s
 }
 
+func (s *SuperChatEvent) GetDefaultFields() *pkg.DefaultFields {
+	return s.DefaultFields
+}
+
 func (s *SuperChatEvent) preRun() {
-	if s.service == nil {
-		s.service = auth.NewY2BService(
+	if s.Service == nil {
+		s.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -57,7 +57,7 @@ func (s *SuperChatEvent) preRun() {
 
 func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
 	s.preRun()
-	call := s.service.SuperChatEvents.List(s.Parts)
+	call := s.Service.SuperChatEvents.List(s.Parts)
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
 	}
@@ -132,26 +132,9 @@ func WithMaxResults(maxResults int64) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(s *SuperChatEvent) {
-		s.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(s *SuperChatEvent) {
-		s.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(s *SuperChatEvent) {
-		s.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(s *SuperChatEvent) {
-		s.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*SuperChatEvent]
+	WithOutput   = pkg.WithOutput[*SuperChatEvent]
+	WithJsonpath = pkg.WithJsonpath[*SuperChatEvent]
+	WithService  = pkg.WithService[*SuperChatEvent]
+)

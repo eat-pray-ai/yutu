@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -35,13 +36,15 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
+				DefaultFields: &pkg.DefaultFields{
+					Output:   "json",
+					Jsonpath: "items.id",
+					Service:  svc,
+				},
 				ChannelId:                     "channel123",
 				File:                          "/path/to/banner.jpg",
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
-				Output:                        "json",
-				Jsonpath:                      "items.id",
-				service:                       svc,
 			},
 		},
 		{
@@ -49,7 +52,7 @@ func TestNewChannelBanner(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &ChannelBanner{},
+			want: &ChannelBanner{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with empty string values",
@@ -64,12 +67,14 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
+				DefaultFields: &pkg.DefaultFields{
+					Output:   "",
+					Jsonpath: "",
+				},
 				ChannelId:                     "",
 				File:                          "",
 				OnBehalfOfContentOwner:        "",
 				OnBehalfOfContentOwnerChannel: "",
-				Output:                        "",
-				Jsonpath:                      "",
 			},
 		},
 		{
@@ -82,9 +87,9 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				ChannelId: "partialChannel",
-				File:      "/partial/banner.png",
-				Output:    "yaml",
+				DefaultFields: &pkg.DefaultFields{Output: "yaml"},
+				ChannelId:     "partialChannel",
+				File:          "/partial/banner.png",
 			},
 		},
 	}

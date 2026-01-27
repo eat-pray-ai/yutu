@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -33,10 +34,12 @@ func TestNewMembershipsLevel(t *testing.T) {
 				},
 			},
 			want: &MembershipsLevel{
-				Parts:    []string{"snippet"},
-				Output:   "json",
-				Jsonpath: "items",
-				service:  svc,
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"snippet"},
+					Output:   "json",
+					Jsonpath: "items",
+				},
 			},
 		},
 		{
@@ -44,7 +47,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &MembershipsLevel{},
+			want: &MembershipsLevel{DefaultFields: &pkg.DefaultFields{}},
 		},
 	}
 
@@ -54,7 +57,9 @@ func TestNewMembershipsLevel(t *testing.T) {
 				if got := NewMembershipsLevel(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("%s\nNewMembershipsLevel() = %v\nwant %v", tt.name, got, tt.want)
+					t.Errorf(
+						"%s\nNewMembershipsLevel() = %v\nwant %v", tt.name, got, tt.want,
+					)
 				}
 			},
 		)

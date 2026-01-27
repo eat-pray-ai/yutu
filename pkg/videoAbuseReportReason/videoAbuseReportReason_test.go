@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -34,11 +35,13 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Hl:       "en",
-				Parts:    []string{"id", "snippet"},
-				Output:   "json",
-				Jsonpath: "$.items[*].id",
-				service:  svc,
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "$.items[*].id",
+				},
+				Hl: "en",
 			},
 		},
 		{
@@ -46,7 +49,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &VideoAbuseReportReason{},
+			want: &VideoAbuseReportReason{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with empty string values",
@@ -58,9 +61,10 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Hl:       "",
-				Output:   "",
-				Jsonpath: "",
+				DefaultFields: &pkg.DefaultFields{
+					Output: "", Jsonpath: "",
+				},
+				Hl: "",
 			},
 		},
 		{
@@ -72,8 +76,8 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Hl:    "ja",
-				Parts: []string{"snippet"},
+				DefaultFields: &pkg.DefaultFields{Parts: []string{"snippet"}},
+				Hl:            "ja",
 			},
 		},
 	}

@@ -20,38 +20,37 @@ var (
 )
 
 type Member struct {
-	MemberChannelId  string   `yaml:"member_channel_id" json:"member_channel_id"`
-	HasAccessToLevel string   `yaml:"has_access_to_level" json:"has_access_to_level"`
-	MaxResults       int64    `yaml:"max_results" json:"max_results"`
-	Mode             string   `yaml:"mode" json:"mode"`
-	Parts            []string `yaml:"parts" json:"parts"`
-	Output           string   `yaml:"output" json:"output"`
-	Jsonpath         string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
+	*pkg.DefaultFields
+	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id"`
+	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level"`
+	MaxResults       int64  `yaml:"max_results" json:"max_results"`
+	Mode             string `yaml:"mode" json:"mode"`
 }
 
 type IMember[T any] interface {
 	List(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Member)
 
 func NewMember(opts ...Option) IMember[youtube.Member] {
-	m := &Member{}
-
+	m := &Member{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(m)
 	}
-
 	return m
 }
 
+func (m *Member) GetDefaultFields() *pkg.DefaultFields {
+	return m.DefaultFields
+}
+
 func (m *Member) preRun() {
-	if m.service == nil {
-		m.service = auth.NewY2BService(
+	if m.Service == nil {
+		m.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -60,7 +59,7 @@ func (m *Member) preRun() {
 
 func (m *Member) Get() ([]*youtube.Member, error) {
 	m.preRun()
-	call := m.service.Members.List(m.Parts)
+	call := m.Service.Members.List(m.Parts)
 	if m.MemberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.MemberChannelId)
 	}
@@ -153,26 +152,9 @@ func WithMode(mode string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(m *Member) {
-		m.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(m *Member) {
-		m.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(m *Member) {
-		m.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(m *Member) {
-		m.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Member]
+	WithOutput   = pkg.WithOutput[*Member]
+	WithJsonpath = pkg.WithJsonpath[*Member]
+	WithService  = pkg.WithService[*Member]
+)

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -42,7 +43,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				service:         svc,
+				DefaultFields:   &pkg.DefaultFields{Service: svc},
 				ChannelId:       "test-channel-123",
 				Home:            &homeTrue,
 				MaxResults:      50,
@@ -57,7 +58,7 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Activity{},
+			want: &Activity{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -67,7 +68,7 @@ func TestNewActivity(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Activity{},
+			want: &Activity{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -78,8 +79,9 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Home: &homeFalse,
-				Mine: &mineFalse,
+				DefaultFields: &pkg.DefaultFields{},
+				Home:          &homeFalse,
+				Mine:          &mineFalse,
 			},
 		},
 		{
@@ -90,7 +92,8 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				MaxResults: math.MaxInt64,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
 			},
 		},
 		{
@@ -101,7 +104,8 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				MaxResults: 1,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
 			},
 		},
 		{
@@ -115,6 +119,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
+				DefaultFields:   &pkg.DefaultFields{},
 				ChannelId:       "",
 				PublishedAfter:  "",
 				PublishedBefore: "",
@@ -131,9 +136,10 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				ChannelId:  "partial-channel",
-				MaxResults: 25,
-				RegionCode: "UK",
+				DefaultFields: &pkg.DefaultFields{},
+				ChannelId:     "partial-channel",
+				MaxResults:    25,
+				RegionCode:    "UK",
 			},
 		},
 	}

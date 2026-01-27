@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -43,6 +44,12 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "$.items[*].id",
+				},
 				Ids:                           []string{"image1", "image2"},
 				Height:                        1080,
 				PlaylistId:                    "playlist123",
@@ -53,10 +60,6 @@ func TestNewPlaylistImage(t *testing.T) {
 				MaxResults:                    50,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
-				Parts:                         []string{"id", "snippet"},
-				Output:                        "json",
-				Jsonpath:                      "$.items[*].id",
-				service:                       svc,
 			},
 		},
 		{
@@ -64,7 +67,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistImage{},
+			want: &PlaylistImage{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with zero max results",
@@ -73,7 +76,10 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &PlaylistImage{MaxResults: math.MaxInt64},
+			want: &PlaylistImage{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -82,7 +88,10 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithMaxResults(-20),
 				},
 			},
-			want: &PlaylistImage{MaxResults: 1},
+			want: &PlaylistImage{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -97,6 +106,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
+				DefaultFields:                 &pkg.DefaultFields{},
 				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
@@ -116,10 +126,11 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				PlaylistId: "myPlaylist",
-				Type:       "hero",
-				File:       "/images/hero.png",
-				MaxResults: 25,
+				DefaultFields: &pkg.DefaultFields{},
+				PlaylistId:    "myPlaylist",
+				Type:          "hero",
+				File:          "/images/hero.png",
+				MaxResults:    25,
 			},
 		},
 	}

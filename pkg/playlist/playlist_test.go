@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -48,6 +49,12 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "$.items[0].snippet.title",
+				},
 				Ids:                           []string{"playlist1", "playlist2"},
 				Title:                         "Test Playlist",
 				Description:                   "Test playlist description",
@@ -60,10 +67,6 @@ func TestNewPlaylist(t *testing.T) {
 				Mine:                          &mineTrue,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
-				Parts:                         []string{"id", "snippet"},
-				Output:                        "json",
-				Jsonpath:                      "$.items[0].snippet.title",
-				service:                       svc,
 			},
 		},
 		{
@@ -71,7 +74,7 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Playlist{},
+			want: &Playlist{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -80,7 +83,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Playlist{},
+			want: &Playlist{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -89,7 +92,10 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(&mineFalse),
 				},
 			},
-			want: &Playlist{Mine: &mineFalse},
+			want: &Playlist{
+				DefaultFields: &pkg.DefaultFields{},
+				Mine:          &mineFalse,
+			},
 		},
 		{
 			name: "with zero max results",
@@ -98,7 +104,10 @@ func TestNewPlaylist(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &Playlist{MaxResults: math.MaxInt64},
+			want: &Playlist{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -107,7 +116,10 @@ func TestNewPlaylist(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &Playlist{MaxResults: 1},
+			want: &Playlist{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -124,6 +136,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
+				DefaultFields:                 &pkg.DefaultFields{},
 				Title:                         "",
 				Description:                   "",
 				Language:                      "",
@@ -145,10 +158,11 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Title:       "My Playlist",
-				Description: "A great playlist",
-				Privacy:     "private",
-				MaxResults:  25,
+				DefaultFields: &pkg.DefaultFields{},
+				Title:         "My Playlist",
+				Description:   "A great playlist",
+				Privacy:       "private",
+				MaxResults:    25,
 			},
 		},
 	}

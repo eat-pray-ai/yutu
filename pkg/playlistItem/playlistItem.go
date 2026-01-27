@@ -25,6 +25,7 @@ var (
 )
 
 type PlaylistItem struct {
+	*pkg.DefaultFields
 	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
@@ -39,12 +40,6 @@ type PlaylistItem struct {
 	MaxResults  int64    `yaml:"max_results" json:"max_results"`
 
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type IPlaylistItem[T any] interface {
@@ -53,24 +48,27 @@ type IPlaylistItem[T any] interface {
 	Update(io.Writer) error
 	Delete(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*PlaylistItem)
 
 func NewPlaylistItem(opts ...Option) IPlaylistItem[youtube.PlaylistItem] {
-	p := &PlaylistItem{}
-
+	p := &PlaylistItem{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(p)
 	}
-
 	return p
 }
 
+func (p *PlaylistItem) GetDefaultFields() *pkg.DefaultFields {
+	return p.DefaultFields
+}
+
 func (pi *PlaylistItem) preRun() {
-	if pi.service == nil {
-		pi.service = auth.NewY2BService(
+	if pi.Service == nil {
+		pi.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -79,7 +77,7 @@ func (pi *PlaylistItem) preRun() {
 
 func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
 	pi.preRun()
-	call := pi.service.PlaylistItems.List(pi.Parts)
+	call := pi.Service.PlaylistItems.List(pi.Parts)
 	if len(pi.Ids) > 0 {
 		call = call.Id(pi.Ids...)
 	}
@@ -188,7 +186,7 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 		},
 	}
 
-	call := pi.service.PlaylistItems.Insert(
+	call := pi.Service.PlaylistItems.Insert(
 		[]string{"snippet", "status"}, playlistItem,
 	)
 	if pi.OnBehalfOfContentOwner != "" {
@@ -235,7 +233,7 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 		playlistItem.Status.PrivacyStatus = pi.Privacy
 	}
 
-	call := pi.service.PlaylistItems.Update(
+	call := pi.Service.PlaylistItems.Update(
 		[]string{"snippet", "status"}, playlistItem,
 	)
 	if pi.OnBehalfOfContentOwner != "" {
@@ -262,7 +260,7 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 func (pi *PlaylistItem) Delete(writer io.Writer) error {
 	pi.preRun()
 	for _, id := range pi.Ids {
-		call := pi.service.PlaylistItems.Delete(id)
+		call := pi.Service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 		}
@@ -360,26 +358,9 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(p *PlaylistItem) {
-		p.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(p *PlaylistItem) {
-		p.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(p *PlaylistItem) {
-		p.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(p *PlaylistItem) {
-		p.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*PlaylistItem]
+	WithOutput   = pkg.WithOutput[*PlaylistItem]
+	WithJsonpath = pkg.WithJsonpath[*PlaylistItem]
+	WithService  = pkg.WithService[*PlaylistItem]
+)

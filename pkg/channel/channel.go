@@ -23,7 +23,7 @@ var (
 )
 
 type Channel struct {
-	service                *youtube.Service
+	*pkg.DefaultFields
 	CategoryId             string   `yaml:"category_id" json:"category_id"`
 	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
 	ForUsername            string   `yaml:"for_username" json:"for_username"`
@@ -40,34 +40,33 @@ type Channel struct {
 	DefaultLanguage string `yaml:"default_language" json:"default_language"`
 	Description     string `yaml:"description" json:"description"`
 	Title           string `yaml:"title" json:"title"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
 type IChannel[T youtube.Channel] interface {
 	List(io.Writer) error
 	Update(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Channel)
 
 func NewChannel(opts ...Option) IChannel[youtube.Channel] {
-	c := &Channel{}
-
+	c := &Channel{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
-
 	return c
+}
+
+func (c *Channel) GetDefaultFields() *pkg.DefaultFields {
+	return c.DefaultFields
 }
 
 func (c *Channel) Get() ([]*youtube.Channel, error) {
 	c.preRun()
-	call := c.service.Channels.List(c.Parts)
+	call := c.Service.Channels.List(c.Parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
 	}
@@ -172,7 +171,7 @@ func (c *Channel) Update(writer io.Writer) error {
 		cha.Snippet.Title = c.Title
 	}
 
-	call := c.service.Channels.Update(c.Parts, cha)
+	call := c.Service.Channels.Update(c.Parts, cha)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)
@@ -191,8 +190,8 @@ func (c *Channel) Update(writer io.Writer) error {
 }
 
 func (c *Channel) preRun() {
-	if c.service == nil {
-		c.service = auth.NewY2BService(
+	if c.Service == nil {
+		c.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -300,26 +299,9 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(c *Channel) {
-		c.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(c *Channel) {
-		c.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(c *Channel) {
-		c.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(c *Channel) {
-		c.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Channel]
+	WithOutput   = pkg.WithOutput[*Channel]
+	WithJsonpath = pkg.WithJsonpath[*Channel]
+	WithService  = pkg.WithService[*Channel]
+)

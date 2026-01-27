@@ -19,32 +19,34 @@ var (
 )
 
 type VideoAbuseReportReason struct {
-	Hl       string   `yaml:"hl" json:"hl"`
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-	service  *youtube.Service
+	*pkg.DefaultFields
+	Hl string `yaml:"hl" json:"hl"`
 }
 
 type IVideoAbuseReportReason[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*VideoAbuseReportReason)
 
 func NewVideoAbuseReportReason(opt ...Option) IVideoAbuseReportReason[youtube.VideoAbuseReportReason] {
-	va := &VideoAbuseReportReason{}
+	va := &VideoAbuseReportReason{DefaultFields: &pkg.DefaultFields{}}
 	for _, o := range opt {
 		o(va)
 	}
 	return va
 }
 
+func (va *VideoAbuseReportReason) GetDefaultFields() *pkg.DefaultFields {
+	return va.DefaultFields
+}
+
 func (va *VideoAbuseReportReason) preRun() {
-	if va.service == nil {
-		va.service = auth.NewY2BService(
+	if va.Service == nil {
+		va.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -55,7 +57,7 @@ func (va *VideoAbuseReportReason) Get() (
 	[]*youtube.VideoAbuseReportReason, error,
 ) {
 	va.preRun()
-	call := va.service.VideoAbuseReportReasons.List(va.Parts)
+	call := va.Service.VideoAbuseReportReasons.List(va.Parts)
 	if va.Hl != "" {
 		call = call.Hl(va.Hl)
 	}
@@ -98,26 +100,9 @@ func WithHL(hl string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(va *VideoAbuseReportReason) {
-		va.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(va *VideoAbuseReportReason) {
-		va.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(va *VideoAbuseReportReason) {
-		va.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(va *VideoAbuseReportReason) {
-		va.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*VideoAbuseReportReason]
+	WithOutput   = pkg.WithOutput[*VideoAbuseReportReason]
+	WithJsonpath = pkg.WithJsonpath[*VideoAbuseReportReason]
+	WithService  = pkg.WithService[*VideoAbuseReportReason]
+)

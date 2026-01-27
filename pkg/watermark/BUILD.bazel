@@ -16,5 +16,8 @@ go_test(
     name = "watermark_test",
     srcs = ["watermark_test.go"],
     embed = [":watermark"],
-    deps = ["@org_golang_google_api//youtube/v3:youtube"],
+    deps = [
+        "//pkg",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
 )

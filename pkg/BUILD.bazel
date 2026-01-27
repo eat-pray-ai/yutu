@@ -9,5 +9,8 @@ go_library(
     ],
     importpath = "github.com/eat-pray-ai/yutu/pkg",
     visibility = ["//visibility:public"],
-    deps = ["@com_github_jedib0t_go_pretty_v6//table"],
+    deps = [
+        "@com_github_jedib0t_go_pretty_v6//table",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
 )

@@ -22,32 +22,33 @@ type VideoCategory struct {
 	Ids        []string `yaml:"ids" json:"ids"`
 	Hl         string   `yaml:"hl" json:"hl"`
 	RegionCode string   `yaml:"region_code" json:"region_code"`
-	Parts      []string `yaml:"parts" json:"parts"`
-	Output     string   `yaml:"output" json:"output"`
-	Jsonpath   string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
+	*pkg.DefaultFields
 }
 
 type IVideoCategory[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*VideoCategory)
 
 func NewVideoCategory(opt ...Option) IVideoCategory[youtube.VideoCategory] {
-	vc := &VideoCategory{}
+	vc := &VideoCategory{DefaultFields: &pkg.DefaultFields{}}
 	for _, o := range opt {
 		o(vc)
 	}
 	return vc
 }
 
+func (vc *VideoCategory) GetDefaultFields() *pkg.DefaultFields {
+	return vc.DefaultFields
+}
+
 func (vc *VideoCategory) preRun() {
-	if vc.service == nil {
-		vc.service = auth.NewY2BService(
+	if vc.Service == nil {
+		vc.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -56,7 +57,7 @@ func (vc *VideoCategory) preRun() {
 
 func (vc *VideoCategory) Get() ([]*youtube.VideoCategory, error) {
 	vc.preRun()
-	call := vc.service.VideoCategories.List(vc.Parts)
+	call := vc.Service.VideoCategories.List(vc.Parts)
 	if len(vc.Ids) > 0 {
 		call = call.Id(vc.Ids...)
 	}
@@ -117,26 +118,9 @@ func WithRegionCode(regionCode string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(vc *VideoCategory) {
-		vc.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(vc *VideoCategory) {
-		vc.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(vc *VideoCategory) {
-		vc.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(vc *VideoCategory) {
-		vc.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*VideoCategory]
+	WithOutput   = pkg.WithOutput[*VideoCategory]
+	WithJsonpath = pkg.WithJsonpath[*VideoCategory]
+	WithService  = pkg.WithService[*VideoCategory]
+)

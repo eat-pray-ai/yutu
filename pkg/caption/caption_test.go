@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -56,7 +57,7 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				service:                svc,
+				DefaultFields:          &pkg.DefaultFields{Service: svc},
 				Ids:                    []string{"caption1", "caption2"},
 				File:                   "/path/to/file.srt",
 				AudioTrackType:         "primary",
@@ -80,7 +81,7 @@ func TestNewCation(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Caption{},
+			want: &Caption{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -93,7 +94,7 @@ func TestNewCation(t *testing.T) {
 					WithIsLarge(nil),
 				},
 			},
-			want: &Caption{},
+			want: &Caption{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -107,11 +108,12 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				IsAutoSynced: &isAutoSyncedFalse,
-				IsCC:         &isCCFalse,
-				IsDraft:      &isDraftFalse,
-				IsEasyReader: &isEasyReaderFalse,
-				IsLarge:      &isLargeFalse,
+				DefaultFields: &pkg.DefaultFields{},
+				IsAutoSynced:  &isAutoSyncedFalse,
+				IsCC:          &isCCFalse,
+				IsDraft:       &isDraftFalse,
+				IsEasyReader:  &isEasyReaderFalse,
+				IsLarge:       &isLargeFalse,
 			},
 		},
 		{
@@ -131,6 +133,7 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
+				DefaultFields:          &pkg.DefaultFields{},
 				File:                   "",
 				AudioTrackType:         "",
 				Language:               "",
@@ -154,10 +157,11 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Ids:      []string{"caption1"},
-				Language: "fr",
-				VideoId:  "video456",
-				IsCC:     &isCCTrue,
+				DefaultFields: &pkg.DefaultFields{},
+				Ids:           []string{"caption1"},
+				Language:      "fr",
+				VideoId:       "video456",
+				IsCC:          &isCCTrue,
 			},
 		},
 	}

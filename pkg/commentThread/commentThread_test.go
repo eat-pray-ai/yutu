@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -44,6 +45,12 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "items.id",
+				},
 				Ids:                          []string{"thread1", "thread2"},
 				AllThreadsRelatedToChannelId: "relatedChannel123",
 				AuthorChannelId:              "author123",
@@ -55,10 +62,6 @@ func TestNewCommentThread(t *testing.T) {
 				TextFormat:                   "html",
 				TextOriginal:                 "This is a comment thread",
 				VideoId:                      "video123",
-				Parts:                        []string{"id", "snippet"},
-				Output:                       "json",
-				Jsonpath:                     "items.id",
-				service:                      svc,
 			},
 		},
 		{
@@ -66,7 +69,7 @@ func TestNewCommentThread(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &CommentThread{},
+			want: &CommentThread{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with zero max results",
@@ -76,7 +79,8 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				MaxResults: math.MaxInt64,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
 			},
 		},
 		{
@@ -87,7 +91,8 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				MaxResults: 1,
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
 			},
 		},
 		{
@@ -109,6 +114,11 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
+				DefaultFields: &pkg.DefaultFields{
+					Parts:    nil,
+					Output:   "",
+					Jsonpath: "",
+				},
 				AllThreadsRelatedToChannelId: "",
 				AuthorChannelId:              "",
 				ChannelId:                    "",
@@ -118,9 +128,6 @@ func TestNewCommentThread(t *testing.T) {
 				TextFormat:                   "",
 				TextOriginal:                 "",
 				VideoId:                      "",
-				Parts:                        nil,
-				Output:                       "",
-				Jsonpath:                     "",
 			},
 		},
 		{
@@ -135,11 +142,11 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Ids:          []string{"thread1"},
-				VideoId:      "video456",
-				TextOriginal: "Partial comment thread",
-				MaxResults:   50,
-				Output:       "yaml",
+				DefaultFields: &pkg.DefaultFields{Output: "yaml"},
+				Ids:           []string{"thread1"},
+				VideoId:       "video456",
+				TextOriginal:  "Partial comment thread",
+				MaxResults:    50,
 			},
 		},
 	}

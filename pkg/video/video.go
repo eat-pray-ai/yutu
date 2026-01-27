@@ -32,6 +32,7 @@ var (
 )
 
 type Video struct {
+	*pkg.DefaultFields
 	Ids               []string `yaml:"ids" json:"ids"`
 	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
 	File              string   `yaml:"file" json:"file"`
@@ -65,12 +66,6 @@ type Video struct {
 	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable"`
 	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type IVideo[T any] interface {
@@ -82,24 +77,27 @@ type IVideo[T any] interface {
 	Delete(io.Writer) error
 	ReportAbuse(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Video)
 
 func NewVideo(opts ...Option) IVideo[youtube.Video] {
-	v := &Video{}
-
+	v := &Video{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(v)
 	}
-
 	return v
 }
 
+func (v *Video) GetDefaultFields() *pkg.DefaultFields {
+	return v.DefaultFields
+}
+
 func (v *Video) preRun() {
-	if v.service == nil {
-		v.service = auth.NewY2BService(
+	if v.Service == nil {
+		v.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -108,7 +106,7 @@ func (v *Video) preRun() {
 
 func (v *Video) Get() ([]*youtube.Video, error) {
 	v.preRun()
-	call := v.service.Videos.List(v.Parts)
+	call := v.Service.Videos.List(v.Parts)
 	if len(v.Ids) > 0 {
 		call = call.Id(v.Ids...)
 	}
@@ -240,7 +238,7 @@ func (v *Video) Insert(writer io.Writer) error {
 		video.Status.PublicStatsViewable = *v.PublicStatsViewable
 	}
 
-	call := v.service.Videos.Insert([]string{"snippet,status"}, video)
+	call := v.Service.Videos.Insert([]string{"snippet,status"}, video)
 
 	if v.AutoLevels != nil {
 		call = call.AutoLevels(*v.AutoLevels)
@@ -267,7 +265,7 @@ func (v *Video) Insert(writer io.Writer) error {
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
-			thumbnail.WithService(v.service),
+			thumbnail.WithService(v.Service),
 			thumbnail.WithOutput("silent"),
 			thumbnail.WithJsonpath(""),
 		)
@@ -283,7 +281,7 @@ func (v *Video) Insert(writer io.Writer) error {
 			playlistItem.WithPlaylistId(v.PlaylistId),
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
-			playlistItem.WithService(v.service),
+			playlistItem.WithService(v.Service),
 			playlistItem.WithOutput("silent"),
 			playlistItem.WithJsonpath(""),
 		)
@@ -345,7 +343,7 @@ func (v *Video) Update(writer io.Writer) error {
 		video.Status.Embeddable = *v.Embeddable
 	}
 
-	call := v.service.Videos.Update([]string{"snippet,status"}, video)
+	call := v.Service.Videos.Update([]string{"snippet,status"}, video)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
@@ -359,7 +357,7 @@ func (v *Video) Update(writer io.Writer) error {
 		t := thumbnail.NewThumbnail(
 			thumbnail.WithVideoId(res.Id),
 			thumbnail.WithFile(v.Thumbnail),
-			thumbnail.WithService(v.service),
+			thumbnail.WithService(v.Service),
 			thumbnail.WithOutput("silent"),
 			thumbnail.WithJsonpath(""),
 		)
@@ -375,7 +373,7 @@ func (v *Video) Update(writer io.Writer) error {
 			playlistItem.WithPlaylistId(v.PlaylistId),
 			playlistItem.WithChannelId(res.Snippet.ChannelId),
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
-			playlistItem.WithService(v.service),
+			playlistItem.WithService(v.Service),
 			playlistItem.WithOutput("silent"),
 			playlistItem.WithJsonpath(""),
 		)
@@ -398,7 +396,7 @@ func (v *Video) Update(writer io.Writer) error {
 func (v *Video) Rate(writer io.Writer) error {
 	v.preRun()
 	for _, id := range v.Ids {
-		call := v.service.Videos.Rate(id, v.Rating)
+		call := v.Service.Videos.Rate(id, v.Rating)
 		err := call.Do()
 		if err != nil {
 			return errors.Join(errRating, err)
@@ -410,7 +408,7 @@ func (v *Video) Rate(writer io.Writer) error {
 
 func (v *Video) GetRating(writer io.Writer) error {
 	v.preRun()
-	call := v.service.Videos.GetRating(v.Ids)
+	call := v.Service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
 	}
@@ -440,7 +438,7 @@ func (v *Video) GetRating(writer io.Writer) error {
 func (v *Video) Delete(writer io.Writer) error {
 	v.preRun()
 	for _, id := range v.Ids {
-		call := v.service.Videos.Delete(id)
+		call := v.Service.Videos.Delete(id)
 		if v.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 		}
@@ -465,7 +463,7 @@ func (v *Video) ReportAbuse(writer io.Writer) error {
 			VideoId:           id,
 		}
 
-		call := v.service.Videos.ReportAbuse(videoAbuseReport)
+		call := v.Service.Videos.ReportAbuse(videoAbuseReport)
 		if v.OnBehalfOfContentOwner != "" {
 			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 		}
@@ -689,26 +687,9 @@ func WithSecondaryReasonId(secondaryReasonId string) Option {
 	}
 }
 
-func WithService(svc *youtube.Service) Option {
-	return func(v *Video) {
-		v.service = svc
-	}
-}
-
-func WithParts(parts []string) Option {
-	return func(v *Video) {
-		v.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(v *Video) {
-		v.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(v *Video) {
-		v.Jsonpath = jsonpath
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Video]
+	WithOutput   = pkg.WithOutput[*Video]
+	WithJsonpath = pkg.WithJsonpath[*Video]
+	WithService  = pkg.WithService[*Video]
+)

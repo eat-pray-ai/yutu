@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -33,11 +34,13 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				VideoId:  "video123",
-				File:     "/path/to/thumbnail.jpg",
-				Output:   "json",
-				Jsonpath: "id",
-				service:  svc,
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Output:   "json",
+					Jsonpath: "id",
+				},
+				VideoId: "video123",
+				File:    "/path/to/thumbnail.jpg",
 			},
 		},
 		{
@@ -45,7 +48,7 @@ func TestNewThumbnail(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Thumbnail{},
+			want: &Thumbnail{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with empty string values",
@@ -58,10 +61,12 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				VideoId:  "",
-				File:     "",
-				Output:   "",
-				Jsonpath: "",
+				DefaultFields: &pkg.DefaultFields{
+					Output:   "",
+					Jsonpath: "",
+				},
+				VideoId: "",
+				File:    "",
 			},
 		},
 		{
@@ -73,17 +78,22 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				VideoId: "myVideo123",
-				File:    "/images/thumb.png",
+				DefaultFields: &pkg.DefaultFields{},
+				VideoId:       "myVideo123",
+				File:          "/images/thumb.png",
 			},
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewThumbnail(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("%s\nNewThumbnail() = %v\nwant %v", tt.name, got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := NewThumbnail(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
+					t.Errorf("%s\nNewThumbnail() = %v\nwant %v", tt.name, got, tt.want)
+				}
+			},
+		)
 	}
 }

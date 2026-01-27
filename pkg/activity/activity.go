@@ -20,7 +20,7 @@ var (
 )
 
 type Activity struct {
-	service         *youtube.Service
+	*pkg.DefaultFields
 	ChannelId       string `yaml:"channel_id" json:"channel_id"`
 	Home            *bool  `yaml:"home" json:"home"`
 	MaxResults      int64  `yaml:"max_results" json:"max_results"`
@@ -28,33 +28,32 @@ type Activity struct {
 	PublishedAfter  string `yaml:"published_after" json:"published_after"`
 	PublishedBefore string `yaml:"published_before" json:"published_before"`
 	RegionCode      string `yaml:"region_code" json:"region_code"`
-
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
 }
 
 type IActivity[T any] interface {
 	List(io.Writer) error
 	Get() ([]*T, error)
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Activity)
 
 func NewActivity(opts ...Option) IActivity[youtube.Activity] {
-	a := &Activity{}
-
+	a := &Activity{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(a)
 	}
-
 	return a
+}
+
+func (a *Activity) GetDefaultFields() *pkg.DefaultFields {
+	return a.DefaultFields
 }
 
 func (a *Activity) Get() ([]*youtube.Activity, error) {
 	a.preRun()
-	call := a.service.Activities.List(a.Parts)
+	call := a.Service.Activities.List(a.Parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
 	}
@@ -133,8 +132,8 @@ func (a *Activity) List(writer io.Writer) error {
 }
 
 func (a *Activity) preRun() {
-	if a.service == nil {
-		a.service = auth.NewY2BService(
+	if a.Service == nil {
+		a.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -192,26 +191,9 @@ func WithRegionCode(regionCode string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(a *Activity) {
-		a.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(a *Activity) {
-		a.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(a *Activity) {
-		a.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(c *Activity) {
-		c.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Activity]
+	WithOutput   = pkg.WithOutput[*Activity]
+	WithJsonpath = pkg.WithJsonpath[*Activity]
+	WithService  = pkg.WithService[*Activity]
+)

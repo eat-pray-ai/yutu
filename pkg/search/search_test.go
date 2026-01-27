@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -69,6 +70,12 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"snippet"},
+					Output:   "json",
+					Jsonpath: "items.id",
+				},
 				ChannelId:                 "channel123",
 				ChannelType:               "any",
 				EventType:                 "live",
@@ -98,10 +105,6 @@ func TestNewSearch(t *testing.T) {
 				VideoPaidProductPlacement: "true",
 				VideoSyndicated:           "true",
 				VideoType:                 "movie",
-				Parts:                     []string{"snippet"},
-				Output:                    "json",
-				Jsonpath:                  "items.id",
-				service:                   svc,
 			},
 		},
 		{
@@ -109,7 +112,7 @@ func TestNewSearch(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Search{},
+			want: &Search{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -120,7 +123,7 @@ func TestNewSearch(t *testing.T) {
 					WithForMine(nil),
 				},
 			},
-			want: &Search{},
+			want: &Search{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -132,6 +135,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
+				DefaultFields:   &pkg.DefaultFields{},
 				ForContentOwner: &forContentOwnerFalse,
 				ForDeveloper:    &forDeveloperFalse,
 				ForMine:         &forMineFalse,
@@ -144,7 +148,10 @@ func TestNewSearch(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &Search{MaxResults: math.MaxInt64},
+			want: &Search{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -153,7 +160,10 @@ func TestNewSearch(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &Search{MaxResults: 1},
+			want: &Search{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -186,6 +196,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
+				DefaultFields:             &pkg.DefaultFields{},
 				ChannelId:                 "",
 				ChannelType:               "",
 				EventType:                 "",
@@ -224,11 +235,12 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Q:          "golang tutorial",
-				MaxResults: 25,
-				Order:      "date",
-				RegionCode: "UK",
-				Types:      []string{"video"},
+				DefaultFields: &pkg.DefaultFields{},
+				Q:             "golang tutorial",
+				MaxResults:    25,
+				Order:         "date",
+				RegionCode:    "UK",
+				Types:         []string{"video"},
 			},
 		},
 	}

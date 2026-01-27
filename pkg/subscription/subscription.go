@@ -23,6 +23,7 @@ var (
 )
 
 type Subscription struct {
+	*pkg.DefaultFields
 	Ids                           []string `yaml:"ids" json:"ids"`
 	SubscriberChannelId           string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
 	Description                   string   `yaml:"description" json:"description"`
@@ -36,13 +37,6 @@ type Subscription struct {
 	OnBehalfOfContentOwnerChannel string   `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
 	Order                         string   `yaml:"order" json:"order"`
 	Title                         string   `yaml:"title" json:"title"`
-
-	// Operation parameters
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type ISubscription[T any] interface {
@@ -50,24 +44,27 @@ type ISubscription[T any] interface {
 	List(io.Writer) error
 	Insert(io.Writer) error
 	Delete(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Subscription)
 
 func NewSubscription(opts ...Option) ISubscription[youtube.Subscription] {
-	s := &Subscription{}
-
+	s := &Subscription{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
-
 	return s
 }
 
+func (s *Subscription) GetDefaultFields() *pkg.DefaultFields {
+	return s.DefaultFields
+}
+
 func (s *Subscription) preRun() {
-	if s.service == nil {
-		s.service = auth.NewY2BService(
+	if s.Service == nil {
+		s.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -76,7 +73,7 @@ func (s *Subscription) preRun() {
 
 func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 	s.preRun()
-	call := s.service.Subscriptions.List(s.Parts)
+	call := s.Service.Subscriptions.List(s.Parts)
 	if len(s.Ids) > 0 {
 		call = call.Id(s.Ids...)
 	}
@@ -179,7 +176,7 @@ func (s *Subscription) Insert(writer io.Writer) error {
 		},
 	}
 
-	call := s.service.Subscriptions.Insert([]string{"snippet"}, subscription)
+	call := s.Service.Subscriptions.Insert([]string{"snippet"}, subscription)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errInsertSubscription, err)
@@ -199,7 +196,7 @@ func (s *Subscription) Insert(writer io.Writer) error {
 func (s *Subscription) Delete(writer io.Writer) error {
 	s.preRun()
 	for _, id := range s.Ids {
-		call := s.service.Subscriptions.Delete(id)
+		call := s.Service.Subscriptions.Delete(id)
 		err := call.Do()
 		if err != nil {
 			return errors.Join(errDeleteSubscription, err)
@@ -299,26 +296,9 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(s *Subscription) {
-		s.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(s *Subscription) {
-		s.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(s *Subscription) {
-		s.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(s *Subscription) {
-		s.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Subscription]
+	WithOutput   = pkg.WithOutput[*Subscription]
+	WithJsonpath = pkg.WithJsonpath[*Subscription]
+	WithService  = pkg.WithService[*Subscription]
+)

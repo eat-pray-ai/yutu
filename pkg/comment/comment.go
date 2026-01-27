@@ -26,6 +26,7 @@ var (
 )
 
 type Comment struct {
+	*pkg.DefaultFields
 	Ids              []string `yaml:"ids" json:"ids"`
 	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
 	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
@@ -38,13 +39,6 @@ type Comment struct {
 	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author"`
 	VideoId          string   `yaml:"video_id" json:"video_id"`
 	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating"`
-
-	// Operation parameters
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
-
-	service *youtube.Service
 }
 
 type IComment[T any] interface {
@@ -55,24 +49,27 @@ type IComment[T any] interface {
 	Delete(io.Writer) error
 	MarkAsSpam(io.Writer) error
 	SetModerationStatus(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Comment)
 
 func NewComment(opts ...Option) IComment[youtube.Comment] {
-	c := &Comment{}
-
+	c := &Comment{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
-
 	return c
 }
 
+func (c *Comment) GetDefaultFields() *pkg.DefaultFields {
+	return c.DefaultFields
+}
+
 func (c *Comment) preRun() {
-	if c.service == nil {
-		c.service = auth.NewY2BService(
+	if c.Service == nil {
+		c.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -81,7 +78,7 @@ func (c *Comment) preRun() {
 
 func (c *Comment) Get() ([]*youtube.Comment, error) {
 	c.preRun()
-	call := c.service.Comments.List(c.Parts)
+	call := c.Service.Comments.List(c.Parts)
 	if len(c.Ids) > 0 && c.Ids[0] != "" {
 		call = call.Id(c.Ids...)
 	}
@@ -163,7 +160,7 @@ func (c *Comment) Insert(writer io.Writer) error {
 		comment.Snippet.CanRate = *c.CanRate
 	}
 
-	call := c.service.Comments.Insert([]string{"snippet"}, comment)
+	call := c.Service.Comments.Insert([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errInsertComment, err)
@@ -206,7 +203,7 @@ func (c *Comment) Update(writer io.Writer) error {
 		comment.Snippet.ViewerRating = c.ViewerRating
 	}
 
-	call := c.service.Comments.Update([]string{"snippet"}, comment)
+	call := c.Service.Comments.Update([]string{"snippet"}, comment)
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdateComment, err)
@@ -226,7 +223,7 @@ func (c *Comment) Update(writer io.Writer) error {
 
 func (c *Comment) MarkAsSpam(writer io.Writer) error {
 	c.preRun()
-	call := c.service.Comments.MarkAsSpam(c.Ids)
+	call := c.Service.Comments.MarkAsSpam(c.Ids)
 	err := call.Do()
 	if err != nil {
 		return errors.Join(errMarkAsSpam, err)
@@ -246,7 +243,7 @@ func (c *Comment) MarkAsSpam(writer io.Writer) error {
 
 func (c *Comment) SetModerationStatus(writer io.Writer) error {
 	c.preRun()
-	call := c.service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
+	call := c.Service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
 		call = call.BanAuthor(*c.BanAuthor)
@@ -275,7 +272,7 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 func (c *Comment) Delete(writer io.Writer) error {
 	c.preRun()
 	for _, id := range c.Ids {
-		call := c.service.Comments.Delete(id)
+		call := c.Service.Comments.Delete(id)
 		err := call.Do()
 		if err != nil {
 			return errors.Join(errDeleteComment, err)
@@ -366,26 +363,9 @@ func WithViewerRating(viewerRating string) Option {
 	}
 }
 
-func WithParts(parts []string) Option {
-	return func(c *Comment) {
-		c.Parts = parts
-	}
-}
-
-func WithOutput(output string) Option {
-	return func(c *Comment) {
-		c.Output = output
-	}
-}
-
-func WithJsonpath(jsonpath string) Option {
-	return func(c *Comment) {
-		c.Jsonpath = jsonpath
-	}
-}
-
-func WithService(svc *youtube.Service) Option {
-	return func(c *Comment) {
-		c.service = svc
-	}
-}
+var (
+	WithParts    = pkg.WithParts[*Comment]
+	WithOutput   = pkg.WithOutput[*Comment]
+	WithJsonpath = pkg.WithJsonpath[*Comment]
+	WithService  = pkg.WithService[*Comment]
+)

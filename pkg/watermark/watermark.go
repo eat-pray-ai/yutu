@@ -20,6 +20,7 @@ var (
 )
 
 type Watermark struct {
+	*pkg.DefaultFields
 	ChannelId              string `yaml:"channel_id" json:"channel_id"`
 	File                   string `yaml:"file" json:"file"`
 	InVideoPosition        string `yaml:"in_video_position" json:"in_video_position"`
@@ -27,31 +28,32 @@ type Watermark struct {
 	OffsetMs               uint64 `yaml:"offset_ms" json:"offset_ms"`
 	OffsetType             string `yaml:"offset_type" json:"offset_type"`
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-
-	service *youtube.Service
 }
 
 type IWatermark interface {
 	Set(io.Writer) error
 	Unset(io.Writer) error
+	GetDefaultFields() *pkg.DefaultFields
 	preRun()
 }
 
 type Option func(*Watermark)
 
 func NewWatermark(opts ...Option) IWatermark {
-	w := &Watermark{}
-
+	w := &Watermark{DefaultFields: &pkg.DefaultFields{}}
 	for _, opt := range opts {
 		opt(w)
 	}
-
 	return w
 }
 
+func (w *Watermark) GetDefaultFields() *pkg.DefaultFields {
+	return w.DefaultFields
+}
+
 func (w *Watermark) preRun() {
-	if w.service == nil {
-		w.service = auth.NewY2BService(
+	if w.Service == nil {
+		w.Service = auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
@@ -86,7 +88,7 @@ func (w *Watermark) Set(writer io.Writer) error {
 		inVideoBranding.Timing.Type = w.OffsetType
 	}
 
-	call := w.service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
+	call := w.Service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
@@ -102,7 +104,7 @@ func (w *Watermark) Set(writer io.Writer) error {
 
 func (w *Watermark) Unset(writer io.Writer) error {
 	w.preRun()
-	call := w.service.Watermarks.Unset(w.ChannelId)
+	call := w.Service.Watermarks.Unset(w.ChannelId)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
 	}
@@ -158,8 +160,4 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	}
 }
 
-func WithService(svc *youtube.Service) Option {
-	return func(w *Watermark) {
-		w.service = svc
-	}
-}
+var WithService = pkg.WithService[*Watermark]

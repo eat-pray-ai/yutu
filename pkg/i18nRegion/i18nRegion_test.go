@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -34,11 +35,13 @@ func TestNewI18nRegion(t *testing.T) {
 				},
 			},
 			want: &I18nRegion{
-				Hl:       "en",
-				Parts:    []string{"id", "snippet"},
-				Output:   "json",
-				Jsonpath: "$.items[*].id",
-				service:  svc,
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"id", "snippet"},
+					Output:   "json",
+					Jsonpath: "$.items[*].id",
+				},
+				Hl: "en",
 			},
 		},
 		{
@@ -46,7 +49,7 @@ func TestNewI18nRegion(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &I18nRegion{},
+			want: &I18nRegion{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with empty string value",
@@ -55,7 +58,10 @@ func TestNewI18nRegion(t *testing.T) {
 					WithHl(""),
 				},
 			},
-			want: &I18nRegion{Hl: ""},
+			want: &I18nRegion{
+				DefaultFields: &pkg.DefaultFields{},
+				Hl:            "",
+			},
 		},
 	}
 

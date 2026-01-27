@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -78,6 +79,12 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"snippet", "contentDetails"},
+					Output:   "json",
+					Jsonpath: "items.id",
+				},
 				Ids:                           []string{"video1", "video2"},
 				AutoLevels:                    &autoLevelsTrue,
 				File:                          "/path/to/video.mp4",
@@ -110,10 +117,6 @@ func TestNewVideo(t *testing.T) {
 				PublicStatsViewable:           &publicStatsViewableTrue,
 				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
-				Parts:                         []string{"snippet", "contentDetails"},
-				Output:                        "json",
-				Jsonpath:                      "items.id",
-				service:                       svc,
 			},
 		},
 		{
@@ -121,7 +124,7 @@ func TestNewVideo(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Video{},
+			want: &Video{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -135,7 +138,7 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(nil),
 				},
 			},
-			want: &Video{},
+			want: &Video{DefaultFields: &pkg.DefaultFields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -150,6 +153,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
+				DefaultFields:       &pkg.DefaultFields{},
 				AutoLevels:          &autoLevelsFalse,
 				ForKids:             &forKidsFalse,
 				Embeddable:          &embeddableFalse,
@@ -165,7 +169,10 @@ func TestNewVideo(t *testing.T) {
 					WithMaxResults(0),
 				},
 			},
-			want: &Video{MaxResults: math.MaxInt64},
+			want: &Video{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    math.MaxInt64,
+			},
 		},
 		{
 			name: "with negative max results",
@@ -174,7 +181,10 @@ func TestNewVideo(t *testing.T) {
 					WithMaxResults(-10),
 				},
 			},
-			want: &Video{MaxResults: 1},
+			want: &Video{
+				DefaultFields: &pkg.DefaultFields{},
+				MaxResults:    1,
+			},
 		},
 		{
 			name: "with empty string values",
@@ -204,6 +214,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
+				DefaultFields:                 &pkg.DefaultFields{},
 				File:                          "",
 				Title:                         "",
 				Description:                   "",
@@ -240,12 +251,13 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Title:       "My Video",
-				Description: "A great video",
-				Tags:        []string{"tutorial", "golang"},
-				Privacy:     "private",
-				MaxResults:  25,
-				ForKids:     &forKidsFalse,
+				DefaultFields: &pkg.DefaultFields{},
+				Title:         "My Video",
+				Description:   "A great video",
+				Tags:          []string{"tutorial", "golang"},
+				Privacy:       "private",
+				MaxResults:    25,
+				ForKids:       &forKidsFalse,
 			},
 		},
 	}

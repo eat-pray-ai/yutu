@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/eat-pray-ai/yutu/pkg"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -16,6 +17,7 @@ func TestNewChannel(t *testing.T) {
 		opts []Option
 	}
 
+	svc := &youtube.Service{}
 	managedByMeTrue := true
 	managedByMeFalse := false
 	mineTrue := true
@@ -47,10 +49,19 @@ func TestNewChannel(t *testing.T) {
 					WithDefaultLanguage("en"),
 					WithDescription("Test channel description"),
 					WithTitle("Test Channel"),
-					WithService(&youtube.Service{}),
+					WithParts([]string{"snippet", "contentDetails"}),
+					WithOutput("json"),
+					WithJsonpath("$.items[0].id"),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
+				DefaultFields: &pkg.DefaultFields{
+					Service:  svc,
+					Parts:    []string{"snippet", "contentDetails"},
+					Output:   "json",
+					Jsonpath: "$.items[0].id",
+				},
 				CategoryId:             "category123",
 				ForHandle:              "@testhandle",
 				ForUsername:            "testuser",
@@ -72,10 +83,12 @@ func TestNewChannel(t *testing.T) {
 			name: "with no options",
 			args: args{
 				opts: []Option{
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &Channel{},
+			want: &Channel{
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+			},
 		},
 		{
 			name: "with nil boolean options",
@@ -84,10 +97,12 @@ func TestNewChannel(t *testing.T) {
 					WithChannelManagedByMe(nil),
 					WithMine(nil),
 					WithMySubscribers(nil),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
-			want: &Channel{},
+			want: &Channel{
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+			},
 		},
 		{
 			name: "with false boolean options",
@@ -96,10 +111,11 @@ func TestNewChannel(t *testing.T) {
 					WithChannelManagedByMe(&managedByMeFalse),
 					WithMine(&mineFalse),
 					WithMySubscribers(&mySubscribersFalse),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
+				DefaultFields: &pkg.DefaultFields{Service: svc},
 				ManagedByMe:   &managedByMeFalse,
 				Mine:          &mineFalse,
 				MySubscribers: &mySubscribersFalse,
@@ -110,11 +126,12 @@ func TestNewChannel(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(0),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
-				MaxResults: math.MaxInt64,
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+				MaxResults:    math.MaxInt64,
 			},
 		},
 		{
@@ -122,11 +139,12 @@ func TestNewChannel(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithMaxResults(-5),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
-				MaxResults: 1,
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+				MaxResults:    1,
 			},
 		},
 		{
@@ -143,10 +161,11 @@ func TestNewChannel(t *testing.T) {
 					WithDefaultLanguage(""),
 					WithDescription(""),
 					WithTitle(""),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
+				DefaultFields:          &pkg.DefaultFields{Service: svc},
 				CategoryId:             "",
 				ForHandle:              "",
 				ForUsername:            "",
@@ -167,14 +186,15 @@ func TestNewChannel(t *testing.T) {
 					WithTitle("My Channel"),
 					WithCountry("UK"),
 					WithMaxResults(50),
-					WithService(&youtube.Service{}),
+					WithService(svc),
 				},
 			},
 			want: &Channel{
-				Ids:        []string{"channel1"},
-				Title:      "My Channel",
-				Country:    "UK",
-				MaxResults: 50,
+				DefaultFields: &pkg.DefaultFields{Service: svc},
+				Ids:           []string{"channel1"},
+				Title:         "My Channel",
+				Country:       "UK",
+				MaxResults:    50,
 			},
 		},
 	}
@@ -182,22 +202,8 @@ func TestNewChannel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewChannel(tt.args.opts...); !reflect.DeepEqual(got.(*Channel).CategoryId, tt.want.(*Channel).CategoryId) ||
-					!reflect.DeepEqual(got.(*Channel).ForHandle, tt.want.(*Channel).ForHandle) ||
-					!reflect.DeepEqual(got.(*Channel).ForUsername, tt.want.(*Channel).ForUsername) ||
-					!reflect.DeepEqual(got.(*Channel).Hl, tt.want.(*Channel).Hl) ||
-					!reflect.DeepEqual(got.(*Channel).Ids, tt.want.(*Channel).Ids) ||
-					!reflect.DeepEqual(got.(*Channel).ManagedByMe, tt.want.(*Channel).ManagedByMe) ||
-					!reflect.DeepEqual(got.(*Channel).MaxResults, tt.want.(*Channel).MaxResults) ||
-					!reflect.DeepEqual(got.(*Channel).Mine, tt.want.(*Channel).Mine) ||
-					!reflect.DeepEqual(got.(*Channel).MySubscribers, tt.want.(*Channel).MySubscribers) ||
-					!reflect.DeepEqual(got.(*Channel).OnBehalfOfContentOwner, tt.want.(*Channel).OnBehalfOfContentOwner) ||
-					!reflect.DeepEqual(got.(*Channel).Country, tt.want.(*Channel).Country) ||
-					!reflect.DeepEqual(got.(*Channel).CustomUrl, tt.want.(*Channel).CustomUrl) ||
-					!reflect.DeepEqual(got.(*Channel).DefaultLanguage, tt.want.(*Channel).DefaultLanguage) ||
-					!reflect.DeepEqual(got.(*Channel).Description, tt.want.(*Channel).Description) ||
-					!reflect.DeepEqual(got.(*Channel).Title, tt.want.(*Channel).Title) {
-					t.Errorf("NewChannel() = %v, want %v", got, tt.want)
+				if got := NewChannel(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("%s\nNewChannel() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},
 		)
