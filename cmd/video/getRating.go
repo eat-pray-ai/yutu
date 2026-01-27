@@ -4,11 +4,8 @@
 package video
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -52,7 +49,11 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    true,
 			},
-		}, getRatingHandler,
+		}, cmd.GenToolHandler(
+			getRatingTool, func(input video.Video, writer io.Writer) error {
+				return input.GetRating(writer)
+			},
+		),
 	)
 	videoCmd.AddCommand(getRatingCmd)
 
@@ -84,25 +85,4 @@ var getRatingCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func getRatingHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input video.Video,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: getRatingTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.GetRating(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

@@ -4,11 +4,8 @@
 package playlistImage
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -59,7 +56,12 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    false,
 			},
-		}, insertHandler,
+		}, cmd.GenToolHandler(
+			insertTool,
+			func(input playlistImage.PlaylistImage, writer io.Writer) error {
+				return input.Insert(writer)
+			},
+		),
 	)
 	playlistImageCmd.AddCommand(insertCmd)
 
@@ -103,26 +105,4 @@ var insertCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest,
-	input playlistImage.PlaylistImage,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: insertTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.Insert(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

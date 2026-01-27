@@ -4,10 +4,7 @@
 package playlist
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
@@ -45,7 +42,11 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    false,
 			},
-		}, deleteHandler,
+		}, cmd.GenToolHandler(
+			deleteTool, func(input playlist.Playlist, writer io.Writer) error {
+				return input.Delete(writer)
+			},
+		),
 	)
 	playlistCmd.AddCommand(deleteCmd)
 
@@ -72,25 +73,4 @@ var deleteCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func deleteHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input playlist.Playlist,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: deleteTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.Delete(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

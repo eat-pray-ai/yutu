@@ -4,11 +4,8 @@
 package channelBanner
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -26,8 +23,9 @@ var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"channel_id", "file"},
 	Properties: map[string]*jsonschema.Schema{
-		"channel_id":                         {Type: "string", Description: cidUsage},
-		"file":                               {Type: "string", Description: fileUsage},
+		"channel_id": {Type: "string", Description: cidUsage},
+		"file":       {Type: "string", Description: fileUsage},
+
 		"on_behalf_of_content_owner":         {Type: "string"},
 		"on_behalf_of_content_owner_channel": {Type: "string"},
 		"output": {
@@ -48,7 +46,12 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    false,
 			},
-		}, insertHandler,
+		}, cmd.GenToolHandler(
+			insertTool,
+			func(input channelBanner.ChannelBanner, writer io.Writer) error {
+				return input.Insert(writer)
+			},
+		),
 	)
 	channelBannerCmd.AddCommand(insertCmd)
 
@@ -86,25 +89,4 @@ var insertCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func insertHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input channelBanner.ChannelBanner,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: insertTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.Insert(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

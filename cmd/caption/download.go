@@ -4,10 +4,7 @@
 package caption
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
@@ -52,7 +49,11 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    false,
 			},
-		}, downloadHandler,
+		}, cmd.GenToolHandler(
+			downloadTool, func(input caption.Caption, writer io.Writer) error {
+				return input.Download(writer)
+			},
+		),
 	)
 	captionCmd.AddCommand(downloadCmd)
 
@@ -89,24 +90,4 @@ var downloadCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func downloadHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input caption.Caption,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: downloadTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	if err := input.Download(&writer); err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

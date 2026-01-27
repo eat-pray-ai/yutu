@@ -4,11 +4,8 @@
 package search
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -132,7 +129,11 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    true,
 			},
-		}, listHandler,
+		}, cmd.GenToolHandler(
+			listTool, func(input search.Search, writer io.Writer) error {
+				return input.List(writer)
+			},
+		),
 	)
 	searchCmd.AddCommand(listCmd)
 
@@ -226,23 +227,4 @@ var listCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func listHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input search.Search,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{LoggerName: listTool, MinInterval: time.Second},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.List(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }

@@ -8,21 +8,53 @@ import (
 )
 
 type Getter[T any] interface {
-	Get([]string) ([]*T, error)
+	Get() ([]*T, error)
 }
 
 type Lister interface {
-	List([]string, string, string, io.Writer) error
+	List(io.Writer) error
 }
 
 type Inserter interface {
-	Insert(string, string, io.Writer) error
+	Insert(io.Writer) error
 }
 
 type Deleter interface {
-	Delete(writer io.Writer) error
+	Delete(io.Writer) error
 }
 
 type Updater interface {
-	Update(string, string, io.Writer) error
+	Update(io.Writer) error
+}
+
+type Downloader interface {
+	Download(io.Writer) error
+}
+
+type RatingGetter interface {
+	GetRating(io.Writer) error
+}
+
+type SpamMaker interface {
+	MarkAsSpam(io.Writer) error
+}
+
+type Rater interface {
+	Rate(io.Writer) error
+}
+
+type AbuseReporter interface {
+	ReportAbuse(io.Writer) error
+}
+
+type Setter interface {
+	Set(io.Writer) error
+}
+
+type Unsetter interface {
+	Unset(io.Writer) error
+}
+
+type ModerationSetter interface {
+	SetModerationStatus(io.Writer) error
 }

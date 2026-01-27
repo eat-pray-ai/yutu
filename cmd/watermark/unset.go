@@ -4,10 +4,7 @@
 package watermark
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
@@ -40,7 +37,11 @@ func init() {
 				OpenWorldHint:   jsonschema.Ptr(true),
 				ReadOnlyHint:    false,
 			},
-		}, unsetHandler,
+		}, cmd.GenToolHandler(
+			unsetTool, func(input watermark.Watermark, writer io.Writer) error {
+				return input.Unset(writer)
+			},
+		),
 	)
 	watermarkCmd.AddCommand(unsetCmd)
 
@@ -62,25 +63,4 @@ var unsetCmd = &cobra.Command{
 			cmd.PrintErrf("Error: %v\n", err)
 		}
 	},
-}
-
-func unsetHandler(
-	ctx context.Context, req *mcp.CallToolRequest, input watermark.Watermark,
-) (*mcp.CallToolResult, any, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: unsetTool, MinInterval: time.Second,
-			},
-		),
-	)
-
-	var writer bytes.Buffer
-	err := input.Unset(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "input", input)
-		return nil, nil, err
-	}
-	return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
 }
