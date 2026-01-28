@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -51,7 +51,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"id", "snippet"},
 					Output:   "json",
@@ -76,7 +76,7 @@ func TestNewComment(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Comment{DefaultFields: &pkg.DefaultFields{}},
+			want: &Comment{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -86,7 +86,7 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(nil),
 				},
 			},
-			want: &Comment{DefaultFields: &pkg.DefaultFields{}},
+			want: &Comment{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -97,9 +97,9 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields: &pkg.DefaultFields{},
-				CanRate:       &canRateFalse,
-				BanAuthor:     &banAuthorFalse,
+				Fields:    &common.Fields{},
+				CanRate:   &canRateFalse,
+				BanAuthor: &banAuthorFalse,
 			},
 		},
 		{
@@ -110,8 +110,8 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -122,8 +122,8 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -141,7 +141,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields:    &pkg.DefaultFields{},
+				Fields:           &common.Fields{},
 				AuthorChannelId:  "",
 				ChannelId:        "",
 				ParentId:         "",
@@ -164,11 +164,11 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
-				Ids:           []string{"comment1"},
-				TextOriginal:  "Partial comment",
-				VideoId:       "video456",
-				MaxResults:    25,
+				Fields:       &common.Fields{Service: svc},
+				Ids:          []string{"comment1"},
+				TextOriginal: "Partial comment",
+				VideoId:      "video456",
+				MaxResults:   25,
 			},
 		},
 	}

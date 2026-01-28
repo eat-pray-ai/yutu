@@ -9,7 +9,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -21,7 +21,7 @@ var (
 )
 
 type ChannelSection struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids                    []string `yaml:"ids" json:"ids"`
 	ChannelId              string   `yaml:"channel_id" json:"channel_id"`
 	Hl                     string   `yaml:"hl" json:"hl"`
@@ -33,8 +33,6 @@ type IChannelSection[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
 	Delete(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 	// Update()
 	// Insert()
 }
@@ -42,21 +40,21 @@ type IChannelSection[T any] interface {
 type Option func(*ChannelSection)
 
 func NewChannelSection(opts ...Option) IChannelSection[youtube.ChannelSection] {
-	cs := &ChannelSection{DefaultFields: &pkg.DefaultFields{}}
+	cs := &ChannelSection{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(cs)
 	}
 	return cs
 }
 
-func (cs *ChannelSection) GetDefaultFields() *pkg.DefaultFields {
-	return cs.DefaultFields
+func (cs *ChannelSection) GetFields() *common.Fields {
+	return cs.Fields
 }
 
 func (cs *ChannelSection) Get() (
 	[]*youtube.ChannelSection, error,
 ) {
-	cs.preRun()
+	cs.EnsureService()
 	call := cs.Service.ChannelSections.List(cs.Parts)
 	if len(cs.Ids) > 0 {
 		call = call.Id(cs.Ids...)
@@ -106,7 +104,7 @@ func (cs *ChannelSection) List(writer io.Writer) error {
 }
 
 func (cs *ChannelSection) Delete(writer io.Writer) error {
-	cs.preRun()
+	cs.EnsureService()
 	for _, id := range cs.Ids {
 		call := cs.Service.ChannelSections.Delete(id)
 		if cs.OnBehalfOfContentOwner != "" {
@@ -121,15 +119,6 @@ func (cs *ChannelSection) Delete(writer io.Writer) error {
 		_, _ = fmt.Fprintf(writer, "Channel section %s deleted\n", id)
 	}
 	return nil
-}
-
-func (cs *ChannelSection) preRun() {
-	if cs.Service == nil {
-		cs.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
 }
 
 func WithIds(ids []string) Option {
@@ -165,8 +154,8 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*ChannelSection]
-	WithOutput   = pkg.WithOutput[*ChannelSection]
-	WithJsonpath = pkg.WithJsonpath[*ChannelSection]
-	WithService  = pkg.WithService[*ChannelSection]
+	WithParts    = common.WithParts[*ChannelSection]
+	WithOutput   = common.WithOutput[*ChannelSection]
+	WithJsonpath = common.WithJsonpath[*ChannelSection]
+	WithService  = common.WithService[*ChannelSection]
 )

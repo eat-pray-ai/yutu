@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
@@ -20,7 +20,7 @@ var (
 )
 
 type ChannelBanner struct {
-	*pkg.DefaultFields
+	*common.Fields
 	ChannelId string `yaml:"channel_id" json:"channel_id"`
 	File      string `yaml:"file" json:"file"`
 
@@ -30,35 +30,20 @@ type ChannelBanner struct {
 
 type IChannelBanner interface {
 	Insert(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(banner *ChannelBanner)
 
 func NewChannelBanner(opts ...Option) IChannelBanner {
-	cb := &ChannelBanner{DefaultFields: &pkg.DefaultFields{}}
+	cb := &ChannelBanner{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(cb)
 	}
 	return cb
 }
 
-func (cb *ChannelBanner) GetDefaultFields() *pkg.DefaultFields {
-	return cb.DefaultFields
-}
-
-func (cb *ChannelBanner) preRun() {
-	if cb.Service == nil {
-		cb.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (cb *ChannelBanner) Insert(writer io.Writer) error {
-	cb.preRun()
+	cb.EnsureService()
 	file, err := pkg.Root.Open(cb.File)
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)
@@ -118,7 +103,7 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 }
 
 var (
-	WithOutput   = pkg.WithOutput[*ChannelBanner]
-	WithJsonpath = pkg.WithJsonpath[*ChannelBanner]
-	WithService  = pkg.WithService[*ChannelBanner]
+	WithOutput   = common.WithOutput[*ChannelBanner]
+	WithJsonpath = common.WithJsonpath[*ChannelBanner]
+	WithService  = common.WithService[*ChannelBanner]
 )

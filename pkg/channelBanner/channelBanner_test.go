@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -36,7 +36,7 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Output:   "json",
 					Jsonpath: "items.id",
 					Service:  svc,
@@ -52,7 +52,7 @@ func TestNewChannelBanner(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &ChannelBanner{DefaultFields: &pkg.DefaultFields{}},
+			want: &ChannelBanner{Fields: &common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -67,7 +67,7 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Output:   "",
 					Jsonpath: "",
 				},
@@ -87,9 +87,9 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				DefaultFields: &pkg.DefaultFields{Output: "yaml"},
-				ChannelId:     "partialChannel",
-				File:          "/partial/banner.png",
+				Fields:    &common.Fields{Output: "yaml"},
+				ChannelId: "partialChannel",
+				File:      "/partial/banner.png",
 			},
 		},
 	}

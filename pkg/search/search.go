@@ -9,7 +9,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -20,7 +20,7 @@ var (
 )
 
 type Search struct {
-	*pkg.DefaultFields
+	*common.Fields
 	ChannelId                 string   `yaml:"channel_id" json:"channel_id"`
 	ChannelType               string   `yaml:"channel_type" json:"channel_type"`
 	EventType                 string   `yaml:"event_type" json:"event_type"`
@@ -55,35 +55,20 @@ type Search struct {
 type ISearch[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Search)
 
 func NewSearch(opts ...Option) ISearch[youtube.SearchResult] {
-	s := &Search{DefaultFields: &pkg.DefaultFields{}}
+	s := &Search{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
 	return s
 }
 
-func (s *Search) GetDefaultFields() *pkg.DefaultFields {
-	return s.DefaultFields
-}
-
-func (s *Search) preRun() {
-	if s.Service == nil {
-		s.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (s *Search) Get() ([]*youtube.SearchResult, error) {
-	s.preRun()
+	s.EnsureService()
 	call := s.Service.Search.List(s.Parts)
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
@@ -415,8 +400,8 @@ func WithVideoType(videoType string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Search]
-	WithOutput   = pkg.WithOutput[*Search]
-	WithJsonpath = pkg.WithJsonpath[*Search]
-	WithService  = pkg.WithService[*Search]
+	WithParts    = common.WithParts[*Search]
+	WithOutput   = common.WithOutput[*Search]
+	WithJsonpath = common.WithJsonpath[*Search]
+	WithService  = common.WithService[*Search]
 )

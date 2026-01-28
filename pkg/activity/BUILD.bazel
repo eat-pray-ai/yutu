@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//pkg",
-        "//pkg/auth",
+        "//pkg/common",
         "//pkg/utils",
         "@com_github_jedib0t_go_pretty_v6//table",
         "@org_golang_google_api//youtube/v3:youtube",
@@ -19,7 +19,7 @@ go_test(
     srcs = ["activity_test.go"],
     embed = [":activity"],
     deps = [
-        "//pkg",
+        "//pkg/common",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -44,7 +44,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"id", "snippet"},
 					Output:   "json",
@@ -67,7 +67,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistImage{DefaultFields: &pkg.DefaultFields{}},
+			want: &PlaylistImage{Fields: &common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -77,8 +77,8 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -89,8 +89,8 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -106,7 +106,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				DefaultFields:                 &pkg.DefaultFields{},
+				Fields:                        &common.Fields{},
 				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
@@ -126,11 +126,11 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				DefaultFields: &pkg.DefaultFields{},
-				PlaylistId:    "myPlaylist",
-				Type:          "hero",
-				File:          "/images/hero.png",
-				MaxResults:    25,
+				Fields:     &common.Fields{},
+				PlaylistId: "myPlaylist",
+				Type:       "hero",
+				File:       "/images/hero.png",
+				MaxResults: 25,
 			},
 		},
 	}

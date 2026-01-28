@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -54,7 +54,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet", "contentDetails"},
 					Output:   "json",
@@ -80,7 +80,7 @@ func TestNewSubscription(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Subscription{DefaultFields: &pkg.DefaultFields{}},
+			want: &Subscription{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -91,7 +91,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMySubscribers(nil),
 				},
 			},
-			want: &Subscription{DefaultFields: &pkg.DefaultFields{}},
+			want: &Subscription{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -103,7 +103,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields:       &pkg.DefaultFields{},
+				Fields:              &common.Fields{},
 				Mine:                &mineFalse,
 				MyRecentSubscribers: &myRecentSubscribersFalse,
 				MySubscribers:       &mySubscribersFalse,
@@ -117,8 +117,8 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -129,8 +129,8 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -148,7 +148,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields:                 &pkg.DefaultFields{},
+				Fields:                        &common.Fields{},
 				SubscriberChannelId:           "",
 				Description:                   "",
 				ChannelId:                     "",
@@ -171,12 +171,12 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				DefaultFields: &pkg.DefaultFields{},
-				ChannelId:     "myChannel",
-				Title:         "My Subscription",
-				MaxResults:    25,
-				Order:         "alphabetical",
-				Mine:          &mineTrue,
+				Fields:     &common.Fields{},
+				ChannelId:  "myChannel",
+				Title:      "My Subscription",
+				MaxResults: 25,
+				Order:      "alphabetical",
+				Mine:       &mineTrue,
 			},
 		},
 	}

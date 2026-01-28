@@ -9,7 +9,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -20,7 +20,7 @@ var (
 )
 
 type SuperChatEvent struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Hl         string `yaml:"hl" json:"hl"`
 	MaxResults int64  `yaml:"max_results" json:"max_results"`
 }
@@ -28,35 +28,20 @@ type SuperChatEvent struct {
 type ISuperChatEvent[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*SuperChatEvent)
 
 func NewSuperChatEvent(opts ...Option) ISuperChatEvent[youtube.SuperChatEvent] {
-	s := &SuperChatEvent{DefaultFields: &pkg.DefaultFields{}}
+	s := &SuperChatEvent{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
 	return s
 }
 
-func (s *SuperChatEvent) GetDefaultFields() *pkg.DefaultFields {
-	return s.DefaultFields
-}
-
-func (s *SuperChatEvent) preRun() {
-	if s.Service == nil {
-		s.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
-	s.preRun()
+	s.EnsureService()
 	call := s.Service.SuperChatEvents.List(s.Parts)
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)
@@ -133,8 +118,8 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*SuperChatEvent]
-	WithOutput   = pkg.WithOutput[*SuperChatEvent]
-	WithJsonpath = pkg.WithJsonpath[*SuperChatEvent]
-	WithService  = pkg.WithService[*SuperChatEvent]
+	WithParts    = common.WithParts[*SuperChatEvent]
+	WithOutput   = common.WithOutput[*SuperChatEvent]
+	WithJsonpath = common.WithJsonpath[*SuperChatEvent]
+	WithService  = common.WithService[*SuperChatEvent]
 )

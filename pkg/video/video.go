@@ -12,7 +12,7 @@ import (
 	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -32,7 +32,7 @@ var (
 )
 
 type Video struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids               []string `yaml:"ids" json:"ids"`
 	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
 	File              string   `yaml:"file" json:"file"`
@@ -77,35 +77,20 @@ type IVideo[T any] interface {
 	Delete(io.Writer) error
 	ReportAbuse(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Video)
 
 func NewVideo(opts ...Option) IVideo[youtube.Video] {
-	v := &Video{DefaultFields: &pkg.DefaultFields{}}
+	v := &Video{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(v)
 	}
 	return v
 }
 
-func (v *Video) GetDefaultFields() *pkg.DefaultFields {
-	return v.DefaultFields
-}
-
-func (v *Video) preRun() {
-	if v.Service == nil {
-		v.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (v *Video) Get() ([]*youtube.Video, error) {
-	v.preRun()
+	v.EnsureService()
 	call := v.Service.Videos.List(v.Parts)
 	if len(v.Ids) > 0 {
 		call = call.Id(v.Ids...)
@@ -193,7 +178,7 @@ func (v *Video) List(writer io.Writer) error {
 }
 
 func (v *Video) Insert(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	file, err := pkg.Root.Open(v.File)
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
@@ -302,7 +287,7 @@ func (v *Video) Insert(writer io.Writer) error {
 }
 
 func (v *Video) Update(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	v.Parts = []string{"id", "snippet", "status"}
 	videos, err := v.Get()
 
@@ -394,7 +379,7 @@ func (v *Video) Update(writer io.Writer) error {
 }
 
 func (v *Video) Rate(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	for _, id := range v.Ids {
 		call := v.Service.Videos.Rate(id, v.Rating)
 		err := call.Do()
@@ -407,7 +392,7 @@ func (v *Video) Rate(writer io.Writer) error {
 }
 
 func (v *Video) GetRating(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	call := v.Service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
@@ -436,7 +421,7 @@ func (v *Video) GetRating(writer io.Writer) error {
 }
 
 func (v *Video) Delete(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	for _, id := range v.Ids {
 		call := v.Service.Videos.Delete(id)
 		if v.OnBehalfOfContentOwner != "" {
@@ -453,7 +438,7 @@ func (v *Video) Delete(writer io.Writer) error {
 }
 
 func (v *Video) ReportAbuse(writer io.Writer) error {
-	v.preRun()
+	v.EnsureService()
 	for _, id := range v.Ids {
 		videoAbuseReport := &youtube.VideoAbuseReport{
 			Comments:          v.Comments,
@@ -688,8 +673,8 @@ func WithSecondaryReasonId(secondaryReasonId string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Video]
-	WithOutput   = pkg.WithOutput[*Video]
-	WithJsonpath = pkg.WithJsonpath[*Video]
-	WithService  = pkg.WithService[*Video]
+	WithParts    = common.WithParts[*Video]
+	WithOutput   = common.WithOutput[*Video]
+	WithJsonpath = common.WithJsonpath[*Video]
+	WithService  = common.WithService[*Video]
 )

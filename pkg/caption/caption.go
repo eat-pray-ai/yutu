@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -25,7 +25,7 @@ var (
 )
 
 type Caption struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids                    []string `yaml:"ids" json:"ids"`
 	File                   string   `yaml:"file" json:"file"`
 	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
@@ -51,26 +51,24 @@ type ICaption[T youtube.Caption] interface {
 	Update(io.Writer) error
 	Delete(io.Writer) error
 	Download(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Caption)
 
 func NewCation(opts ...Option) ICaption[youtube.Caption] {
-	c := &Caption{DefaultFields: &pkg.DefaultFields{}}
+	c := &Caption{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *Caption) GetDefaultFields() *pkg.DefaultFields {
-	return c.DefaultFields
+func (c *Caption) GetFields() *common.Fields {
+	return c.Fields
 }
 
 func (c *Caption) Get() ([]*youtube.Caption, error) {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Captions.List(c.Parts, c.VideoId)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
@@ -120,7 +118,7 @@ func (c *Caption) List(writer io.Writer) error {
 }
 
 func (c *Caption) Insert(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	file, err := pkg.Root.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
@@ -170,7 +168,6 @@ func (c *Caption) Insert(writer io.Writer) error {
 }
 
 func (c *Caption) Update(writer io.Writer) error {
-	c.preRun()
 	c.Parts = []string{"snippet"}
 	captions, err := c.Get()
 	if err != nil {
@@ -248,7 +245,7 @@ func (c *Caption) Update(writer io.Writer) error {
 }
 
 func (c *Caption) Delete(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	for _, id := range c.Ids {
 		call := c.Service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
@@ -269,7 +266,7 @@ func (c *Caption) Delete(writer io.Writer) error {
 }
 
 func (c *Caption) Download(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Captions.Download(c.Ids[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)
@@ -312,15 +309,6 @@ func (c *Caption) Download(writer io.Writer) error {
 
 	_, _ = fmt.Fprintf(writer, "Caption %s downloaded to %s\n", c.Ids[0], c.File)
 	return nil
-}
-
-func (c *Caption) preRun() {
-	if c.Service == nil {
-		c.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
 }
 
 func WithIds(ids []string) Option {
@@ -430,8 +418,8 @@ func WithTlang(tlang string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Caption]
-	WithOutput   = pkg.WithOutput[*Caption]
-	WithJsonpath = pkg.WithJsonpath[*Caption]
-	WithService  = pkg.WithService[*Caption]
+	WithParts    = common.WithParts[*Caption]
+	WithOutput   = common.WithOutput[*Caption]
+	WithJsonpath = common.WithJsonpath[*Caption]
+	WithService  = common.WithService[*Caption]
 )

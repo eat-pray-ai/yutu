@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -57,7 +57,7 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				DefaultFields:          &pkg.DefaultFields{Service: svc},
+				Fields:                 &common.Fields{Service: svc},
 				Ids:                    []string{"caption1", "caption2"},
 				File:                   "/path/to/file.srt",
 				AudioTrackType:         "primary",
@@ -81,7 +81,7 @@ func TestNewCation(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Caption{DefaultFields: &pkg.DefaultFields{}},
+			want: &Caption{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -94,7 +94,7 @@ func TestNewCation(t *testing.T) {
 					WithIsLarge(nil),
 				},
 			},
-			want: &Caption{DefaultFields: &pkg.DefaultFields{}},
+			want: &Caption{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -108,12 +108,12 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				DefaultFields: &pkg.DefaultFields{},
-				IsAutoSynced:  &isAutoSyncedFalse,
-				IsCC:          &isCCFalse,
-				IsDraft:       &isDraftFalse,
-				IsEasyReader:  &isEasyReaderFalse,
-				IsLarge:       &isLargeFalse,
+				Fields:       &common.Fields{},
+				IsAutoSynced: &isAutoSyncedFalse,
+				IsCC:         &isCCFalse,
+				IsDraft:      &isDraftFalse,
+				IsEasyReader: &isEasyReaderFalse,
+				IsLarge:      &isLargeFalse,
 			},
 		},
 		{
@@ -133,7 +133,7 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				DefaultFields:          &pkg.DefaultFields{},
+				Fields:                 &common.Fields{},
 				File:                   "",
 				AudioTrackType:         "",
 				Language:               "",
@@ -157,11 +157,11 @@ func TestNewCation(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				DefaultFields: &pkg.DefaultFields{},
-				Ids:           []string{"caption1"},
-				Language:      "fr",
-				VideoId:       "video456",
-				IsCC:          &isCCTrue,
+				Fields:   &common.Fields{},
+				Ids:      []string{"caption1"},
+				Language: "fr",
+				VideoId:  "video456",
+				IsCC:     &isCCTrue,
 			},
 		},
 	}

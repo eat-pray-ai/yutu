@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -26,7 +26,7 @@ var (
 )
 
 type Comment struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids              []string `yaml:"ids" json:"ids"`
 	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
 	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
@@ -49,35 +49,20 @@ type IComment[T any] interface {
 	Delete(io.Writer) error
 	MarkAsSpam(io.Writer) error
 	SetModerationStatus(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Comment)
 
 func NewComment(opts ...Option) IComment[youtube.Comment] {
-	c := &Comment{DefaultFields: &pkg.DefaultFields{}}
+	c := &Comment{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *Comment) GetDefaultFields() *pkg.DefaultFields {
-	return c.DefaultFields
-}
-
-func (c *Comment) preRun() {
-	if c.Service == nil {
-		c.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (c *Comment) Get() ([]*youtube.Comment, error) {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Comments.List(c.Parts)
 	if len(c.Ids) > 0 && c.Ids[0] != "" {
 		call = call.Id(c.Ids...)
@@ -143,7 +128,7 @@ func (c *Comment) List(writer io.Writer) error {
 }
 
 func (c *Comment) Insert(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -179,7 +164,7 @@ func (c *Comment) Insert(writer io.Writer) error {
 }
 
 func (c *Comment) Update(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	c.Parts = []string{"id", "snippet"}
 	comments, err := c.Get()
 
@@ -222,7 +207,7 @@ func (c *Comment) Update(writer io.Writer) error {
 }
 
 func (c *Comment) MarkAsSpam(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Comments.MarkAsSpam(c.Ids)
 	err := call.Do()
 	if err != nil {
@@ -242,7 +227,7 @@ func (c *Comment) MarkAsSpam(writer io.Writer) error {
 }
 
 func (c *Comment) SetModerationStatus(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
@@ -270,7 +255,7 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 }
 
 func (c *Comment) Delete(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	for _, id := range c.Ids {
 		call := c.Service.Comments.Delete(id)
 		err := call.Do()
@@ -364,8 +349,8 @@ func WithViewerRating(viewerRating string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Comment]
-	WithOutput   = pkg.WithOutput[*Comment]
-	WithJsonpath = pkg.WithJsonpath[*Comment]
-	WithService  = pkg.WithService[*Comment]
+	WithParts    = common.WithParts[*Comment]
+	WithOutput   = common.WithOutput[*Comment]
+	WithJsonpath = common.WithJsonpath[*Comment]
+	WithService  = common.WithService[*Comment]
 )

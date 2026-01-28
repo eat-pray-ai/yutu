@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -38,7 +38,7 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				DefaultFields:          &pkg.DefaultFields{Service: svc},
+				Fields:                 &common.Fields{Service: svc},
 				Ids:                    []string{"section1", "section2"},
 				ChannelId:              "channel123",
 				Hl:                     "en",
@@ -51,7 +51,7 @@ func TestNewChannelSection(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &ChannelSection{DefaultFields: &pkg.DefaultFields{}},
+			want: &ChannelSection{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -60,7 +60,7 @@ func TestNewChannelSection(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &ChannelSection{DefaultFields: &pkg.DefaultFields{}},
+			want: &ChannelSection{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -70,8 +70,8 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				DefaultFields: &pkg.DefaultFields{},
-				Mine:          &mineFalse,
+				Fields: &common.Fields{},
+				Mine:   &mineFalse,
 			},
 		},
 		{
@@ -84,7 +84,7 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				DefaultFields:          &pkg.DefaultFields{},
+				Fields:                 &common.Fields{},
 				ChannelId:              "",
 				Hl:                     "",
 				OnBehalfOfContentOwner: "",
@@ -100,10 +100,10 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				DefaultFields: &pkg.DefaultFields{},
-				Ids:           []string{"section1"},
-				ChannelId:     "partialChannel",
-				Hl:            "fr",
+				Fields:    &common.Fields{},
+				Ids:       []string{"section1"},
+				ChannelId: "partialChannel",
+				Hl:        "fr",
 			},
 		},
 	}

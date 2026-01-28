@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -79,7 +79,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet", "contentDetails"},
 					Output:   "json",
@@ -124,7 +124,7 @@ func TestNewVideo(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Video{DefaultFields: &pkg.DefaultFields{}},
+			want: &Video{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -138,7 +138,7 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(nil),
 				},
 			},
-			want: &Video{DefaultFields: &pkg.DefaultFields{}},
+			want: &Video{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -153,7 +153,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields:       &pkg.DefaultFields{},
+				Fields:              &common.Fields{},
 				AutoLevels:          &autoLevelsFalse,
 				ForKids:             &forKidsFalse,
 				Embeddable:          &embeddableFalse,
@@ -170,8 +170,8 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -182,8 +182,8 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -214,7 +214,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields:                 &pkg.DefaultFields{},
+				Fields:                        &common.Fields{},
 				File:                          "",
 				Title:                         "",
 				Description:                   "",
@@ -251,13 +251,13 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				DefaultFields: &pkg.DefaultFields{},
-				Title:         "My Video",
-				Description:   "A great video",
-				Tags:          []string{"tutorial", "golang"},
-				Privacy:       "private",
-				MaxResults:    25,
-				ForKids:       &forKidsFalse,
+				Fields:      &common.Fields{},
+				Title:       "My Video",
+				Description: "A great video",
+				Tags:        []string{"tutorial", "golang"},
+				Privacy:     "private",
+				MaxResults:  25,
+				ForKids:     &forKidsFalse,
 			},
 		},
 	}

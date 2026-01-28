@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//pkg",
-        "//pkg/auth",
+        "//pkg/common",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )
@@ -17,7 +17,7 @@ go_test(
     srcs = ["watermark_test.go"],
     embed = [":watermark"],
     deps = [
-        "//pkg",
+        "//pkg/common",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -19,44 +19,29 @@ var (
 )
 
 type VideoAbuseReportReason struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Hl string `yaml:"hl" json:"hl"`
 }
 
 type IVideoAbuseReportReason[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*VideoAbuseReportReason)
 
 func NewVideoAbuseReportReason(opt ...Option) IVideoAbuseReportReason[youtube.VideoAbuseReportReason] {
-	va := &VideoAbuseReportReason{DefaultFields: &pkg.DefaultFields{}}
+	va := &VideoAbuseReportReason{Fields: &common.Fields{}}
 	for _, o := range opt {
 		o(va)
 	}
 	return va
 }
 
-func (va *VideoAbuseReportReason) GetDefaultFields() *pkg.DefaultFields {
-	return va.DefaultFields
-}
-
-func (va *VideoAbuseReportReason) preRun() {
-	if va.Service == nil {
-		va.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (va *VideoAbuseReportReason) Get() (
 	[]*youtube.VideoAbuseReportReason, error,
 ) {
-	va.preRun()
+	va.EnsureService()
 	call := va.Service.VideoAbuseReportReasons.List(va.Parts)
 	if va.Hl != "" {
 		call = call.Hl(va.Hl)
@@ -101,8 +86,8 @@ func WithHL(hl string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*VideoAbuseReportReason]
-	WithOutput   = pkg.WithOutput[*VideoAbuseReportReason]
-	WithJsonpath = pkg.WithJsonpath[*VideoAbuseReportReason]
-	WithService  = pkg.WithService[*VideoAbuseReportReason]
+	WithParts    = common.WithParts[*VideoAbuseReportReason]
+	WithOutput   = common.WithOutput[*VideoAbuseReportReason]
+	WithJsonpath = common.WithJsonpath[*VideoAbuseReportReason]
+	WithService  = common.WithService[*VideoAbuseReportReason]
 )

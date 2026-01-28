@@ -11,7 +11,7 @@ import (
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -25,7 +25,7 @@ var (
 )
 
 type PlaylistImage struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids        []string `yaml:"ids" json:"ids"`
 	Height     int64    `yaml:"height" json:"height"`
 	PlaylistId string   `yaml:"playlist_id" json:"playlist_id"`
@@ -46,35 +46,20 @@ type IPlaylistImage[T any] interface {
 	Insert(io.Writer) error
 	Update(io.Writer) error
 	Delete(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*PlaylistImage)
 
 func NewPlaylistImage(opts ...Option) IPlaylistImage[youtube.PlaylistImage] {
-	pi := &PlaylistImage{DefaultFields: &pkg.DefaultFields{}}
+	pi := &PlaylistImage{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(pi)
 	}
 	return pi
 }
 
-func (pi *PlaylistImage) GetDefaultFields() *pkg.DefaultFields {
-	return pi.DefaultFields
-}
-
-func (pi *PlaylistImage) preRun() {
-	if pi.Service == nil {
-		pi.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
-	pi.preRun()
+	pi.EnsureService()
 	call := pi.Service.PlaylistImages.List()
 	call = call.Part(pi.Parts...)
 	if pi.Parent != "" {
@@ -138,7 +123,7 @@ func (pi *PlaylistImage) List(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Insert(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	file, err := pkg.Root.Open(pi.File)
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
@@ -184,7 +169,7 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Update(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	pi.Parts = []string{"id", "kind", "snippet"}
 	playlistImages, err := pi.Get()
 	if err != nil {
@@ -242,7 +227,7 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Delete(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistImages.Delete()
 		call = call.Id(id)
@@ -325,8 +310,8 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 }
 
 var (
-	WithParts    = pkg.WithParts[*PlaylistImage]
-	WithOutput   = pkg.WithOutput[*PlaylistImage]
-	WithJsonpath = pkg.WithJsonpath[*PlaylistImage]
-	WithService  = pkg.WithService[*PlaylistImage]
+	WithParts    = common.WithParts[*PlaylistImage]
+	WithOutput   = common.WithOutput[*PlaylistImage]
+	WithJsonpath = common.WithJsonpath[*PlaylistImage]
+	WithService  = common.WithService[*PlaylistImage]
 )

@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -23,7 +23,7 @@ var (
 )
 
 type Subscription struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids                           []string `yaml:"ids" json:"ids"`
 	SubscriberChannelId           string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
 	Description                   string   `yaml:"description" json:"description"`
@@ -44,35 +44,20 @@ type ISubscription[T any] interface {
 	List(io.Writer) error
 	Insert(io.Writer) error
 	Delete(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Subscription)
 
 func NewSubscription(opts ...Option) ISubscription[youtube.Subscription] {
-	s := &Subscription{DefaultFields: &pkg.DefaultFields{}}
+	s := &Subscription{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
 	return s
 }
 
-func (s *Subscription) GetDefaultFields() *pkg.DefaultFields {
-	return s.DefaultFields
-}
-
-func (s *Subscription) preRun() {
-	if s.Service == nil {
-		s.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (s *Subscription) Get() ([]*youtube.Subscription, error) {
-	s.preRun()
+	s.EnsureService()
 	call := s.Service.Subscriptions.List(s.Parts)
 	if len(s.Ids) > 0 {
 		call = call.Id(s.Ids...)
@@ -164,7 +149,7 @@ func (s *Subscription) List(writer io.Writer) error {
 }
 
 func (s *Subscription) Insert(writer io.Writer) error {
-	s.preRun()
+	s.EnsureService()
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.SubscriberChannelId,
@@ -194,7 +179,7 @@ func (s *Subscription) Insert(writer io.Writer) error {
 }
 
 func (s *Subscription) Delete(writer io.Writer) error {
-	s.preRun()
+	s.EnsureService()
 	for _, id := range s.Ids {
 		call := s.Service.Subscriptions.Delete(id)
 		err := call.Do()
@@ -297,8 +282,8 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Subscription]
-	WithOutput   = pkg.WithOutput[*Subscription]
-	WithJsonpath = pkg.WithJsonpath[*Subscription]
-	WithService  = pkg.WithService[*Subscription]
+	WithParts    = common.WithParts[*Subscription]
+	WithOutput   = common.WithOutput[*Subscription]
+	WithJsonpath = common.WithJsonpath[*Subscription]
+	WithService  = common.WithService[*Subscription]
 )

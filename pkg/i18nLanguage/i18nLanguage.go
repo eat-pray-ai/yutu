@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -19,44 +19,29 @@ var (
 )
 
 type I18nLanguage struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Hl string `yaml:"hl" json:"hl"`
 }
 
 type II18nLanguage[T youtube.I18nLanguage] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*I18nLanguage)
 
 func NewI18nLanguage(opts ...Option) II18nLanguage[youtube.I18nLanguage] {
-	i := &I18nLanguage{DefaultFields: &pkg.DefaultFields{}}
+	i := &I18nLanguage{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(i)
 	}
 	return i
 }
 
-func (i *I18nLanguage) GetDefaultFields() *pkg.DefaultFields {
-	return i.DefaultFields
-}
-
-func (i *I18nLanguage) preRun() {
-	if i.Service == nil {
-		i.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (i *I18nLanguage) Get() (
 	[]*youtube.I18nLanguage, error,
 ) {
-	i.preRun()
+	i.EnsureService()
 	call := i.Service.I18nLanguages.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
@@ -101,8 +86,8 @@ func WithHl(hl string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*I18nLanguage]
-	WithOutput   = pkg.WithOutput[*I18nLanguage]
-	WithJsonpath = pkg.WithJsonpath[*I18nLanguage]
-	WithService  = pkg.WithService[*I18nLanguage]
+	WithParts    = common.WithParts[*I18nLanguage]
+	WithOutput   = common.WithOutput[*I18nLanguage]
+	WithJsonpath = common.WithJsonpath[*I18nLanguage]
+	WithService  = common.WithService[*I18nLanguage]
 )

@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -37,7 +37,7 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet"},
 					Output:   "json",
@@ -53,7 +53,7 @@ func TestNewVideoCategory(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &VideoCategory{DefaultFields: &pkg.DefaultFields{}},
+			want: &VideoCategory{Fields: &common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -64,9 +64,9 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				DefaultFields: &pkg.DefaultFields{},
-				Hl:            "",
-				RegionCode:    "",
+				Fields:     &common.Fields{},
+				Hl:         "",
+				RegionCode: "",
 			},
 		},
 		{
@@ -78,9 +78,9 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				DefaultFields: &pkg.DefaultFields{},
-				Hl:            "ja",
-				RegionCode:    "JP",
+				Fields:     &common.Fields{},
+				Hl:         "ja",
+				RegionCode: "JP",
 			},
 		},
 	}

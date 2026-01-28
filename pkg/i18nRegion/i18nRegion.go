@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -19,42 +19,27 @@ var (
 )
 
 type I18nRegion struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Hl string `yaml:"hl" json:"hl"`
 }
 
 type II18nRegion[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*I18nRegion)
 
 func NewI18nRegion(opts ...Option) II18nRegion[youtube.I18nRegion] {
-	i := &I18nRegion{DefaultFields: &pkg.DefaultFields{}}
+	i := &I18nRegion{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(i)
 	}
 	return i
 }
 
-func (i *I18nRegion) GetDefaultFields() *pkg.DefaultFields {
-	return i.DefaultFields
-}
-
-func (i *I18nRegion) preRun() {
-	if i.Service == nil {
-		i.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (i *I18nRegion) Get() ([]*youtube.I18nRegion, error) {
-	i.preRun()
+	i.EnsureService()
 	call := i.Service.I18nRegions.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)
@@ -99,8 +84,8 @@ func WithHl(hl string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*I18nRegion]
-	WithOutput   = pkg.WithOutput[*I18nRegion]
-	WithJsonpath = pkg.WithJsonpath[*I18nRegion]
-	WithService  = pkg.WithService[*I18nRegion]
+	WithParts    = common.WithParts[*I18nRegion]
+	WithOutput   = common.WithOutput[*I18nRegion]
+	WithJsonpath = common.WithJsonpath[*I18nRegion]
+	WithService  = common.WithService[*I18nRegion]
 )

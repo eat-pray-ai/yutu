@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -39,7 +39,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet"},
 					Output:   "json",
@@ -56,7 +56,7 @@ func TestNewMember(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Member{DefaultFields: &pkg.DefaultFields{}},
+			want: &Member{Fields: &common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -66,8 +66,8 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -78,8 +78,8 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -92,7 +92,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				DefaultFields:    &pkg.DefaultFields{},
+				Fields:           &common.Fields{},
 				MemberChannelId:  "",
 				HasAccessToLevel: "",
 				Mode:             "",
@@ -108,7 +108,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				DefaultFields:   &pkg.DefaultFields{Parts: []string{"id"}},
+				Fields:          &common.Fields{Parts: []string{"id"}},
 				MemberChannelId: "channel456",
 				MaxResults:      50,
 			},

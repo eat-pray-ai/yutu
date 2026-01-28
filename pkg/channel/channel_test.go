@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -56,7 +56,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet", "contentDetails"},
 					Output:   "json",
@@ -87,7 +87,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
+				Fields: &common.Fields{Service: svc},
 			},
 		},
 		{
@@ -101,7 +101,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
+				Fields: &common.Fields{Service: svc},
 			},
 		},
 		{
@@ -115,7 +115,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
+				Fields:        &common.Fields{Service: svc},
 				ManagedByMe:   &managedByMeFalse,
 				Mine:          &mineFalse,
 				MySubscribers: &mySubscribersFalse,
@@ -130,8 +130,8 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{Service: svc},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -143,8 +143,8 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
-				MaxResults:    1,
+				Fields:     &common.Fields{Service: svc},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -165,7 +165,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields:          &pkg.DefaultFields{Service: svc},
+				Fields:                 &common.Fields{Service: svc},
 				CategoryId:             "",
 				ForHandle:              "",
 				ForUsername:            "",
@@ -190,11 +190,11 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				DefaultFields: &pkg.DefaultFields{Service: svc},
-				Ids:           []string{"channel1"},
-				Title:         "My Channel",
-				Country:       "UK",
-				MaxResults:    50,
+				Fields:     &common.Fields{Service: svc},
+				Ids:        []string{"channel1"},
+				Title:      "My Channel",
+				Country:    "UK",
+				MaxResults: 50,
 			},
 		},
 	}

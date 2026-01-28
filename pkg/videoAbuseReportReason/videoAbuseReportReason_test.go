@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -35,7 +35,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"id", "snippet"},
 					Output:   "json",
@@ -49,7 +49,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &VideoAbuseReportReason{DefaultFields: &pkg.DefaultFields{}},
+			want: &VideoAbuseReportReason{Fields: &common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -61,7 +61,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Output: "", Jsonpath: "",
 				},
 				Hl: "",
@@ -76,8 +76,8 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				DefaultFields: &pkg.DefaultFields{Parts: []string{"snippet"}},
-				Hl:            "ja",
+				Fields: &common.Fields{Parts: []string{"snippet"}},
+				Hl:     "ja",
 			},
 		},
 	}

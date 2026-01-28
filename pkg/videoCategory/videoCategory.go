@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -22,41 +22,26 @@ type VideoCategory struct {
 	Ids        []string `yaml:"ids" json:"ids"`
 	Hl         string   `yaml:"hl" json:"hl"`
 	RegionCode string   `yaml:"region_code" json:"region_code"`
-	*pkg.DefaultFields
+	*common.Fields
 }
 
 type IVideoCategory[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*VideoCategory)
 
 func NewVideoCategory(opt ...Option) IVideoCategory[youtube.VideoCategory] {
-	vc := &VideoCategory{DefaultFields: &pkg.DefaultFields{}}
+	vc := &VideoCategory{Fields: &common.Fields{}}
 	for _, o := range opt {
 		o(vc)
 	}
 	return vc
 }
 
-func (vc *VideoCategory) GetDefaultFields() *pkg.DefaultFields {
-	return vc.DefaultFields
-}
-
-func (vc *VideoCategory) preRun() {
-	if vc.Service == nil {
-		vc.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (vc *VideoCategory) Get() ([]*youtube.VideoCategory, error) {
-	vc.preRun()
+	vc.EnsureService()
 	call := vc.Service.VideoCategories.List(vc.Parts)
 	if len(vc.Ids) > 0 {
 		call = call.Id(vc.Ids...)
@@ -119,8 +104,8 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*VideoCategory]
-	WithOutput   = pkg.WithOutput[*VideoCategory]
-	WithJsonpath = pkg.WithJsonpath[*VideoCategory]
-	WithService  = pkg.WithService[*VideoCategory]
+	WithParts    = common.WithParts[*VideoCategory]
+	WithOutput   = common.WithOutput[*VideoCategory]
+	WithJsonpath = common.WithJsonpath[*VideoCategory]
+	WithService  = common.WithService[*VideoCategory]
 )

@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 
@@ -23,7 +23,7 @@ var (
 )
 
 type Channel struct {
-	*pkg.DefaultFields
+	*common.Fields
 	CategoryId             string   `yaml:"category_id" json:"category_id"`
 	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
 	ForUsername            string   `yaml:"for_username" json:"for_username"`
@@ -46,26 +46,20 @@ type IChannel[T youtube.Channel] interface {
 	List(io.Writer) error
 	Update(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Channel)
 
 func NewChannel(opts ...Option) IChannel[youtube.Channel] {
-	c := &Channel{DefaultFields: &pkg.DefaultFields{}}
+	c := &Channel{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *Channel) GetDefaultFields() *pkg.DefaultFields {
-	return c.DefaultFields
-}
-
 func (c *Channel) Get() ([]*youtube.Channel, error) {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.Channels.List(c.Parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)
@@ -189,15 +183,6 @@ func (c *Channel) Update(writer io.Writer) error {
 	return nil
 }
 
-func (c *Channel) preRun() {
-	if c.Service == nil {
-		c.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func WithCategoryId(categoryId string) Option {
 	return func(c *Channel) {
 		c.CategoryId = categoryId
@@ -300,8 +285,8 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Channel]
-	WithOutput   = pkg.WithOutput[*Channel]
-	WithJsonpath = pkg.WithJsonpath[*Channel]
-	WithService  = pkg.WithService[*Channel]
+	WithParts    = common.WithParts[*Channel]
+	WithOutput   = common.WithOutput[*Channel]
+	WithJsonpath = common.WithJsonpath[*Channel]
+	WithService  = common.WithService[*Channel]
 )

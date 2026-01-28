@@ -9,7 +9,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
@@ -18,42 +18,27 @@ var (
 )
 
 type Thumbnail struct {
-	*pkg.DefaultFields
+	*common.Fields
 	File    string `yaml:"file" json:"file"`
 	VideoId string `yaml:"video_id" json:"video_id"`
 }
 
 type IThumbnail interface {
 	Set(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Thumbnail)
 
 func NewThumbnail(opts ...Option) IThumbnail {
-	t := &Thumbnail{DefaultFields: &pkg.DefaultFields{}}
+	t := &Thumbnail{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(t)
 	}
 	return t
 }
 
-func (t *Thumbnail) GetDefaultFields() *pkg.DefaultFields {
-	return t.DefaultFields
-}
-
-func (t *Thumbnail) preRun() {
-	if t.Service == nil {
-		t.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (t *Thumbnail) Set(writer io.Writer) error {
-	t.preRun()
+	t.EnsureService()
 	file, err := pkg.Root.Open(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
@@ -90,7 +75,7 @@ func WithFile(file string) Option {
 }
 
 var (
-	WithOutput   = pkg.WithOutput[*Thumbnail]
-	WithJsonpath = pkg.WithJsonpath[*Thumbnail]
-	WithService  = pkg.WithService[*Thumbnail]
+	WithOutput   = common.WithOutput[*Thumbnail]
+	WithJsonpath = common.WithJsonpath[*Thumbnail]
+	WithService  = common.WithService[*Thumbnail]
 )

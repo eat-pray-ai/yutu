@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -70,7 +70,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet"},
 					Output:   "json",
@@ -112,7 +112,7 @@ func TestNewSearch(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Search{DefaultFields: &pkg.DefaultFields{}},
+			want: &Search{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -123,7 +123,7 @@ func TestNewSearch(t *testing.T) {
 					WithForMine(nil),
 				},
 			},
-			want: &Search{DefaultFields: &pkg.DefaultFields{}},
+			want: &Search{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -135,7 +135,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields:   &pkg.DefaultFields{},
+				Fields:          &common.Fields{},
 				ForContentOwner: &forContentOwnerFalse,
 				ForDeveloper:    &forDeveloperFalse,
 				ForMine:         &forMineFalse,
@@ -149,8 +149,8 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -161,8 +161,8 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -196,7 +196,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields:             &pkg.DefaultFields{},
+				Fields:                    &common.Fields{},
 				ChannelId:                 "",
 				ChannelType:               "",
 				EventType:                 "",
@@ -235,12 +235,12 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				DefaultFields: &pkg.DefaultFields{},
-				Q:             "golang tutorial",
-				MaxResults:    25,
-				Order:         "date",
-				RegionCode:    "UK",
-				Types:         []string{"video"},
+				Fields:     &common.Fields{},
+				Q:          "golang tutorial",
+				MaxResults: 25,
+				Order:      "date",
+				RegionCode: "UK",
+				Types:      []string{"video"},
 			},
 		},
 	}

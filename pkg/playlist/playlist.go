@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -24,7 +24,7 @@ var (
 )
 
 type Playlist struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
@@ -46,35 +46,20 @@ type IPlaylist[T any] interface {
 	Update(io.Writer) error
 	Delete(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Playlist)
 
 func NewPlaylist(opts ...Option) IPlaylist[youtube.Playlist] {
-	p := &Playlist{DefaultFields: &pkg.DefaultFields{}}
+	p := &Playlist{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(p)
 	}
 	return p
 }
 
-func (p *Playlist) GetDefaultFields() *pkg.DefaultFields {
-	return p.DefaultFields
-}
-
-func (p *Playlist) preRun() {
-	if p.Service == nil {
-		p.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (p *Playlist) Get() ([]*youtube.Playlist, error) {
-	p.preRun()
+	p.EnsureService()
 	call := p.Service.Playlists.List(p.Parts)
 
 	if len(p.Ids) > 0 {
@@ -142,7 +127,7 @@ func (p *Playlist) List(writer io.Writer) error {
 }
 
 func (p *Playlist) Insert(writer io.Writer) error {
-	p.preRun()
+	p.EnsureService()
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -175,7 +160,7 @@ func (p *Playlist) Insert(writer io.Writer) error {
 }
 
 func (p *Playlist) Update(writer io.Writer) error {
-	p.preRun()
+	p.EnsureService()
 	playlists, err := p.Get()
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
@@ -220,7 +205,7 @@ func (p *Playlist) Update(writer io.Writer) error {
 }
 
 func (p *Playlist) Delete(writer io.Writer) error {
-	p.preRun()
+	p.EnsureService()
 	for _, id := range p.Ids {
 		call := p.Service.Playlists.Delete(id)
 		if p.OnBehalfOfContentOwner != "" {
@@ -316,8 +301,8 @@ func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Playlist]
-	WithOutput   = pkg.WithOutput[*Playlist]
-	WithJsonpath = pkg.WithJsonpath[*Playlist]
-	WithService  = pkg.WithService[*Playlist]
+	WithParts    = common.WithParts[*Playlist]
+	WithOutput   = common.WithOutput[*Playlist]
+	WithJsonpath = common.WithJsonpath[*Playlist]
+	WithService  = common.WithService[*Playlist]
 )

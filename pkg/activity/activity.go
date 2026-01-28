@@ -9,7 +9,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -20,7 +20,7 @@ var (
 )
 
 type Activity struct {
-	*pkg.DefaultFields
+	*common.Fields
 	ChannelId       string `yaml:"channel_id" json:"channel_id"`
 	Home            *bool  `yaml:"home" json:"home"`
 	MaxResults      int64  `yaml:"max_results" json:"max_results"`
@@ -33,26 +33,20 @@ type Activity struct {
 type IActivity[T any] interface {
 	List(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Activity)
 
 func NewActivity(opts ...Option) IActivity[youtube.Activity] {
-	a := &Activity{DefaultFields: &pkg.DefaultFields{}}
+	a := &Activity{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(a)
 	}
 	return a
 }
 
-func (a *Activity) GetDefaultFields() *pkg.DefaultFields {
-	return a.DefaultFields
-}
-
 func (a *Activity) Get() ([]*youtube.Activity, error) {
-	a.preRun()
+	a.EnsureService()
 	call := a.Service.Activities.List(a.Parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)
@@ -131,15 +125,6 @@ func (a *Activity) List(writer io.Writer) error {
 	return err
 }
 
-func (a *Activity) preRun() {
-	if a.Service == nil {
-		a.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func WithChannelId(channelId string) Option {
 	return func(a *Activity) {
 		a.ChannelId = channelId
@@ -192,8 +177,8 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*Activity]
-	WithOutput   = pkg.WithOutput[*Activity]
-	WithJsonpath = pkg.WithJsonpath[*Activity]
-	WithService  = pkg.WithService[*Activity]
+	WithParts    = common.WithParts[*Activity]
+	WithOutput   = common.WithOutput[*Activity]
+	WithJsonpath = common.WithJsonpath[*Activity]
+	WithService  = common.WithService[*Activity]
 )

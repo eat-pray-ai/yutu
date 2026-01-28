@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -20,7 +20,7 @@ var (
 )
 
 type Watermark struct {
-	*pkg.DefaultFields
+	*common.Fields
 	ChannelId              string `yaml:"channel_id" json:"channel_id"`
 	File                   string `yaml:"file" json:"file"`
 	InVideoPosition        string `yaml:"in_video_position" json:"in_video_position"`
@@ -33,35 +33,20 @@ type Watermark struct {
 type IWatermark interface {
 	Set(io.Writer) error
 	Unset(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*Watermark)
 
 func NewWatermark(opts ...Option) IWatermark {
-	w := &Watermark{DefaultFields: &pkg.DefaultFields{}}
+	w := &Watermark{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(w)
 	}
 	return w
 }
 
-func (w *Watermark) GetDefaultFields() *pkg.DefaultFields {
-	return w.DefaultFields
-}
-
-func (w *Watermark) preRun() {
-	if w.Service == nil {
-		w.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (w *Watermark) Set(writer io.Writer) error {
-	w.preRun()
+	w.EnsureService()
 	file, err := pkg.Root.Open(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)
@@ -103,7 +88,7 @@ func (w *Watermark) Set(writer io.Writer) error {
 }
 
 func (w *Watermark) Unset(writer io.Writer) error {
-	w.preRun()
+	w.EnsureService()
 	call := w.Service.Watermarks.Unset(w.ChannelId)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
@@ -160,4 +145,4 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 	}
 }
 
-var WithService = pkg.WithService[*Watermark]
+var WithService = common.WithService[*Watermark]

@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -19,34 +19,30 @@ var (
 )
 
 type MembershipsLevel struct {
-	*pkg.DefaultFields
+	*common.Fields
 }
 
 type IMembershipsLevel[T any] interface {
 	List(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*MembershipsLevel)
 
 func NewMembershipsLevel(opts ...Option) IMembershipsLevel[youtube.MembershipsLevel] {
-	m := &MembershipsLevel{DefaultFields: &pkg.DefaultFields{}}
+	m := &MembershipsLevel{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(m)
 	}
 	return m
 }
 
-func (m *MembershipsLevel) GetDefaultFields() *pkg.DefaultFields {
-	return m.DefaultFields
+func (m *MembershipsLevel) GetFields() *common.Fields {
+	return m.Fields
 }
 
-func (m *MembershipsLevel) Get() (
-	[]*youtube.MembershipsLevel, error,
-) {
-	m.preRun()
+func (m *MembershipsLevel) Get() ([]*youtube.MembershipsLevel, error) {
+	m.EnsureService()
 	call := m.Service.MembershipsLevels.List(m.Parts)
 	res, err := call.Do()
 	if err != nil {
@@ -80,18 +76,9 @@ func (m *MembershipsLevel) List(writer io.Writer) error {
 	return nil
 }
 
-func (m *MembershipsLevel) preRun() {
-	if m.Service == nil {
-		m.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 var (
-	WithParts    = pkg.WithParts[*MembershipsLevel]
-	WithOutput   = pkg.WithOutput[*MembershipsLevel]
-	WithJsonpath = pkg.WithJsonpath[*MembershipsLevel]
-	WithService  = pkg.WithService[*MembershipsLevel]
+	WithParts    = common.WithParts[*MembershipsLevel]
+	WithOutput   = common.WithOutput[*MembershipsLevel]
+	WithJsonpath = common.WithJsonpath[*MembershipsLevel]
+	WithService  = common.WithService[*MembershipsLevel]
 )

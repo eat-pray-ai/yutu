@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -25,7 +25,7 @@ var (
 )
 
 type PlaylistItem struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids         []string `yaml:"ids" json:"ids"`
 	Title       string   `yaml:"title" json:"title"`
 	Description string   `yaml:"description" json:"description"`
@@ -48,35 +48,20 @@ type IPlaylistItem[T any] interface {
 	Update(io.Writer) error
 	Delete(io.Writer) error
 	Get() ([]*T, error)
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*PlaylistItem)
 
 func NewPlaylistItem(opts ...Option) IPlaylistItem[youtube.PlaylistItem] {
-	p := &PlaylistItem{DefaultFields: &pkg.DefaultFields{}}
+	p := &PlaylistItem{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(p)
 	}
 	return p
 }
 
-func (p *PlaylistItem) GetDefaultFields() *pkg.DefaultFields {
-	return p.DefaultFields
-}
-
-func (pi *PlaylistItem) preRun() {
-	if pi.Service == nil {
-		pi.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
-	pi.preRun()
+	pi.EnsureService()
 	call := pi.Service.PlaylistItems.List(pi.Parts)
 	if len(pi.Ids) > 0 {
 		call = call.Id(pi.Ids...)
@@ -153,7 +138,7 @@ func (pi *PlaylistItem) List(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Insert(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
 	case "video":
@@ -211,7 +196,7 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Update(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	pi.Parts = []string{"id", "snippet", "status"}
 	playlistItems, err := pi.Get()
 
@@ -258,7 +243,7 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Delete(writer io.Writer) error {
-	pi.preRun()
+	pi.EnsureService()
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {
@@ -359,8 +344,8 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*PlaylistItem]
-	WithOutput   = pkg.WithOutput[*PlaylistItem]
-	WithJsonpath = pkg.WithJsonpath[*PlaylistItem]
-	WithService  = pkg.WithService[*PlaylistItem]
+	WithParts    = common.WithParts[*PlaylistItem]
+	WithOutput   = common.WithOutput[*PlaylistItem]
+	WithJsonpath = common.WithJsonpath[*PlaylistItem]
+	WithService  = common.WithService[*PlaylistItem]
 )

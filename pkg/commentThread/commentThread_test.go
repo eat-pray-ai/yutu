@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -45,7 +45,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"id", "snippet"},
 					Output:   "json",
@@ -69,7 +69,7 @@ func TestNewCommentThread(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &CommentThread{DefaultFields: &pkg.DefaultFields{}},
+			want: &CommentThread{Fields: &common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -79,8 +79,8 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -91,8 +91,8 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -114,7 +114,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Parts:    nil,
 					Output:   "",
 					Jsonpath: "",
@@ -142,11 +142,11 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				DefaultFields: &pkg.DefaultFields{Output: "yaml"},
-				Ids:           []string{"thread1"},
-				VideoId:       "video456",
-				TextOriginal:  "Partial comment thread",
-				MaxResults:    50,
+				Fields:       &common.Fields{Output: "yaml"},
+				Ids:          []string{"thread1"},
+				VideoId:      "video456",
+				TextOriginal: "Partial comment thread",
+				MaxResults:   50,
 			},
 		},
 	}

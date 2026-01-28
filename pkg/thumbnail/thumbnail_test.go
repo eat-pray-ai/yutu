@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -34,7 +34,7 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Output:   "json",
 					Jsonpath: "id",
@@ -48,7 +48,7 @@ func TestNewThumbnail(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Thumbnail{DefaultFields: &pkg.DefaultFields{}},
+			want: &Thumbnail{Fields: &common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -61,7 +61,7 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Output:   "",
 					Jsonpath: "",
 				},
@@ -78,9 +78,9 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				DefaultFields: &pkg.DefaultFields{},
-				VideoId:       "myVideo123",
-				File:          "/images/thumb.png",
+				Fields:  &common.Fields{},
+				VideoId: "myVideo123",
+				File:    "/images/thumb.png",
 			},
 		},
 	}

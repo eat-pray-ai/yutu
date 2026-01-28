@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -43,7 +43,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields:   &pkg.DefaultFields{Service: svc},
+				Fields:          &common.Fields{Service: svc},
 				ChannelId:       "test-channel-123",
 				Home:            &homeTrue,
 				MaxResults:      50,
@@ -58,7 +58,7 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Activity{DefaultFields: &pkg.DefaultFields{}},
+			want: &Activity{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -68,7 +68,7 @@ func TestNewActivity(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Activity{DefaultFields: &pkg.DefaultFields{}},
+			want: &Activity{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -79,9 +79,9 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields: &pkg.DefaultFields{},
-				Home:          &homeFalse,
-				Mine:          &mineFalse,
+				Fields: &common.Fields{},
+				Home:   &homeFalse,
+				Mine:   &mineFalse,
 			},
 		},
 		{
@@ -92,8 +92,8 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -104,8 +104,8 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -119,7 +119,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields:   &pkg.DefaultFields{},
+				Fields:          &common.Fields{},
 				ChannelId:       "",
 				PublishedAfter:  "",
 				PublishedBefore: "",
@@ -136,10 +136,10 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				DefaultFields: &pkg.DefaultFields{},
-				ChannelId:     "partial-channel",
-				MaxResults:    25,
-				RegionCode:    "UK",
+				Fields:     &common.Fields{},
+				ChannelId:  "partial-channel",
+				MaxResults: 25,
+				RegionCode: "UK",
 			},
 		},
 	}
@@ -147,7 +147,9 @@ func TestNewActivity(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
+				if got := NewActivity(tt.args.opts...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
 					t.Errorf("%s\nNewActivity() = %v\nwant %v", tt.name, got, tt.want)
 				}
 			},

@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//pkg",
-        "//pkg/auth",
+        "//pkg/common",
         "//pkg/utils",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
@@ -18,7 +18,7 @@ go_test(
     srcs = ["channelBanner_test.go"],
     embed = [":channelBanner"],
     deps = [
-        "//pkg",
+        "//pkg/common",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

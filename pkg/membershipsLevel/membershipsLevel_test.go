@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -34,7 +34,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 				},
 			},
 			want: &MembershipsLevel{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet"},
 					Output:   "json",
@@ -47,7 +47,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &MembershipsLevel{DefaultFields: &pkg.DefaultFields{}},
+			want: &MembershipsLevel{Fields: &common.Fields{}},
 		},
 	}
 

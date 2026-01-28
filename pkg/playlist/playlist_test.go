@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -49,7 +49,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"id", "snippet"},
 					Output:   "json",
@@ -74,7 +74,7 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Playlist{DefaultFields: &pkg.DefaultFields{}},
+			want: &Playlist{Fields: &common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -83,7 +83,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Playlist{DefaultFields: &pkg.DefaultFields{}},
+			want: &Playlist{Fields: &common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -93,8 +93,8 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields: &pkg.DefaultFields{},
-				Mine:          &mineFalse,
+				Fields: &common.Fields{},
+				Mine:   &mineFalse,
 			},
 		},
 		{
@@ -105,8 +105,8 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -117,8 +117,8 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -136,7 +136,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields:                 &pkg.DefaultFields{},
+				Fields:                        &common.Fields{},
 				Title:                         "",
 				Description:                   "",
 				Language:                      "",
@@ -158,11 +158,11 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				DefaultFields: &pkg.DefaultFields{},
-				Title:         "My Playlist",
-				Description:   "A great playlist",
-				Privacy:       "private",
-				MaxResults:    25,
+				Fields:      &common.Fields{},
+				Title:       "My Playlist",
+				Description: "A great playlist",
+				Privacy:     "private",
+				MaxResults:  25,
 			},
 		},
 	}

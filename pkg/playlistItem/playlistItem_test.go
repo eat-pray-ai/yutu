@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -48,7 +48,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				DefaultFields: &pkg.DefaultFields{
+				Fields: &common.Fields{
 					Service:  svc,
 					Parts:    []string{"snippet", "status"},
 					Output:   "json",
@@ -74,7 +74,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistItem{DefaultFields: &pkg.DefaultFields{}},
+			want: &PlaylistItem{Fields: &common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -84,8 +84,8 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    math.MaxInt64,
+				Fields:     &common.Fields{},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -96,8 +96,8 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				DefaultFields: &pkg.DefaultFields{},
-				MaxResults:    1,
+				Fields:     &common.Fields{},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -120,7 +120,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				DefaultFields:          &pkg.DefaultFields{Output: "", Jsonpath: ""},
+				Fields:                 &common.Fields{Output: "", Jsonpath: ""},
 				Title:                  "",
 				Description:            "",
 				Kind:                   "",
@@ -147,12 +147,12 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				DefaultFields: &pkg.DefaultFields{Parts: []string{"id"}},
-				Title:         "My Video",
-				Kind:          "video",
-				KVideoId:      "myVideo123",
-				PlaylistId:    "myPlaylist",
-				MaxResults:    25,
+				Fields:     &common.Fields{Parts: []string{"id"}},
+				Title:      "My Video",
+				Kind:       "video",
+				KVideoId:   "myVideo123",
+				PlaylistId: "myPlaylist",
+				MaxResults: 25,
 			},
 		},
 	}

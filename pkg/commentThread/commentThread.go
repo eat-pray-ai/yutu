@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
-	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
@@ -22,7 +22,7 @@ var (
 )
 
 type CommentThread struct {
-	*pkg.DefaultFields
+	*common.Fields
 	Ids                          []string `yaml:"ids" json:"ids"`
 	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
 	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
@@ -40,35 +40,20 @@ type ICommentThread[T any] interface {
 	Get() ([]*T, error)
 	List(io.Writer) error
 	Insert(io.Writer) error
-	GetDefaultFields() *pkg.DefaultFields
-	preRun()
 }
 
 type Option func(*CommentThread)
 
 func NewCommentThread(opts ...Option) ICommentThread[youtube.CommentThread] {
-	c := &CommentThread{DefaultFields: &pkg.DefaultFields{}}
+	c := &CommentThread{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *CommentThread) GetDefaultFields() *pkg.DefaultFields {
-	return c.DefaultFields
-}
-
-func (c *CommentThread) preRun() {
-	if c.Service == nil {
-		c.Service = auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-	}
-}
-
 func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
-	c.preRun()
+	c.EnsureService()
 	call := c.Service.CommentThreads.List(c.Parts)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
@@ -150,7 +135,7 @@ func (c *CommentThread) List(writer io.Writer) error {
 }
 
 func (c *CommentThread) Insert(writer io.Writer) error {
-	c.preRun()
+	c.EnsureService()
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
 			ChannelId: c.ChannelId,
@@ -256,8 +241,8 @@ func WithVideoId(videoId string) Option {
 }
 
 var (
-	WithParts    = pkg.WithParts[*CommentThread]
-	WithOutput   = pkg.WithOutput[*CommentThread]
-	WithJsonpath = pkg.WithJsonpath[*CommentThread]
-	WithService  = pkg.WithService[*CommentThread]
+	WithParts    = common.WithParts[*CommentThread]
+	WithOutput   = common.WithOutput[*CommentThread]
+	WithJsonpath = common.WithJsonpath[*CommentThread]
+	WithService  = common.WithService[*CommentThread]
 )
