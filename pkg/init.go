@@ -41,7 +41,7 @@ func initLogger() {
 	}
 	logger = slog.New(
 		slog.NewTextHandler(
-			os.Stdout, &slog.HandlerOptions{
+			os.Stderr, &slog.HandlerOptions{
 				Level: logLevel,
 			},
 		),

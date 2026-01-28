@@ -29,10 +29,22 @@ var (
 var Server = mcp.NewServer(
 	&mcp.Implementation{Name: "yutu", Version: Version},
 	&mcp.ServerOptions{
+		Instructions: "Automate YouTube operations",
 		PageSize:     99,
 		KeepAlive:    13 * time.Second,
-		HasResources: true,
-		HasTools:     true,
+		Capabilities: &mcp.ServerCapabilities{
+			Experimental: nil,
+			Completions:  nil,
+			Logging:      &mcp.LoggingCapabilities{},
+			Prompts:      nil,
+			Resources: &mcp.ResourceCapabilities{
+				ListChanged: true,
+				Subscribe:   true,
+			},
+			Tools: &mcp.ToolCapabilities{
+				ListChanged: true,
+			},
+		},
 	},
 )
 
