@@ -55,7 +55,7 @@ type ICaption[T youtube.Caption] interface {
 
 type Option func(*Caption)
 
-func NewCation(opts ...Option) ICaption[youtube.Caption] {
+func NewCaption(opts ...Option) ICaption[youtube.Caption] {
 	c := &Caption{Fields: &common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
@@ -130,11 +130,11 @@ func (c *Caption) Insert(writer io.Writer) error {
 	caption := &youtube.Caption{
 		Snippet: &youtube.CaptionSnippet{
 			AudioTrackType: c.AudioTrackType,
-			IsAutoSynced:   *c.IsAutoSynced,
-			IsCC:           *c.IsCC,
-			IsDraft:        *c.IsDraft,
-			IsEasyReader:   *c.IsEasyReader,
-			IsLarge:        *c.IsLarge,
+			IsAutoSynced:   c.IsAutoSynced != nil && *c.IsAutoSynced,
+			IsCC:           c.IsCC != nil && *c.IsCC,
+			IsDraft:        c.IsDraft != nil && *c.IsDraft,
+			IsEasyReader:   c.IsEasyReader != nil && *c.IsEasyReader,
+			IsLarge:        c.IsLarge != nil && *c.IsLarge,
 			Language:       c.Language,
 			Name:           c.Name,
 			TrackKind:      c.TrackKind,

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/google/jsonschema-go/jsonschema"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -359,5 +360,72 @@ func TestExtractHl(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+func TestBoolToStrPtr(t *testing.T) {
+	bTrue := true
+	bFalse := false
+	type args struct {
+		b *bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want *string
+	}{
+		{
+			name: "true",
+			args: args{b: &bTrue},
+			want: jsonschema.Ptr("true"),
+		},
+		{
+			name: "false",
+			args: args{b: &bFalse},
+			want: jsonschema.Ptr("false"),
+		},
+		{
+			name: "nil",
+			args: args{b: nil},
+			want: jsonschema.Ptr(""),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := BoolToStrPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("BoolToStrPtr() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestErrf(t *testing.T) {
+	type args struct {
+		format string
+		args   []any
+	}
+	tests := []struct {
+		name string
+		args args
+		want *mcp.CallToolResult
+	}{
+		{
+			name: "error",
+			args: args{
+				format: "error %s",
+				args:   []any{"msg"},
+			},
+			want: &mcp.CallToolResult{
+				Content: []mcp.Content{&mcp.TextContent{Text: "error msg"}},
+				IsError: true,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Errf(tt.args.format, tt.args.args...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Errf() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

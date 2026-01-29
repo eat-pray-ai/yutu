@@ -83,7 +83,7 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := caption.NewCation(
+		input := caption.NewCaption(
 			caption.WithIds(ids),
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),

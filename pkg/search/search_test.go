@@ -4,11 +4,18 @@
 package search
 
 import (
+	"bytes"
+	"context"
+	"fmt"
 	"math"
+	"net/http"
+	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
+	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -253,5 +260,236 @@ func TestNewSearch(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+func TestSearch_Get(t *testing.T) {
+	tests := []struct {
+		name    string
+		opts    []Option
+		verify  func(*http.Request)
+		wantLen int
+		wantErr bool
+	}{
+		{
+			name: "get search with query",
+			opts: []Option{
+				WithQ("test query"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.URL.Query().Get("q") != "test query" {
+					t.Errorf("expected q=test query, got %s", r.URL.Query().Get("q"))
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with channelId",
+			opts: []Option{
+				WithChannelId("channel-id"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.URL.Query().Get("channelId") != "channel-id" {
+					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with types",
+			opts: []Option{
+				WithTypes([]string{"video", "playlist"}),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				gotType := r.URL.Query()["type"]
+				joined := strings.Join(gotType, ",")
+				if !strings.Contains(joined, "video") || !strings.Contains(joined, "playlist") {
+					t.Errorf("expected type to contain video and playlist, got %v", gotType)
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with onBehalfOfContentOwner",
+			opts: []Option{
+				WithOnBehalfOfContentOwner("owner-id"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if tt.verify != nil {
+					tt.verify(r)
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.Write([]byte(`{
+					"items": [
+						{"id": {"videoId": "video-1"}, "snippet": {"title": "Video 1"}}
+					]
+				}`))
+			}))
+			defer ts.Close()
+
+			svc, err := youtube.NewService(
+				context.Background(),
+				option.WithEndpoint(ts.URL),
+				option.WithAPIKey("test-key"),
+			)
+			if err != nil {
+				t.Fatalf("failed to create service: %v", err)
+			}
+
+			opts := append([]Option{WithService(svc)}, tt.opts...)
+			s := NewSearch(opts...)
+			got, err := s.Get()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Search.Get() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if len(got) != tt.wantLen {
+				t.Errorf("Search.Get() got length = %v, want %v", len(got), tt.wantLen)
+			}
+		})
+	}
+}
+
+func TestSearch_Get_Pagination(t *testing.T) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		pageToken := r.URL.Query().Get("pageToken")
+		w.Header().Set("Content-Type", "application/json")
+		if pageToken == "" {
+			items := make([]string, 20)
+			for i := 0; i < 20; i++ {
+				items[i] = fmt.Sprintf(`{"id": {"videoId": "video-%d"}}`, i)
+			}
+			w.Write([]byte(fmt.Sprintf(`{
+				"items": [%s],
+				"nextPageToken": "page-2"
+			}`, strings.Join(items, ","))))
+		} else if pageToken == "page-2" {
+			w.Write([]byte(`{
+				"items": [{"id": {"videoId": "video-20"}}, {"id": {"videoId": "video-21"}}],
+				"nextPageToken": ""
+			}`))
+		}
+	}
+	ts := httptest.NewServer(http.HandlerFunc(handler))
+	defer ts.Close()
+
+	svc, err := youtube.NewService(
+		context.Background(),
+		option.WithEndpoint(ts.URL),
+		option.WithAPIKey("test-key"),
+	)
+	if err != nil {
+		t.Fatalf("failed to create service: %v", err)
+	}
+
+	s := NewSearch(
+		WithService(svc),
+		WithMaxResults(22),
+	)
+	got, err := s.Get()
+	if err != nil {
+		t.Errorf("Search.Get() error = %v", err)
+	}
+	if len(got) != 22 {
+		t.Errorf("Search.Get() got length = %v, want 22", len(got))
+	}
+}
+
+func TestSearch_List(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{
+			"items": [
+				{
+					"id": {
+						"kind": "youtube#video",
+						"videoId": "video-1"
+					},
+					"snippet": {
+						"title": "Video 1"
+					}
+				}
+			]
+		}`))
+	}))
+	defer ts.Close()
+
+	svc, err := youtube.NewService(
+		context.Background(),
+		option.WithEndpoint(ts.URL),
+		option.WithAPIKey("test-key"),
+	)
+	if err != nil {
+		t.Fatalf("failed to create service: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		opts    []Option
+		output  string
+		wantErr bool
+	}{
+		{
+			name: "list search results json",
+			opts: []Option{
+				WithService(svc),
+				WithOutput("json"),
+				WithQ("test"),
+			},
+			output:  "json",
+			wantErr: false,
+		},
+		{
+			name: "list search results yaml",
+			opts: []Option{
+				WithService(svc),
+				WithOutput("yaml"),
+				WithQ("test"),
+			},
+			output:  "yaml",
+			wantErr: false,
+		},
+		{
+			name: "list search results table",
+			opts: []Option{
+				WithService(svc),
+				WithOutput("table"),
+				WithQ("test"),
+			},
+			output:  "table",
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := NewSearch(tt.opts...)
+			var buf bytes.Buffer
+			if err := s.List(&buf); (err != nil) != tt.wantErr {
+				t.Errorf("Search.List() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if buf.Len() == 0 {
+				t.Errorf("Search.List() output is empty")
+			}
+		})
 	}
 }

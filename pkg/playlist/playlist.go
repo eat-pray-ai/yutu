@@ -65,6 +65,9 @@ func (p *Playlist) Get() ([]*youtube.Playlist, error) {
 	if len(p.Ids) > 0 {
 		call = call.Id(p.Ids...)
 	}
+	if p.ChannelId != "" {
+		call = call.ChannelId(p.ChannelId)
+	}
 	if p.Hl != "" {
 		call = call.Hl(p.Hl)
 	}
@@ -142,6 +145,12 @@ func (p *Playlist) Insert(writer io.Writer) error {
 	}
 
 	call := p.Service.Playlists.Insert([]string{"snippet", "status"}, upload)
+	if p.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+	}
+	if p.OnBehalfOfContentOwnerChannel != "" {
+		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
+	}
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errInsertPlaylist, err)
@@ -187,6 +196,9 @@ func (p *Playlist) Update(writer io.Writer) error {
 	}
 
 	call := p.Service.Playlists.Update([]string{"snippet", "status"}, playlist)
+	if p.OnBehalfOfContentOwner != "" {
+		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+	}
 	res, err := call.Do()
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)

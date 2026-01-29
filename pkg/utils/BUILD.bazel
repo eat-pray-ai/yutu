@@ -20,6 +20,7 @@ go_test(
     embed = [":utils"],
     deps = [
         "@com_github_google_jsonschema_go//jsonschema",
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_spf13_cobra//:cobra",
         "@com_github_spf13_pflag//:pflag",
     ],

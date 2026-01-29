@@ -39,7 +39,7 @@ jobs:
           go-version-file: ./go.mod
       - name: Go test
         run: |
-          go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./..."
+          go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./pkg/..."
       - name: Command tests
         run: |
           ./scripts/command-test.sh

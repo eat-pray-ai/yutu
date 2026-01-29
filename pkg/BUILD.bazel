@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "pkg",
@@ -10,4 +10,10 @@ go_library(
     importpath = "github.com/eat-pray-ai/yutu/pkg",
     visibility = ["//visibility:public"],
     deps = ["@com_github_jedib0t_go_pretty_v6//table"],
+)
+
+go_test(
+    name = "pkg_test",
+    srcs = ["init_test.go"],
+    embed = [":pkg"],
 )

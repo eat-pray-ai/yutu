@@ -106,7 +106,7 @@ var updateCmd = &cobra.Command{
 	Short: updateShort,
 	Long:  updateLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := caption.NewCation(
+		input := caption.NewCaption(
 			caption.WithFile(file),
 			caption.WithAudioTrackType(audioTrackType),
 			caption.WithIsAutoSynced(isAutoSynced),

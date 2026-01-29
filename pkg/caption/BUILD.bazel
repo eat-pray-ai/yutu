@@ -19,7 +19,9 @@ go_test(
     srcs = ["caption_test.go"],
     embed = [":caption"],
     deps = [
+        "//pkg",
         "//pkg/common",
+        "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

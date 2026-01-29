@@ -395,7 +395,7 @@ func (v *Video) GetRating(writer io.Writer) error {
 	v.EnsureService()
 	call := v.Service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwnerChannel)
+		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
 	res, err := call.Do()
 	if err != nil {
