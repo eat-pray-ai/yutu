@@ -8,6 +8,7 @@ import (
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/playlist"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -67,10 +68,6 @@ var deleteCmd = &cobra.Command{
 			playlist.WithIds(ids),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
-		err := input.Delete(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)
 	},
 }

@@ -11,6 +11,7 @@ go_library(
     deps = [
         "//cmd",
         "//pkg",
+        "//pkg/utils",
         "//pkg/videoAbuseReportReason",
         "@com_github_google_jsonschema_go//jsonschema",
         "@com_github_modelcontextprotocol_go_sdk//mcp",

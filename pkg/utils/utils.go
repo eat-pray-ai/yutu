@@ -17,8 +17,8 @@ import (
 	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/ohler55/ojg/jp"
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"gopkg.in/yaml.v3"
@@ -116,9 +116,9 @@ func ExtractHl(uri string) string {
 	return ""
 }
 
-func Errf(format string, args ...any) *mcp.CallToolResult {
-	return &mcp.CallToolResult{
-		Content: []mcp.Content{&mcp.TextContent{Text: fmt.Sprintf(format, args...)}},
-		IsError: true,
+func HandleCmdError(err error, cmd *cobra.Command) {
+	if err != nil {
+		_ = cmd.Help()
+		cmd.PrintErrf("Error: %v\n", err)
 	}
 }

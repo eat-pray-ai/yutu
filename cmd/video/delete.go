@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -59,10 +60,6 @@ var deleteCmd = &cobra.Command{
 	Long:  deleteLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(video.WithIds(ids))
-		err := input.Delete(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)
 	},
 }

@@ -60,11 +60,7 @@ var listCmd = &cobra.Command{
 			i18nLanguage.WithOutput(output),
 			i18nLanguage.WithJsonpath(jsonpath),
 		)
-		err := input.List(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.List(cmd.OutOrStdout()), cmd)
 	},
 }
 

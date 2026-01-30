@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -54,13 +55,7 @@ var unsetCmd = &cobra.Command{
 	Short: unsetShort,
 	Long:  unsetLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		input := watermark.NewWatermark(
-			watermark.WithChannelId(channelId),
-		)
-		err := input.Unset(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		input := watermark.NewWatermark(watermark.WithChannelId(channelId))
+		utils.HandleCmdError(input.Unset(cmd.OutOrStdout()), cmd)
 	},
 }

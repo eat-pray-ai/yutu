@@ -10,6 +10,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistItem"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -109,10 +110,6 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithOutput(output),
 			playlistItem.WithJsonpath(jsonpath),
 		)
-		err := input.Insert(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
 	},
 }

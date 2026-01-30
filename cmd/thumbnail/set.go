@@ -10,6 +10,7 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/thumbnail"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -71,10 +72,6 @@ var setCmd = &cobra.Command{
 			thumbnail.WithOutput(output),
 			thumbnail.WithJsonpath(jsonpath),
 		)
-		err := input.Set(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.Set(cmd.OutOrStdout()), cmd)
 	},
 }

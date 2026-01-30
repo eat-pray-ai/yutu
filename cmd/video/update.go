@@ -9,6 +9,7 @@ import (
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -115,10 +116,6 @@ var updateCmd = &cobra.Command{
 			video.WithOutput(output),
 			video.WithJsonpath(jsonpath),
 		)
-		err := input.Update(cmd.OutOrStdout())
-		if err != nil {
-			_ = cmd.Help()
-			cmd.PrintErrf("Error: %v\n", err)
-		}
+		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)
 	},
 }
