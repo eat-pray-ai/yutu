@@ -183,7 +183,10 @@ func TestActivity_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -225,7 +228,10 @@ func TestActivity_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("publishedAfter") != "2024-01-01T00:00:00Z" {
-					t.Errorf("expected publishedAfter=2024-01-01T00:00:00Z, got %s", r.URL.Query().Get("publishedAfter"))
+					t.Errorf(
+						"expected publishedAfter=2024-01-01T00:00:00Z, got %s",
+						r.URL.Query().Get("publishedAfter"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -239,7 +245,10 @@ func TestActivity_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("publishedBefore") != "2024-12-31T23:59:59Z" {
-					t.Errorf("expected publishedBefore=2024-12-31T23:59:59Z, got %s", r.URL.Query().Get("publishedBefore"))
+					t.Errorf(
+						"expected publishedBefore=2024-12-31T23:59:59Z, got %s",
+						r.URL.Query().Get("publishedBefore"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -253,7 +262,9 @@ func TestActivity_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("regionCode") != "US" {
-					t.Errorf("expected regionCode=US, got %s", r.URL.Query().Get("regionCode"))
+					t.Errorf(
+						"expected regionCode=US, got %s", r.URL.Query().Get("regionCode"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -266,7 +277,9 @@ func TestActivity_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("maxResults") != "20" {
-					t.Errorf("expected maxResults=20, got %s", r.URL.Query().Get("maxResults"))
+					t.Errorf(
+						"expected maxResults=20, got %s", r.URL.Query().Get("maxResults"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -275,42 +288,52 @@ func TestActivity_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "1", "snippet": {"title": "A1"}},
 						{"id": "2", "snippet": {"title": "A2"}}
 					],
 					"nextPageToken": ""
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			a := NewActivity(opts...)
-			got, err := a.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Activity.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("Activity.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				a := NewActivity(opts...)
+				got, err := a.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Activity.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"Activity.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
@@ -324,15 +347,19 @@ func TestActivity_Get_Pagination(t *testing.T) {
 				items[i] = `{"id": "id"}`
 			}
 			jsonItems := "[" + strings.Join(items, ",") + "]"
-			fmt.Fprintf(w, `{
+			_, _ = fmt.Fprintf(
+				w, `{
                 "items": %s,
                 "nextPageToken": "page-2"
-            }`, jsonItems)
+            }`, jsonItems,
+			)
 		} else if pageToken == "page-2" {
-			w.Write([]byte(`{
+			_, _ = w.Write(
+				[]byte(`{
                 "items": [{"id": "21"}, {"id": "22"}],
                 "nextPageToken": ""
-            }`))
+            }`),
+			)
 		}
 	}
 	ts := httptest.NewServer(http.HandlerFunc(handler))
@@ -376,10 +403,14 @@ func TestActivity_List(t *testing.T) {
 		"nextPageToken": ""
 	}`
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(mockResponse))
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(mockResponse))
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -430,15 +461,17 @@ func TestActivity_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			a := NewActivity(tt.opts...)
-			var buf bytes.Buffer
-			if err := a.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Activity.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("Activity.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				a := NewActivity(tt.opts...)
+				var buf bytes.Buffer
+				if err := a.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Activity.List() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("Activity.List() output is empty")
+				}
+			},
+		)
 	}
 }

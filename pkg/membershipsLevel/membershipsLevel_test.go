@@ -72,9 +72,12 @@ func TestNewMembershipsLevel(t *testing.T) {
 }
 
 func TestMembershipsLevel_Get(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "level-1",
@@ -85,8 +88,11 @@ func TestMembershipsLevel_Get(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -109,9 +115,12 @@ func TestMembershipsLevel_Get(t *testing.T) {
 }
 
 func TestMembershipsLevel_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "level-1",
@@ -122,8 +131,11 @@ func TestMembershipsLevel_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -171,15 +183,19 @@ func TestMembershipsLevel_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			m := NewMembershipsLevel(tt.opts...)
-			var buf bytes.Buffer
-			if err := m.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("MembershipsLevel.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("MembershipsLevel.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				m := NewMembershipsLevel(tt.opts...)
+				var buf bytes.Buffer
+				if err := m.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"MembershipsLevel.List() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("MembershipsLevel.List() output is empty")
+				}
+			},
+		)
 	}
 }

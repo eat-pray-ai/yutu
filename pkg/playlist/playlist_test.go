@@ -218,7 +218,10 @@ func TestPlaylist_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -249,7 +252,10 @@ func TestPlaylist_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -277,7 +283,10 @@ func TestPlaylist_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwnerChannel") != "channel-id" {
-					t.Errorf("expected onBehalfOfContentOwnerChannel=channel-id, got %s", r.URL.Query().Get("onBehalfOfContentOwnerChannel"))
+					t.Errorf(
+						"expected onBehalfOfContentOwnerChannel=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwnerChannel"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -286,40 +295,50 @@ func TestPlaylist_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "playlist-1", "snippet": {"title": "Playlist 1"}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			p := NewPlaylist(opts...)
-			got, err := p.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Playlist.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("Playlist.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				p := NewPlaylist(opts...)
+				got, err := p.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Playlist.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"Playlist.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
@@ -332,15 +351,21 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 			for i := 0; i < 20; i++ {
 				items[i] = fmt.Sprintf(`{"id": "playlist-%d"}`, i)
 			}
-			w.Write([]byte(fmt.Sprintf(`{
+			_, _ = w.Write(
+				[]byte(fmt.Sprintf(
+					`{
 				"items": [%s],
 				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","))))
+			}`, strings.Join(items, ","),
+				)),
+			)
 		} else if pageToken == "page-2" {
-			w.Write([]byte(`{
+			_, _ = w.Write(
+				[]byte(`{
 				"items": [{"id": "playlist-20"}, {"id": "playlist-21"}],
 				"nextPageToken": ""
-			}`))
+			}`),
+			)
 		}
 	}
 	ts := httptest.NewServer(http.HandlerFunc(handler))
@@ -369,9 +394,12 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylist_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "playlist-1",
@@ -381,8 +409,11 @@ func TestPlaylist_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -433,16 +464,18 @@ func TestPlaylist_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			p := NewPlaylist(tt.opts...)
-			var buf bytes.Buffer
-			if err := p.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Playlist.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("Playlist.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				p := NewPlaylist(tt.opts...)
+				var buf bytes.Buffer
+				if err := p.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Playlist.List() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("Playlist.List() output is empty")
+				}
+			},
+		)
 	}
 }
 
@@ -470,32 +503,38 @@ func TestPlaylist_Insert(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-playlist-id"}`))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"id": "new-playlist-id"}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			p := NewPlaylist(opts...)
-			var buf bytes.Buffer
-			if err := p.Insert(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Playlist.Insert() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				p := NewPlaylist(opts...)
+				var buf bytes.Buffer
+				if err := p.Insert(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Playlist.Insert() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -517,8 +556,12 @@ func TestPlaylist_Update(t *testing.T) {
 				if r.Method == "PUT" {
 					parts := r.URL.Query()["part"]
 					joined := strings.Join(parts, ",")
-					if !strings.Contains(joined, "snippet") || !strings.Contains(joined, "status") {
-						t.Errorf("expected part to contain snippet and status, got %v", parts)
+					if !strings.Contains(joined, "snippet") || !strings.Contains(
+						joined, "status",
+					) {
+						t.Errorf(
+							"expected part to contain snippet and status, got %v", parts,
+						)
 					}
 				}
 			},
@@ -540,11 +583,18 @@ func TestPlaylist_Update(t *testing.T) {
 				if r.Method == "PUT" {
 					parts := r.URL.Query()["part"]
 					joined := strings.Join(parts, ",")
-					if !strings.Contains(joined, "snippet") || !strings.Contains(joined, "status") {
-						t.Errorf("expected part to contain snippet and status, got %v", parts)
+					if !strings.Contains(joined, "snippet") || !strings.Contains(
+						joined, "status",
+					) {
+						t.Errorf(
+							"expected part to contain snippet and status, got %v", parts,
+						)
 					}
 					if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-						t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+						t.Errorf(
+							"expected onBehalfOfContentOwner=owner-id, got %s",
+							r.URL.Query().Get("onBehalfOfContentOwner"),
+						)
 					}
 
 					var playlist youtube.Playlist
@@ -552,16 +602,25 @@ func TestPlaylist_Update(t *testing.T) {
 						t.Errorf("failed to decode body: %v", err)
 					}
 					if playlist.Snippet.Title != "Updated Title" {
-						t.Errorf("expected title=Updated Title, got %s", playlist.Snippet.Title)
+						t.Errorf(
+							"expected title=Updated Title, got %s", playlist.Snippet.Title,
+						)
 					}
 					if playlist.Snippet.Description != "Updated Description" {
-						t.Errorf("expected description=Updated Description, got %s", playlist.Snippet.Description)
+						t.Errorf(
+							"expected description=Updated Description, got %s",
+							playlist.Snippet.Description,
+						)
 					}
 					if playlist.Snippet.DefaultLanguage != "en" {
-						t.Errorf("expected language=en, got %s", playlist.Snippet.DefaultLanguage)
+						t.Errorf(
+							"expected language=en, got %s", playlist.Snippet.DefaultLanguage,
+						)
 					}
 					if playlist.Status.PrivacyStatus != "private" {
-						t.Errorf("expected privacy=private, got %s", playlist.Status.PrivacyStatus)
+						t.Errorf(
+							"expected privacy=private, got %s", playlist.Status.PrivacyStatus,
+						)
 					}
 				}
 			},
@@ -570,40 +629,48 @@ func TestPlaylist_Update(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				if r.Method == "GET" {
-					w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{
 						"items": [
 							{"id": "playlist-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}
 						]
-					}`))
-				} else {
-					w.Write([]byte(`{"id": "playlist-id", "snippet": {"title": "Updated Title"}}`))
+					}`),
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "playlist-id", "snippet": {"title": "Updated Title"}}`))
+							}
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			p := NewPlaylist(opts...)
-			var buf bytes.Buffer
-			if err := p.Update(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Playlist.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				p := NewPlaylist(opts...)
+				var buf bytes.Buffer
+				if err := p.Update(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Playlist.Update() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -637,7 +704,10 @@ func TestPlaylist_Delete(t *testing.T) {
 					t.Errorf("expected DELETE, got %s", r.Method)
 				}
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -645,30 +715,36 @@ func TestPlaylist_Delete(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			p := NewPlaylist(opts...)
-			var buf bytes.Buffer
-			if err := p.Delete(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Playlist.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				p := NewPlaylist(opts...)
+				var buf bytes.Buffer
+				if err := p.Delete(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Playlist.Delete() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }

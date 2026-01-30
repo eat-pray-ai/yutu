@@ -6,6 +6,7 @@ package caption
 import (
 	"bytes"
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -206,7 +207,9 @@ func TestCaption_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("videoId") != "video-id" {
-					t.Errorf("expected videoId=video-id, got %s", r.URL.Query().Get("videoId"))
+					t.Errorf(
+						"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -235,7 +238,10 @@ func TestCaption_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
-					t.Errorf("expected onBehalfOf=channel-id, got %s", r.URL.Query().Get("onBehalfOf"))
+					t.Errorf(
+						"expected onBehalfOf=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOf"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -249,7 +255,10 @@ func TestCaption_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
-					t.Errorf("expected onBehalfOfContentOwner=content-owner, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=content-owner, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantLen: 2,
@@ -258,48 +267,61 @@ func TestCaption_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "1", "snippet": {"videoId": "video-id"}},
 						{"id": "2", "snippet": {"videoId": "video-id"}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCaption(opts...)
-			got, err := c.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Caption.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("Caption.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCaption(opts...)
+				got, err := c.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Caption.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"Caption.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
 func TestCaption_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "caption-1",
@@ -310,8 +332,11 @@ func TestCaption_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -362,16 +387,18 @@ func TestCaption_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := NewCaption(tt.opts...)
-			var buf bytes.Buffer
-			if err := c.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Caption.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("Caption.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				c := NewCaption(tt.opts...)
+				var buf bytes.Buffer
+				if err := c.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Caption.List() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("Caption.List() output is empty")
+				}
+			},
+		)
 	}
 }
 
@@ -406,7 +433,10 @@ func TestCaption_Insert(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
-					t.Errorf("expected onBehalfOf=channel-id, got %s", r.URL.Query().Get("onBehalfOf"))
+					t.Errorf(
+						"expected onBehalfOf=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOf"),
+					)
 				}
 			},
 			wantErr: false,
@@ -420,46 +450,59 @@ func TestCaption_Insert(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
-					t.Errorf("expected onBehalfOfContentOwner=content-owner, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=content-owner, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
 		},
 	}
 
-	err := os.WriteFile("test_caption.srt", []byte("1\n00:00:01,000 --> 00:00:04,000\nHello"), 0644)
+	err := os.WriteFile(
+		"test_caption.srt", []byte("1\n00:00:01,000 --> 00:00:04,000\nHello"), 0644,
+	)
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer os.Remove("test_caption.srt")
+	defer func() {
+		_ = os.Remove("test_caption.srt")
+	}()
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-caption-id", "snippet": {"videoId": "video-id"}}`))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"id": "new-caption-id", "snippet": {"videoId": "video-id"}}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCaption(opts...)
-			var buf bytes.Buffer
-			if err := c.Insert(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Caption.Insert() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCaption(opts...)
+				var buf bytes.Buffer
+				if err := c.Insert(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Caption.Insert() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -484,7 +527,9 @@ func TestCaption_Update(t *testing.T) {
 					}
 				} else if r.Method == "GET" {
 					if r.URL.Query().Get("videoId") != "video-id" {
-						t.Errorf("expected videoId=video-id, got %s", r.URL.Query().Get("videoId"))
+						t.Errorf(
+							"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
+						)
 					}
 				} else {
 					t.Errorf("unexpected method %s", r.Method)
@@ -502,7 +547,10 @@ func TestCaption_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					if r.URL.Query().Get("onBehalfOf") != "channel-id" {
-						t.Errorf("expected onBehalfOf=channel-id, got %s", r.URL.Query().Get("onBehalfOf"))
+						t.Errorf(
+							"expected onBehalfOf=channel-id, got %s",
+							r.URL.Query().Get("onBehalfOf"),
+						)
 					}
 				}
 			},
@@ -518,7 +566,10 @@ func TestCaption_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
-						t.Errorf("expected onBehalfOfContentOwner=content-owner, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+						t.Errorf(
+							"expected onBehalfOfContentOwner=content-owner, got %s",
+							r.URL.Query().Get("onBehalfOfContentOwner"),
+						)
 					}
 				}
 			},
@@ -527,40 +578,48 @@ func TestCaption_Update(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				if r.Method == "GET" {
-					w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{
 						"items": [
 							{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "en"}}
 						]
-					}`))
-				} else {
-					w.Write([]byte(`{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "es"}}`))
+					}`),
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "es"}}`))
+							}
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCaption(opts...)
-			var buf bytes.Buffer
-			if err := c.Update(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Caption.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCaption(opts...)
+				var buf bytes.Buffer
+				if err := c.Update(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Caption.Update() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -591,7 +650,10 @@ func TestCaption_Delete(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
-					t.Errorf("expected onBehalfOf=channel-id, got %s", r.URL.Query().Get("onBehalfOf"))
+					t.Errorf(
+						"expected onBehalfOf=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOf"),
+					)
 				}
 			},
 			wantErr: false,
@@ -604,7 +666,10 @@ func TestCaption_Delete(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
-					t.Errorf("expected onBehalfOfContentOwner=content-owner, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=content-owner, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -612,31 +677,37 @@ func TestCaption_Delete(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCaption(opts...)
-			var buf bytes.Buffer
-			if err := c.Delete(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Caption.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCaption(opts...)
+				var buf bytes.Buffer
+				if err := c.Delete(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Caption.Delete() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -697,7 +768,10 @@ func TestCaption_Download(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
-					t.Errorf("expected onBehalfOf=channel-id, got %s", r.URL.Query().Get("onBehalfOf"))
+					t.Errorf(
+						"expected onBehalfOf=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOf"),
+					)
 				}
 			},
 			wantErr: false,
@@ -711,7 +785,10 @@ func TestCaption_Download(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
-					t.Errorf("expected onBehalfOfContentOwner=content-owner, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=content-owner, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -719,32 +796,40 @@ func TestCaption_Download(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							_, _ = w.Write([]byte("1\n00:00:01,000 --> 00:00:04,000\nDownloaded Caption"))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Write([]byte("1\n00:00:01,000 --> 00:00:04,000\nDownloaded Caption"))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCaption(opts...)
-			var buf bytes.Buffer
-			if err := c.Download(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Caption.Download() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			defer os.Remove("downloaded.srt")
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCaption(opts...)
+				var buf bytes.Buffer
+				if err := c.Download(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Caption.Download() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				defer func() {
+					_ = os.Remove("downloaded.srt")
+				}()
+			},
+		)
 	}
 }
 
@@ -758,7 +843,9 @@ func TestCaption_Insert_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer f.Close()
+	defer func(f *os.Root) {
+		_ = f.Close()
+	}(f)
 
 	svc, _ := youtube.NewService(context.Background(), option.WithAPIKey("test"))
 
@@ -770,16 +857,24 @@ func TestCaption_Insert_Error(t *testing.T) {
 
 	// Test: API error
 	// Create dummy file
-	if err := os.WriteFile(tmpDir+"/test.srt", []byte("content"), 0644); err != nil {
+	if err := os.WriteFile(
+		tmpDir+"/test.srt", []byte("content"), 0644,
+	); err != nil {
 		t.Fatal(err)
 	}
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer ts.Close()
 
-	svc, _ = youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
+	svc, _ = youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
 	c = NewCaption(WithFile("test.srt"), WithService(svc))
 	if err := c.Insert(&bytes.Buffer{}); err == nil {
 		t.Error("expected error from API, got nil")
@@ -796,55 +891,86 @@ func TestCaption_Update_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer f.Close()
+	defer func(f *os.Root) {
+		_ = f.Close()
+	}(f)
 
 	// Test: File open error (when file is specified)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"items": [{"id": "1", "snippet": {"videoId": "v1"}}]}`))
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"items": [{"id": "1", "snippet": {"videoId": "v1"}}]}`))
+			},
+		),
+	)
 	defer ts.Close()
-	svc, _ := youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
+	svc, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
 
-	c := NewCaption(WithFile("non_existent.srt"), WithService(svc), WithVideoId("v1"))
+	c := NewCaption(
+		WithFile("non_existent.srt"), WithService(svc), WithVideoId("v1"),
+	)
 	if err := c.Update(&bytes.Buffer{}); err == nil {
 		t.Error("expected error for non-existent file, got nil")
 	}
 
 	// Test: Get error
-	tsError := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	tsError := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer tsError.Close()
-	svcError, _ := youtube.NewService(context.Background(), option.WithEndpoint(tsError.URL), option.WithAPIKey("test"))
+	svcError, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(tsError.URL),
+		option.WithAPIKey("test"),
+	)
 	c = NewCaption(WithService(svcError), WithVideoId("v1"))
 	if err := c.Update(&bytes.Buffer{}); err == nil {
 		t.Error("expected error from Get, got nil")
 	}
 
 	// Test: No caption found
-	tsEmpty := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"items": []}`))
-	}))
+	tsEmpty := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"items": []}`))
+			},
+		),
+	)
 	defer tsEmpty.Close()
-	svcEmpty, _ := youtube.NewService(context.Background(), option.WithEndpoint(tsEmpty.URL), option.WithAPIKey("test"))
+	svcEmpty, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(tsEmpty.URL),
+		option.WithAPIKey("test"),
+	)
 	c = NewCaption(WithService(svcEmpty), WithVideoId("v1"))
-	if err := c.Update(&bytes.Buffer{}); err != errGetCaption {
+	if err := c.Update(&bytes.Buffer{}); !errors.Is(err, errGetCaption) {
 		t.Errorf("expected errGetCaption, got %v", err)
 	}
 
 	// Test: API Update Error
-	tsUpdateErr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte(`{"items": [{"id": "1", "snippet": {"videoId": "v1"}}]}`))
-			return
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	tsUpdateErr := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.Method == "GET" {
+					w.Header().Set("Content-Type", "application/json")
+					_, _ = w.Write([]byte(`{"items": [{"id": "1", "snippet": {"videoId": "v1"}}]}`))
+					return
+				}
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer tsUpdateErr.Close()
-	svcUpdateErr, _ := youtube.NewService(context.Background(), option.WithEndpoint(tsUpdateErr.URL), option.WithAPIKey("test"))
+	svcUpdateErr, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(tsUpdateErr.URL),
+		option.WithAPIKey("test"),
+	)
 	c = NewCaption(WithService(svcUpdateErr), WithVideoId("v1"))
 	if err := c.Update(&bytes.Buffer{}); err == nil {
 		t.Error("expected error from API Update, got nil")
@@ -852,11 +978,17 @@ func TestCaption_Update_Error(t *testing.T) {
 }
 
 func TestCaption_Delete_Error(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer ts.Close()
-	svc, _ := youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
+	svc, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
 
 	c := NewCaption(WithService(svc), WithIds([]string{"id1"}))
 	if err := c.Delete(&bytes.Buffer{}); err == nil {
@@ -866,23 +998,38 @@ func TestCaption_Delete_Error(t *testing.T) {
 
 func TestCaption_Download_Error(t *testing.T) {
 	// Test API Error
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer ts.Close()
-	svc, _ := youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
+	svc, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
 
-	c := NewCaption(WithService(svc), WithIds([]string{"id1"}), WithFile("out.srt"))
+	c := NewCaption(
+		WithService(svc), WithIds([]string{"id1"}), WithFile("out.srt"),
+	)
 	if err := c.Download(&bytes.Buffer{}); err == nil {
 		t.Error("expected error from Download API, got nil")
 	}
 
 	// Test File Creation Error
-	ts2 := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("content"))
-	}))
+	ts2 := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				_, _ = w.Write([]byte("content"))
+			},
+		),
+	)
 	defer ts2.Close()
-	svc2, _ := youtube.NewService(context.Background(), option.WithEndpoint(ts2.URL), option.WithAPIKey("test"))
+	svc2, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(ts2.URL),
+		option.WithAPIKey("test"),
+	)
 	// Use a directory as file path to trigger error.
 	tmpDir := t.TempDir()
 	c = NewCaption(WithService(svc2), WithIds([]string{"id1"}), WithFile(tmpDir))

@@ -107,47 +107,56 @@ func TestI18nRegion_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{"items": [{"id": "US", "snippet": {"gl": "US", "name": "United States"}}]}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
-					"items": [
-						{"id": "US", "snippet": {"gl": "US", "name": "United States"}}
-					]
-				}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			i := NewI18nRegion(opts...)
-			got, err := i.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("I18nRegion.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("I18nRegion.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				i := NewI18nRegion(opts...)
+				got, err := i.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("I18nRegion.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"I18nRegion.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
 func TestI18nRegion_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "US",
@@ -157,8 +166,11 @@ func TestI18nRegion_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -206,15 +218,17 @@ func TestI18nRegion_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			i := NewI18nRegion(tt.opts...)
-			var buf bytes.Buffer
-			if err := i.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("I18nRegion.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("I18nRegion.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				i := NewI18nRegion(tt.opts...)
+				var buf bytes.Buffer
+				if err := i.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("I18nRegion.List() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("I18nRegion.List() output is empty")
+				}
+			},
+		)
 	}
 }

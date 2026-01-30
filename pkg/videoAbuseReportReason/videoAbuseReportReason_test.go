@@ -127,47 +127,64 @@ func TestVideoAbuseReportReason_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "reason-1", "snippet": {"label": "Reason 1"}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			va := NewVideoAbuseReportReason(opts...)
-			got, err := va.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("VideoAbuseReportReason.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("VideoAbuseReportReason.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				va := NewVideoAbuseReportReason(opts...)
+				got, err := va.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf(
+						"VideoAbuseReportReason.Get() error = %v, wantErr %v", err,
+						tt.wantErr,
+					)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"VideoAbuseReportReason.Get() got length = %v, want %v", len(got),
+						tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
 func TestVideoAbuseReportReason_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "reason-1",
@@ -176,8 +193,11 @@ func TestVideoAbuseReportReason_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -225,15 +245,20 @@ func TestVideoAbuseReportReason_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			va := NewVideoAbuseReportReason(tt.opts...)
-			var buf bytes.Buffer
-			if err := va.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("VideoAbuseReportReason.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("VideoAbuseReportReason.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				va := NewVideoAbuseReportReason(tt.opts...)
+				var buf bytes.Buffer
+				if err := va.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"VideoAbuseReportReason.List() error = %v, wantErr %v", err,
+						tt.wantErr,
+					)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("VideoAbuseReportReason.List() output is empty")
+				}
+			},
+		)
 	}
 }

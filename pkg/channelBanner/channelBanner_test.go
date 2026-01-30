@@ -28,7 +28,9 @@ func TestChannelBanner_Insert_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer f.Close()
+	defer func(f *os.Root) {
+		_ = f.Close()
+	}(f)
 
 	svc, _ := youtube.NewService(context.Background(), option.WithAPIKey("test"))
 
@@ -39,15 +41,25 @@ func TestChannelBanner_Insert_Error(t *testing.T) {
 	}
 
 	// Test: API error
-	if err := os.WriteFile(tmpDir+"/test.jpg", []byte("content"), 0644); err != nil {
+	if err := os.WriteFile(
+		tmpDir+"/test.jpg", []byte("content"), 0644,
+	); err != nil {
 		t.Fatal(err)
 	}
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer ts.Close()
-	svc, _ = youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
-	cb = NewChannelBanner(WithFile("test.jpg"), WithService(svc), WithChannelId("cid"))
+	svc, _ = youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
+	cb = NewChannelBanner(
+		WithFile("test.jpg"), WithService(svc), WithChannelId("cid"),
+	)
 	if err := cb.Insert(&bytes.Buffer{}); err == nil {
 		t.Error("expected error from API, got nil")
 	}
@@ -62,18 +74,28 @@ func TestChannelBanner_Insert_Output(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer f.Close()
+	defer func(f *os.Root) {
+		_ = f.Close()
+	}(f)
 
-	if err := os.WriteFile(tmpDir+"/test.jpg", []byte("content"), 0644); err != nil {
+	if err := os.WriteFile(
+		tmpDir+"/test.jpg", []byte("content"), 0644,
+	); err != nil {
 		t.Fatal(err)
 	}
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"url": "http://example.com/banner.jpg"}`))
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"url": "https://example.com/banner.jpg"}`))
+			},
+		),
+	)
 	defer ts.Close()
-	svc, _ := youtube.NewService(context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"))
+	svc, _ := youtube.NewService(
+		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+	)
 
 	tests := []struct {
 		name        string
@@ -86,22 +108,27 @@ func TestChannelBanner_Insert_Output(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cb := NewChannelBanner(WithFile("test.jpg"), WithService(svc), WithChannelId("cid"), WithOutput(tt.output))
-			var buf bytes.Buffer
-			if err := cb.Insert(&buf); err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if tt.expectEmpty {
-				if buf.Len() > 0 {
-					t.Errorf("expected empty output, got %s", buf.String())
+		t.Run(
+			tt.name, func(t *testing.T) {
+				cb := NewChannelBanner(
+					WithFile("test.jpg"), WithService(svc), WithChannelId("cid"),
+					WithOutput(tt.output),
+				)
+				var buf bytes.Buffer
+				if err := cb.Insert(&buf); err != nil {
+					t.Fatalf("unexpected error: %v", err)
 				}
-			} else {
-				if buf.Len() == 0 {
-					t.Error("expected output, got empty")
+				if tt.expectEmpty {
+					if buf.Len() > 0 {
+						t.Errorf("expected empty output, got %s", buf.String())
+					}
+				} else {
+					if buf.Len() == 0 {
+						t.Error("expected output, got empty")
+					}
 				}
-			}
-		})
+			},
+		)
 	}
 }
 
@@ -219,7 +246,10 @@ func TestChannelBanner_Insert(t *testing.T) {
 					t.Errorf("expected POST, got %s", r.Method)
 				}
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantErr: false,
@@ -233,7 +263,10 @@ func TestChannelBanner_Insert(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -247,7 +280,10 @@ func TestChannelBanner_Insert(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwnerChannel") != "channel-id" {
-					t.Errorf("expected onBehalfOfContentOwnerChannel=channel-id, got %s", r.URL.Query().Get("onBehalfOfContentOwnerChannel"))
+					t.Errorf(
+						"expected onBehalfOfContentOwnerChannel=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwnerChannel"),
+					)
 				}
 			},
 			wantErr: false,
@@ -258,34 +294,44 @@ func TestChannelBanner_Insert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer os.Remove("test_banner.jpg")
+	defer func() {
+		_ = os.Remove("test_banner.jpg")
+	}()
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"url": "https://example.com/banner.jpg"}`))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"url": "http://example.com/banner.jpg"}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			cb := NewChannelBanner(opts...)
-			var buf bytes.Buffer
-			if err := cb.Insert(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("ChannelBanner.Insert() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				cb := NewChannelBanner(opts...)
+				var buf bytes.Buffer
+				if err := cb.Insert(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"ChannelBanner.Insert() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+			},
+		)
 	}
 }

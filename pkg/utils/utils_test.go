@@ -391,11 +391,13 @@ func TestBoolToStrPtr(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := BoolToStrPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("BoolToStrPtr() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := BoolToStrPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("BoolToStrPtr() = %v, want %v", got, tt.want)
+				}
+			},
+		)
 	}
 }
 
@@ -422,10 +424,14 @@ func TestErrf(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := Errf(tt.args.format, tt.args.args...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Errf() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if got := Errf(tt.args.format, tt.args.args...); !reflect.DeepEqual(
+					got, tt.want,
+				) {
+					t.Errorf("Errf() = %v, want %v", got, tt.want)
+				}
+			},
+		)
 	}
 }

@@ -201,7 +201,10 @@ func TestCommentThread_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("allThreadsRelatedToChannelId") != "channel-id" {
-					t.Errorf("expected allThreadsRelatedToChannelId=channel-id, got %s", r.URL.Query().Get("allThreadsRelatedToChannelId"))
+					t.Errorf(
+						"expected allThreadsRelatedToChannelId=channel-id, got %s",
+						r.URL.Query().Get("allThreadsRelatedToChannelId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -215,7 +218,10 @@ func TestCommentThread_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -229,7 +235,9 @@ func TestCommentThread_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("videoId") != "video-id" {
-					t.Errorf("expected videoId=video-id, got %s", r.URL.Query().Get("videoId"))
+					t.Errorf(
+						"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -248,7 +256,10 @@ func TestCommentThread_Get(t *testing.T) {
 			verify: func(r *http.Request) {
 				q := r.URL.Query()
 				if q.Get("moderationStatus") != "heldForReview" {
-					t.Errorf("expected moderationStatus=heldForReview, got %s", q.Get("moderationStatus"))
+					t.Errorf(
+						"expected moderationStatus=heldForReview, got %s",
+						q.Get("moderationStatus"),
+					)
 				}
 				if q.Get("order") != "relevance" {
 					t.Errorf("expected order=relevance, got %s", q.Get("order"))
@@ -266,40 +277,50 @@ func TestCommentThread_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "thread-1", "snippet": {"topLevelComment": {"snippet": {"textDisplay": "Comment 1"}}}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCommentThread(opts...)
-			got, err := c.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CommentThread.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("CommentThread.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCommentThread(opts...)
+				got, err := c.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("CommentThread.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"CommentThread.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
@@ -312,15 +333,21 @@ func TestCommentThread_Get_Pagination(t *testing.T) {
 			for i := 0; i < 20; i++ {
 				items[i] = fmt.Sprintf(`{"id": "thread-%d"}`, i)
 			}
-			w.Write([]byte(fmt.Sprintf(`{
+			_, _ = w.Write(
+				[]byte(fmt.Sprintf(
+					`{
 				"items": [%s],
 				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","))))
+			}`, strings.Join(items, ","),
+				)),
+			)
 		} else if pageToken == "page-2" {
-			w.Write([]byte(`{
+			_, _ = w.Write(
+				[]byte(`{
 				"items": [{"id": "thread-20"}, {"id": "thread-21"}],
 				"nextPageToken": ""
-			}`))
+			}`),
+			)
 		}
 	}
 	ts := httptest.NewServer(http.HandlerFunc(handler))
@@ -349,9 +376,12 @@ func TestCommentThread_Get_Pagination(t *testing.T) {
 }
 
 func TestCommentThread_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "thread-1",
@@ -366,8 +396,11 @@ func TestCommentThread_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -421,16 +454,20 @@ func TestCommentThread_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := NewCommentThread(tt.opts...)
-			var buf bytes.Buffer
-			if err := c.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("CommentThread.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("CommentThread.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				c := NewCommentThread(tt.opts...)
+				var buf bytes.Buffer
+				if err := c.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"CommentThread.List() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("CommentThread.List() output is empty")
+				}
+			},
+		)
 	}
 }
 
@@ -473,31 +510,39 @@ func TestCommentThread_Insert(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-thread-id"}`))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"id": "new-thread-id"}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewCommentThread(opts...)
-			var buf bytes.Buffer
-			if err := c.Insert(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("CommentThread.Insert() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewCommentThread(opts...)
+				var buf bytes.Buffer
+				if err := c.Insert(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"CommentThread.Insert() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+			},
+		)
 	}
 }

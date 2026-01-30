@@ -143,7 +143,10 @@ func TestChannelSection_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -203,7 +206,10 @@ func TestChannelSection_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -212,47 +218,63 @@ func TestChannelSection_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "section-1", "snippet": {"title": "Section 1"}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			cs := NewChannelSection(opts...)
-			got, err := cs.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ChannelSection.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("ChannelSection.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				cs := NewChannelSection(opts...)
+				got, err := cs.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf(
+						"ChannelSection.Get() error = %v, wantErr %v", err, tt.wantErr,
+					)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"ChannelSection.Get() got length = %v, want %v", len(got),
+						tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
 func TestChannelSection_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "section-1",
@@ -262,8 +284,11 @@ func TestChannelSection_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -314,16 +339,20 @@ func TestChannelSection_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cs := NewChannelSection(tt.opts...)
-			var buf bytes.Buffer
-			if err := cs.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("ChannelSection.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("ChannelSection.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				cs := NewChannelSection(tt.opts...)
+				var buf bytes.Buffer
+				if err := cs.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"ChannelSection.List() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("ChannelSection.List() output is empty")
+				}
+			},
+		)
 	}
 }
 
@@ -354,7 +383,10 @@ func TestChannelSection_Delete(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -362,30 +394,38 @@ func TestChannelSection_Delete(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			cs := NewChannelSection(opts...)
-			var buf bytes.Buffer
-			if err := cs.Delete(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("ChannelSection.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				cs := NewChannelSection(opts...)
+				var buf bytes.Buffer
+				if err := cs.Delete(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"ChannelSection.Delete() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+			},
+		)
 	}
 }

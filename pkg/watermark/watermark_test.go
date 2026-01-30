@@ -150,7 +150,10 @@ func TestWatermark_Set(t *testing.T) {
 					t.Errorf("expected POST, got %s", r.Method)
 				}
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantErr: false,
@@ -164,7 +167,10 @@ func TestWatermark_Set(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -175,34 +181,42 @@ func TestWatermark_Set(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer os.Remove("test_watermark.jpg")
+	defer func() {
+		_ = os.Remove("test_watermark.jpg")
+	}()
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			w := NewWatermark(opts...)
-			var buf bytes.Buffer
-			if err := w.Set(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Watermark.Set() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				w := NewWatermark(opts...)
+				var buf bytes.Buffer
+				if err := w.Set(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Watermark.Set() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -223,7 +237,10 @@ func TestWatermark_Unset(t *testing.T) {
 					t.Errorf("expected POST, got %s", r.Method)
 				}
 				if r.URL.Query().Get("channelId") != "channel-id" {
-					t.Errorf("expected channelId=channel-id, got %s", r.URL.Query().Get("channelId"))
+					t.Errorf(
+						"expected channelId=channel-id, got %s",
+						r.URL.Query().Get("channelId"),
+					)
 				}
 			},
 			wantErr: false,
@@ -236,7 +253,10 @@ func TestWatermark_Unset(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
-					t.Errorf("expected onBehalfOfContentOwner=owner-id, got %s", r.URL.Query().Get("onBehalfOfContentOwner"))
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,
@@ -244,30 +264,36 @@ func TestWatermark_Unset(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			w := NewWatermark(opts...)
-			var buf bytes.Buffer
-			if err := w.Unset(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Watermark.Unset() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				w := NewWatermark(opts...)
+				var buf bytes.Buffer
+				if err := w.Unset(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Watermark.Unset() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }

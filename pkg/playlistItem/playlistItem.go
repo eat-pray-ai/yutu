@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	service               *youtube.Service
 	errGetPlaylistItem    = errors.New("failed to get playlist item")
 	errUpdatePlaylistItem = errors.New("failed to update playlist item")
 	errInsertPlaylistItem = errors.New("failed to insert playlist item")

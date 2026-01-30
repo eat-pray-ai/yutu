@@ -222,7 +222,9 @@ func TestComment_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("parentId") != "parent-id" {
-					t.Errorf("expected parentId=parent-id, got %s", r.URL.Query().Get("parentId"))
+					t.Errorf(
+						"expected parentId=parent-id, got %s", r.URL.Query().Get("parentId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -236,7 +238,10 @@ func TestComment_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("textFormat") != "plainText" {
-					t.Errorf("expected textFormat=plainText, got %s", r.URL.Query().Get("textFormat"))
+					t.Errorf(
+						"expected textFormat=plainText, got %s",
+						r.URL.Query().Get("textFormat"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -245,40 +250,50 @@ func TestComment_Get(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "comment-1", "snippet": {"textOriginal": "Comment 1"}}
 					]
-				}`))
-			}))
-			defer ts.Close()
+				}`),
+							)
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			got, err := c.Get()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Comment.Get() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if len(got) != tt.wantLen {
-				t.Errorf("Comment.Get() got length = %v, want %v", len(got), tt.wantLen)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				got, err := c.Get()
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Comment.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				if len(got) != tt.wantLen {
+					t.Errorf(
+						"Comment.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
+				}
+			},
+		)
 	}
 }
 
@@ -291,15 +306,21 @@ func TestComment_Get_Pagination(t *testing.T) {
 			for i := 0; i < 20; i++ {
 				items[i] = fmt.Sprintf(`{"id": "comment-%d"}`, i)
 			}
-			w.Write([]byte(fmt.Sprintf(`{
+			_, _ = w.Write(
+				[]byte(fmt.Sprintf(
+					`{
 				"items": [%s],
 				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","))))
+			}`, strings.Join(items, ","),
+				)),
+			)
 		} else if pageToken == "page-2" {
-			w.Write([]byte(`{
+			_, _ = w.Write(
+				[]byte(`{
 				"items": [{"id": "comment-20"}, {"id": "comment-21"}],
 				"nextPageToken": ""
-			}`))
+			}`),
+			)
 		}
 	}
 	ts := httptest.NewServer(http.HandlerFunc(handler))
@@ -328,9 +349,12 @@ func TestComment_Get_Pagination(t *testing.T) {
 }
 
 func TestComment_List(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "comment-1",
@@ -341,8 +365,11 @@ func TestComment_List(t *testing.T) {
 					}
 				}
 			]
-		}`))
-	}))
+		}`),
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	svc, err := youtube.NewService(
@@ -396,16 +423,18 @@ func TestComment_List(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := NewComment(tt.opts...)
-			var buf bytes.Buffer
-			if err := c.List(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.List() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if buf.Len() == 0 {
-				t.Errorf("Comment.List() output is empty")
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				c := NewComment(tt.opts...)
+				var buf bytes.Buffer
+				if err := c.List(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Comment.List() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				if buf.Len() == 0 {
+					t.Errorf("Comment.List() output is empty")
+				}
+			},
+		)
 	}
 }
 
@@ -452,32 +481,38 @@ func TestComment_Insert(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-comment-id"}`))
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(`{"id": "new-comment-id"}`))
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			var buf bytes.Buffer
-			if err := c.Insert(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.Insert() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				var buf bytes.Buffer
+				if err := c.Insert(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Comment.Insert() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -527,40 +562,44 @@ func TestComment_Update(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				if r.Method == "GET" {
-					w.Write([]byte(`{
-						"items": [
-							{"id": "comment-id", "snippet": {"textOriginal": "Old Text"}}
-						]
-					}`))
-				} else {
-					w.Write([]byte(`{"id": "comment-id", "snippet": {"textOriginal": "Updated Text"}}`))
-				}
-			}))
-			defer ts.Close()
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{"items": [{"id": "comment-id", "snippet": {"textOriginal": "Old Text"}}]}`),
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "comment-id", "snippet": {"textOriginal": "Updated Text"}}`))
+							}
+						},
+					),
+				)
+				defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
+				}
 
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			var buf bytes.Buffer
-			if err := c.Update(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				var buf bytes.Buffer
+				if err := c.Update(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Comment.Update() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -586,31 +625,37 @@ func TestComment_Delete(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			var buf bytes.Buffer
-			if err := c.Delete(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				var buf bytes.Buffer
+				if err := c.Delete(&buf); (err != nil) != tt.wantErr {
+					t.Errorf("Comment.Delete() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -639,31 +684,39 @@ func TestComment_MarkAsSpam(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			var buf bytes.Buffer
-			if err := c.MarkAsSpam(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.MarkAsSpam() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				var buf bytes.Buffer
+				if err := c.MarkAsSpam(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"Comment.MarkAsSpam() error = %v, wantErr %v", err, tt.wantErr,
+					)
+				}
+			},
+		)
 	}
 }
 
@@ -689,7 +742,10 @@ func TestComment_SetModerationStatus(t *testing.T) {
 					t.Errorf("expected id=comment-id, got %s", r.URL.Query().Get("id"))
 				}
 				if r.URL.Query().Get("moderationStatus") != "published" {
-					t.Errorf("expected moderationStatus=published, got %s", r.URL.Query().Get("moderationStatus"))
+					t.Errorf(
+						"expected moderationStatus=published, got %s",
+						r.URL.Query().Get("moderationStatus"),
+					)
 				}
 			},
 			wantErr: false,
@@ -703,7 +759,9 @@ func TestComment_SetModerationStatus(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("banAuthor") != "true" {
-					t.Errorf("expected banAuthor=true, got %s", r.URL.Query().Get("banAuthor"))
+					t.Errorf(
+						"expected banAuthor=true, got %s", r.URL.Query().Get("banAuthor"),
+					)
 				}
 			},
 			wantErr: false,
@@ -711,30 +769,39 @@ func TestComment_SetModerationStatus(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if tt.verify != nil {
-					tt.verify(r)
+		t.Run(
+			tt.name, func(t *testing.T) {
+				ts := httptest.NewServer(
+					http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
+				defer ts.Close()
+
+				svc, err := youtube.NewService(
+					context.Background(),
+					option.WithEndpoint(ts.URL),
+					option.WithAPIKey("test-key"),
+				)
+				if err != nil {
+					t.Fatalf("failed to create service: %v", err)
 				}
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			defer ts.Close()
 
-			svc, err := youtube.NewService(
-				context.Background(),
-				option.WithEndpoint(ts.URL),
-				option.WithAPIKey("test-key"),
-			)
-			if err != nil {
-				t.Fatalf("failed to create service: %v", err)
-			}
-
-			opts := append([]Option{WithService(svc)}, tt.opts...)
-			c := NewComment(opts...)
-			var buf bytes.Buffer
-			if err := c.SetModerationStatus(&buf); (err != nil) != tt.wantErr {
-				t.Errorf("Comment.SetModerationStatus() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+				opts := append([]Option{WithService(svc)}, tt.opts...)
+				c := NewComment(opts...)
+				var buf bytes.Buffer
+				if err := c.SetModerationStatus(&buf); (err != nil) != tt.wantErr {
+					t.Errorf(
+						"Comment.SetModerationStatus() error = %v, wantErr %v", err,
+						tt.wantErr,
+					)
+				}
+			},
+		)
 	}
 }
