@@ -4,10 +4,7 @@
 package i18nLanguage
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -64,64 +61,25 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func hlHandler(
-	ctx context.Context, req *mcp.ReadResourceRequest,
-) (*mcp.ReadResourceResult, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{LoggerName: hlName, MinInterval: time.Second},
-		),
-	)
+var hlHandler = cmd.GenResourceHandler(
+	hlName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+		input := i18nLanguage.NewI18nLanguage(
+			i18nLanguage.WithParts(defaultParts),
+			i18nLanguage.WithOutput("json"),
+			i18nLanguage.WithJsonpath("$.*.snippet.hl"),
+		)
+		return input.List(w)
+	},
+)
 
-	var writer bytes.Buffer
-	input := i18nLanguage.NewI18nLanguage(
-		i18nLanguage.WithParts(defaultParts),
-		i18nLanguage.WithOutput("json"),
-		i18nLanguage.WithJsonpath("$.*.snippet.hl"),
-	)
-	err := input.List(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
-		return nil, err
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{
-				URI: hlURI, MIMEType: pkg.JsonMIME, Text: writer.String(),
-			},
-		},
-	}, nil
-}
-
-func langsHandler(
-	ctx context.Context, req *mcp.ReadResourceRequest,
-) (*mcp.ReadResourceResult, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{LoggerName: langName, MinInterval: time.Second},
-		),
-	)
-
-	hl := utils.ExtractHl(req.Params.URI)
-	var writer bytes.Buffer
-	input := i18nLanguage.NewI18nLanguage(
-		i18nLanguage.WithHl(hl),
-		i18nLanguage.WithParts(defaultParts),
-		i18nLanguage.WithOutput("json"),
-	)
-
-	err := input.List(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
-		return nil, err
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
-		},
-	}, nil
-}
+var langsHandler = cmd.GenResourceHandler(
+	langName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+		hl := utils.ExtractHl(req.Params.URI)
+		input := i18nLanguage.NewI18nLanguage(
+			i18nLanguage.WithHl(hl),
+			i18nLanguage.WithParts(defaultParts),
+			i18nLanguage.WithOutput("json"),
+		)
+		return input.List(w)
+	},
+)

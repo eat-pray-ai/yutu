@@ -4,10 +4,7 @@
 package i18nRegion
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -53,35 +50,14 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func regionsHandler(
-	ctx context.Context, req *mcp.ReadResourceRequest,
-) (*mcp.ReadResourceResult, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{
-				LoggerName: regionName, MinInterval: time.Second,
-			},
-		),
-	)
-
-	hl := utils.ExtractHl(req.Params.URI)
-	input := i18nRegion.NewI18nRegion(
-		i18nRegion.WithHl(hl),
-		i18nRegion.WithParts(defaultParts),
-		i18nRegion.WithOutput("json"),
-	)
-
-	var writer bytes.Buffer
-	err := input.List(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
-		return nil, err
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
-		},
-	}, nil
-}
+var regionsHandler = cmd.GenResourceHandler(
+	regionName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+		hl := utils.ExtractHl(req.Params.URI)
+		input := i18nRegion.NewI18nRegion(
+			i18nRegion.WithHl(hl),
+			i18nRegion.WithParts(defaultParts),
+			i18nRegion.WithOutput("json"),
+		)
+		return input.List(w)
+	},
+)

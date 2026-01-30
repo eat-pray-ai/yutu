@@ -4,10 +4,7 @@
 package videoCategory
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
-	"time"
+	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -58,33 +55,15 @@ var listCmd = &cobra.Command{
 	},
 }
 
-func categoriesHandler(
-	ctx context.Context, req *mcp.ReadResourceRequest,
-) (*mcp.ReadResourceResult, error) {
-	logger := slog.New(
-		mcp.NewLoggingHandler(
-			req.Session,
-			&mcp.LoggingHandlerOptions{LoggerName: vcName, MinInterval: time.Second},
-		),
-	)
-
-	hl = utils.ExtractHl(req.Params.URI)
-	vc := videoCategory.NewVideoCategory(
-		videoCategory.WithHl(hl),
-		videoCategory.WithParts(defaultParts),
-		videoCategory.WithOutput("json"),
-	)
-
-	var writer bytes.Buffer
-	err := vc.List(&writer)
-	if err != nil {
-		logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
-		return nil, err
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{URI: req.Params.URI, MIMEType: pkg.JsonMIME, Text: writer.String()},
-		},
-	}, nil
-}
+var categoriesHandler = cmd.GenResourceHandler(
+	vcName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+		hl := utils.ExtractHl(req.Params.URI)
+		vc := videoCategory.NewVideoCategory(
+			videoCategory.WithHl(hl),
+			videoCategory.WithRegionCode("US"),
+			videoCategory.WithParts(defaultParts),
+			videoCategory.WithOutput("json"),
+		)
+		return vc.List(w)
+	},
+)
