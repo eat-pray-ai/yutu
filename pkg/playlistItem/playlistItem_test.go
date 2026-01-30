@@ -460,6 +460,98 @@ func TestPlaylistItem_Insert(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "insert playlist item channel",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("channel"),
+				WithKChannelId("channel-id"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist item playlist",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("playlist"),
+				WithKPlaylistId("playlist-id-2"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist item with content owner and privacy",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("video"),
+				WithKVideoId("video-id"),
+				WithOnBehalfOfContentOwner("owner-id"),
+				WithPrivacy("private"),
+			},
+			verify: func(r *http.Request) {
+				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist item json output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("video"),
+				WithKVideoId("video-id"),
+				WithOutput("json"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist item yaml output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("video"),
+				WithKVideoId("video-id"),
+				WithOutput("yaml"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist item silent output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithKind("video"),
+				WithKVideoId("video-id"),
+				WithOutput("silent"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -529,6 +621,43 @@ func TestPlaylistItem_Update(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "update playlist item description and privacy",
+			opts: []Option{
+				WithIds([]string{"item-id"}),
+				WithDescription("Updated Description"),
+				WithPrivacy("private"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.Method == "PUT" {
+					if r.URL.Query().Get("id") != "" {
+					}
+				}
+			},
+			wantErr: false,
+		},
+
+		{
+			name: "update playlist item with content owner",
+			opts: []Option{
+				WithIds([]string{"item-id"}),
+				WithTitle("Updated Title"),
+				WithOnBehalfOfContentOwner("owner-id"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.Method == "PUT" {
+					if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+						t.Errorf(
+							"expected onBehalfOfContentOwner=owner-id, got %s",
+							r.URL.Query().Get("onBehalfOfContentOwner"),
+						)
+					}
+				}
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -545,7 +674,7 @@ func TestPlaylistItem_Update(t *testing.T) {
 								_, _ = w.Write(
 									[]byte(`{
 						"items": [
-							{"id": "item-id", "snippet": {"title": "Old Title"}}
+							{"id": "item-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}
 						]
 					}`),
 								)
@@ -594,6 +723,25 @@ func TestPlaylistItem_Delete(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method != "DELETE" {
 					t.Errorf("expected DELETE, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "delete playlist item with content owner",
+			opts: []Option{
+				WithIds([]string{"item-id"}),
+				WithOnBehalfOfContentOwner("owner-id"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "DELETE" {
+					t.Errorf("expected DELETE, got %s", r.Method)
+				}
+				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,

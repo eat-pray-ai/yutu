@@ -197,6 +197,23 @@ func TestPlaylistImage_Get(t *testing.T) {
 			wantLen: 1,
 			wantErr: false,
 		},
+		{
+			name: "get playlist images with onBehalfOfContentOwnerChannel",
+			opts: []Option{
+				WithOnBehalfOfContentOwnerChannel("channel-id"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				if r.URL.Query().Get("onBehalfOfContentOwnerChannel") != "channel-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwnerChannel=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwnerChannel"),
+					)
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -405,6 +422,79 @@ func TestPlaylistImage_Insert(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "insert playlist image with content owner",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithType("default"),
+				WithFile("test_image.jpg"),
+				WithOnBehalfOfContentOwner("owner-id"),
+				WithOnBehalfOfContentOwnerChannel("channel-id"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
+				}
+				if r.URL.Query().Get("onBehalfOfContentOwnerChannel") != "channel-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwnerChannel=channel-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwnerChannel"),
+					)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist image json output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithType("default"),
+				WithFile("test_image.jpg"),
+				WithOutput("json"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist image yaml output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithType("default"),
+				WithFile("test_image.jpg"),
+				WithOutput("yaml"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert playlist image silent output",
+			opts: []Option{
+				WithPlaylistId("playlist-id"),
+				WithType("default"),
+				WithFile("test_image.jpg"),
+				WithOutput("silent"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+			},
+			wantErr: false,
+		},
 	}
 
 	err := os.WriteFile("test_image.jpg", []byte("dummy image content"), 0644)
@@ -482,7 +572,47 @@ func TestPlaylistImage_Update(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "update playlist image with content owner",
+			opts: []Option{
+				WithParent("parent-id"),
+				WithMaxResults(1),
+				WithOnBehalfOfContentOwner("owner-id"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method == "PUT" {
+					if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+						t.Errorf(
+							"expected onBehalfOfContentOwner=owner-id, got %s",
+							r.URL.Query().Get("onBehalfOfContentOwner"),
+						)
+					}
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "update playlist image with file",
+			opts: []Option{
+				WithParent("parent-id"),
+				WithMaxResults(1),
+				WithFile("test_image.jpg"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method == "PUT" {
+				}
+			},
+			wantErr: false,
+		},
 	}
+
+	err := os.WriteFile("test_image.jpg", []byte("dummy image content"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create dummy file: %v", err)
+	}
+	defer func() {
+		_ = os.Remove("test_image.jpg")
+	}()
 
 	for _, tt := range tests {
 		t.Run(
@@ -550,6 +680,25 @@ func TestPlaylistImage_Delete(t *testing.T) {
 				}
 				if r.URL.Query().Get("id") != "image-id" {
 					t.Errorf("expected id=image-id, got %s", r.URL.Query().Get("id"))
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "delete playlist image with content owner",
+			opts: []Option{
+				WithIds([]string{"image-id"}),
+				WithOnBehalfOfContentOwner("owner-id"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "DELETE" {
+					t.Errorf("expected DELETE, got %s", r.Method)
+				}
+				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
+					t.Errorf(
+						"expected onBehalfOfContentOwner=owner-id, got %s",
+						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
 				}
 			},
 			wantErr: false,

@@ -264,6 +264,10 @@ func TestNewSearch(t *testing.T) {
 }
 
 func TestSearch_Get(t *testing.T) {
+	forMineTrue := true
+	forDeveloperTrue := true
+	forContentOwnerTrue := true
+
 	tests := []struct {
 		name    string
 		opts    []Option
@@ -333,6 +337,77 @@ func TestSearch_Get(t *testing.T) {
 					t.Errorf(
 						"expected onBehalfOfContentOwner=owner-id, got %s",
 						r.URL.Query().Get("onBehalfOfContentOwner"),
+					)
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with complex filters",
+			opts: []Option{
+				WithLocation("37.42307,-122.08427"),
+				WithLocationRadius("10km"),
+				WithEventType("live"),
+				WithPublishedAfter("2024-01-01T00:00:00Z"),
+				WithVideoDuration("long"),
+				WithRegionCode("US"),
+				WithSafeSearch("strict"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				q := r.URL.Query()
+				if q.Get("location") != "37.42307,-122.08427" {
+					t.Errorf(
+						"expected location=37.42307,-122.08427, got %s", q.Get("location"),
+					)
+				}
+				if q.Get("locationRadius") != "10km" {
+					t.Errorf(
+						"expected locationRadius=10km, got %s", q.Get("locationRadius"),
+					)
+				}
+				if q.Get("eventType") != "live" {
+					t.Errorf("expected eventType=live, got %s", q.Get("eventType"))
+				}
+				if q.Get("publishedAfter") != "2024-01-01T00:00:00Z" {
+					t.Errorf(
+						"expected publishedAfter=2024-01-01T00:00:00Z, got %s",
+						q.Get("publishedAfter"),
+					)
+				}
+				if q.Get("videoDuration") != "long" {
+					t.Errorf("expected videoDuration=long, got %s", q.Get("videoDuration"))
+				}
+				if q.Get("regionCode") != "US" {
+					t.Errorf("expected regionCode=US, got %s", q.Get("regionCode"))
+				}
+				if q.Get("safeSearch") != "strict" {
+					t.Errorf("expected safeSearch=strict, got %s", q.Get("safeSearch"))
+				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with boolean flags",
+			opts: []Option{
+				WithForMine(&forMineTrue),
+				WithForDeveloper(&forDeveloperTrue),
+				WithForContentOwner(&forContentOwnerTrue),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				q := r.URL.Query()
+				if q.Get("forMine") != "true" {
+					t.Errorf("expected forMine=true, got %s", q.Get("forMine"))
+				}
+				if q.Get("forDeveloper") != "true" {
+					t.Errorf("expected forDeveloper=true, got %s", q.Get("forDeveloper"))
+				}
+				if q.Get("forContentOwner") != "true" {
+					t.Errorf(
+						"expected forContentOwner=true, got %s", q.Get("forContentOwner"),
 					)
 				}
 			},

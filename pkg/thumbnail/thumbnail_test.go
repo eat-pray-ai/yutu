@@ -129,6 +129,44 @@ func TestThumbnail_Set(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "set thumbnail json",
+			opts: []Option{
+				WithVideoId("video-id"),
+				WithFile("test_thumbnail.jpg"),
+				WithOutput("json"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+				if r.URL.Query().Get("videoId") != "video-id" {
+					t.Errorf(
+						"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
+					)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "set thumbnail yaml",
+			opts: []Option{
+				WithVideoId("video-id"),
+				WithFile("test_thumbnail.jpg"),
+				WithOutput("yaml"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					t.Errorf("expected POST, got %s", r.Method)
+				}
+				if r.URL.Query().Get("videoId") != "video-id" {
+					t.Errorf(
+						"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
+					)
+				}
+			},
+			wantErr: false,
+		},
 	}
 
 	err := os.WriteFile("test_thumbnail.jpg", []byte("dummy image content"), 0644)
@@ -175,6 +213,26 @@ func TestThumbnail_Set(t *testing.T) {
 				var buf bytes.Buffer
 				if err := thumb.Set(&buf); (err != nil) != tt.wantErr {
 					t.Errorf("Thumbnail.Set() error = %v, wantErr %v", err, tt.wantErr)
+				}
+
+				if tt.name == "set thumbnail json" {
+					if got := buf.String(); !bytes.Contains(
+						[]byte(got), []byte("https://example.com/thumb.jpg"),
+					) {
+						t.Errorf(
+							"expected JSON output to contain thumbnail URL, got %s", got,
+						)
+					}
+				}
+
+				if tt.name == "set thumbnail yaml" {
+					if got := buf.String(); !bytes.Contains(
+						[]byte(got), []byte("https://example.com/thumb.jpg"),
+					) {
+						t.Errorf(
+							"expected YAML output to contain thumbnail URL, got %s", got,
+						)
+					}
 				}
 			},
 		)

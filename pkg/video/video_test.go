@@ -6,8 +6,11 @@ package video
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
+	"mime"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -563,6 +566,35 @@ func TestVideo_Insert(t *testing.T) {
 	notifySubscribersTrue := true
 	stabilizeTrue := true
 
+	decodeMultipartVideo := func(t *testing.T, r *http.Request) *youtube.Video {
+		t.Helper()
+		ct := r.Header.Get("Content-Type")
+		mediaType, params, err := mime.ParseMediaType(ct)
+		if err != nil {
+			t.Fatalf("failed to parse Content-Type %q: %v", ct, err)
+		}
+		if !strings.HasPrefix(mediaType, "multipart/") {
+			t.Fatalf("expected multipart content type, got %s", mediaType)
+		}
+		boundary, ok := params["boundary"]
+		if !ok || boundary == "" {
+			t.Fatalf("missing multipart boundary in Content-Type %q", ct)
+		}
+
+		mr := multipart.NewReader(r.Body, boundary)
+		part, err := mr.NextPart()
+		if err != nil {
+			t.Fatalf("failed to read first multipart part: %v", err)
+		}
+		defer func() { _ = part.Close() }()
+
+		var body youtube.Video
+		if err := json.NewDecoder(part).Decode(&body); err != nil {
+			t.Fatalf("failed to decode video from request body: %v", err)
+		}
+		return &body
+	}
+
 	tests := []struct {
 		name    string
 		opts    []Option
@@ -579,6 +611,13 @@ func TestVideo_Insert(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method != "POST" {
 					t.Errorf("expected POST, got %s", r.Method)
+				}
+				body := decodeMultipartVideo(t, r)
+				if body.Snippet == nil || body.Snippet.Title != "New Video" {
+					t.Errorf("expected snippet.title=New Video, got %+v", body.Snippet)
+				}
+				if body.Status == nil || body.Status.PrivacyStatus != "public" {
+					t.Errorf("expected status.privacyStatus=public, got %+v", body.Status)
 				}
 			},
 			wantErr: false,
@@ -626,6 +665,13 @@ func TestVideo_Insert(t *testing.T) {
 						"expected onBehalfOfContentOwnerChannel=channel-id, got %s",
 						r.URL.Query().Get("onBehalfOfContentOwnerChannel"),
 					)
+				}
+				body := decodeMultipartVideo(t, r)
+				if body.Snippet == nil || body.Snippet.Title != "New Video" {
+					t.Errorf("expected snippet.title=New Video, got %+v", body.Snippet)
+				}
+				if body.Status == nil || body.Status.PrivacyStatus != "public" {
+					t.Errorf("expected status.privacyStatus=public, got %+v", body.Status)
 				}
 			},
 			wantErr: false,
@@ -688,6 +734,7 @@ func TestVideo_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"video-id"}),
 				WithTitle("Updated Title"),
+				WithDescription("Updated Description"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -695,6 +742,25 @@ func TestVideo_Update(t *testing.T) {
 					if r.URL.Query().Get("part") != "snippet,status" {
 						t.Errorf(
 							"expected part=snippet,status, got %s", r.URL.Query().Get("part"),
+						)
+					}
+
+					var body youtube.Video
+					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+						t.Fatalf("failed to decode update body: %v", err)
+					}
+					if body.Id != "video-id" {
+						t.Errorf("expected id=video-id, got %s", body.Id)
+					}
+					if body.Snippet == nil || body.Snippet.Title != "Updated Title" {
+						t.Errorf(
+							"expected snippet.title=Updated Title, got %+v", body.Snippet,
+						)
+					}
+					if body.Snippet.Description != "Updated Description" {
+						t.Errorf(
+							"expected snippet.description=Updated Description, got %s",
+							body.Snippet.Description,
 						)
 					}
 				}

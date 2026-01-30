@@ -6,6 +6,7 @@ package subscription
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
@@ -515,10 +516,52 @@ func TestSubscription_Insert(t *testing.T) {
 			name: "insert subscription",
 			opts: []Option{
 				WithChannelId("channel-id"),
+				WithTitle("my-title"),
+				WithDescription("my-description"),
+				WithSubscriberChannelId("subscriber-channel-id"),
 			},
 			verify: func(r *http.Request) {
+				// ensure HTTP method
 				if r.Method != "POST" {
 					t.Errorf("expected POST, got %s", r.Method)
+				}
+
+				// decode request body and verify payload
+				defer func() { _ = r.Body.Close() }()
+				var body struct {
+					Snippet struct {
+						ResourceId struct {
+							ChannelId string `json:"channelId"`
+						} `json:"resourceId"`
+						Title       string `json:"title"`
+						Description string `json:"description"`
+						ChannelId   string `json:"channelId"`
+					} `json:"snippet"`
+				}
+				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					t.Fatalf("failed to decode request body: %v", err)
+				}
+
+				if body.Snippet.ResourceId.ChannelId != "channel-id" {
+					t.Errorf(
+						"expected snippet.resourceId.channelId=channel-id, got %s",
+						body.Snippet.ResourceId.ChannelId,
+					)
+				}
+				if body.Snippet.Title != "my-title" {
+					t.Errorf("expected snippet.title=my-title, got %s", body.Snippet.Title)
+				}
+				if body.Snippet.Description != "my-description" {
+					t.Errorf(
+						"expected snippet.description=my-description, got %s",
+						body.Snippet.Description,
+					)
+				}
+				if body.Snippet.ChannelId != "subscriber-channel-id" {
+					t.Errorf(
+						"expected snippet.channelId=subscriber-channel-id, got %s",
+						body.Snippet.ChannelId,
+					)
 				}
 			},
 			wantErr: false,
