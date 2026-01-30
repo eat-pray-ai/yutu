@@ -1,28 +1,43 @@
 # Agent Guidelines
 
-Focus mostly on given tasks, avoid unnecessary complexity. Since developers may update code manually, codebase can be different from generated code. Ensure compatibility with existing structures and conventions.
+## OVERVIEW
 
-Follow developers instruction first, don't update existing codes unless developer asked explicitly.
+Go CLI + MCP server for YouTube.
 
-## Commands
+## STRUCTURE
 
-- **Build**: `go build ./...` or `bazel build //...`
-- **Test (All)**: `go test ./...` or `bazel test //...`
-- **Test (Single)**: `go test -v ./pkg/path -run TestName`
-- **Lint**: `go vet ./...`
-- **Update Bazel**: `bazel run //:gazelle` (Run this after adding/removing files or imports)
+```text
+.
+├── assets/     # Static assets (logos, etc.)
+├── cmd/        # CLI command definitions (Cobra)
+├── dist/       # Build artifacts
+├── internal/   # Internal tools and private packages
+├── pkg/        # Core domain logic and infrastructure
+└── scripts/    # Utility scripts and smoke tests
+```
 
-## Code Style
+## WHERE TO LOOK
 
-- **Formatting**: Ensure code is formatted with `go fmt`.
-- **Naming**: Use camelCase for multi-word packages, directories, and filenames (e.g., `channelBanner`, `i18nRegion`).
-- **Headers**: Run `addlicense -c "eat-pray-ai & OpenWaygate" -f LICENSE -s=only -ignore "**/*.yml" -ignore "**/*.yaml" -ignore "**/*.bazel" .` to add headers.
-- **Imports**: Group standard library first, then third-party, then local imports.
-- **Errors**: explicit error handling `if err != nil`.
-- **Commits**: Follow [gitmoji](https://gitmoji.dev) convention.
+- **CLI Entry**: `main.go` -> `cmd/`
+- **Domain Logic**: `pkg/<resource>/` (e.g., `pkg/video/`)
+- **Infrastructure**: `pkg/auth`, `pkg/utils`
+- **Tests**: Co-located `*_test.go` files within `pkg/`
 
-## Structure
+## CODE MAP
 
-- **CLI Commands**: Located in `cmd/<resource>/`.
-- **Core Logic**: Located in `pkg/<resource>/`.
-- **Tests**: Co-located with code in `pkg/` as `_test.go`.
+- `main.go`: Application entry point.
+- `cmd/root.go`: Cobra root command and global flag definitions.
+- `pkg/video/video.go`: Example of domain logic implementation.
+
+## CONVENTIONS
+
+- **Build System**: Bazel is used for build/test, though standard Go tools (`go build`, `go test`) also work.
+- **Testing**: Table-driven tests are preferred for consistency and coverage.
+- **Secrets**: `client_secret.json` and `youtube.token.json` are typically stored in the root directory (standard for
+  this project).
+
+## COMMANDS
+
+- **Build**: `go build -o yutu .` or `bazel build //...`
+- **Test**: `go test ./...` or `bazel test //...`
+- **Smoke Tests**: `./scripts/command-test.sh`
