@@ -4,6 +4,9 @@
 package cmd
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/spf13/cobra"
@@ -26,10 +29,13 @@ var authCmd = &cobra.Command{
 	Short: authShort,
 	Long:  authLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		auth.NewY2BService(
+		if _, err := auth.NewY2BService(
 			auth.WithCredential(credential, pkg.Root.FS()),
 			auth.WithCacheToken(cacheToken, pkg.Root.FS()),
-		).GetService()
+		).GetService(); err != nil {
+			slog.Error("authentication failed", "error", err)
+			os.Exit(1)
+		}
 	},
 }
 

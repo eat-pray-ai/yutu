@@ -37,6 +37,7 @@ const (
 
 	browserOpenedHint = "Your browser has been opened to an authorization URL. yutu will resume once authorization has been provided.\n%s\n"
 	openBrowserHint   = "It seems that your browser is not open. Go to the following link in your browser:\n%s\n"
+	receivedCodeHint  = "Authorization code received: %s\nYou can now safely close the browser window.\n"
 	manualInputHint   = `
 After completing the authorization flow, enter the authorization code on command line.
 
@@ -48,7 +49,6 @@ ONLY 'COPY-THIS' part is the code you need to enter on command line.
 )
 
 var (
-	state = utils.RandomStage()
 	scope = []string{
 		youtube.YoutubeScope,
 		youtube.YoutubeForceSslScope,
@@ -56,87 +56,107 @@ var (
 	}
 )
 
-func (s *svc) GetService() *youtube.Service {
-	client := s.refreshClient()
+func (s *svc) GetService() (*youtube.Service, error) {
+	if s.initErr != nil {
+		return nil, s.initErr
+	}
+
+	client, err := s.refreshClient()
+	if err != nil {
+		return nil, err
+	}
 	service, err := youtube.NewService(s.ctx, option.WithHTTPClient(client))
 	if err != nil {
-		slog.Error(createSvcFailed, "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("%s: %w", createSvcFailed, err)
 	}
 	s.service = service
 
-	return s.service
+	return s.service, nil
 }
 
-func (s *svc) refreshClient() (client *http.Client) {
-	config := s.getConfig()
-	authedToken := &oauth2.Token{}
-	err := json.Unmarshal([]byte(s.CacheToken), authedToken)
+func (s *svc) refreshClient() (client *http.Client, err error) {
+	config, err := s.getConfig()
 	if err != nil {
-		client, authedToken = s.newClient(config)
-		if s.tokenFile != "" {
-			s.saveToken(authedToken)
+		return nil, err
+	}
+	authedToken := &oauth2.Token{}
+	err = json.Unmarshal([]byte(s.CacheToken), authedToken)
+	if err != nil {
+		client, authedToken, err = s.newClient(config)
+		if err != nil {
+			return nil, err
 		}
-		return client
+		if s.tokenFile != "" {
+			if err := s.saveToken(authedToken); err != nil {
+				return nil, err
+			}
+		}
+		return client, nil
 	}
 
 	if !authedToken.Valid() {
 		tokenSource := config.TokenSource(s.ctx, authedToken)
 		authedToken, err = tokenSource.Token()
 		if err != nil && s.tokenFile != "" {
-			client, authedToken = s.newClient(config)
-			s.saveToken(authedToken)
-			return client
+			client, authedToken, err = s.newClient(config)
+			if err != nil {
+				return nil, err
+			}
+			if err := s.saveToken(authedToken); err != nil {
+				return nil, err
+			}
+			return client, nil
 		} else if err != nil {
-			slog.Error(refreshTokenFailed, "error", err)
-			os.Exit(1)
+			return nil, fmt.Errorf("%s: %w", refreshTokenFailed, err)
 		}
 
 		if authedToken != nil && s.tokenFile != "" {
-			s.saveToken(authedToken)
+			if err := s.saveToken(authedToken); err != nil {
+				return nil, err
+			}
 		}
-		return config.Client(s.ctx, authedToken)
+		return config.Client(s.ctx, authedToken), nil
 	}
 
-	return config.Client(s.ctx, authedToken)
+	return config.Client(s.ctx, authedToken), nil
 }
 
 func (s *svc) newClient(config *oauth2.Config) (
-	client *http.Client, token *oauth2.Token,
+	client *http.Client, token *oauth2.Token, err error,
 ) {
 	verifier := oauth2.GenerateVerifier()
 	authURL := config.AuthCodeURL(
-		state,
+		s.state,
 		oauth2.AccessTypeOffline,
 		oauth2.S256ChallengeOption(verifier),
 	)
-	token = s.getTokenFromWeb(config, authURL, verifier)
+	token, err = s.getTokenFromWeb(config, authURL, verifier)
+	if err != nil {
+		return nil, nil, err
+	}
 	client = config.Client(s.ctx, token)
 
-	return
+	return client, token, nil
 }
 
-func (s *svc) getConfig() *oauth2.Config {
+func (s *svc) getConfig() (*oauth2.Config, error) {
 	config, err := google.ConfigFromJSON([]byte(s.Credential), scope...)
 	if err != nil {
-		slog.Error(parseSecretFailed, "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("%s: %w", parseSecretFailed, err)
 	}
 
-	return config
+	return config, nil
 }
 
-func (s *svc) startWebServer(redirectURL string) chan string {
+func (s *svc) startWebServer(redirectURL string) (chan string, error) {
 	u, err := url.Parse(redirectURL)
 	if err != nil {
-		slog.Error(parseUrlFailed, "url", redirectURL, "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("%s: %w", parseUrlFailed, err)
 	}
 
 	listener, err := net.Listen("tcp", u.Host)
 	if err != nil {
-		slog.Error(listenFailed, "host", u.Host, "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("%s: %w", listenFailed, err)
 	}
 
 	codeCh := make(chan string)
@@ -147,50 +167,47 @@ func (s *svc) startWebServer(redirectURL string) chan string {
 					if r.URL.Path != "/" {
 						return
 					}
-					s := r.FormValue("state")
-					if s != state {
+					state := r.FormValue("state")
+					if state != s.state {
 						slog.Error(
-							stateMatchFailed,
-							"actual", s,
-							"expected", state,
+							stateMatchFailed, "actual", state, "expected", s.state,
 						)
-						os.Exit(1)
+						return
 					}
 					code := r.FormValue("code")
 					codeCh <- code
 					_ = listener.Close()
 					w.Header().Set("Content-Type", "text/plain")
-					_, _ = fmt.Fprintf(
-						w, "Received code: %s\r\nYou can now safely close this window.",
-						code,
-					)
+					_, _ = fmt.Fprintf(w, receivedCodeHint, code)
 				},
 			),
 		)
 	}()
 
-	return codeCh
+	return codeCh, nil
 }
 
-func (s *svc) getCodeFromPrompt(authURL string) (code string) {
+func (s *svc) getCodeFromPrompt(authURL string) (code string, err error) {
 	fmt.Printf(openBrowserHint, authURL)
 	fmt.Print(manualInputHint)
-	_, err := fmt.Scan(&code)
+	_, err = fmt.Scan(&code)
 	if err != nil {
-		slog.Error(readPromptFailed, "error", err)
-		os.Exit(1)
+		return "", fmt.Errorf("%s: %w", readPromptFailed, err)
 	}
 
 	if strings.HasPrefix(code, "4%2F") {
 		code = strings.Replace(code, "4%2F", "4/", 1)
 	}
-	return code
+	return code, nil
 }
 
 func (s *svc) getTokenFromWeb(
 	config *oauth2.Config, authURL string, verifier string,
-) *oauth2.Token {
-	codeCh := s.startWebServer(config.RedirectURL)
+) (*oauth2.Token, error) {
+	codeCh, err := s.startWebServer(config.RedirectURL)
+	if err != nil {
+		return nil, err
+	}
 
 	var code string
 	if err := utils.OpenURL(authURL); err == nil {
@@ -199,28 +216,28 @@ func (s *svc) getTokenFromWeb(
 	}
 
 	if code == "" {
-		code = s.getCodeFromPrompt(authURL)
+		code, err = s.getCodeFromPrompt(authURL)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	slog.Debug("Authorization code generated", "code", code)
 	token, err := config.Exchange(
-		context.TODO(),
-		code,
-		oauth2.VerifierOption(verifier),
+		context.TODO(), code, oauth2.VerifierOption(verifier),
 	)
 	if err != nil {
-		slog.Error(exchangeFailed, "error", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("%s: %w", exchangeFailed, err)
 	}
 
-	return token
+	return token, nil
 }
 
-func (s *svc) saveToken(token *oauth2.Token) {
+func (s *svc) saveToken(token *oauth2.Token) error {
 	dir := filepath.Dir(s.tokenFile)
 	if err := pkg.Root.MkdirAll(dir, 0755); err != nil {
 		slog.Error(cacheTokenFailed, "dir", dir, "error", err)
-		os.Exit(1)
+		return fmt.Errorf("%s: %w", cacheTokenFailed, err)
 	}
 
 	f, err := pkg.Root.OpenFile(
@@ -228,7 +245,7 @@ func (s *svc) saveToken(token *oauth2.Token) {
 	)
 	if err != nil {
 		slog.Error(cacheTokenFailed, "file", s.tokenFile, "error", err)
-		os.Exit(1)
+		return fmt.Errorf("%s: %w", cacheTokenFailed, err)
 	}
 
 	defer func() {
@@ -236,8 +253,9 @@ func (s *svc) saveToken(token *oauth2.Token) {
 	}()
 	err = json.NewEncoder(f).Encode(token)
 	if err != nil {
-		slog.Error(cacheTokenFailed, "error", err)
-		os.Exit(1)
+		return fmt.Errorf("%s: %w", cacheTokenFailed, err)
 	}
 	slog.Debug("Token cached to file", "file", s.tokenFile)
+
+	return nil
 }

@@ -1,6 +1,8 @@
 package common
 
 import (
+	"fmt"
+
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"google.golang.org/api/youtube/v3"
@@ -19,10 +21,14 @@ func (d *Fields) GetFields() *Fields {
 
 func (d *Fields) EnsureService() {
 	if d.Service == nil {
-		d.Service = auth.NewY2BService(
+		svc, err := auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
+		if err != nil {
+			panic(fmt.Sprintf("failed to create YouTube service: %v", err))
+		}
+		d.Service = svc
 	}
 }
 

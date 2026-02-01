@@ -6,16 +6,15 @@ package auth
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"io/fs"
 	"log/slog"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"golang.org/x/oauth2"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -30,20 +29,15 @@ type svc struct {
 	CacheToken string `yaml:"cache_token" json:"cache_token"`
 	credFile   string
 	tokenFile  string
+	initErr    error
 
 	service *youtube.Service
 	ctx     context.Context
+	state   string
 }
 
 type Svc interface {
-	GetService() *youtube.Service
-	refreshClient() *http.Client
-	newClient(*oauth2.Config) (*http.Client, *oauth2.Token)
-	getConfig() *oauth2.Config
-	startWebServer(string) chan string
-	getTokenFromWeb(*oauth2.Config, string, string) *oauth2.Token
-	getCodeFromPrompt(string) string
-	saveToken(*oauth2.Token)
+	GetService() (*youtube.Service, error)
 }
 
 type Option func(*svc)
@@ -52,6 +46,7 @@ func NewY2BService(opts ...Option) Svc {
 	s := &svc{}
 	s.ctx = context.Background()
 	s.credFile = "client_secret.json"
+	s.state = utils.RandomStage()
 
 	for _, opt := range opts {
 		opt(s)
@@ -70,7 +65,7 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		}
 		// 1. cred is a file path
 		// 2. cred is a base64 encoded string
-		// 3. cred is a json string
+		// 3. cred is a JSON string
 		absCred, _ := filepath.Abs(cred)
 		relCred, _ := filepath.Rel(*pkg.RootDir, absCred)
 		relCred = strings.ReplaceAll(relCred, `\`, `/`)
@@ -79,10 +74,10 @@ func WithCredential(cred string, fsys fs.FS) Option {
 			s.credFile = absCred
 			credBytes, err := fs.ReadFile(fsys, relCred)
 			if err != nil {
+				s.initErr = fmt.Errorf("%s: %w", readSecretFailed, err)
 				slog.Error(
 					readSecretFailed, "hint", authHint, "path", absCred, "error", err,
 				)
-				os.Exit(1)
 			}
 			s.Credential = string(credBytes)
 			return
@@ -93,8 +88,8 @@ func WithCredential(cred string, fsys fs.FS) Option {
 		} else if utils.IsJson(cred) {
 			s.Credential = cred
 		} else {
+			s.initErr = fmt.Errorf("%s: %w", parseSecretFailed, err)
 			slog.Error(parseSecretFailed, "hint", authHint, "error", err)
-			os.Exit(1)
 		}
 	}
 }
@@ -111,7 +106,7 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 
 		// 1. token is a file path
 		// 2. token is a base64 encoded string
-		// 3. token is a json string
+		// 3. token is a JSON string
 		absToken, _ := filepath.Abs(token)
 		relToken, _ := filepath.Rel(*pkg.RootDir, absToken)
 		relToken = strings.ReplaceAll(relToken, `\`, `/`)
