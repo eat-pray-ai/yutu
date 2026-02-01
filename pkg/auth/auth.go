@@ -104,8 +104,13 @@ func (s *svc) refreshClient() (client *http.Client) {
 func (s *svc) newClient(config *oauth2.Config) (
 	client *http.Client, token *oauth2.Token,
 ) {
-	authURL := config.AuthCodeURL(state, oauth2.AccessTypeOffline)
-	token = s.getTokenFromWeb(config, authURL)
+	verifier := oauth2.GenerateVerifier()
+	authURL := config.AuthCodeURL(
+		state,
+		oauth2.AccessTypeOffline,
+		oauth2.S256ChallengeOption(verifier),
+	)
+	token = s.getTokenFromWeb(config, authURL, verifier)
 	client = config.Client(s.ctx, token)
 
 	return
@@ -183,7 +188,7 @@ func (s *svc) getCodeFromPrompt(authURL string) (code string) {
 }
 
 func (s *svc) getTokenFromWeb(
-	config *oauth2.Config, authURL string,
+	config *oauth2.Config, authURL string, verifier string,
 ) *oauth2.Token {
 	codeCh := s.startWebServer(config.RedirectURL)
 
@@ -198,7 +203,11 @@ func (s *svc) getTokenFromWeb(
 	}
 
 	slog.Debug("Authorization code generated", "code", code)
-	token, err := config.Exchange(context.TODO(), code)
+	token, err := config.Exchange(
+		context.TODO(),
+		code,
+		oauth2.VerifierOption(verifier),
+	)
 	if err != nil {
 		slog.Error(exchangeFailed, "error", err)
 		os.Exit(1)

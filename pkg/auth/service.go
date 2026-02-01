@@ -41,7 +41,7 @@ type Svc interface {
 	newClient(*oauth2.Config) (*http.Client, *oauth2.Token)
 	getConfig() *oauth2.Config
 	startWebServer(string) chan string
-	getTokenFromWeb(*oauth2.Config, string) *oauth2.Token
+	getTokenFromWeb(*oauth2.Config, string, string) *oauth2.Token
 	getCodeFromPrompt(string) string
 	saveToken(*oauth2.Token)
 }
