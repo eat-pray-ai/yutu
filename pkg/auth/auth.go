@@ -188,9 +188,9 @@ func (s *svc) startWebServer(redirectURL string) (chan string, error) {
 }
 
 func (s *svc) getCodeFromPrompt(authURL string) (code string, err error) {
-	fmt.Printf(openBrowserHint, authURL)
-	fmt.Print(manualInputHint)
-	_, err = fmt.Scan(&code)
+	_, _ = fmt.Fprintf(s.out, openBrowserHint, authURL)
+	_, _ = fmt.Fprint(s.out, manualInputHint)
+	_, err = fmt.Fscan(s.in, &code)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", readPromptFailed, err)
 	}
@@ -211,7 +211,7 @@ func (s *svc) getTokenFromWeb(
 
 	var code string
 	if err := utils.OpenURL(authURL); err == nil {
-		fmt.Printf(browserOpenedHint, authURL)
+		_, _ = fmt.Fprintf(s.out, browserOpenedHint, authURL)
 		code = <-codeCh
 	}
 

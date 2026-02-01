@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -30,6 +31,8 @@ type svc struct {
 	credFile   string
 	tokenFile  string
 	initErr    error
+	in         io.Reader
+	out        io.Writer
 
 	service *youtube.Service
 	ctx     context.Context
@@ -47,11 +50,20 @@ func NewY2BService(opts ...Option) Svc {
 	s.ctx = context.Background()
 	s.credFile = "client_secret.json"
 	s.state = utils.RandomStage()
+	s.in = os.Stdin
+	s.out = os.Stdout
 
 	for _, opt := range opts {
 		opt(s)
 	}
 	return s
+}
+
+func WithIO(in io.Reader, out io.Writer) Option {
+	return func(s *svc) {
+		s.in = in
+		s.out = out
+	}
 }
 
 func WithCredential(cred string, fsys fs.FS) Option {
