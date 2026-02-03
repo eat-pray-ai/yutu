@@ -67,7 +67,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
-	google.golang.org/adk v0.3.0
+	google.golang.org/adk v0.4.0
 	google.golang.org/api v0.259.0
 	google.golang.org/genai v1.41.0
 	google.golang.org/protobuf v1.36.11 // indirect
