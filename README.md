@@ -37,6 +37,7 @@
   - [macOS](#macos)
   - [Windows](#windows)
   - [Verifying Installation](#verifying-installation)
+- [Agent](#agent)
 - [MCP Server](#mcp-server)
 - [Usage](#usage)
 - [Features](#features)
@@ -173,6 +174,7 @@ Then run the following command for detail usage:
 
 ```
 ❯ yutu agent --help
+❯ yutu agent --args "help"
 ```
 
 ## MCP Server
