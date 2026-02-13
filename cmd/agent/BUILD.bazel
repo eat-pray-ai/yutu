@@ -2,11 +2,7 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "agent",
-    srcs = [
-        "agent.go",
-        "console.go",
-        "web.go",
-    ],
+    srcs = ["agent.go"],
     embedsrcs = ["INSTRUCTION.md"],
     importpath = "github.com/eat-pray-ai/yutu/cmd/agent",
     visibility = ["//visibility:public"],

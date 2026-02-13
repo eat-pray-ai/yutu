@@ -6,9 +6,11 @@ package agent
 import (
 	"context"
 	_ "embed"
+	"fmt"
+	"io"
 	"log/slog"
 	"os"
-	"time"
+	"strings"
 
 	rootCmd "github.com/eat-pray-ai/yutu/cmd"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -32,16 +34,7 @@ var (
 	//go:embed INSTRUCTION.md
 	instruction string
 
-	streamingMode    string
-	idleTimeout      time.Duration
-	port             int
-	readTimeout      time.Duration
-	writeTimeout     time.Duration
-	sublaunchers     []string
-	sseWriteTimeout  time.Duration
-	webuiAddress     string
-	a2aAgentURL      string
-	apiServerAddress string
+	launcherArgs string
 )
 
 var agentCmd = &cobra.Command{
@@ -55,15 +48,23 @@ var agentCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = cmd.Help()
+		if launcherArgs == "" {
+			_ = cmd.Help()
+			return
+		}
+		launch(cmd.Context(), cmd.OutOrStdout(), strings.Fields(launcherArgs))
 	},
 }
 
 func init() {
 	rootCmd.RootCmd.AddCommand(agentCmd)
+	agentCmd.Flags().StringVarP(
+		&launcherArgs, "args", "a", "",
+		"launcher arguments as a single string, e.g. 'console -streaming_mode sse'",
+	)
 }
 
-func launch(ctx context.Context, args []string) {
+func launch(ctx context.Context, writer io.Writer, args []string) {
 	m, err := gemini.NewModel(
 		ctx, os.Getenv("YUTU_AGENT_MODEL"), &genai.ClientConfig{
 			APIKey:  os.Getenv("YUTU_LLM_API_KEY"),
@@ -109,10 +110,8 @@ func launch(ctx context.Context, args []string) {
 	}
 	l := full.NewLauncher()
 	if err := l.Execute(ctx, config, args); err != nil {
-		slog.ErrorContext(
-			ctx, "failed to launch agent",
-			"launch", l.CommandLineSyntax(), "error", err,
-		)
+		slog.ErrorContext(ctx, "failed to launch agent", "error", err)
+		_, _ = fmt.Fprintln(writer, l.CommandLineSyntax())
 		os.Exit(1)
 	}
 }
