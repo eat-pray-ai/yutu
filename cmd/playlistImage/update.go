@@ -30,11 +30,11 @@ var updateInSchema = &jsonschema.Schema{
 		"type":        {Type: "string", Description: typeUsage},
 		"height": {
 			Type: "number", Description: heightUsage,
-			Minimum: jsonschema.Ptr(float64(0)),
+			Minimum: new(float64(0)),
 		},
 		"width": {
 			Type: "number", Description: widthUsage,
-			Minimum: jsonschema.Ptr(float64(0)),
+			Minimum: new(float64(0)),
 		},
 		"on_behalf_of_content_owner":         {Type: "string"},
 		"on_behalf_of_content_owner_channel": {Type: "string"},
@@ -51,9 +51,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: updateTool, Title: updateShort, Description: updateLong,
 			InputSchema: updateInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

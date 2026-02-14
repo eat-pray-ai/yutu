@@ -45,9 +45,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: downloadTool, Title: downloadShort, Description: downloadLong,
 			InputSchema: downloadInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

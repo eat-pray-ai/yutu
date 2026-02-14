@@ -16,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/ohler55/ojg/jp"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -24,7 +23,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func PrintJSON(data interface{}, jsonpath string, writer io.Writer) {
+func PrintJSON(data any, jsonpath string, writer io.Writer) {
 	j, err := jp.ParseString(jsonpath)
 	if err != nil && jsonpath != "" {
 		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
@@ -36,7 +35,7 @@ func PrintJSON(data interface{}, jsonpath string, writer io.Writer) {
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
-func PrintYAML(data interface{}, jsonpath string, writer io.Writer) {
+func PrintYAML(data any, jsonpath string, writer io.Writer) {
 	j, err := jp.ParseString(jsonpath)
 	if err != nil && jsonpath != "" {
 		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
@@ -92,10 +91,10 @@ func StrToBoolPtr(b *string) *bool {
 
 func BoolToStrPtr(b *bool) *string {
 	if b == nil {
-		return jsonschema.Ptr("")
+		return new("")
 	}
 
-	return jsonschema.Ptr(strconv.FormatBool(*b))
+	return new(strconv.FormatBool(*b))
 }
 
 func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {

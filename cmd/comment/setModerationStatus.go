@@ -49,9 +49,9 @@ func init() {
 			Name: smsTool, Title: smsShort, Description: smsLong,
 			InputSchema: setModerationStatusInSchema,
 			Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  false,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

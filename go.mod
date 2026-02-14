@@ -1,6 +1,6 @@
 module github.com/eat-pray-ai/yutu
 
-go 1.25.7
+go 1.26.0
 
 require (
 	github.com/google/jsonschema-go v0.4.2
@@ -12,7 +12,7 @@ require (
 
 require (
 	cloud.google.com/go v0.123.0 // indirect
-	cloud.google.com/go/auth v0.18.1 // indirect
+	cloud.google.com/go/auth v0.18.2 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	github.com/a2aproject/a2a-go v0.3.6 // indirect
 	github.com/awalterschulze/gographviz v2.0.3+incompatible // indirect
@@ -46,7 +46,7 @@ require (
 	golang.org/x/net v0.50.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260209200024-4cfbd4190f57 // indirect
-	google.golang.org/grpc v1.78.0 // indirect
+	google.golang.org/grpc v1.79.1 // indirect
 	rsc.io/omap v1.2.0 // indirect
 	rsc.io/ordered v1.1.1 // indirect
 )

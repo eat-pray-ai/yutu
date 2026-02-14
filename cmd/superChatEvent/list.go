@@ -28,7 +28,7 @@ var listInSchema = &jsonschema.Schema{
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
-			Minimum: jsonschema.Ptr(float64(0)),
+			Minimum: new(float64(0)),
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -48,9 +48,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: listTool, Title: short, Description: long,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    true,
 			},
 		}, cmd.GenToolHandler(

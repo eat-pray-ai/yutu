@@ -45,9 +45,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: getRatingTool, Title: getRatingShort, Description: getRatingLong,
 			InputSchema: getRatingInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    true,
 			},
 		}, cmd.GenToolHandler(

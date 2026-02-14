@@ -42,9 +42,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: rateTool, Title: rateShort, Description: rateLong,
 			InputSchema: rateInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  false,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

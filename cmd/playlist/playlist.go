@@ -6,7 +6,6 @@ package playlist
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/google/jsonschema-go/jsonschema"
 
 	"github.com/spf13/cobra"
 )
@@ -29,7 +28,7 @@ var (
 	description string
 	hl          string
 	maxResults  int64
-	mine        = jsonschema.Ptr(false)
+	mine        = new(false)
 	tags        []string
 	language    string
 	channelId   string

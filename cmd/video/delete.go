@@ -37,9 +37,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: deleteTool, Title: deleteShort, Description: deleteLong,
 			InputSchema: deleteInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(true),
+				DestructiveHint: new(true),
 				IdempotentHint:  false,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

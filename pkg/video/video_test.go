@@ -427,16 +427,16 @@ func TestVideo_Get_Pagination(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		if pageToken == "" {
 			items := make([]string, 20)
-			for i := 0; i < 20; i++ {
+			for i := range 20 {
 				items[i] = fmt.Sprintf(`{"id": "video-%d"}`, i)
 			}
 			_, _ = w.Write(
-				[]byte(fmt.Sprintf(
+				fmt.Appendf(nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"
 			}`, strings.Join(items, ","),
-				)),
+				),
 			)
 		} else if pageToken == "page-2" {
 			_, _ = w.Write(

@@ -39,9 +39,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: setTool, Title: short, Description: long,
 			InputSchema: setInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
 		}, cmd.GenToolHandler(

@@ -6,7 +6,6 @@ package channelSection
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +21,7 @@ var (
 	ids                    []string
 	channelId              string
 	hl                     string
-	mine                   = jsonschema.Ptr(false)
+	mine                   = new(false)
 	onBehalfOfContentOwner string
 	parts                  []string
 	output                 string

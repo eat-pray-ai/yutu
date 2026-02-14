@@ -41,15 +41,14 @@ var listInSchema = &jsonschema.Schema{
 		"category_id": {Type: "string", Description: caidUsage},
 		"region_code": {Type: "string", Description: rcUsage},
 		"max_height": {
-			Type: "number", Description: mhUsage, Minimum: jsonschema.Ptr(float64(0)),
+			Type: "number", Description: mhUsage, Minimum: new(float64(0)),
 		},
 		"max_width": {
-			Type: "number", Description: mwUsage, Minimum: jsonschema.Ptr(float64(0)),
+			Type: "number", Description: mwUsage, Minimum: new(float64(0)),
 		},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
-			Minimum: jsonschema.Ptr(float64(0)),
+			Default: json.RawMessage("5"), Minimum: new(float64(0)),
 		},
 		"on_behalf_of_content_owner": {Type: "string"},
 		"rating":                     {Type: "string", Description: listMrUsage},
@@ -71,9 +70,9 @@ func init() {
 		cmd.Server, &mcp.Tool{
 			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
-				DestructiveHint: jsonschema.Ptr(false),
+				DestructiveHint: new(false),
 				IdempotentHint:  true,
-				OpenWorldHint:   jsonschema.Ptr(true),
+				OpenWorldHint:   new(true),
 				ReadOnlyHint:    true,
 			},
 		}, cmd.GenToolHandler(

@@ -9,7 +9,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -25,7 +24,7 @@ func TestStrToBoolPtr(t *testing.T) {
 	}{
 		{
 			name: "true",
-			args: args{b: jsonschema.Ptr("true")},
+			args: args{b: new("true")},
 			want: func() *bool {
 				b := true
 				return &b
@@ -33,7 +32,7 @@ func TestStrToBoolPtr(t *testing.T) {
 		},
 		{
 			name: "false",
-			args: args{b: jsonschema.Ptr("false")},
+			args: args{b: new("false")},
 			want: func() *bool {
 				b := false
 				return &b
@@ -41,7 +40,7 @@ func TestStrToBoolPtr(t *testing.T) {
 		},
 		{
 			name: "empty",
-			args: args{b: jsonschema.Ptr("")},
+			args: args{b: new("")},
 			want: nil,
 		},
 	}
@@ -120,7 +119,7 @@ func TestIsJson(t *testing.T) {
 
 func TestPrintJSON(t *testing.T) {
 	type args struct {
-		data     interface{}
+		data     any
 		jsonpath string
 	}
 	tests := []struct {
@@ -148,7 +147,7 @@ func TestPrintJSON(t *testing.T) {
 		{
 			name: "extract specific field",
 			args: args{
-				data: map[string]interface{}{
+				data: map[string]any{
 					"key":     "value",
 					"another": "field",
 				}, jsonpath: "$.key",
@@ -158,7 +157,7 @@ func TestPrintJSON(t *testing.T) {
 		{
 			name: "nested jsonpath",
 			args: args{
-				data: map[string]interface{}{
+				data: map[string]any{
 					"item1": map[string]string{"key1": "value1"},
 					"item2": map[string]string{"key2": "value2"},
 					"count": 2,
@@ -200,7 +199,7 @@ func TestPrintJSON(t *testing.T) {
 
 func TestPrintYAML(t *testing.T) {
 	type args struct {
-		data     interface{}
+		data     any
 		jsonpath string
 	}
 	tests := []struct {
@@ -228,7 +227,7 @@ func TestPrintYAML(t *testing.T) {
 		{
 			name: "extract specific field",
 			args: args{
-				data: map[string]interface{}{
+				data: map[string]any{
 					"key":     "value",
 					"another": "field",
 				}, jsonpath: "$.key",
@@ -238,7 +237,7 @@ func TestPrintYAML(t *testing.T) {
 		{
 			name: "nested jsonpath",
 			args: args{
-				data: map[string]interface{}{
+				data: map[string]any{
 					"item1": map[string]string{"key1": "value1"},
 					"item2": map[string]string{"key2": "value2"},
 					"count": 2,
@@ -283,7 +282,7 @@ func TestResetBool(t *testing.T) {
 		m       map[string]**bool
 		flagSet *pflag.FlagSet
 	}
-	b := jsonschema.Ptr(true)
+	b := new(true)
 	cmd := &cobra.Command{}
 	cmd.Flags().BoolVar(b, "flag", false, "")
 	tests := []struct {
@@ -377,17 +376,17 @@ func TestBoolToStrPtr(t *testing.T) {
 		{
 			name: "true",
 			args: args{b: &bTrue},
-			want: jsonschema.Ptr("true"),
+			want: new("true"),
 		},
 		{
 			name: "false",
 			args: args{b: &bFalse},
-			want: jsonschema.Ptr("false"),
+			want: new("false"),
 		},
 		{
 			name: "nil",
 			args: args{b: nil},
-			want: jsonschema.Ptr(""),
+			want: new(""),
 		},
 	}
 	for _, tt := range tests {

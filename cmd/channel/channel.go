@@ -6,7 +6,6 @@ package channel
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
-	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/spf13/pflag"
 
 	"github.com/spf13/cobra"
@@ -35,10 +34,10 @@ var (
 	forUsername     string
 	hl              string
 	ids             []string
-	managedByMe     = jsonschema.Ptr(false)
+	managedByMe     = new(false)
 	maxResults      int64
-	mine            = jsonschema.Ptr(false)
-	mySubscribers   = jsonschema.Ptr(false)
+	mine            = new(false)
+	mySubscribers   = new(false)
 	country         string
 	customUrl       string
 	defaultLanguage string
