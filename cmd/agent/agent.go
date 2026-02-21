@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	rootCmd "github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 	"google.golang.org/adk/agent"
@@ -57,7 +57,7 @@ var agentCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.RootCmd.AddCommand(agentCmd)
+	cmd.RootCmd.AddCommand(agentCmd)
 	agentCmd.Flags().StringVarP(
 		&launcherArgs, "args", "a", "",
 		"launcher arguments as a single string, e.g. 'console -streaming_mode sse'",
@@ -77,7 +77,7 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 	}
 
 	clientTransport, serverTransport := mcp.NewInMemoryTransports()
-	_, err = rootCmd.Server.Connect(ctx, serverTransport, nil)
+	_, err = cmd.Server.Connect(ctx, serverTransport, nil)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to connect to MCP server", "error", err)
 		os.Exit(1)

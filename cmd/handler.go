@@ -33,6 +33,7 @@ func GenResourceHandler(
 		err := op(req, &writer)
 		if err != nil {
 			logger.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
+			slog.ErrorContext(ctx, err.Error(), "uri", req.Params.URI)
 			return nil, err
 		}
 
@@ -63,6 +64,7 @@ func GenToolHandler[T any](
 		err := op(input, &writer)
 		if err != nil {
 			logger.ErrorContext(ctx, err.Error(), "input", input)
+			slog.ErrorContext(ctx, err.Error(), "tool", toolName, "input", input)
 			return nil, nil, err
 		}
 		return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: writer.String()}}}, nil, nil
