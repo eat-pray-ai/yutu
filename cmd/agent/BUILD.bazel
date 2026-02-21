@@ -16,6 +16,7 @@ go_library(
         "@org_golang_google_adk//cmd/launcher/full",
         "@org_golang_google_adk//model/gemini",
         "@org_golang_google_adk//tool",
+        "@org_golang_google_adk//tool/geminitool",
         "@org_golang_google_adk//tool/mcptoolset",
         "@org_golang_google_genai//:genai",
     ],

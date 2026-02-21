@@ -21,6 +21,7 @@ import (
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/genai"
 )
@@ -97,6 +98,7 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 			Model:       m,
 			Name:        "YouTube Copilot",
 			Instruction: instruction,
+			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
 			Toolsets:    []tool.Toolset{mcpToolSet},
 		},
 	)

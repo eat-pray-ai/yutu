@@ -24,7 +24,7 @@ const (
 
 var updateInSchema = &jsonschema.Schema{
 	Type:     "object",
-	Required: []string{"videoId"},
+	Required: []string{"video_id"},
 	Properties: map[string]*jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
 		"audio_track_type": {
