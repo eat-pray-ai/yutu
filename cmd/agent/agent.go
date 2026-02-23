@@ -5,7 +5,6 @@ package agent
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"io"
 	"log/slog"
@@ -16,12 +15,9 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/genai"
 )
@@ -31,23 +27,12 @@ const (
 	agentLong  = "Start agent to automate YouTube workflows"
 )
 
-var (
-	//go:embed INSTRUCTION.md
-	instruction string
-
-	launcherArgs string
-)
+var launcherArgs string
 
 var agentCmd = &cobra.Command{
 	Use:   "agent",
 	Short: agentShort,
 	Long:  agentLong,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		envInstruction, ok := os.LookupEnv("YUTU_AGENT_INSTRUCTION")
-		if ok && envInstruction != "" {
-			instruction = envInstruction
-		}
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if launcherArgs == "" {
 			_ = cmd.Help()
@@ -93,22 +78,14 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		slog.ErrorContext(ctx, "failed to create MCP tool set", "error", err)
 	}
 
-	a, err := llmagent.New(
-		llmagent.Config{
-			Model:       m,
-			Name:        "YouTube Copilot",
-			Instruction: instruction,
-			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
-			Toolsets:    []tool.Toolset{mcpToolSet},
-		},
-	)
+	orchestrator, err := buildOrchestrator(m, mcpToolSet)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create LLM agent", "error", err)
+		slog.ErrorContext(ctx, "failed to build orchestrator agent", "error", err)
 		os.Exit(1)
 	}
 
 	config := &launcher.Config{
-		AgentLoader: agent.NewSingleLoader(a),
+		AgentLoader: agent.NewSingleLoader(orchestrator),
 	}
 	l := full.NewLauncher()
 	if err := l.Execute(ctx, config, args); err != nil {

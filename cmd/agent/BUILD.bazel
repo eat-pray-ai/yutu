@@ -2,8 +2,16 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "agent",
-    srcs = ["agent.go"],
-    embedsrcs = ["INSTRUCTION.md"],
+    srcs = [
+        "agent.go",
+        "agents.go",
+    ],
+    embedsrcs = [
+        "INSTRUCTION_DESTROYER.md",
+        "INSTRUCTION_MODIFIER.md",
+        "INSTRUCTION_ORCHESTRATOR.md",
+        "INSTRUCTION_RETRIEVAL.md",
+    ],
     importpath = "github.com/eat-pray-ai/yutu/cmd/agent",
     visibility = ["//visibility:public"],
     deps = [
@@ -14,8 +22,10 @@ go_library(
         "@org_golang_google_adk//agent/llmagent",
         "@org_golang_google_adk//cmd/launcher",
         "@org_golang_google_adk//cmd/launcher/full",
+        "@org_golang_google_adk//model",
         "@org_golang_google_adk//model/gemini",
         "@org_golang_google_adk//tool",
+        "@org_golang_google_adk//tool/agenttool",
         "@org_golang_google_adk//tool/geminitool",
         "@org_golang_google_adk//tool/mcptoolset",
         "@org_golang_google_genai//:genai",
