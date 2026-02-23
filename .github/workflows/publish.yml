@@ -29,7 +29,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           distribution: goreleaser
-          args: release --clean
+          args: release --clean --verbose
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:

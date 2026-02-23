@@ -11,7 +11,6 @@ project_name: yutu
 
 env:
   - MODULE_PATH=github.com/{{ if index .Env "GITHUB_REPOSITORY"  }}{{ .Env.GITHUB_REPOSITORY }}{{ else }}eat-pray-ai/yutu{{ end }}
-  - LATEST_RELEASE={{ if filter .Tag "rc|beta|alpha|dev" }}false{{ else }}true{{ end }}
   - Builder={{ if index .Env "GITHUB_ACTOR"  }}{{ .Env.GITHUB_ACTOR }}{{ else }}Gopher{{ end }}
 
 before:
@@ -98,6 +97,7 @@ changelog:
       - "^.*?:arrow_up:.+"
 
 release:
+  replace_existing_draft: true
   discussion_category_name: General
   prerelease: auto
-  make_latest: "{{ .Env.LATEST_RELEASE }}"
+  make_latest: "{{ if .Prerelease }}false{{ else }}true{{ end }}"
