@@ -15,11 +15,11 @@
     "source": "github",
     "id": "643163403"
   },
-  "version": "v0.10.5-dev",
+  "version": "v0.10.6-dev",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.5-dev",
+      "identifier": "ghcr.io/eat-pray-ai/yutu:v0.10.6-dev",
       "transport": {
         "type": "streamable-http",
         "url": "http://localhost:8216/mcp"
