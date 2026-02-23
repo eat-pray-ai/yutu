@@ -22,6 +22,7 @@ go_library(
     deps = [
         "//pkg",
         "//pkg/auth",
+        "//pkg/utils",
         "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_savioxavier_termlink//:termlink",
         "@com_github_spf13_cobra//:cobra",

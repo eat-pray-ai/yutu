@@ -21,11 +21,11 @@ var (
 
 type ChannelBanner struct {
 	*common.Fields
-	ChannelId string `yaml:"channel_id" json:"channel_id"`
-	File      string `yaml:"file" json:"file"`
+	ChannelId string `yaml:"channel_id" json:"channel_id,omitempty"`
+	File      string `yaml:"file" json:"file,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IChannelBanner interface {

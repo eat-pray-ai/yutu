@@ -21,13 +21,13 @@ var (
 
 type Activity struct {
 	*common.Fields
-	ChannelId       string `yaml:"channel_id" json:"channel_id"`
-	Home            *bool  `yaml:"home" json:"home"`
-	MaxResults      int64  `yaml:"max_results" json:"max_results"`
-	Mine            *bool  `yaml:"mine" json:"mine"`
-	PublishedAfter  string `yaml:"published_after" json:"published_after"`
-	PublishedBefore string `yaml:"published_before" json:"published_before"`
-	RegionCode      string `yaml:"region_code" json:"region_code"`
+	ChannelId       string `yaml:"channel_id" json:"channel_id,omitempty"`
+	Home            *bool  `yaml:"home" json:"home,omitempty"`
+	MaxResults      int64  `yaml:"max_results" json:"max_results,omitempty"`
+	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
+	PublishedAfter  string `yaml:"published_after" json:"published_after,omitempty"`
+	PublishedBefore string `yaml:"published_before" json:"published_before,omitempty"`
+	RegionCode      string `yaml:"region_code" json:"region_code,omitempty"`
 }
 
 type IActivity[T any] interface {

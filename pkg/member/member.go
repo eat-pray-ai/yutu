@@ -21,10 +21,10 @@ var (
 
 type Member struct {
 	*common.Fields
-	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id"`
-	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level"`
-	MaxResults       int64  `yaml:"max_results" json:"max_results"`
-	Mode             string `yaml:"mode" json:"mode"`
+	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id,omitempty"`
+	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level,omitempty"`
+	MaxResults       int64  `yaml:"max_results" json:"max_results,omitempty"`
+	Mode             string `yaml:"mode" json:"mode,omitempty"`
 }
 
 type IMember[T any] interface {

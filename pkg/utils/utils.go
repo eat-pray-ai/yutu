@@ -85,8 +85,7 @@ func StrToBoolPtr(b *string) *bool {
 	if b == nil || *b == "" || strings.ToLower(strings.TrimSpace(*b)) == "null" {
 		return nil
 	}
-	val := *b == "true"
-	return &val
+	return new(*b == "true")
 }
 
 func BoolToStrPtr(b *bool) *string {

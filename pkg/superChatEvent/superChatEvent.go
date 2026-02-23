@@ -21,8 +21,8 @@ var (
 
 type SuperChatEvent struct {
 	*common.Fields
-	Hl         string `yaml:"hl" json:"hl"`
-	MaxResults int64  `yaml:"max_results" json:"max_results"`
+	Hl         string `yaml:"hl" json:"hl,omitempty"`
+	MaxResults int64  `yaml:"max_results" json:"max_results,omitempty"`
 }
 
 type ISuperChatEvent[T any] interface {

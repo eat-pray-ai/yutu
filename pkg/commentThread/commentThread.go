@@ -23,17 +23,18 @@ var (
 
 type CommentThread struct {
 	*common.Fields
-	Ids                          []string `yaml:"ids" json:"ids"`
-	AllThreadsRelatedToChannelId string   `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id"`
-	AuthorChannelId              string   `yaml:"author_channel_id" json:"author_channel_id"`
-	ChannelId                    string   `yaml:"channel_id" json:"channel_id"`
-	MaxResults                   int64    `yaml:"max_results" json:"max_results"`
-	ModerationStatus             string   `yaml:"moderation_status" json:"moderation_status"`
-	Order                        string   `yaml:"order" json:"order"`
-	SearchTerms                  string   `yaml:"search_terms" json:"search_terms"`
-	TextFormat                   string   `yaml:"text_format" json:"text_format"`
-	TextOriginal                 string   `yaml:"text_original" json:"text_original"`
-	VideoId                      string   `yaml:"video_id" json:"video_id"`
+	Ids              []string `yaml:"ids" json:"ids,omitempty"`
+	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
+	ChannelId        string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	MaxResults       int64    `yaml:"max_results" json:"max_results,omitempty"`
+	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status,omitempty"`
+	Order            string   `yaml:"order" json:"order,omitempty"`
+	SearchTerms      string   `yaml:"search_terms" json:"search_terms,omitempty"`
+	TextFormat       string   `yaml:"text_format" json:"text_format,omitempty"`
+	TextOriginal     string   `yaml:"text_original" json:"text_original,omitempty"`
+	VideoId          string   `yaml:"video_id" json:"video_id,omitempty"`
+
+	AllThreadsRelatedToChannelId string `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id,omitempty"`
 }
 
 type ICommentThread[T any] interface {

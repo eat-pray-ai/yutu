@@ -175,10 +175,7 @@ func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
 		return nil, fmt.Errorf("failed to create %s agent: %w", def.name, err)
 	}
 
-	retrievalTool := agenttool.New(
-		retrieval, &agenttool.Config{SkipSummarization: true},
-	)
-
+	retrievalTool := agenttool.New(retrieval, nil)
 	agents := make(map[string]agent.Agent, 2)
 	for _, key := range []string{"Knorretje", "Daan"} {
 		def = agentDefs[key]

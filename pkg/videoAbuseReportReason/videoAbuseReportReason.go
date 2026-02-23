@@ -20,7 +20,7 @@ var (
 
 type VideoAbuseReportReason struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl"`
+	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type IVideoAbuseReportReason[T any] interface {

@@ -20,7 +20,7 @@ var (
 
 type I18nRegion struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl"`
+	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type II18nRegion[T any] interface {

@@ -26,18 +26,17 @@ var (
 
 type PlaylistImage struct {
 	*common.Fields
-	Ids        []string `yaml:"ids" json:"ids"`
-	Height     int64    `yaml:"height" json:"height"`
-	PlaylistId string   `yaml:"playlist_id" json:"playlist_id"`
-	Type       string   `yaml:"type" json:"type"`
-	Width      int64    `yaml:"width" json:"width"`
-	File       string   `yaml:"file" json:"file"`
+	Ids        []string `yaml:"ids" json:"ids,omitempty"`
+	Height     int64    `yaml:"height" json:"height,omitempty"`
+	PlaylistId string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	Type       string   `yaml:"type" json:"type,omitempty"`
+	Width      int64    `yaml:"width" json:"width,omitempty"`
+	File       string   `yaml:"file" json:"file,omitempty"`
+	Parent     string   `yaml:"parent" json:"parent,omitempty"`
+	MaxResults int64    `yaml:"max_results" json:"max_results,omitempty"`
 
-	Parent     string `yaml:"parent" json:"parent"`
-	MaxResults int64  `yaml:"max_results" json:"max_results"`
-
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IPlaylistImage[T any] interface {

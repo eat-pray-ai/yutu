@@ -19,8 +19,8 @@ var (
 
 type Thumbnail struct {
 	*common.Fields
-	File    string `yaml:"file" json:"file"`
-	VideoId string `yaml:"video_id" json:"video_id"`
+	File    string `yaml:"file" json:"file,omitempty"`
+	VideoId string `yaml:"video_id" json:"video_id,omitempty"`
 }
 
 type IThumbnail interface {

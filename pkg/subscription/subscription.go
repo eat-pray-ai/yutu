@@ -24,19 +24,20 @@ var (
 
 type Subscription struct {
 	*common.Fields
-	Ids                           []string `yaml:"ids" json:"ids"`
-	SubscriberChannelId           string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id"`
-	Description                   string   `yaml:"description" json:"description"`
-	ChannelId                     string   `yaml:"channel_id" json:"channel_id"`
-	ForChannelId                  string   `yaml:"for_channel_id" json:"for_channel_id"`
-	MaxResults                    int64    `yaml:"max_results" json:"max_results"`
-	Mine                          *bool    `yaml:"mine" json:"mine"`
-	MyRecentSubscribers           *bool    `yaml:"my_recent_subscribers" json:"my_recent_subscribers"`
-	MySubscribers                 *bool    `yaml:"my_subscribers" json:"my_subscribers"`
-	OnBehalfOfContentOwner        string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string   `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
-	Order                         string   `yaml:"order" json:"order"`
-	Title                         string   `yaml:"title" json:"title"`
+	Ids                 []string `yaml:"ids" json:"ids,omitempty"`
+	SubscriberChannelId string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id,omitempty"`
+	Description         string   `yaml:"description" json:"description,omitempty"`
+	ChannelId           string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	ForChannelId        string   `yaml:"for_channel_id" json:"for_channel_id,omitempty"`
+	MaxResults          int64    `yaml:"max_results" json:"max_results,omitempty"`
+	Mine                *bool    `yaml:"mine" json:"mine,omitempty"`
+	MyRecentSubscribers *bool    `yaml:"my_recent_subscribers" json:"my_recent_subscribers,omitempty"`
+	MySubscribers       *bool    `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	Order               string   `yaml:"order" json:"order,omitempty"`
+	Title               string   `yaml:"title" json:"title,omitempty"`
+
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type ISubscription[T any] interface {

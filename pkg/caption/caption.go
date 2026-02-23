@@ -26,22 +26,23 @@ var (
 
 type Caption struct {
 	*common.Fields
-	Ids                    []string `yaml:"ids" json:"ids"`
-	File                   string   `yaml:"file" json:"file"`
-	AudioTrackType         string   `yaml:"audio_track_type" json:"audio_track_type"`
-	IsAutoSynced           *bool    `yaml:"is_auto_synced" json:"is_auto_synced"`
-	IsCC                   *bool    `yaml:"is_cc" json:"is_cc"`
-	IsDraft                *bool    `yaml:"is_draft" json:"is_draft"`
-	IsEasyReader           *bool    `yaml:"is_easy_reader" json:"is_easy_reader"`
-	IsLarge                *bool    `yaml:"is_large" json:"is_large"`
-	Language               string   `yaml:"language" json:"language"`
-	Name                   string   `yaml:"name" json:"name"`
-	TrackKind              string   `yaml:"track_kind" json:"track_kind"`
-	OnBehalfOf             string   `yaml:"on_behalf_of" json:"on_behalf_of"`
-	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	VideoId                string   `yaml:"video_id" json:"video_id"`
-	Tfmt                   string   `yaml:"tfmt" json:"tfmt"`
-	Tlang                  string   `yaml:"tlang" json:"tlang"`
+	Ids            []string `yaml:"ids" json:"ids,omitempty"`
+	File           string   `yaml:"file" json:"file,omitempty"`
+	AudioTrackType string   `yaml:"audio_track_type" json:"audio_track_type,omitempty"`
+	IsAutoSynced   *bool    `yaml:"is_auto_synced" json:"is_auto_synced,omitempty"`
+	IsCC           *bool    `yaml:"is_cc" json:"is_cc,omitempty"`
+	IsDraft        *bool    `yaml:"is_draft" json:"is_draft,omitempty"`
+	IsEasyReader   *bool    `yaml:"is_easy_reader" json:"is_easy_reader,omitempty"`
+	IsLarge        *bool    `yaml:"is_large" json:"is_large,omitempty"`
+	Language       string   `yaml:"language" json:"language,omitempty"`
+	Name           string   `yaml:"name" json:"name,omitempty"`
+	TrackKind      string   `yaml:"track_kind" json:"track_kind,omitempty"`
+	OnBehalfOf     string   `yaml:"on_behalf_of" json:"on_behalf_of,omitempty"`
+	VideoId        string   `yaml:"video_id" json:"video_id,omitempty"`
+	Tfmt           string   `yaml:"tfmt" json:"tfmt,omitempty"`
+	Tlang          string   `yaml:"tlang" json:"tlang,omitempty"`
+
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type ICaption[T youtube.Caption] interface {

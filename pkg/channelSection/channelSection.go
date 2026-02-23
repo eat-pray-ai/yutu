@@ -22,11 +22,12 @@ var (
 
 type ChannelSection struct {
 	*common.Fields
-	Ids                    []string `yaml:"ids" json:"ids"`
-	ChannelId              string   `yaml:"channel_id" json:"channel_id"`
-	Hl                     string   `yaml:"hl" json:"hl"`
-	Mine                   *bool    `yaml:"mine" json:"mine"`
-	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	Ids       []string `yaml:"ids" json:"ids,omitempty"`
+	ChannelId string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	Hl        string   `yaml:"hl" json:"hl,omitempty"`
+	Mine      *bool    `yaml:"mine" json:"mine,omitempty"`
+
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type IChannelSection[T any] interface {

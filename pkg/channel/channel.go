@@ -24,22 +24,22 @@ var (
 
 type Channel struct {
 	*common.Fields
-	CategoryId             string   `yaml:"category_id" json:"category_id"`
-	ForHandle              string   `yaml:"for_handle" json:"for_handle"`
-	ForUsername            string   `yaml:"for_username" json:"for_username"`
-	Hl                     string   `yaml:"hl" json:"hl"`
-	Ids                    []string `yaml:"ids" json:"ids"`
-	ManagedByMe            *bool    `yaml:"managed_by_me" json:"managed_by_me"`
-	MaxResults             int64    `yaml:"max_results" json:"max_results"`
-	Mine                   *bool    `yaml:"mine" json:"mine"`
-	MySubscribers          *bool    `yaml:"my_subscribers" json:"my_subscribers"`
-	OnBehalfOfContentOwner string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	CategoryId      string   `yaml:"category_id" json:"category_id,omitempty"`
+	ForHandle       string   `yaml:"for_handle" json:"for_handle,omitempty"`
+	ForUsername     string   `yaml:"for_username" json:"for_username,omitempty"`
+	Hl              string   `yaml:"hl" json:"hl,omitempty"`
+	Ids             []string `yaml:"ids" json:"ids,omitempty"`
+	ManagedByMe     *bool    `yaml:"managed_by_me" json:"managed_by_me,omitempty"`
+	MaxResults      int64    `yaml:"max_results" json:"max_results,omitempty"`
+	Mine            *bool    `yaml:"mine" json:"mine,omitempty"`
+	MySubscribers   *bool    `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	Country         string   `yaml:"country" json:"country,omitempty"`
+	CustomUrl       string   `yaml:"custom_url" json:"custom_url,omitempty"`
+	DefaultLanguage string   `yaml:"default_language" json:"default_language,omitempty"`
+	Description     string   `yaml:"description" json:"description,omitempty"`
+	Title           string   `yaml:"title" json:"title,omitempty"`
 
-	Country         string `yaml:"country" json:"country"`
-	CustomUrl       string `yaml:"custom_url" json:"custom_url"`
-	DefaultLanguage string `yaml:"default_language" json:"default_language"`
-	Description     string `yaml:"description" json:"description"`
-	Title           string `yaml:"title" json:"title"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type IChannel[T youtube.Channel] interface {

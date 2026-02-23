@@ -33,39 +33,39 @@ var (
 
 type Video struct {
 	*common.Fields
-	Ids               []string `yaml:"ids" json:"ids"`
-	AutoLevels        *bool    `yaml:"auto_levels" json:"auto_levels"`
-	File              string   `yaml:"file" json:"file"`
-	Title             string   `yaml:"title" json:"title"`
-	Description       string   `yaml:"description" json:"description"`
-	Hl                string   `yaml:"hl" json:"hl"`
-	Tags              []string `yaml:"tags" json:"tags"`
-	Language          string   `yaml:"language" json:"language"`
-	Locale            string   `yaml:"locale" json:"locale"`
-	License           string   `yaml:"license" json:"license"`
-	Thumbnail         string   `yaml:"thumbnail" json:"thumbnail"`
-	Rating            string   `yaml:"rating" json:"rating"`
-	Chart             string   `yaml:"chart" json:"chart"`
-	ChannelId         string   `yaml:"channel_id" json:"channel_id"`
-	Comments          string   `yaml:"comments" json:"comments"`
-	PlaylistId        string   `yaml:"playlist_id" json:"playlist_id"`
-	CategoryId        string   `yaml:"category_id" json:"category_id"`
-	Privacy           string   `yaml:"privacy" json:"privacy"`
-	ForKids           *bool    `yaml:"for_kids" json:"for_kids"`
-	Embeddable        *bool    `yaml:"embeddable" json:"embeddable"`
-	PublishAt         string   `yaml:"publish_at" json:"publish_at"`
-	RegionCode        string   `yaml:"region_code" json:"region_code"`
-	ReasonId          string   `yaml:"reason_id" json:"reason_id"`
-	SecondaryReasonId string   `yaml:"secondary_reason_id" json:"secondary_reason_id"`
-	Stabilize         *bool    `yaml:"stabilize" json:"stabilize"`
-	MaxHeight         int64    `yaml:"max_height" json:"max_height"`
-	MaxWidth          int64    `yaml:"max_width" json:"max_width"`
-	MaxResults        int64    `yaml:"max_results" json:"max_results"`
+	Ids         []string `yaml:"ids" json:"ids,omitempty"`
+	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitempty"`
+	File        string   `yaml:"file" json:"file,omitempty"`
+	Title       string   `yaml:"title" json:"title,omitempty"`
+	Description string   `yaml:"description" json:"description,omitempty"`
+	Hl          string   `yaml:"hl" json:"hl,omitempty"`
+	Tags        []string `yaml:"tags" json:"tags,omitempty"`
+	Language    string   `yaml:"language" json:"language,omitempty"`
+	Locale      string   `yaml:"locale" json:"locale,omitempty"`
+	License     string   `yaml:"license" json:"license,omitempty"`
+	Thumbnail   string   `yaml:"thumbnail" json:"thumbnail,omitempty"`
+	Rating      string   `yaml:"rating" json:"rating,omitempty"`
+	Chart       string   `yaml:"chart" json:"chart,omitempty"`
+	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	Comments    string   `yaml:"comments" json:"comments,omitempty"`
+	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	CategoryId  string   `yaml:"category_id" json:"category_id,omitempty"`
+	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
+	ForKids     *bool    `yaml:"for_kids" json:"for_kids,omitempty"`
+	Embeddable  *bool    `yaml:"embeddable" json:"embeddable,omitempty"`
+	PublishAt   string   `yaml:"publish_at" json:"publish_at,omitempty"`
+	RegionCode  string   `yaml:"region_code" json:"region_code,omitempty"`
+	ReasonId    string   `yaml:"reason_id" json:"reason_id,omitempty"`
+	Stabilize   *bool    `yaml:"stabilize" json:"stabilize,omitempty"`
+	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitempty"`
+	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitempty"`
+	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
 
-	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers"`
-	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable"`
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	SecondaryReasonId             string `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
+	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitempty"`
+	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitempty"`
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IVideo[T any] interface {

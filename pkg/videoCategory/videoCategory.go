@@ -19,10 +19,10 @@ var (
 )
 
 type VideoCategory struct {
-	Ids        []string `yaml:"ids" json:"ids"`
-	Hl         string   `yaml:"hl" json:"hl"`
-	RegionCode string   `yaml:"region_code" json:"region_code"`
 	*common.Fields
+	Ids        []string `yaml:"ids" json:"ids,omitempty"`
+	Hl         string   `yaml:"hl" json:"hl,omitempty"`
+	RegionCode string   `yaml:"region_code" json:"region_code,omitempty"`
 }
 
 type IVideoCategory[T any] interface {

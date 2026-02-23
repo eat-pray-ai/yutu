@@ -21,13 +21,14 @@ var (
 
 type Watermark struct {
 	*common.Fields
-	ChannelId              string `yaml:"channel_id" json:"channel_id"`
-	File                   string `yaml:"file" json:"file"`
-	InVideoPosition        string `yaml:"in_video_position" json:"in_video_position"`
-	DurationMs             uint64 `yaml:"duration_ms" json:"duration_ms"`
-	OffsetMs               uint64 `yaml:"offset_ms" json:"offset_ms"`
-	OffsetType             string `yaml:"offset_type" json:"offset_type"`
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	ChannelId       string `yaml:"channel_id" json:"channel_id,omitempty"`
+	File            string `yaml:"file" json:"file,omitempty"`
+	InVideoPosition string `yaml:"in_video_position" json:"in_video_position,omitempty"`
+	DurationMs      uint64 `yaml:"duration_ms" json:"duration_ms,omitempty"`
+	OffsetMs        uint64 `yaml:"offset_ms" json:"offset_ms,omitempty"`
+	OffsetType      string `yaml:"offset_type" json:"offset_type,omitempty"`
+
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type IWatermark interface {

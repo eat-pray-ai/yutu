@@ -9,10 +9,10 @@ import (
 )
 
 type Fields struct {
-	Service  *youtube.Service
-	Parts    []string `yaml:"parts" json:"parts"`
-	Output   string   `yaml:"output" json:"output"`
-	Jsonpath string   `yaml:"jsonpath" json:"jsonpath"`
+	Service  *youtube.Service `yaml:"-" json:"-"`
+	Parts    []string         `yaml:"parts" json:"parts,omitempty"`
+	Output   string           `yaml:"output" json:"output,omitempty"`
+	Jsonpath string           `yaml:"jsonpath" json:"jsonpath,omitempty"`
 }
 
 func (d *Fields) GetFields() *Fields {

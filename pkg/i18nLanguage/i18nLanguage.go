@@ -20,7 +20,7 @@ var (
 
 type I18nLanguage struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl"`
+	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type II18nLanguage[T youtube.I18nLanguage] interface {

@@ -25,19 +25,19 @@ var (
 
 type Playlist struct {
 	*common.Fields
-	Ids         []string `yaml:"ids" json:"ids"`
-	Title       string   `yaml:"title" json:"title"`
-	Description string   `yaml:"description" json:"description"`
-	Hl          string   `yaml:"hl" json:"hl"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results"`
-	Mine        *bool    `yaml:"mine" json:"mine"`
-	Tags        []string `yaml:"tags" json:"tags"`
-	Language    string   `yaml:"language" json:"language"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id"`
-	Privacy     string   `yaml:"privacy" json:"privacy"`
+	Ids         []string `yaml:"ids" json:"ids,omitempty"`
+	Title       string   `yaml:"title" json:"title,omitempty"`
+	Description string   `yaml:"description" json:"description,omitempty"`
+	Hl          string   `yaml:"hl" json:"hl,omitempty"`
+	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
+	Mine        *bool    `yaml:"mine" json:"mine,omitempty"`
+	Tags        []string `yaml:"tags" json:"tags,omitempty"`
+	Language    string   `yaml:"language" json:"language,omitempty"`
+	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel"`
+	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IPlaylist[T any] interface {

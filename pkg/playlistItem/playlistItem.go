@@ -25,20 +25,20 @@ var (
 
 type PlaylistItem struct {
 	*common.Fields
-	Ids         []string `yaml:"ids" json:"ids"`
-	Title       string   `yaml:"title" json:"title"`
-	Description string   `yaml:"description" json:"description"`
-	Kind        string   `yaml:"kind" json:"kind"`
-	KVideoId    string   `yaml:"k_video_id" json:"k_video_id"`
-	KChannelId  string   `yaml:"k_channel_id" json:"k_channel_id"`
-	KPlaylistId string   `yaml:"k_playlist_id" json:"k_playlist_id"`
-	VideoId     string   `yaml:"video_id" json:"video_id"`
-	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id"`
-	Privacy     string   `yaml:"privacy" json:"privacy"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results"`
+	Ids         []string `yaml:"ids" json:"ids,omitempty"`
+	Title       string   `yaml:"title" json:"title,omitempty"`
+	Description string   `yaml:"description" json:"description,omitempty"`
+	Kind        string   `yaml:"kind" json:"kind,omitempty"`
+	KVideoId    string   `yaml:"k_video_id" json:"k_video_id,omitempty"`
+	KChannelId  string   `yaml:"k_channel_id" json:"k_channel_id,omitempty"`
+	KPlaylistId string   `yaml:"k_playlist_id" json:"k_playlist_id,omitempty"`
+	VideoId     string   `yaml:"video_id" json:"video_id,omitempty"`
+	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
+	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
 
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner"`
+	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type IPlaylistItem[T any] interface {

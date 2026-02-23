@@ -27,18 +27,18 @@ var (
 
 type Comment struct {
 	*common.Fields
-	Ids              []string `yaml:"ids" json:"ids"`
-	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id"`
-	CanRate          *bool    `yaml:"can_rate" json:"can_rate"`
-	ChannelId        string   `yaml:"channel_id" json:"channel_id"`
-	MaxResults       int64    `yaml:"max_results" json:"max_results"`
-	ParentId         string   `yaml:"parent_id" json:"parent_id"`
-	TextFormat       string   `yaml:"text_format" json:"text_format"`
-	TextOriginal     string   `yaml:"text_original" json:"text_original"`
-	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status"`
-	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author"`
-	VideoId          string   `yaml:"video_id" json:"video_id"`
-	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating"`
+	Ids              []string `yaml:"ids" json:"ids,omitempty"`
+	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
+	CanRate          *bool    `yaml:"can_rate" json:"can_rate,omitempty"`
+	ChannelId        string   `yaml:"channel_id" json:"channel_id,omitempty"`
+	MaxResults       int64    `yaml:"max_results" json:"max_results,omitempty"`
+	ParentId         string   `yaml:"parent_id" json:"parent_id,omitempty"`
+	TextFormat       string   `yaml:"text_format" json:"text_format,omitempty"`
+	TextOriginal     string   `yaml:"text_original" json:"text_original,omitempty"`
+	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status,omitempty"`
+	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author,omitempty"`
+	VideoId          string   `yaml:"video_id" json:"video_id,omitempty"`
+	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating,omitempty"`
 }
 
 type IComment[T any] interface {
