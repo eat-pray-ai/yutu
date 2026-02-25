@@ -43,7 +43,7 @@ After completing the authorization flow, enter the authorization code on command
 
 If you end up in an error page after completing the authorization flow,
 and the url in the address bar is in the form of
-'localhost:8216/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
+'%s/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
 ONLY 'COPY-THIS' part is the code you need to enter on command line.
 `
 )
@@ -188,9 +188,9 @@ func (s *svc) startWebServer(redirectURL string) (chan string, error) {
 	return codeCh, nil
 }
 
-func (s *svc) getCodeFromPrompt(authURL string) (code string, err error) {
+func (s *svc) getCodeFromPrompt(authURL string, redirectURL string) (code string, err error) {
 	_, _ = fmt.Fprintf(s.out, openBrowserHint, authURL)
-	_, _ = fmt.Fprint(s.out, manualInputHint)
+	_, _ = fmt.Fprintf(s.out, manualInputHint, redirectURL)
 	_, err = fmt.Fscan(s.in, &code)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", readPromptFailed, err)
@@ -217,7 +217,7 @@ func (s *svc) getTokenFromWeb(
 	}
 
 	if code == "" {
-		code, err = s.getCodeFromPrompt(authURL)
+		code, err = s.getCodeFromPrompt(authURL, config.RedirectURL)
 		if err != nil {
 			return nil, err
 		}

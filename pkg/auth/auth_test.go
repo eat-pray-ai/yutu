@@ -152,7 +152,7 @@ func TestGetCodeFromPrompt_Success(t *testing.T) {
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
 
-	code, err := s.getCodeFromPrompt("http://example.com/auth")
+	code, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
 	if err != nil {
 		t.Fatalf("getCodeFromPrompt returned error: %v", err)
 	}
@@ -167,6 +167,9 @@ func TestGetCodeFromPrompt_Success(t *testing.T) {
 	if !strings.Contains(outStr, "After completing the authorization flow") {
 		t.Fatalf("expected manualInputHint to be written to out, got %q", outStr)
 	}
+	if !strings.Contains(outStr, "http://localhost:8216/?state=DONOT-COPY") {
+		t.Fatalf("expected redirect URL in manualInputHint, got %q", outStr)
+	}
 }
 
 func TestGetCodeFromPrompt_URLDecode(t *testing.T) {
@@ -175,7 +178,7 @@ func TestGetCodeFromPrompt_URLDecode(t *testing.T) {
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
 
-	code, err := s.getCodeFromPrompt("http://example.com/auth")
+	code, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
 	if err != nil {
 		t.Fatalf("getCodeFromPrompt returned error: %v", err)
 	}
