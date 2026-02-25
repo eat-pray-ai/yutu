@@ -127,6 +127,7 @@ func (s *svc) newClient(config *oauth2.Config) (
 	verifier := oauth2.GenerateVerifier()
 	authURL := config.AuthCodeURL(
 		s.state,
+		oauth2.ApprovalForce,
 		oauth2.AccessTypeOffline,
 		oauth2.S256ChallengeOption(verifier),
 	)
