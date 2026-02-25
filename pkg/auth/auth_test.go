@@ -1,3 +1,6 @@
+// Copyright 2026 eat-pray-ai & OpenWaygate
+// SPDX-License-Identifier: Apache-2.0
+
 package auth
 
 import (
