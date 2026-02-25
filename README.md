@@ -175,6 +175,10 @@ Then run the following command for detail usage:
 ```
 ❯ yutu agent --help
 ❯ yutu agent --args "help"
+# console mode
+❯ yutu agent --args "console"
+# web mode with three sub-launchers: api, a2a and webui
+❯ yutu agent --args "web api a2a webui"
 ```
 
 ## MCP Server

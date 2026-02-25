@@ -175,6 +175,10 @@ yutu 有两个可用的 action，一个是通用 action，另一个专用于上�
 ```
 ❯ yutu agent --help
 ❯ yutu agent --args "help"
+# console mode
+❯ yutu agent --args "console"
+# web mode with three sub-launchers: api, a2a and webui
+❯ yutu agent --args "web api a2a webui"
 ```
 
 ## MCP 服务器
