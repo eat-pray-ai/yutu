@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -34,7 +35,7 @@ var reportAbuseInSchema = &jsonschema.Schema{
 		"secondary_reason_id":        {Type: "string", Description: sridUsage},
 		"comments":                   {Type: "string", Description: commentsUsage},
 		"language":                   {Type: "string", Description: raLangUsage},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},
 }
 
@@ -69,7 +70,7 @@ func init() {
 	)
 	reportAbuseCmd.Flags().StringVarP(&language, "language", "l", "", raLangUsage)
 	reportAbuseCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 
 	_ = reportAbuseCmd.MarkFlagRequired("ids")

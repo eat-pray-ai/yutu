@@ -31,7 +31,7 @@ var getRatingInSchema = &jsonschema.Schema{
 			Type: "array", Description: grIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
@@ -60,7 +60,7 @@ func init() {
 
 	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, grIdsUsage)
 	getRatingCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", pkg.TableUsage)
 	getRatingCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)

@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -28,7 +29,7 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: idsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},
 }
 
@@ -53,7 +54,7 @@ func init() {
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	deleteCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 
 	_ = deleteCmd.MarkFlagRequired("ids")

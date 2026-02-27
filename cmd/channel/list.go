@@ -44,7 +44,7 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"mine":                       {Type: "boolean", Description: mineUsage},
 		"my_subscribers":             {Type: "boolean", Description: msUsage},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -98,7 +98,7 @@ func init() {
 		mySubscribers, "mySubscribers", "S", false, msUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,

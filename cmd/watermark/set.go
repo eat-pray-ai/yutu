@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -36,7 +37,7 @@ var setInSchema = &jsonschema.Schema{
 			Type: "string", Description: otUsage,
 			Enum: []any{"offsetFromStart", "offsetFromEnd", ""},
 		},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},
 }
 
@@ -70,7 +71,7 @@ func init() {
 	setCmd.Flags().Uint64VarP(&offsetMs, "offsetMs", "m", 0, omUsage)
 	setCmd.Flags().StringVarP(&offsetType, "offsetType", "t", "", otUsage)
 	setCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 
 	_ = setCmd.MarkFlagRequired("channelId")

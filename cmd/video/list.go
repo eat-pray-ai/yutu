@@ -37,7 +37,7 @@ var listInSchema = &jsonschema.Schema{
 			Enum: []any{"chartUnspecified", "mostPopular", ""},
 		},
 		"hl":          {Type: "string", Description: hlUsage},
-		"locale":      {Type: "string", Description: localUsage},
+		"locale":      {Type: "string", Description: localeUsage},
 		"category_id": {Type: "string", Description: caidUsage},
 		"region_code": {Type: "string", Description: rcUsage},
 		"max_height": {
@@ -50,7 +50,7 @@ var listInSchema = &jsonschema.Schema{
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"), Minimum: new(float64(0)),
 		},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"rating":                     {Type: "string", Description: listMrUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -86,14 +86,14 @@ func init() {
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
 	listCmd.Flags().StringVarP(&chart, "chart", "c", "", chartUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringVarP(&locale, "locale", "L", "", localUsage)
+	listCmd.Flags().StringVarP(&locale, "locale", "L", "", localeUsage)
 	listCmd.Flags().StringVarP(&categoryId, "videoCategoryId", "g", "", caidUsage)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
 	listCmd.Flags().Int64VarP(&maxHeight, "maxHeight", "H", 0, mhUsage)
 	listCmd.Flags().Int64VarP(&maxWidth, "maxWidth", "W", 0, mwUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
 	listCmd.Flags().StringSliceVarP(

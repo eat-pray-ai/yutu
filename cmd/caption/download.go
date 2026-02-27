@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -35,8 +36,8 @@ var downloadInSchema = &jsonschema.Schema{
 			Enum: []any{"sbv", "srt", "vtt", ""},
 		},
 		"tlang":                      {Type: "string", Description: tlangUsage},
-		"on_behalf_of":               {Type: "string"},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},
 }
 
@@ -64,9 +65,9 @@ func init() {
 	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
 	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)
-	downloadCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
+	downloadCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	downloadCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
 
 	_ = downloadCmd.MarkFlagRequired("id")

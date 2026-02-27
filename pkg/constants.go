@@ -15,6 +15,9 @@ const (
 	JPUsage     = "JSONPath expression to filter the output"
 	JsonMIME    = "application/json"
 	PerPage     = 20
+	OBOUsage    = "ID of the YouTube account that the content owner is acting on behalf of"
+	OBOCOUsage  = "ID of the content owner, for YouTube content partners"
+	OBOCOCUsage = "YouTube channel ID linked to the content owner"
 
 	getWdFailed    = "failed to get working directory"
 	openRootFailed = "failed to open root directory"

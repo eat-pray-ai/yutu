@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -29,8 +30,8 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"on_behalf_of":               {Type: "string"},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},
 }
 
@@ -53,9 +54,9 @@ func init() {
 	captionCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
-	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
+	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	deleteCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
 
 	_ = deleteCmd.MarkFlagRequired("ids")

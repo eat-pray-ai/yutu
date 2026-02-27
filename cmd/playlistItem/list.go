@@ -39,7 +39,7 @@ var listInSchema = &jsonschema.Schema{
 			Minimum: new(float64(0)),
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -76,7 +76,7 @@ func init() {
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,

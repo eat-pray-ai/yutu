@@ -43,7 +43,7 @@ var listInSchema = &jsonschema.Schema{
 			Default: json.RawMessage("5"),
 			Minimum: new(float64(0)),
 		},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"order": {
 			Type: "string", Description: orderUsage,
 			Default: json.RawMessage(`"relevance"`),
@@ -152,7 +152,7 @@ func init() {
 	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", lrUsage)
 	listCmd.Flags().Int64Var(&maxResults, "maxResults", 5, pkg.MRUsage)
 	listCmd.Flags().StringVar(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringVar(&order, "order", "relevance", orderUsage)
 	listCmd.Flags().StringVar(&publishedAfter, "publishedAfter", "", paUsage)

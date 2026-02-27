@@ -42,8 +42,8 @@ var listInSchema = &jsonschema.Schema{
 		"mine": {
 			Type: "boolean", Description: mineUsage,
 		},
-		"on_behalf_of_content_owner":         {Type: "string"},
-		"on_behalf_of_content_owner_channel": {Type: "string"},
+		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -81,10 +81,10 @@ func init() {
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
 	)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,

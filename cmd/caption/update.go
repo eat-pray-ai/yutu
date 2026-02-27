@@ -44,8 +44,8 @@ var updateInSchema = &jsonschema.Schema{
 			Default: json.RawMessage(`"standard"`),
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
-		"on_behalf_of":               {Type: "string"},
-		"on_behalf_of_content_owner": {Type: "string"},
+		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
+		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Description: pkg.SilentUsage,
 			Enum:    []any{"json", "yaml", "silent", ""},
@@ -92,9 +92,9 @@ func init() {
 		&trackKind, "trackKind", "t", "standard", tkUsage,
 	)
 	updateCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", "")
+	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)

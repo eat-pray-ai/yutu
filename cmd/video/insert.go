@@ -55,8 +55,8 @@ var insertInSchema = &jsonschema.Schema{
 		"notify_subscribers":    {Type: "boolean", Description: nsUsage},
 		"public_stats_viewable": {Type: "boolean", Description: psvUsage},
 
-		"on_behalf_of_content_owner":         {Type: "string"},
-		"on_behalf_of_content_owner_channel": {Type: "string"},
+		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -110,10 +110,10 @@ func init() {
 		publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
 	)
 	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)

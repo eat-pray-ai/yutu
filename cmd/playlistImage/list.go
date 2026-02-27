@@ -32,8 +32,8 @@ var listInSchema = &jsonschema.Schema{
 			Default: json.RawMessage("5"),
 			Minimum: new(float64(0)),
 		},
-		"on_behalf_of_content_owner":         {Type: "string"},
-		"on_behalf_of_content_owner_channel": {Type: "string"},
+		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
@@ -72,10 +72,10 @@ func init() {
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
 	listCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
 	)
 }
 

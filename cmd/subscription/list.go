@@ -48,8 +48,8 @@ var listInSchema = &jsonschema.Schema{
 		"my_subscribers": {
 			Type: "boolean", Description: msUsage,
 		},
-		"on_behalf_of_content_owner":         {Type: "string"},
-		"on_behalf_of_content_owner_channel": {Type: "string"},
+		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
+		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
 		"order": {
 			Type: "string", Description: orderUsage,
 			Enum: []any{
@@ -98,10 +98,10 @@ func init() {
 	)
 	listCmd.Flags().BoolVarP(mySubscribers, "mySubscribers", "S", false, msUsage)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", "",
+		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", "",
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
 	)
 	listCmd.Flags().StringVarP(&order, "order", "O", "relevance", orderUsage)
 	listCmd.Flags().StringSliceVarP(
