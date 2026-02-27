@@ -19,7 +19,7 @@ import (
 const (
 	updateTool  = "caption-update"
 	updateShort = "Update caption"
-	updateLong  = "Update caption of a video"
+	updateLong  = "Update caption of a video\n\nExamples:\n  yutu caption update --videoId dQw4w9WgXcQ --isDraft=false\n  yutu caption update --videoId dQw4w9WgXcQ --language en --name English\n  yutu caption update --videoId dQw4w9WgXcQ --file updated.srt"
 )
 
 var updateInSchema = &jsonschema.Schema{

@@ -17,7 +17,7 @@ import (
 const (
 	downloadTool    = "caption-download"
 	downloadShort   = "Download caption"
-	downloadLong    = "Download caption from a video"
+	downloadLong    = "Download caption from a video\n\nExamples:\n  yutu caption download --id abc123 --file subtitle.srt\n  yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt\n  yutu caption download --id abc123 --file subtitle.srt --tlang fr"
 	downloadIdUsage = "ID of the caption to download"
 )
 

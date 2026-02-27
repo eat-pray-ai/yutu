@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool     = "subscription-delete"
 	deleteShort    = "Delete a YouTube subscriptions"
-	deleteLong     = "Delete a YouTube subscriptions by ids"
+	deleteLong     = "Delete a YouTube subscriptions by ids\n\nExamples:\n  yutu subscription delete --ids abc123\n  yutu subscription delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the subscriptions to delete"
 )
 

@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool     = "video-delete"
 	deleteShort    = "Delete a video on YouTube"
-	deleteLong     = "Delete a video on YouTube by ids"
+	deleteLong     = "Delete a video on YouTube by ids\n\nExamples:\n  yutu video delete --ids dQw4w9WgXcQ\n  yutu video delete --ids dQw4w9WgXcQ,abc123"
 	deleteIdsUsage = "IDs of the videos to delete"
 )
 

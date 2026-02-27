@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool     = "playlistItem-delete"
 	deleteShort    = "Delete items from a playlist"
-	deleteLong     = "Delete items from a playlist by ids"
+	deleteLong     = "Delete items from a playlist by ids\n\nExamples:\n  yutu playlistItem delete --ids abc123\n  yutu playlistItem delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the playlist items to delete"
 )
 

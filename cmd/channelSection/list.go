@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "channelSection-list"
 	listShort    = "List channel sections"
-	listLong     = "List channel sections"
+	listLong     = "List channel sections\n\nExamples:\n  yutu channelSection list --mine\n  yutu channelSection list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw\n  yutu channelSection list --ids abc123,def456 --output json"
 	listIdsUsage = "Return the channel sections with the given ids"
 )
 

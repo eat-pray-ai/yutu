@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool  = "playlistImage-delete"
 	deleteShort = "Delete YouTube playlist images"
-	deleteLong  = "Delete YouTube playlist images by ids"
+	deleteLong  = "Delete YouTube playlist images by ids\n\nExamples:\n  yutu playlistImage delete --ids abc123\n  yutu playlistImage delete --ids abc123,def456"
 )
 
 var deleteInSchema = &jsonschema.Schema{

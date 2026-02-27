@@ -11,7 +11,7 @@ import (
 
 const (
 	short     = "Manipulate YouTube comments"
-	long      = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments"
+	long      = "List, insert, update, mark as spam, set moderation status, or delete YouTube comments\n\nExamples:\n  yutu comment list --parentId UgyXXXXXXXX --maxResults 10\n  yutu comment insert --channelId UC_x5X --videoId dQw4w --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'\n  yutu comment update --id abc123 --textOriginal 'Updated comment'\n  yutu comment delete --ids abc123,def456\n  yutu comment markAsSpam --ids abc123\n  yutu comment setModerationStatus --ids abc123 --moderationStatus published"
 	idsUsage  = "IDs of comments"
 	acidUsage = "Channel id of the comment author"
 	crUsage   = "Whether the viewer can rate the comment"

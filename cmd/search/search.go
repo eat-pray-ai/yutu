@@ -11,7 +11,7 @@ import (
 
 const (
 	short         = "Search for YouTube resources"
-	long          = "Search for YouTube resources"
+	long          = "Search for YouTube resources\n\nExamples:\n  yutu search list --q 'golang tutorial' --maxResults 10\n  yutu search list --q 'music' --types video --videoDuration medium --output json\n  yutu search list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order date --maxResults 5\n  yutu search list --q 'live coding' --eventType live --types video"
 	cidUsage      = "Filter on resources belonging to this channelId"
 	ctUsage       = "channelTypeUnspecified|any|show"
 	etUsage       = "none|upcoming|live|completed"

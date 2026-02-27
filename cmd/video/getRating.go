@@ -19,7 +19,7 @@ import (
 const (
 	getRatingTool  = "video-getRating"
 	getRatingShort = "Get the rating of videos"
-	getRatingLong  = "Get the rating of videos by ids"
+	getRatingLong  = "Get the rating of videos by ids\n\nExamples:\n  yutu video getRating --ids dQw4w9WgXcQ\n  yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json"
 	grIdsUsage     = "IDs of the videos to get the rating for"
 )
 

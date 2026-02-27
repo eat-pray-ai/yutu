@@ -12,7 +12,7 @@ import (
 
 const (
 	short         = "Manipulate YouTube captions"
-	long          = "List, insert, update, download, or delete YouTube captions"
+	long          = "List, insert, update, download, or delete YouTube captions\n\nExamples:\n  yutu caption list --videoId dQw4w9WgXcQ\n  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ\n  yutu caption update --videoId dQw4w9WgXcQ --isDraft=false\n  yutu caption download --id abc123 --file output.srt\n  yutu caption delete --ids abc123,def456"
 	fileUsage     = "Path to save the caption file"
 	attUsage      = "unknown|primary|commentary|descriptive"
 	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"

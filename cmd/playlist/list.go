@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "playlist-list"
 	listShort    = "List playlist's info"
-	listLong     = "List playlist's info, such as title, description, etc"
+	listLong     = "List playlist's info, such as title, description, etc\n\nExamples:\n  yutu playlist list --mine\n  yutu playlist list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10\n  yutu playlist list --ids PLxxx1,PLxxx2 --output json"
 	listIdsUsage = "Return the playlists with the given Ids for Stubby or Apiary"
 	listCidUsage = "Return the playlists owned by the specified channel id"
 )

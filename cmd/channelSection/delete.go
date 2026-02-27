@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool     = "channelSection-delete"
 	deleteShort    = "Delete channel sections"
-	deleteLong     = "Delete channel sections by ids"
+	deleteLong     = "Delete channel sections by ids\n\nExamples:\n  yutu channelSection delete --ids abc123\n  yutu channelSection delete --ids abc123,def456"
 	deleteIdsUsage = "Delete the channel sections with the given ids"
 )
 

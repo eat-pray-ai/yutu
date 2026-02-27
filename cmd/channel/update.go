@@ -19,7 +19,7 @@ import (
 const (
 	updateTool    = "channel-update"
 	updateShort   = "Update channel's info"
-	updateLong    = "Update channel's info, such as title, description, etc"
+	updateLong    = "Update channel's info, such as title, description, etc\n\nExamples:\n  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'\n  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US\n  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en"
 	updateIdUsage = "ID of the channel to update"
 )
 

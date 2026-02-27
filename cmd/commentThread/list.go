@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "commentThread-list"
 	listShort    = "List YouTube comment threads"
-	listLong     = "List YouTube comment threads"
+	listLong     = "List YouTube comment threads\n\nExamples:\n  yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10\n  yutu commentThread list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --searchTerms 'hello'\n  yutu commentThread list --ids abc123,def456 --output json"
 	listVidUsage = "Returns the comment threads of the specified video"
 )
 

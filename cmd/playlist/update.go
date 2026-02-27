@@ -19,7 +19,7 @@ import (
 const (
 	updateTool    = "playlist-update"
 	updateShort   = "Update an existing playlist"
-	updateLong    = "Update an existing playlist, with the specified title, description, tags, etc"
+	updateLong    = "Update an existing playlist, with the specified title, description, tags, etc\n\nExamples:\n  yutu playlist update --id PLxxxxxxxxxxxxxxxxxx --title 'Updated Title'\n  yutu playlist update --id PLxxx --description 'New description' --privacy public\n  yutu playlist update --id PLxxx --tags 'music,pop,2024'"
 	updateIdUsage = "ID of the playlist to update"
 )
 

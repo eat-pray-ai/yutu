@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "channel-list"
 	listShort    = "List channel's info"
-	listLong     = "List channel's info, such as title, description, etc."
+	listLong     = "List channel's info, such as title, description, etc.\n\nExamples:\n  yutu channel list --mine\n  yutu channel list --forHandle @GoogleDevelopers\n  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json\n  yutu channel list --maxResults 10 --output table"
 	listIdsUsage = "Return the channels with the specified Ids"
 )
 

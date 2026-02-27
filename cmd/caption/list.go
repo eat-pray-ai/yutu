@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "caption-list"
 	listShort    = "List captions"
-	listLong     = "List captions of a video"
+	listLong     = "List captions of a video\n\nExamples:\n  yutu caption list --videoId dQw4w9WgXcQ\n  yutu caption list --videoId dQw4w9WgXcQ --output json\n  yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ"
 	listIdsUsage = "IDs of the captions to list"
 )
 

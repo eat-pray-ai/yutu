@@ -19,7 +19,7 @@ import (
 const (
 	insertTool     = "commentThread-insert"
 	insertShort    = "Insert a new comment thread"
-	insertLong     = "Insert a new comment thread"
+	insertLong     = "Insert a new comment thread\n\nExamples:\n  yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'\n  yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Nice work!' --output json"
 	insertVidUsage = "ID of the video"
 )
 

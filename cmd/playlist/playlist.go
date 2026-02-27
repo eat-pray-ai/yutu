@@ -12,7 +12,7 @@ import (
 
 const (
 	short         = "Manipulate YouTube playlists"
-	long          = "List, insert, update, or delete YouTube playlists"
+	long          = "List, insert, update, or delete YouTube playlists\n\nExamples:\n  yutu playlist list --mine\n  yutu playlist insert --title 'My Playlist' --channelId UC_x5X --privacy public\n  yutu playlist update --id PLxxx --title 'Updated Title'\n  yutu playlist delete --ids PLxxx"
 	titleUsage    = "Title of the playlist"
 	descUsage     = "Description of the playlist"
 	hlUsage       = "Return content in specified language"

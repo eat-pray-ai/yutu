@@ -17,7 +17,7 @@ import (
 const (
 	setTool  = "watermark-set"
 	setShort = "Set watermark for channel's video"
-	setLong  = "Set watermark for channel's video by channel id"
+	setLong  = "Set watermark for channel's video by channel id\n\nExamples:\n  yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png\n  yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000\n  yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000"
 )
 
 var setInSchema = &jsonschema.Schema{

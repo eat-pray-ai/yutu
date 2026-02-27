@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool     = "caption-delete"
 	deleteShort    = "Delete captions"
-	deleteLong     = "Delete captions of a video by ids"
+	deleteLong     = "Delete captions of a video by ids\n\nExamples:\n  yutu caption delete --ids abc123\n  yutu caption delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the captions to delete"
 )
 

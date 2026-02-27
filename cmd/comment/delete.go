@@ -17,7 +17,7 @@ import (
 const (
 	deleteTool  = "comment-delete"
 	deleteShort = "Delete YouTube comments"
-	deleteLong  = "Delete YouTube comments by ids"
+	deleteLong  = "Delete YouTube comments by ids\n\nExamples:\n  yutu comment delete --ids abc123\n  yutu comment delete --ids abc123,def456"
 )
 
 var deleteInSchema = &jsonschema.Schema{

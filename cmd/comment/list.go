@@ -19,7 +19,7 @@ import (
 const (
 	listTool     = "comment-list"
 	listShort    = "List YouTube comments"
-	listLong     = "List YouTube comments by ids"
+	listLong     = "List YouTube comments by ids\n\nExamples:\n  yutu comment list --parentId UgyXXXXXXXX --maxResults 10\n  yutu comment list --ids abc123,def456 --output json\n  yutu comment list --ids abc123 --textFormat plainText"
 	listPidUsage = "Returns replies to the specified comment"
 )
 

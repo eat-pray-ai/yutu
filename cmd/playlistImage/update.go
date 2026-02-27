@@ -19,7 +19,7 @@ import (
 const (
 	updateTool  = "playlistImage-update"
 	updateShort = "Update a playlist image"
-	updateLong  = "Update a playlist image for a given playlist id"
+	updateLong  = "Update a playlist image for a given playlist id\n\nExamples:\n  yutu playlistImage update --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152"
 )
 
 var updateInSchema = &jsonschema.Schema{

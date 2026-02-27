@@ -10,7 +10,7 @@ import (
 
 const (
 	short        = "Manipulate YouTube comment threads"
-	long         = "List or insert YouTube comment threads"
+	long         = "List or insert YouTube comment threads\n\nExamples:\n  yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10\n  yutu commentThread list --channelId UC_x5X --searchTerms 'hello'\n  yutu commentThread insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --textOriginal 'Great video!'"
 	idsUsage     = "IDs of the comment threads"
 	atrtcidUsage = "Returns the comment threads of all videos of the channel and the channel comments as well"
 	acidUsage    = "Channel id of the comment author"

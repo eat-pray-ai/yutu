@@ -19,7 +19,7 @@ import (
 const (
 	insertTool     = "playlist-insert"
 	insertShort    = "Create a new playlist"
-	insertLong     = "Create a new playlist, with the specified title, description, tags, etc"
+	insertLong     = "Create a new playlist, with the specified title, description, tags, etc\n\nExamples:\n  yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public\n  yutu playlist insert --title 'Tutorial Series' --channelId UC_x5X --privacy private --description 'My tutorials'\n  yutu playlist insert --title 'Music' --channelId UC_x5X --privacy unlisted --tags 'music,pop'"
 	insertCidUsage = "Channel id of the playlist"
 )
 

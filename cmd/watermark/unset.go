@@ -17,7 +17,7 @@ import (
 const (
 	unsetTool  = "watermark-unset"
 	unsetShort = "Unset watermark for channel's video"
-	unsetLong  = "Unset watermark for channel's video by channel id"
+	unsetLong  = "Unset watermark for channel's video by channel id\n\nExamples:\n  yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw\n  yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw"
 )
 
 var unsetInSchema = &jsonschema.Schema{

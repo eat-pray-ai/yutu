@@ -19,7 +19,7 @@ import (
 const (
 	insertTool     = "comment-insert"
 	insertShort    = "Insert a comment"
-	insertLong     = "Insert a comment to a video"
+	insertLong     = "Insert a comment to a video\n\nExamples:\n  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'\n  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate"
 	insertPidUsage = "ID of the parent comment"
 )
 

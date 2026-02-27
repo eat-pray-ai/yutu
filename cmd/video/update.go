@@ -19,7 +19,7 @@ import (
 const (
 	updateTool      = "video-update"
 	updateShort     = "Update a video on YouTube"
-	updateLong      = "Update a video on YouTube, with the specified title, description, tags, etc"
+	updateLong      = "Update a video on YouTube, with the specified title, description, tags, etc\n\nExamples:\n  yutu video update --id dQw4w9WgXcQ --title 'New Title'\n  yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public\n  yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10"
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
 )
