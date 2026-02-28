@@ -23,8 +23,8 @@ yutu video insert [flags]
 | `--language` | `-l` | Language of the video |
 | `--license` | `-L` | youtube\|creativeCommon (default "youtube") |
 | `--notifySubscribers` | `-N` | Notify the channel subscribers about the new video (default true) |
-| `--onBehalfOfContentOwner` | `-b` | |
-| `--onBehalfOfContentOwnerChannel` | `-B` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| `--onBehalfOfContentOwnerChannel` | `-B` | YouTube channel ID linked to the content owner |
 | `--output` | `-o` | json\|yaml\|silent |
 | `--playlistId` | `-y` | Playlist id of the video |
 | `--privacy` | `-p` | public\|private\|unlisted |

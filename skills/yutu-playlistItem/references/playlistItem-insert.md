@@ -19,7 +19,7 @@ yutu playlistItem insert [flags]
 | `--kPlaylistId` | `-Y` | ID of the playlist if kind is playlist |
 | `--kVideoId` | `-V` | ID of the video if kind is video |
 | `--kind` | `-k` | video\|channel\|playlist |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|silent |
 | `--playlistId` | `-y` | The id that YouTube uses to uniquely identify the playlist that the item is in |
 | `--privacy` | `-p` | public\|private\|unlisted |

@@ -18,8 +18,8 @@ yutu playlist list [flags]
 | `--jsonPath` | `-j` | JSONPath expression to filter the output |
 | `--maxResults` | `-n` | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--mine` | `-M` | Return the playlists owned by the authenticated user (default true) |
-| `--onBehalfOfContentOwner` | `-b` | |
-| `--onBehalfOfContentOwnerChannel` | `-B` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| `--onBehalfOfContentOwnerChannel` | `-B` | YouTube channel ID linked to the content owner |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet,status]) |
 

@@ -14,5 +14,5 @@ yutu video getRating [flags]
 |------|-----------|-------------|
 | `--ids` | `-i` | IDs of the videos to get the rating for |
 | `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|table |

@@ -22,7 +22,7 @@ yutu search list [flags]
 | `--location` | Filter on location of the video |
 | `--locationRadius` | Filter on distance from the location |
 | `--maxResults` | The maximum number of items that should be returned, 0 for no limit (default 5) |
-| `--onBehalfOfContentOwner` | |
+| `--onBehalfOfContentOwner` | ID of the content owner, for YouTube content partners |
 | `--order` | searchSortUnspecified, date, rating, viewCount, relevance, title, videoCount (default "relevance") |
 | `--output` | json\|yaml\|table (default "table") |
 | `--parts` | Comma separated parts (default [id,snippet]) |

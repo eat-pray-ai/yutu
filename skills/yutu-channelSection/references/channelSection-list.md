@@ -17,7 +17,7 @@ yutu channelSection list [flags]
 | `--ids` | `-i` | Return the channel sections with the given ids |
 | `--jsonpath` | `-j` | JSONPath expression to filter the output |
 | `--mine` | `-M` | Return the ChannelSections owned by the authenticated user |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
 

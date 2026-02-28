@@ -20,8 +20,8 @@ yutu subscription list [flags]
 | `--mine` | `-M` | Return the subscriptions of the authenticated user (default true) |
 | `--myRecentSubscribers` | `-R` | true\|false\|null |
 | `--mySubscribers` | `-S` | Return the subscribers of the given channel owner |
-| `--onBehalfOfContentOwner` | `-b` | |
-| `--onBehalfOfContentOwnerChannel` | `-B` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| `--onBehalfOfContentOwnerChannel` | `-B` | YouTube channel ID linked to the content owner |
 | `--order` | `-O` | subscriptionOrderUnspecified\|relevance\|unread\|alphabetical (default "relevance") |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet]) |

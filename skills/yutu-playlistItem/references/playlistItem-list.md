@@ -15,7 +15,7 @@ yutu playlistItem list [flags]
 | `--ids` | `-i` | IDs of the playlist items to list |
 | `--jsonpath` | `-j` | JSONPath expression to filter the output |
 | `--maxResults` | `-n` | The maximum number of items that should be returned, 0 for no limit (default 5) |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet,status]) |
 | `--playlistId` | `-y` | Return the playlist items within the given playlist |

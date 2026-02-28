@@ -13,7 +13,7 @@ yutu channelSection delete [flags]
 | Flag | Shorthand | Description |
 |------|-----------|-------------|
 | `--ids` | `-i` | Delete the channel sections with the given ids |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

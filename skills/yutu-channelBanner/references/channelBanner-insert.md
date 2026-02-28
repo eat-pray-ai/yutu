@@ -15,8 +15,8 @@ yutu channelBanner insert [flags]
 | `--channelId` | `-c` | ID of the channel to insert the banner for |
 | `--file` | `-f` | Path to the banner image |
 | `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--onBehalfOfContentOwner` | `-b` | |
-| `--onBehalfOfContentOwnerChannel` | `-B` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| `--onBehalfOfContentOwnerChannel` | `-B` | YouTube channel ID linked to the content owner |
 | `--output` | `-o` | json\|yaml\|silent |
 
 ## Examples

@@ -21,7 +21,7 @@ yutu activity list [flags]
 | `--parts` | `-p` | Comma separated parts (default [id,snippet,contentDetails]) |
 | `--publishedAfter` | `-a` | Filter on activities published after this date |
 | `--publishedBefore` | `-b` | Filter on activities published before this date |
-| `--regionCode` | `-r` | |
+| `--regionCode` | `-r` | Display the content as seen by viewers in this country |
 
 ## Examples
 

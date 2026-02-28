@@ -22,7 +22,7 @@ yutu channel list [flags]
 | `--maxResults` | `-n` | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--mine` | `-M` | Return the ids of channels owned by the authenticated user (default true) |
 | `--mySubscribers` | `-S` | Return the channels subscribed to the authenticated user |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet,status]) |
 

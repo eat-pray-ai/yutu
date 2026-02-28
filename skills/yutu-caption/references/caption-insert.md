@@ -22,8 +22,8 @@ yutu caption insert [flags]
 | `--jsonPath` | `-j` | JSONPath expression to filter the output |
 | `--language` | `-l` | Language of the caption track |
 | `--name` | `-n` | Name of the caption track |
-| `--onBehalfOf` | `-b` | |
-| `--onBehalfOfContentOwner` | `-B` | |
+| `--onBehalfOf` | `-b` | ID of the YouTube account that the content owner is acting on behalf of |
+| `--onBehalfOfContentOwner` | `-B` | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` | json\|yaml\|silent |
 | `--trackKind` | `-t` | standard\|ASR\|forced (default "standard") |
 | `--videoId` | `-v` | ID of the video |

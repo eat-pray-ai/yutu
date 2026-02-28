@@ -13,7 +13,7 @@ yutu playlistImage delete [flags]
 | Flag | Shorthand | Description |
 |------|-----------|-------------|
 | `--ids` | `-i` | IDs of the playlist images to delete |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

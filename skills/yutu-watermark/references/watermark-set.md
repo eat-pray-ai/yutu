@@ -18,7 +18,7 @@ yutu watermark set [flags]
 | `--inVideoPosition` | `-p` | topLeft\|topRight\|bottomLeft\|bottomRight |
 | `--offsetMs` | `-m` | Defines the time at which the watermark will appear |
 | `--offsetType` | `-t` | offsetFromStart\|offsetFromEnd |
-| `--onBehalfOfContentOwner` | `-b` | |
+| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
 
 ## Examples
 
