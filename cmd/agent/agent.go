@@ -103,7 +103,7 @@ func newModel(ctx context.Context, spec string) (model.LLM, error) {
 	parts := strings.SplitN(spec, ":", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return nil, fmt.Errorf(
-			"invalid model spec %q: expected format provider:modelName (e.g. google:gemini-3-pro-preview)",
+			"invalid model spec %q: expected format provider:modelName (e.g. google:gemini-3.1-pro-preview)",
 			spec,
 		)
 	}

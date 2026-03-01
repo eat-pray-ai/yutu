@@ -82,9 +82,9 @@ A browser window will open asking for your permission to access your YouTube acc
 ```json
 {
   "access_token": "ya29.XXXXXXXXX",
-  "token_type":"Bearer",
-  "refresh_token":"1//XXXXXXXXXX",
-  "expiry":"2024-05-26T18:49:56.1911165+08:00"
+  "token_type": "Bearer",
+  "refresh_token": "1//XXXXXXXXXX",
+  "expiry": "2024-05-26T18:49:56.1911165+08:00"
 }
 ```
 
@@ -96,6 +96,15 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 # or
 ❯ YUTU_CREDENTIAL=client_secret.json YUTU_CACHE_TOKEN=youtube.token.json yutu subcommand --flag value
 ```
+
+### Global Environment Variables
+
+| Variable           | Description                                  | Default                   |
+|--------------------|----------------------------------------------|---------------------------|
+| `YUTU_CREDENTIAL`  | Path, base64, or JSON of OAuth client secret | `client_secret.json`      |
+| `YUTU_CACHE_TOKEN` | Path, base64, or JSON of cached OAuth token  | `youtube.token.json`      |
+| `YUTU_ROOT`        | Root directory for file resolution           | Current working directory |
+| `YUTU_LOG_LEVEL`   | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO`                    |
 
 ## Installation
 
@@ -163,12 +172,29 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 `yutu` provides an agent mode to automate YouTube workflows. Currently, the agent mode is in the experimental stage under active development, only supports Google's Gemini models with the following environment variables set:
 
 ```shell
-❯ export YUTU_AGENT_MODEL=gemini-3-pro-preview
+❯ export YUTU_ADVANCED_MODEL=google:gemini-3.1-pro-preview
+❯ export YUTU_LITE_MODEL=google:gemini-3-flash-preview
 ❯ export YUTU_LLM_API_KEY=your_gemini_api_key
 // Optional settings
 ❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
 ❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
 ```
+
+`YUTU_ADVANCED_MODEL` is used by the orchestrator agent, while `YUTU_LITE_MODEL` is used by all other agents. Both use
+the `provider:modelName` format (only `google` is supported). If only one is set, the other defaults to the same value.
+
+### Agent Environment Variables
+
+| Variable                     | Description                                                 | Required                                                   |
+|------------------------------|-------------------------------------------------------------|------------------------------------------------------------|
+| `YUTU_ADVANCED_MODEL`        | Model for orchestrator agent (format: `provider:modelName`) | At least one of `YUTU_ADVANCED_MODEL` or `YUTU_LITE_MODEL` |
+| `YUTU_LITE_MODEL`            | Model for sub-agents (format: `provider:modelName`)         | At least one of `YUTU_ADVANCED_MODEL` or `YUTU_LITE_MODEL` |
+| `YUTU_LLM_API_KEY`           | API key for the model provider                              | Yes                                                        |
+| `GOOGLE_GEMINI_BASE_URL`     | Base URL for Gemini API                                     | No                                                         |
+| `YUTU_AGENT_INSTRUCTION`     | Custom instruction for orchestrator agent                   | No                                                         |
+| `YUTU_RETRIEVAL_INSTRUCTION` | Custom instruction for retrieval agent                      | No                                                         |
+| `YUTU_MODIFIER_INSTRUCTION`  | Custom instruction for modifier agent                       | No                                                         |
+| `YUTU_DESTROYER_INSTRUCTION` | Custom instruction for destroyer agent                      | No                                                         |
 
 Then run the following command for detail usage:
 
