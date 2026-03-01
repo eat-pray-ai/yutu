@@ -137,14 +137,14 @@ func requireConfirmation(name string, _ any) bool {
 	return slices.Contains(confirmationToolNames, name)
 }
 
-func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
+func buildOrchestrator(advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset) (
 	agent.Agent, error,
 ) {
 	def := agentDefs["Aagje"]
 	retrieval, err := llmagent.New(
 		llmagent.Config{
 			Name:        def.name,
-			Model:       m,
+			Model:       liteModel,
 			Description: def.description,
 			Instruction: *def.instruction,
 			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
@@ -164,7 +164,7 @@ func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
 		a, err := llmagent.New(
 			llmagent.Config{
 				Name:        def.name,
-				Model:       m,
+				Model:       liteModel,
 				Description: def.description,
 				Instruction: *def.instruction,
 				Tools:       []tool.Tool{retrievalTool},
@@ -183,7 +183,7 @@ func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
 	orchestrator, err := llmagent.New(
 		llmagent.Config{
 			Name:        oDef.name,
-			Model:       m,
+			Model:       advancedModel,
 			Description: oDef.description,
 			Instruction: *oDef.instruction,
 			Tools:       []tool.Tool{retrievalTool},

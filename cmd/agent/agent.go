@@ -17,6 +17,7 @@ import (
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
+	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/genai"
@@ -50,15 +51,65 @@ func init() {
 	)
 }
 
-func launch(ctx context.Context, writer io.Writer, args []string) {
-	m, err := gemini.NewModel(
-		ctx, os.Getenv("YUTU_AGENT_MODEL"), &genai.ClientConfig{
-			APIKey:  os.Getenv("YUTU_LLM_API_KEY"),
-			Backend: genai.BackendGeminiAPI,
-		},
-	)
+func resolveModels(ctx context.Context) (advancedModel, liteModel model.LLM, err error) {
+	advanced := os.Getenv("YUTU_ADVANCED_MODEL")
+	lite := os.Getenv("YUTU_LITE_MODEL")
+
+	if advanced == "" && lite == "" {
+		return nil, nil, fmt.Errorf(
+			"at least one of YUTU_ADVANCED_MODEL or YUTU_LITE_MODEL must be set (format: provider:modelName)",
+		)
+	}
+	if advanced == "" {
+		advanced = lite
+	}
+	if lite == "" {
+		lite = advanced
+	}
+
+	advancedModel, err = newModel(ctx, advanced)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create Gemini model", "error", err)
+		return nil, nil, fmt.Errorf("YUTU_ADVANCED_MODEL: %w", err)
+	}
+
+	if lite == advanced {
+		return advancedModel, advancedModel, nil
+	}
+
+	liteModel, err = newModel(ctx, lite)
+	if err != nil {
+		return nil, nil, fmt.Errorf("YUTU_LITE_MODEL: %w", err)
+	}
+
+	return advancedModel, liteModel, nil
+}
+
+func newModel(ctx context.Context, spec string) (model.LLM, error) {
+	parts := strings.SplitN(spec, ":", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		return nil, fmt.Errorf(
+			"invalid model spec %q: expected format provider:modelName (e.g. google:gemini-3-pro-preview)", spec,
+		)
+	}
+
+	provider, modelName := parts[0], parts[1]
+	switch provider {
+	case "google":
+		return gemini.NewModel(
+			ctx, modelName, &genai.ClientConfig{
+				APIKey:  os.Getenv("YUTU_LLM_API_KEY"),
+				Backend: genai.BackendGeminiAPI,
+			},
+		)
+	default:
+		return nil, fmt.Errorf("unsupported provider %q: only \"google\" is supported", provider)
+	}
+}
+
+func launch(ctx context.Context, writer io.Writer, args []string) {
+	advancedModel, liteModel, err := resolveModels(ctx)
+	if err != nil {
+		slog.ErrorContext(ctx, "model configuration error", "error", err)
 		os.Exit(1)
 	}
 
@@ -79,7 +130,7 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		slog.ErrorContext(ctx, "failed to create MCP tool set", "error", err)
 	}
 
-	orchestrator, err := buildOrchestrator(m, mcpToolSet)
+	orchestrator, err := buildOrchestrator(advancedModel, liteModel, mcpToolSet)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to build orchestrator agent", "error", err)
 		os.Exit(1)
