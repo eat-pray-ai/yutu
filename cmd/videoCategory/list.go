@@ -39,10 +39,15 @@ func init() {
 	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
+const (
+	listShort = "List video categories"
+	listLong  = `List video categories. Use this tool when you need to list available video categories.`
+)
+
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := videoCategory.NewVideoCategory(
 			videoCategory.WithIds(ids),

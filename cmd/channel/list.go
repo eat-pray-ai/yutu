@@ -19,9 +19,15 @@ import (
 
 const (
 	listTool     = "channel-list"
-	listShort    = "List channel's info"
-	listLong     = "List channel's info, such as title, description, etc.\n\nExamples:\n  yutu channel list --mine\n  yutu channel list --forHandle @GoogleDevelopers\n  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json\n  yutu channel list --maxResults 10 --output table"
 	listIdsUsage = "Return the channels with the specified Ids"
+	listShort    = "List channel information"
+	listLong     = `List channel information. Use this tool when you need to list channel information.
+
+Examples:
+  yutu channel list --mine
+  yutu channel list --forHandle @GoogleDevelopers
+  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+  yutu channel list --maxResults 10 --output table`
 )
 
 var listInSchema = &jsonschema.Schema{

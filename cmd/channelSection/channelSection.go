@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	short     = "Manipulate YouTube channel sections"
-	long      = "List or delete YouTube channel sections\n\nExamples:\n  yutu channelSection list --mine\n  yutu channelSection list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw\n  yutu channelSection delete --ids abc123\n  yutu channelSection delete --ids abc123,def456"
+	short     = "Manage YouTube channel sections"
+	long      = "Manage YouTube channel sections. Use this tool to list or delete channel sections."
 	cidUsage  = "Return the ChannelSections owned by the specified channel id"
 	hlUsage   = "Return content in specified language"
 	mineUsage = "Return the ChannelSections owned by the authenticated user"

@@ -19,8 +19,12 @@ import (
 
 const (
 	listTool  = "playlistImage-list"
-	listShort = "List YouTube playlist images"
-	listLong  = "List YouTube playlist images' info\n\nExamples:\n  yutu playlistImage list --parent PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage list --parent PLxxx --maxResults 10 --output json"
+	listShort = "List playlist images"
+	listLong  = `List playlist images. Use this tool when you need to list playlist images.
+
+Examples:
+  yutu playlistImage list --parent PLxxx
+  yutu playlistImage list --parent PLxxx --maxResults 10 --output json`
 )
 
 var listInSchema = &jsonschema.Schema{

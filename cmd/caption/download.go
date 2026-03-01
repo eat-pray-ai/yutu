@@ -18,9 +18,14 @@ import (
 
 const (
 	downloadTool    = "caption-download"
-	downloadShort   = "Download caption"
-	downloadLong    = "Download caption from a video\n\nExamples:\n  yutu caption download --id abc123 --file subtitle.srt\n  yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt\n  yutu caption download --id abc123 --file subtitle.srt --tlang fr"
 	downloadIdUsage = "ID of the caption to download"
+	downloadShort   = "Download a caption"
+	downloadLong    = `Download a caption. Use this tool when you need to download a caption from a video.
+
+Examples:
+  yutu caption download --id abc123 --file subtitle.srt
+  yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
+  yutu caption download --id abc123 --file subtitle.srt --tlang fr`
 )
 
 var downloadInSchema = &jsonschema.Schema{

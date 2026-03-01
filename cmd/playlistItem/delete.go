@@ -18,9 +18,13 @@ import (
 
 const (
 	deleteTool     = "playlistItem-delete"
-	deleteShort    = "Delete items from a playlist"
-	deleteLong     = "Delete items from a playlist by ids\n\nExamples:\n  yutu playlistItem delete --ids abc123\n  yutu playlistItem delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the playlist items to delete"
+	deleteShort    = "Delete items from a playlist"
+	deleteLong     = `Delete items from a playlist. Use this tool when you need to delete items from a playlist by IDs.
+
+Examples:
+  yutu playlistItem delete --ids abc123
+  yutu playlistItem delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

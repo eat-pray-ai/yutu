@@ -19,10 +19,15 @@ import (
 
 const (
 	listTool     = "playlistItem-list"
-	listShort    = "List playlist items"
-	listLong     = "List playlist items' info, such as title, description, etc\n\nExamples:\n  yutu playlistItem list --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json\n  yutu playlistItem list --ids abc123,def456"
 	listIdsUsage = "IDs of the playlist items to list"
 	listPidUsage = "Return the playlist items within the given playlist"
+	listShort    = "List playlist items"
+	listLong     = `List playlist items. Use this tool when you need to list playlist items.
+
+Examples:
+  yutu playlistItem list --playlistId PLxxx
+  yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json
+  yutu playlistItem list --ids abc123,def456`
 )
 
 var listInSchema = &jsonschema.Schema{

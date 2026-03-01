@@ -19,9 +19,14 @@ import (
 
 const (
 	updateTool    = "playlistItem-update"
-	updateShort   = "Update a playlist item"
-	updateLong    = "Update a playlist item's info, such as title, description, etc\n\nExamples:\n  yutu playlistItem update --id abc123 --title 'Updated Title'\n  yutu playlistItem update --id abc123 --description 'New description' --privacy public\n  yutu playlistItem update --id abc123 --privacy private --output json"
 	updateIdUsage = "ID of the playlist item to update"
+	updateShort   = "Update a playlist item"
+	updateLong    = `Update a playlist item. Use this tool when you need to update a playlist item.
+
+Examples:
+  yutu playlistItem update --id abc123 --title 'Updated Title'
+  yutu playlistItem update --id abc123 --description 'New description' --privacy public
+  yutu playlistItem update --id abc123 --privacy private --output json`
 )
 
 var updateInSchema = &jsonschema.Schema{

@@ -18,7 +18,14 @@ import (
 )
 
 const (
-	listTool = "activity-list"
+	listTool  = "activity-list"
+	listShort = "List activities"
+	listLong  = `List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
+
+Examples:
+  yutu activity list --mine
+  yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+  yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -51,7 +58,7 @@ var listInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: listTool, Title: short, Description: long,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -86,8 +93,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := activity.NewActivity(
 			activity.WithChannelId(channelId),

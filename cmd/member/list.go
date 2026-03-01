@@ -18,7 +18,13 @@ import (
 )
 
 const (
-	listTool = "member-list"
+	listTool  = "member-list"
+	listShort = "List channel members"
+	listLong  = `List channel members. Use this tool when you need to list information about channel members.
+
+Examples:
+  yutu member list --mode all_current
+  yutu member list --maxResults 10`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -53,7 +59,7 @@ var listInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: listTool, Title: short, Description: long,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -85,8 +91,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := member.NewMember(
 			member.WithMemberChannelId(memberChannelId),

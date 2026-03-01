@@ -18,7 +18,13 @@ import (
 )
 
 const (
-	setTool = "thumbnail-set"
+	setTool  = "thumbnail-set"
+	setShort = "Set a thumbnail for a video"
+	setLong  = `Set a thumbnail for a video. Use this tool when you need to set a thumbnail for a video.
+
+Examples:
+  yutu thumbnail set --file image.jpg --videoId dQw4w9WgXcQ
+  yutu thumbnail set --file image.png --videoId dQw4w9WgXcQ --output json`
 )
 
 var setInSchema = &jsonschema.Schema{
@@ -38,7 +44,7 @@ var setInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: setTool, Title: short, Description: long,
+			Name: setTool, Title: setShort, Description: setLong,
 			InputSchema: setInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -64,8 +70,8 @@ func init() {
 
 var setCmd = &cobra.Command{
 	Use:   "set",
-	Short: short,
-	Long:  long,
+	Short: setShort,
+	Long:  setLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short     = "Insert YouTube channel banner"
-	long      = "Insert YouTube channel banner\n\nExamples:\n  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg\n  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json"
+	short     = "Manage YouTube channel banners"
+	long      = "Manage YouTube channel banners. Use this tool to insert or upload channel banners."
 	cidUsage  = "ID of the channel to insert the banner for"
 	fileUsage = "Path to the banner image"
 )

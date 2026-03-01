@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short        = "Manipulate YouTube playlist items"
-	long         = "List, insert, update, or delete YouTube playlist items\n\nExamples:\n  yutu playlistItem list --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9\n  yutu playlistItem update --id xxx --title 'Updated'\n  yutu playlistItem delete --ids xxx1,xxx2"
+	short        = "Manage YouTube playlist items"
+	long         = "Manage YouTube playlist items. Use this tool to list items in a playlist, add new items, update items, or remove items."
 	titleUsage   = "Title of the playlist item"
 	descUsage    = "Description of the playlist item"
 	kindUsage    = "video|channel|playlist"

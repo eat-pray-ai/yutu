@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	short        = "Manipulate YouTube channels"
-	long         = "List or update YouTube channels\n\nExamples:\n  yutu channel list --mine\n  yutu channel list --forHandle @GoogleDevelopers\n  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json\n  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'"
+	short        = "Manage YouTube channels"
+	long         = "Manage YouTube channels. Use this tool to list or update channels."
 	cidUsage     = "Return the channels within the specified guide category id"
 	fhUsage      = "Return the channel associated with a YouTube handle"
 	fuUsage      = "Return the channel associated with a YouTube username"

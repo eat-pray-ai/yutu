@@ -19,8 +19,13 @@ import (
 
 const (
 	insertTool  = "caption-insert"
-	insertShort = "Insert caption"
-	insertLong  = "Insert caption to a video\n\nExamples:\n  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ\n  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English\n  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false"
+	insertShort = "Insert a caption"
+	insertLong  = `Insert a caption. Use this tool when you need to insert a caption to a video.
+
+Examples:
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
 )
 
 var insertInSchema = &jsonschema.Schema{

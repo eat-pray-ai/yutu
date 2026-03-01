@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short     = "List channel's members' info"
-	long      = "List channel's members' info, such as channelId, displayName, etc"
+	short     = "Manage YouTube channel members"
+	long      = "Manage YouTube channel members. Use this tool to list information about channel members."
 	mcidUsage = "Comma separated list of channel Ids. Only data about members that are part of this list will be included"
 	hatlUsage = "Filter members in the results set to the ones that have access to a level"
 	mmUsage   = "listMembersModeUnknown, updates, or all_current"

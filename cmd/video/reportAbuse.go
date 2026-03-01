@@ -18,10 +18,15 @@ import (
 
 const (
 	reportAbuseTool  = "video-reportAbuse"
-	reportAbuseShort = "Report abuse on a video"
-	reportAbuseLong  = "Report abuse on a video\n\nExamples:\n  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V\n  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V --secondaryReasonId V1 --language en\n  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId N --comments 'Spam content'"
 	raIdsUsage       = "IDs of the videos to report abuse on"
 	raLangUsage      = "Language that the content was viewed in"
+	reportAbuseShort = "Report abuse on a video"
+	reportAbuseLong  = `Report abuse on a video. Use this tool when you need to report abuse on a video.
+
+Examples:
+  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V
+  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V --secondaryReasonId V1 --language en
+  yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId N --comments 'Spam content'`
 )
 
 var reportAbuseInSchema = &jsonschema.Schema{

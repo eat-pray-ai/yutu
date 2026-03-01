@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short       = "Manipulate YouTube playlist images"
-	long        = "List, insert, update, or delete YouTube playlist images\n\nExamples:\n  yutu playlistImage list --parent PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage insert --file cover.jpg --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage update --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage delete --ids abc123"
+	short       = "Manage YouTube playlist images"
+	long        = "Manage YouTube playlist images. Use this tool to list, insert, update, or delete playlist images."
 	idsUsage    = "IDs of the playlist images to delete"
 	heightUsage = "The image height"
 	pidUsage    = "ID of the playlist this image is associated with"

@@ -19,10 +19,16 @@ import (
 
 const (
 	listTool     = "subscription-list"
-	listShort    = "List subscriptions' info"
-	listLong     = "List subscriptions' info, such as id, title, etc\n\nExamples:\n  yutu subscription list --mine\n  yutu subscription list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10\n  yutu subscription list --ids abc123,def456 --output json\n  yutu subscription list --forChannelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order alphabetical"
 	listIdsUsage = "Return the subscriptions with the given ids for Stubby or Apiary"
 	listCidUsage = "Return the subscriptions of the given channel owner"
+	listShort    = "List subscription information"
+	listLong     = `List subscription information. Use this tool when you need to list subscription information.
+
+Examples:
+  yutu subscription list --mine
+  yutu subscription list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+  yutu subscription list --ids abc123,def456 --output json
+  yutu subscription list --forChannelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order alphabetical`
 )
 
 var listInSchema = &jsonschema.Schema{

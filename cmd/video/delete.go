@@ -17,9 +17,13 @@ import (
 
 const (
 	deleteTool     = "video-delete"
-	deleteShort    = "Delete a video on YouTube"
-	deleteLong     = "Delete a video on YouTube by ids\n\nExamples:\n  yutu video delete --ids dQw4w9WgXcQ\n  yutu video delete --ids dQw4w9WgXcQ,abc123"
 	deleteIdsUsage = "IDs of the videos to delete"
+	deleteShort    = "Delete videos"
+	deleteLong     = `Delete videos. Use this tool when you need to delete videos by IDs.
+
+Examples:
+  yutu video delete --ids dQw4w9WgXcQ
+  yutu video delete --ids dQw4w9WgXcQ,abc123`
 )
 
 var deleteInSchema = &jsonschema.Schema{

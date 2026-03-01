@@ -19,9 +19,14 @@ import (
 
 const (
 	updateTool    = "comment-update"
-	updateShort   = "Update a comment"
-	updateLong    = "Update a comment on a video\n\nExamples:\n  yutu comment update --id abc123 --textOriginal 'Updated comment'\n  yutu comment update --id abc123 --viewerRating like\n  yutu comment update --id abc123 --textOriginal 'New text' --canRate"
 	updateIdUsage = "ID of the comment"
+	updateShort   = "Update a comment on a video"
+	updateLong    = `Update a comment on a video. Use this tool when you need to update a comment on a video.
+
+Examples:
+  yutu comment update --id abc123 --textOriginal 'Updated comment'
+  yutu comment update --id abc123 --viewerRating like
+  yutu comment update --id abc123 --textOriginal 'New text' --canRate`
 )
 
 var updateInSchema = &jsonschema.Schema{

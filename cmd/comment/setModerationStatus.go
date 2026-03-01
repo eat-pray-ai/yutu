@@ -19,8 +19,13 @@ import (
 
 const (
 	smsTool  = "comment-setModerationStatus"
-	smsShort = "Set YouTube comments moderation status"
-	smsLong  = "Set YouTube comments moderation status by ids\n\nExamples:\n  yutu comment setModerationStatus --ids abc123 --moderationStatus published\n  yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview\n  yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor"
+	smsShort = "Set comment moderation status"
+	smsLong  = `Set comment moderation status. Use this tool when you need to set comment moderation status.
+
+Examples:
+  yutu comment setModerationStatus --ids abc123 --moderationStatus published
+  yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview
+  yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor`
 )
 
 var setModerationStatusInSchema = &jsonschema.Schema{

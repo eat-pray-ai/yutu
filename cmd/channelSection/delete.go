@@ -18,9 +18,13 @@ import (
 
 const (
 	deleteTool     = "channelSection-delete"
-	deleteShort    = "Delete channel sections"
-	deleteLong     = "Delete channel sections by ids\n\nExamples:\n  yutu channelSection delete --ids abc123\n  yutu channelSection delete --ids abc123,def456"
 	deleteIdsUsage = "Delete the channel sections with the given ids"
+	deleteShort    = "Delete channel sections"
+	deleteLong     = `Delete channel sections. Use this tool when you need to delete channel sections by IDs.
+
+Examples:
+  yutu channelSection delete --ids abc123
+  yutu channelSection delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

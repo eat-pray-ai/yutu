@@ -19,10 +19,15 @@ import (
 
 const (
 	updateTool      = "video-update"
-	updateShort     = "Update a video on YouTube"
-	updateLong      = "Update a video on YouTube, with the specified title, description, tags, etc\n\nExamples:\n  yutu video update --id dQw4w9WgXcQ --title 'New Title'\n  yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public\n  yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10"
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
+	updateShort     = "Update a video"
+	updateLong      = `Update a video. Use this tool when you need to update a video.
+
+Examples:
+  yutu video update --id dQw4w9WgXcQ --title 'New Title'
+  yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+  yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
 )
 
 var updateInSchema = &jsonschema.Schema{

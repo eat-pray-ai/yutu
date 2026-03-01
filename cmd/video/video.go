@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	short           = "Manipulate YouTube videos"
-	long            = "List, insert, update, rate, get rating, report abuse, or delete YouTube videos"
+	short           = "Manage YouTube videos"
+	long            = "Manage YouTube videos. Use this tool to list, upload, update, delete, get rating, or report videos."
 	alUsage         = "Should auto-levels be applied to the upload"
 	fileUsage       = "Path to the video file"
 	titleUsage      = "Title of the video"

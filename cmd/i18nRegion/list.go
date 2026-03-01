@@ -15,11 +15,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort = "List i18n regions"
+	listLong  = `List i18n regions. Use this tool when you need to list available internationalization regions.`
+)
+
 func init() {
 	cmd.Server.AddResourceTemplate(
 		&mcp.ResourceTemplate{
 			Name:        regionName,
-			Description: long,
+			Description: listLong,
 			MIMEType:    pkg.JsonMIME,
 			URITemplate: regionURI,
 			Annotations: &mcp.Annotations{
@@ -38,8 +43,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := i18nRegion.NewI18nRegion(
 			i18nRegion.WithHl(hl),

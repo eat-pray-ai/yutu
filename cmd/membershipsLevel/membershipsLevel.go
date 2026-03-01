@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short = "List memberships levels' info"
-	long  = "List memberships levels' info, such as id, displayName, etc"
+	short = "Manage YouTube memberships levels"
+	long  = "Manage YouTube memberships levels. Use this tool to list information about channel membership levels."
 )
 
 var (

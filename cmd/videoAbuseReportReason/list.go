@@ -18,7 +18,12 @@ import (
 )
 
 const (
-	listTool = "videoAbuseReportReason-list"
+	listTool  = "videoAbuseReportReason-list"
+	listShort = "List video abuse report reasons"
+	listLong  = `List video abuse report reasons. Use this tool when you need to list available abuse report reasons.
+
+Examples:
+  yutu videoAbuseReportReason list --hl en`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -43,7 +48,7 @@ var listInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: listTool, Title: short, Description: long,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -70,8 +75,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := videoAbuseReportReason.NewVideoAbuseReportReason(
 			videoAbuseReportReason.WithHL(hl),

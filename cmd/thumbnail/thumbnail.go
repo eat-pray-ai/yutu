@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short     = "Set thumbnail for a video"
-	long      = "Set thumbnail for a video"
+	short     = "Manage YouTube video thumbnails"
+	long      = "Manage YouTube video thumbnails. Use this tool to set custom thumbnails for videos."
 	fileUsage = "Path to the thumbnail file"
 	vidUsage  = "ID of the video"
 )

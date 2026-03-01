@@ -19,9 +19,14 @@ import (
 
 const (
 	insertTool      = "video-insert"
-	insertShort     = "Upload a video to YouTube"
-	insertLong      = "Upload a video to YouTube, with the specified title, description, tags, etc\n\nExamples:\n  yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public\n  yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'\n  yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg"
 	insertLangUsage = "Language of the video"
+	insertShort     = "Upload a video"
+	insertLong      = `Upload a video. Use this tool when you need to upload a video to YouTube.
+
+Examples:
+  yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
+  yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'
+  yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg`
 )
 
 var insertInSchema = &jsonschema.Schema{

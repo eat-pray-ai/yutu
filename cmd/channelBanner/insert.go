@@ -18,7 +18,13 @@ import (
 )
 
 const (
-	insertTool = "channelBanner-insert"
+	insertTool  = "channelBanner-insert"
+	insertShort = "Insert a YouTube channel banner"
+	insertLong  = `Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner.
+
+Examples:
+  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -47,7 +53,7 @@ var insertInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: insertTool, Title: short, Description: long,
+			Name: insertTool, Title: insertShort, Description: insertLong,
 			InputSchema: insertInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -81,8 +87,8 @@ func init() {
 
 var insertCmd = &cobra.Command{
 	Use:   "insert",
-	Short: short,
-	Long:  long,
+	Short: insertShort,
+	Long:  insertLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channelBanner.NewChannelBanner(
 			channelBanner.WithChannelId(channelId),

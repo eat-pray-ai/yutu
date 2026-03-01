@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	short     = "List YouTube activities"
-	long      = "List YouTube activities, such as likes, favorites, uploads, etc\n\nExamples:\n  yutu activity list --mine\n  yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10\n  yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json"
+	short     = "Manage YouTube activities"
+	long      = "Manage YouTube activities. Use this tool to list channel activities."
 	ciUsage   = "ID of the channel"
 	homeUsage = "true|false|null"
 	mineUsage = "true|false|null"

@@ -18,9 +18,13 @@ import (
 
 const (
 	deleteTool     = "caption-delete"
-	deleteShort    = "Delete captions"
-	deleteLong     = "Delete captions of a video by ids\n\nExamples:\n  yutu caption delete --ids abc123\n  yutu caption delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the captions to delete"
+	deleteShort    = "Delete captions"
+	deleteLong     = `Delete captions. Use this tool when you need to delete captions of a video by IDs.
+
+Examples:
+  yutu caption delete --ids abc123
+  yutu caption delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

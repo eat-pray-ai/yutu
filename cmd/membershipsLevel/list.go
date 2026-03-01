@@ -18,7 +18,12 @@ import (
 )
 
 const (
-	listTool = "membershipsLevel-list"
+	listTool  = "membershipsLevel-list"
+	listShort = "List memberships levels"
+	listLong  = `List memberships levels. Use this tool when you need to list information about channel membership levels.
+
+Examples:
+  yutu membershipsLevel list --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -41,7 +46,7 @@ var listInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name: listTool, Title: short, Description: long,
+			Name: listTool, Title: listShort, Description: listLong,
 			InputSchema: listInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
@@ -66,8 +71,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := membershipsLevel.NewMembershipsLevel(
 			membershipsLevel.WithParts(parts),

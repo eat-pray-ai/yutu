@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short     = "Manipulate YouTube watermarks"
-	long      = "Set or unset YouTube watermarks"
+	short     = "Manage YouTube watermarks"
+	long      = "Manage YouTube watermarks. Use this tool to set or unset watermarks for channel videos."
 	cidUsage  = "ID of the channel"
 	fileUsage = "Path to the watermark file"
 	ivpUsage  = "topLeft|topRight|bottomLeft|bottomRight"

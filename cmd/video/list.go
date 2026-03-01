@@ -19,10 +19,16 @@ import (
 
 const (
 	listTool     = "video-list"
-	listShort    = "List video's info"
-	listLong     = "List video's info, such as title, description, etc\n\nExamples:\n  yutu video list --ids dQw4w9WgXcQ\n  yutu video list --ids dQw4w9WgXcQ,abc123 --output json\n  yutu video list --chart mostPopular --regionCode US --maxResults 10\n  yutu video list --myRating like --output yaml"
 	listIdsUsage = "Return videos with the given ids"
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
+	listShort    = "List video information"
+	listLong     = `List video information. Use this tool when you need to list video information.
+
+Examples:
+  yutu video list --ids dQw4w9WgXcQ
+  yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+  yutu video list --chart mostPopular --regionCode US --maxResults 10
+  yutu video list --myRating like --output yaml`
 )
 
 var listInSchema = &jsonschema.Schema{

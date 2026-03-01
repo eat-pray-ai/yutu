@@ -19,9 +19,14 @@ import (
 
 const (
 	listTool     = "comment-list"
-	listShort    = "List YouTube comments"
-	listLong     = "List YouTube comments by ids\n\nExamples:\n  yutu comment list --parentId UgyXXXXXXXX --maxResults 10\n  yutu comment list --ids abc123,def456 --output json\n  yutu comment list --ids abc123 --textFormat plainText"
 	listPidUsage = "Returns replies to the specified comment"
+	listShort    = "List comments"
+	listLong     = `List comments. Use this tool when you need to list comments by IDs.
+
+Examples:
+  yutu comment list --parentId UgyXXXXXXXX --maxResults 10
+  yutu comment list --ids abc123,def456 --output json
+  yutu comment list --ids abc123 --textFormat plainText`
 )
 
 var listInSchema = &jsonschema.Schema{

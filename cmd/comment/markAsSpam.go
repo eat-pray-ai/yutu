@@ -19,8 +19,12 @@ import (
 
 const (
 	masTool  = "comment-markAsSpam"
-	masShort = "Mark YouTube comments as spam"
-	masLong  = "Mark YouTube comments as spam by ids\n\nExamples:\n  yutu comment markAsSpam --ids abc123\n  yutu comment markAsSpam --ids abc123,def456"
+	masShort = "Mark comments as spam"
+	masLong  = `Mark comments as spam. Use this tool when you need to mark comments as spam.
+
+Examples:
+  yutu comment markAsSpam --ids abc123
+  yutu comment markAsSpam --ids abc123,def456`
 )
 
 var markAsSpamInSchema = &jsonschema.Schema{

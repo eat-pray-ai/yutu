@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short    = "List YouTube video categories"
-	long     = "List YouTube video categories' info, such as id, title, assignable, etc."
+	short    = "Manage YouTube video categories"
+	long     = "Manage YouTube video categories. Use this tool to list available video categories."
 	idsUsage = "IDs of the video categories"
 	hlUsage  = "Host language"
 	rcUsage  = "Region code"

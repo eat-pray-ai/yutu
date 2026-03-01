@@ -137,7 +137,9 @@ func requireConfirmation(name string, _ any) bool {
 	return slices.Contains(confirmationToolNames, name)
 }
 
-func buildOrchestrator(advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset) (
+func buildOrchestrator(
+	advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset,
+) (
 	agent.Agent, error,
 ) {
 	def := agentDefs["Aagje"]

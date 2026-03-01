@@ -15,6 +15,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	listShort = "List i18n languages"
+	listLong  = `List i18n languages. Use this tool when you need to list available internationalization languages.`
+)
+
 func init() {
 	cmd.Server.AddResource(
 		&mcp.Resource{
@@ -30,7 +35,7 @@ func init() {
 	cmd.Server.AddResourceTemplate(
 		&mcp.ResourceTemplate{
 			Name:        langName,
-			Description: long,
+			Description: listLong,
 			MIMEType:    pkg.JsonMIME,
 			URITemplate: langURI,
 			Annotations: &mcp.Annotations{
@@ -49,8 +54,8 @@ func init() {
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: short,
-	Long:  long,
+	Short: listShort,
+	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithHl(hl),

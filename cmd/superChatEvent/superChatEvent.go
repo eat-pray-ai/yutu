@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short   = "List Super Chat events for a channel"
-	long    = "List Super Chat events for a channel"
+	short   = "Manage YouTube Super Chat events"
+	long    = "Manage YouTube Super Chat events. Use this tool to list Super Chat events for a channel."
 	hlUsage = "Return rendered funding amounts in specified language"
 )
 

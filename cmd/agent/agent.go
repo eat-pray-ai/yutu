@@ -24,8 +24,21 @@ import (
 )
 
 const (
-	agentShort = "Start agent to automate YouTube workflows"
-	agentLong  = "Start agent to automate YouTube workflows"
+	agentShort = "Start an agent to automate YouTube workflows"
+	agentLong  = `Start an agent to automate YouTube workflows.
+
+Environment variables:
+  YUTU_ADVANCED_MODEL          Model for orchestrator agent (format: provider:modelName, e.g. google:gemini-3.1-pro-preview)
+  YUTU_LITE_MODEL              Model for sub-agents (format: provider:modelName, e.g. google:gemini-3-flash-preview)
+  YUTU_LLM_API_KEY             API key for the model provider
+  GOOGLE_GEMINI_BASE_URL       Base URL for Gemini API (optional)
+  YUTU_AGENT_INSTRUCTION       Custom instruction for orchestrator agent (optional)
+  YUTU_RETRIEVAL_INSTRUCTION   Custom instruction for retrieval agent (optional)
+  YUTU_MODIFIER_INSTRUCTION    Custom instruction for modifier agent (optional)
+  YUTU_DESTROYER_INSTRUCTION   Custom instruction for destroyer agent (optional)
+
+At least one of YUTU_ADVANCED_MODEL or YUTU_LITE_MODEL must be set.
+If only one is set, the other defaults to the same value.`
 )
 
 var launcherArgs string
@@ -51,7 +64,9 @@ func init() {
 	)
 }
 
-func resolveModels(ctx context.Context) (advancedModel, liteModel model.LLM, err error) {
+func resolveModels(ctx context.Context) (
+	advancedModel, liteModel model.LLM, err error,
+) {
 	advanced := os.Getenv("YUTU_ADVANCED_MODEL")
 	lite := os.Getenv("YUTU_LITE_MODEL")
 
@@ -88,7 +103,8 @@ func newModel(ctx context.Context, spec string) (model.LLM, error) {
 	parts := strings.SplitN(spec, ":", 2)
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		return nil, fmt.Errorf(
-			"invalid model spec %q: expected format provider:modelName (e.g. google:gemini-3-pro-preview)", spec,
+			"invalid model spec %q: expected format provider:modelName (e.g. google:gemini-3-pro-preview)",
+			spec,
 		)
 	}
 
@@ -102,7 +118,9 @@ func newModel(ctx context.Context, spec string) (model.LLM, error) {
 			},
 		)
 	default:
-		return nil, fmt.Errorf("unsupported provider %q: only \"google\" is supported", provider)
+		return nil, fmt.Errorf(
+			"unsupported provider %q: only \"google\" is supported", provider,
+		)
 	}
 }
 

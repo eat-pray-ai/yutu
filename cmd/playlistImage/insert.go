@@ -20,7 +20,12 @@ import (
 const (
 	insertTool  = "playlistImage-insert"
 	insertShort = "Insert a YouTube playlist image"
-	insertLong  = "Insert a YouTube playlist image for a given playlist id\n\nExamples:\n  yutu playlistImage insert --file cover.jpg --playlistId PLxxxxxxxxxxxxxxxxxx\n  yutu playlistImage insert --file cover.png --playlistId PLxxx --type hero\n  yutu playlistImage insert --file cover.jpg --playlistId PLxxx --width 2048 --height 1152"
+	insertLong  = `Insert a YouTube playlist image. Use this tool when you need to insert a YouTube playlist image for a given playlist ID.
+
+Examples:
+  yutu playlistImage insert --file cover.jpg --playlistId PLxxx
+  yutu playlistImage insert --file cover.png --playlistId PLxxx --type hero
+  yutu playlistImage insert --file cover.jpg --playlistId PLxxx --width 2048 --height 1152`
 )
 
 var insertInSchema = &jsonschema.Schema{

@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	short      = "Manipulate YouTube subscriptions"
-	long       = "List, insert, or delete YouTube subscriptions"
+	short      = "Manage YouTube subscriptions"
+	long       = "Manage YouTube subscriptions. Use this tool to list subscriptions/subscribers, subscribe to channels, or unsubscribe."
 	scidUsage  = "Subscriber's channel id"
 	descUsage  = "Description of the subscription"
 	fcidUsage  = "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to"

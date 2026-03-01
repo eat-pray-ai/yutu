@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short   = "List YouTube video abuse report reasons"
-	long    = "List YouTube video abuse report reasons"
+	short   = "Manage YouTube video abuse report reasons"
+	long    = "Manage YouTube video abuse report reasons. Use this tool to list available abuse report reasons."
 	hlUsage = "Host language"
 )
 

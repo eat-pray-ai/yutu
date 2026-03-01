@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short      = "List YouTube i18n regions"
-	long       = "List YouTube i18n regions' id, hl, and name"
+	short      = "Manage YouTube i18n regions"
+	long       = "Manage YouTube i18n regions. Use this tool to list available internationalization regions."
 	hlUsage    = "Host language"
 	regionURI  = "i18n://region/{hl}"
 	regionName = "i18nRegions"

@@ -12,7 +12,7 @@ import (
 
 const (
 	verShort = "Show the version of yutu"
-	verLong  = "Show the version of yutu"
+	verLong  = "Show the version of yutu."
 	repo     = "Github/eat-pray-ai/yutu"
 	repoUrl  = "https://github.com/eat-pray-ai/yutu"
 )

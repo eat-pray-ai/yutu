@@ -18,8 +18,13 @@ import (
 
 const (
 	setTool  = "watermark-set"
-	setShort = "Set watermark for channel's video"
-	setLong  = "Set watermark for channel's video by channel id\n\nExamples:\n  yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png\n  yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000\n  yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000"
+	setShort = "Set a watermark for channel's videos"
+	setLong  = `Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
+
+Examples:
+  yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+  yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
+  yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
 )
 
 var setInSchema = &jsonschema.Schema{
@@ -45,11 +50,8 @@ var setInSchema = &jsonschema.Schema{
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
-			Name:        setTool,
-			Title:       setShort,
-			Description: setLong,
-			InputSchema: setInSchema,
-			Annotations: &mcp.ToolAnnotations{
+			Name: setTool, Title: setShort, Description: setLong,
+			InputSchema: setInSchema, Annotations: &mcp.ToolAnnotations{
 				DestructiveHint: new(false),
 				IdempotentHint:  true,
 				OpenWorldHint:   new(true),

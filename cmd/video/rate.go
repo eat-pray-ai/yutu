@@ -17,10 +17,15 @@ import (
 
 const (
 	rateTool     = "video-rate"
-	rateShort    = "Rate a video on YouTube"
-	rateLong     = "Rate a video on YouTube, with the specified rating\n\nExamples:\n  yutu video rate --ids dQw4w9WgXcQ --rating like\n  yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike\n  yutu video rate --ids dQw4w9WgXcQ --rating none"
 	rateIdsUsage = "IDs of the videos to rate"
 	rateRUsage   = "like|dislike|none"
+	rateShort    = "Rate a video"
+	rateLong     = `Rate a video. Use this tool when you need to rate a video.
+
+Examples:
+  yutu video rate --ids dQw4w9WgXcQ --rating like
+  yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
+  yutu video rate --ids dQw4w9WgXcQ --rating none`
 )
 
 var rateInSchema = &jsonschema.Schema{

@@ -17,9 +17,13 @@ import (
 
 const (
 	deleteTool     = "subscription-delete"
-	deleteShort    = "Delete a YouTube subscriptions"
-	deleteLong     = "Delete a YouTube subscriptions by ids\n\nExamples:\n  yutu subscription delete --ids abc123\n  yutu subscription delete --ids abc123,def456"
 	deleteIdsUsage = "IDs of the subscriptions to delete"
+	deleteShort    = "Delete subscriptions"
+	deleteLong     = `Delete subscriptions. Use this tool when you need to delete subscriptions by IDs.
+
+Examples:
+  yutu subscription delete --ids abc123
+  yutu subscription delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

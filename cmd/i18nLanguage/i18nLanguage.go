@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short    = "List YouTube i18n languages"
-	long     = "List YouTube i18n languages' id, hl, and name"
+	short    = "Manage YouTube i18n languages"
+	long     = "Manage YouTube i18n languages. Use this tool to list available internationalization languages."
 	hlUsage  = "Host language"
 	hlURI    = "i18n://hl"
 	hlName   = "i18nHostLanguages"
