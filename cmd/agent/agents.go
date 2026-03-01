@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"slices"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -120,6 +121,10 @@ var agentDefs = map[string]agentDef{
 	},
 }
 
+var confirmationToolNames = append(
+	agentDefs["Knorretje"].toolNames, agentDefs["Daan"].toolNames...,
+)
+
 func init() {
 	for _, def := range agentDefs {
 		if v, ok := os.LookupEnv(def.envKey); ok && v != "" {
@@ -128,31 +133,8 @@ func init() {
 	}
 }
 
-func requireConfirmation(
-	ctx tool.Context, t tool.Tool, args map[string]any,
-) (map[string]any, error) {
-	if t.Name() == agentDefs["Aagje"].name {
-		return nil, nil
-	}
-
-	confirmation := ctx.ToolConfirmation()
-	if confirmation == nil {
-		hint := fmt.Sprintf(
-			"The agent wants to call tool %q with args %v. Do you approve?",
-			t.Name(), args,
-		)
-		if err := ctx.RequestConfirmation(hint, nil); err != nil {
-			return nil, fmt.Errorf("failed to request confirmation: %w", err)
-		}
-		return nil, nil
-	}
-
-	if !confirmation.Confirmed {
-		return map[string]any{
-			"error": fmt.Sprintf("tool %q was denied by the user", t.Name()),
-		}, nil
-	}
-	return nil, nil
+func requireConfirmation(name string, _ any) bool {
+	return slices.Contains(confirmationToolNames, name)
 }
 
 func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
@@ -188,9 +170,6 @@ func buildOrchestrator(m model.LLM, mcpToolSet tool.Toolset) (
 				Tools:       []tool.Tool{retrievalTool},
 				Toolsets: []tool.Toolset{
 					tool.FilterToolset(mcpToolSet, tool.StringPredicate(def.toolNames)),
-				},
-				BeforeToolCallbacks: []llmagent.BeforeToolCallback{
-					requireConfirmation,
 				},
 			},
 		)

@@ -71,7 +71,8 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 
 	mcpToolSet, err := mcptoolset.New(
 		mcptoolset.Config{
-			Transport: clientTransport,
+			Transport:                   clientTransport,
+			RequireConfirmationProvider: requireConfirmation,
 		},
 	)
 	if err != nil {
