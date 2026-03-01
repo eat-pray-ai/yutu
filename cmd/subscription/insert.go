@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
@@ -49,7 +50,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			insertTool, func(input subscription.Subscription, writer io.Writer) error {
 				return input.Insert(writer)
 			},

@@ -3,6 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.26.0
 
 require (
+	github.com/eat-pray-ai/cobra-mcp v0.0.0-20260228180651-db063eaf3fe9
 	github.com/google/jsonschema-go v0.4.2
 	github.com/savioxavier/termlink v1.4.3
 	github.com/spf13/cobra v1.10.2
@@ -68,7 +69,7 @@ require (
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/modelcontextprotocol/go-sdk v1.3.1
+	github.com/modelcontextprotocol/go-sdk v1.4.0
 	github.com/ohler55/ojg v1.28.0
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect

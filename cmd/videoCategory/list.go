@@ -6,6 +6,7 @@ package videoCategory
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
@@ -55,8 +56,8 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var categoriesHandler = cmd.GenResourceHandler(
-	vcName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+var categoriesHandler = cobramcp.GenResourceHandler(
+	vcName, pkg.JsonMIME, func(req *mcp.ReadResourceRequest, w io.Writer) error {
 		hl := utils.ExtractHl(req.Params.URI)
 		vc := videoCategory.NewVideoCategory(
 			videoCategory.WithHl(hl),

@@ -6,6 +6,7 @@ package watermark
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
@@ -38,7 +39,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			unsetTool, func(input watermark.Watermark, writer io.Writer) error {
 				return input.Unset(writer)
 			},

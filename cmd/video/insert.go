@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
@@ -55,8 +56,14 @@ var insertInSchema = &jsonschema.Schema{
 		"notify_subscribers":    {Type: "boolean", Description: nsUsage},
 		"public_stats_viewable": {Type: "boolean", Description: psvUsage},
 
-		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
-		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
+		"on_behalf_of_content_owner": {
+			Type:        "string",
+			Description: pkg.OBOCOUsage,
+		},
+		"on_behalf_of_content_owner_channel": {
+			Type:        "string",
+			Description: pkg.OBOCOCUsage,
+		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -75,7 +82,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			insertTool, func(input video.Video, writer io.Writer) error {
 				return input.Insert(writer)
 			},
@@ -113,7 +120,8 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
+		pkg.OBOCOCUsage,
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)

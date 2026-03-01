@@ -6,6 +6,7 @@ package video
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
@@ -47,7 +48,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			rateTool, func(input video.Video, writer io.Writer) error {
 				return input.Rate(writer)
 			},

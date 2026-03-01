@@ -6,6 +6,7 @@ package subscription
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/subscription"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
@@ -42,7 +43,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			deleteTool, func(input subscription.Subscription, writer io.Writer) error {
 				return input.Delete(writer)
 			},

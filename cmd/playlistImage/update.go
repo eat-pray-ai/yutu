@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/playlistImage"
@@ -36,8 +37,14 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "number", Description: widthUsage,
 			Minimum: new(float64(0)),
 		},
-		"on_behalf_of_content_owner":         {Type: "string", Description: pkg.OBOCOUsage},
-		"on_behalf_of_content_owner_channel": {Type: "string", Description: pkg.OBOCOCUsage},
+		"on_behalf_of_content_owner": {
+			Type:        "string",
+			Description: pkg.OBOCOUsage,
+		},
+		"on_behalf_of_content_owner_channel": {
+			Type:        "string",
+			Description: pkg.OBOCOCUsage,
+		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -56,7 +63,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			updateTool,
 			func(input playlistImage.PlaylistImage, writer io.Writer) error {
 				return input.Update(writer)
@@ -75,7 +82,8 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "", pkg.OBOCOCUsage,
+		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
+		pkg.OBOCOCUsage,
 	)
 
 	_ = updateCmd.MarkFlagRequired("playlistId")

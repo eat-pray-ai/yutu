@@ -6,6 +6,7 @@ package i18nRegion
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/i18nRegion"
@@ -50,8 +51,9 @@ var listCmd = &cobra.Command{
 	},
 }
 
-var regionsHandler = cmd.GenResourceHandler(
-	regionName, func(req *mcp.ReadResourceRequest, w io.Writer) error {
+var regionsHandler = cobramcp.GenResourceHandler(
+	regionName, pkg.JsonMIME,
+	func(req *mcp.ReadResourceRequest, w io.Writer) error {
 		hl := utils.ExtractHl(req.Params.URI)
 		input := i18nRegion.NewI18nRegion(
 			i18nRegion.WithHl(hl),

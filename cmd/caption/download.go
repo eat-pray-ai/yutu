@@ -6,6 +6,7 @@ package caption
 import (
 	"io"
 
+	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/caption"
@@ -51,7 +52,7 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cmd.GenToolHandler(
+		}, cobramcp.GenToolHandler(
 			downloadTool, func(input caption.Caption, writer io.Writer) error {
 				return input.Download(writer)
 			},
@@ -65,7 +66,9 @@ func init() {
 	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
 	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)
-	downloadCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	downloadCmd.Flags().StringVarP(
+		&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage,
+	)
 	downloadCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)

@@ -13,6 +13,7 @@ go_library(
         "//pkg",
         "//pkg/activity",
         "//pkg/utils",
+        "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
         "@com_github_google_jsonschema_go//jsonschema",
         "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_spf13_cobra//:cobra",
