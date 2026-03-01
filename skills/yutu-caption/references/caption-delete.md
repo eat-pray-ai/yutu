@@ -1,6 +1,6 @@
 # Caption Delete Command
 
-Delete captions of a video by ids.
+Delete captions. Use this tool when you need to delete captions of a video by IDs.
 
 ## Usage
 
@@ -19,6 +19,6 @@ yutu caption delete [flags]
 ## Examples
 
 ```bash
-# Delete a caption
-yutu caption delete --ids CAPTION_ID
+yutu caption delete --ids abc123
+yutu caption delete --ids abc123,def456
 ```

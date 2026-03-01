@@ -1,6 +1,6 @@
 # I18nLanguage List Command
 
-List YouTube i18n languages' id, hl, and name.
+List i18n languages. Use this tool when you need to list available internationalization languages.
 
 ## Usage
 
@@ -16,13 +16,3 @@ yutu i18nLanguage list [flags]
 | `--jsonpath` | `-j` | JSONPath expression to filter the output |
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
-
-## Examples
-
-```bash
-# List supported languages
-yutu i18nLanguage list
-
-# List languages in a specific host language
-yutu i18nLanguage list --hl es
-```

@@ -1,6 +1,6 @@
 # PlaylistImage Update Command
 
-Update a playlist image for a given playlist id.
+Update a playlist image. Use this tool when you need to update a playlist image.
 
 ## Usage
 
@@ -20,3 +20,9 @@ yutu playlistImage update [flags]
 | `--playlistId` | `-p` | ID of the playlist this image is associated with |
 | `--type` | `-t` | The image type (e.g., 'hero') |
 | `--width` | `-W` | The image width |
+
+## Examples
+
+```bash
+yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152
+```

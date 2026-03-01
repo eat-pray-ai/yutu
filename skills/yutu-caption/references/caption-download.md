@@ -1,6 +1,6 @@
 # Caption Download Command
 
-Download caption from a video.
+Download a caption. Use this tool when you need to download a caption from a video.
 
 ## Usage
 
@@ -22,6 +22,7 @@ yutu caption download [flags]
 ## Examples
 
 ```bash
-# Download caption in srt format
-yutu caption download --id CAPTION_ID --tfmt srt --file caption.srt
+yutu caption download --id abc123 --file subtitle.srt
+yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
+yutu caption download --id abc123 --file subtitle.srt --tlang fr
 ```

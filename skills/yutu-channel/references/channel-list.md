@@ -1,6 +1,6 @@
 # Channel List Command
 
-List channel's info, such as title, description, etc.
+List channel information. Use this tool when you need to list channel information.
 
 ## Usage
 
@@ -29,12 +29,8 @@ yutu channel list [flags]
 ## Examples
 
 ```bash
-# List my channel
 yutu channel list --mine
-
-# List channel by ID
-yutu channel list --ids UCxxxxxxxx
-
-# List channel by handle
-yutu channel list --forHandle @handle
+yutu channel list --forHandle @GoogleDevelopers
+yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+yutu channel list --maxResults 10 --output table
 ```

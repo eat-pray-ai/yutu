@@ -1,37 +1,29 @@
 ---
 name: yutu-channelSection
-description: Manage YouTube channel sections using the yutu CLI. Use this skill to list or delete channel sections.
+description: Manage YouTube channel sections. Use this skill when you need to list or delete channel sections.
 ---
 
-# Yutu Channel Section
+# Yutu ChannelSection
 
 ## Overview
 
-This skill allows you to manage YouTube channel sections using the `yutu` CLI tool. You can list existing channel sections and delete them.
+This skill allows you to manage YouTube channel sections using the `yutu` CLI tool.
 
-## Channel Section Operations
+## ChannelSection Operations
 
-### List Channel Sections
+### Delete channel sections
 
-Retrieve information about channel sections.
-
-**Reference:** [references/channelSection-list.md](references/channelSection-list.md)
-
-**Common Tasks:**
-
-- List my channel sections: `yutu channelSection list --mine`
-
-### Delete Channel Sections
-
-Remove a channel section.
+Delete channel sections. Use this tool when you need to delete channel sections by IDs.
 
 **Reference:** [references/channelSection-delete.md](references/channelSection-delete.md)
 
-**Common Tasks:**
+### List channel sections
 
-- Delete channel section: `yutu channelSection delete --ids SECTION_ID`
+List channel sections. Use this tool when you need to list channel sections.
+
+**Reference:** [references/channelSection-list.md](references/channelSection-list.md)
 
 ## Resources
 
-- [references/channelSection-list.md](references/channelSection-list.md): List channel sections.
-- [references/channelSection-delete.md](references/channelSection-delete.md): Delete channel sections.
+- [references/channelSection-delete.md](references/channelSection-delete.md): Detailed usage of `Delete channel sections`
+- [references/channelSection-list.md](references/channelSection-list.md): Detailed usage of `List channel sections`

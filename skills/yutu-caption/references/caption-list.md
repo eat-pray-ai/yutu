@@ -1,6 +1,6 @@
 # Caption List Command
 
-List captions of a video.
+List captions. Use this tool when you need to list captions of a video.
 
 ## Usage
 
@@ -23,6 +23,7 @@ yutu caption list [flags]
 ## Examples
 
 ```bash
-# List captions for a video
-yutu caption list --videoId VIDEO_ID
+yutu caption list --videoId dQw4w9WgXcQ
+yutu caption list --videoId dQw4w9WgXcQ --output json
+yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ
 ```

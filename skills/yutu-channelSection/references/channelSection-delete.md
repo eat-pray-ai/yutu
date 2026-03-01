@@ -1,6 +1,6 @@
 # ChannelSection Delete Command
 
-Delete channel sections by ids.
+Delete channel sections. Use this tool when you need to delete channel sections by IDs.
 
 ## Usage
 
@@ -18,6 +18,6 @@ yutu channelSection delete [flags]
 ## Examples
 
 ```bash
-# Delete a channel section
-yutu channelSection delete --ids SECTION_ID
+yutu channelSection delete --ids abc123
+yutu channelSection delete --ids abc123,def456
 ```

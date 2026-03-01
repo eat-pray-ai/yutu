@@ -1,6 +1,6 @@
 # MembershipsLevel List Command
 
-List memberships levels' info, such as id, displayName, etc.
+List memberships levels. Use this tool when you need to list information about channel membership levels.
 
 ## Usage
 
@@ -19,6 +19,5 @@ yutu membershipsLevel list [flags]
 ## Examples
 
 ```bash
-# List membership levels
-yutu membershipsLevel list
+yutu membershipsLevel list --output json
 ```

@@ -1,6 +1,6 @@
 # CommentThread Insert Command
 
-Insert a new comment thread.
+Insert a new comment thread. Use this tool when you need to insert a new comment thread.
 
 ## Usage
 
@@ -22,6 +22,6 @@ yutu commentThread insert [flags]
 ## Examples
 
 ```bash
-# Insert a new comment thread on a video
-yutu commentThread insert --videoId VIDEO_ID --textOriginal "Nice video!"
+yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'
+yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Nice work!' --output json
 ```

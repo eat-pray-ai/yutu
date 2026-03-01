@@ -1,6 +1,6 @@
 # Video List Command
 
-List video's info.
+List video information. Use this tool when you need to list video information.
 
 ## Usage
 
@@ -30,9 +30,8 @@ yutu video list [flags]
 ## Examples
 
 ```bash
-# List my videos
-yutu video list --myRating like
-
-# List most popular videos
-yutu video list --chart mostPopular
+yutu video list --ids dQw4w9WgXcQ
+yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+yutu video list --chart mostPopular --regionCode US --maxResults 10
+yutu video list --myRating like --output yaml
 ```

@@ -1,6 +1,6 @@
 # PlaylistItem Delete Command
 
-Delete items from a playlist by ids.
+Delete items from a playlist. Use this tool when you need to delete items from a playlist by IDs.
 
 ## Usage
 
@@ -18,6 +18,6 @@ yutu playlistItem delete [flags]
 ## Examples
 
 ```bash
-# Remove an item from a playlist
-yutu playlistItem delete --ids ITEM_ID
+yutu playlistItem delete --ids abc123
+yutu playlistItem delete --ids abc123,def456
 ```

@@ -1,6 +1,6 @@
 # PlaylistItem List Command
 
-List playlist items' info.
+List playlist items. Use this tool when you need to list playlist items.
 
 ## Usage
 
@@ -24,9 +24,7 @@ yutu playlistItem list [flags]
 ## Examples
 
 ```bash
-# List items in a playlist
-yutu playlistItem list --playlistId PLAYLIST_ID
-
-# Find playlist item for a video
-yutu playlistItem list --videoId VIDEO_ID
+yutu playlistItem list --playlistId PLxxx
+yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json
+yutu playlistItem list --ids abc123,def456
 ```

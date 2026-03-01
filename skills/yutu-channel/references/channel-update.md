@@ -1,6 +1,6 @@
 # Channel Update Command
 
-Update channel's info, such as title, description, etc
+Update channel information. Use this tool when you need to update channel information.
 
 ## Usage
 
@@ -24,9 +24,7 @@ yutu channel update [flags]
 ## Examples
 
 ```bash
-# Update channel title
-yutu channel update --id UCxxxxxx --title "New Title"
-
-# Update channel description
-yutu channel update --id UCxxxxxx --description "New Description"
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en
 ```

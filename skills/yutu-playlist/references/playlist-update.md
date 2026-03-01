@@ -1,6 +1,6 @@
 # Playlist Update Command
 
-Update an existing playlist.
+Update a playlist. Use this tool when you need to update a playlist.
 
 ## Usage
 
@@ -24,6 +24,7 @@ yutu playlist update [flags]
 ## Examples
 
 ```bash
-# Update playlist title
-yutu playlist update --id PLAYLIST_ID --title "New Title"
+yutu playlist update --id PLxxx --title 'Updated Title'
+yutu playlist update --id PLxxx --description 'New description' --privacy public
+yutu playlist update --id PLxxx --tags 'music,pop,2024'
 ```

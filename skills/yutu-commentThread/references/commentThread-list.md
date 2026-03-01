@@ -1,6 +1,6 @@
 # CommentThread List Command
 
-List YouTube comment threads.
+List comment threads. Use this tool when you need to list comment threads.
 
 ## Usage
 
@@ -28,6 +28,7 @@ yutu commentThread list [flags]
 ## Examples
 
 ```bash
-# List comment threads for a video
-yutu commentThread list --videoId VIDEO_ID
+yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
+yutu commentThread list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --searchTerms 'hello'
+yutu commentThread list --ids abc123,def456 --output json
 ```

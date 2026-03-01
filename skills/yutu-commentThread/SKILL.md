@@ -1,37 +1,29 @@
 ---
 name: yutu-commentThread
-description: Manage YouTube comment threads using the yutu CLI. Use this skill to list or insert new top-level comment threads.
+description: Manage YouTube comment threads. Use this skill when you need to list or insert new top-level comment threads.
 ---
 
-# Yutu Comment Thread
+# Yutu CommentThread
 
 ## Overview
 
-This skill allows you to manage YouTube comment threads using the `yutu` CLI tool. Comment threads are top-level comments and their replies.
+This skill allows you to manage YouTube comment threads using the `yutu` CLI tool.
 
-## Comment Thread Operations
+## CommentThread Operations
 
-### List Comment Threads
+### Insert a new comment thread
 
-Retrieve a list of comment threads for a video or channel.
-
-**Reference:** [references/commentThread-list.md](references/commentThread-list.md)
-
-**Common Tasks:**
-
-- List threads for video: `yutu commentThread list --videoId VIDEO_ID`
-
-### Insert Comment Thread
-
-Create a new top-level comment thread on a video or channel.
+Insert a new comment thread. Use this tool when you need to insert a new comment thread.
 
 **Reference:** [references/commentThread-insert.md](references/commentThread-insert.md)
 
-**Common Tasks:**
+### List comment threads
 
-- New comment thread: `yutu commentThread insert --videoId VIDEO_ID --textOriginal "This is a new thread"`
+List comment threads. Use this tool when you need to list comment threads.
+
+**Reference:** [references/commentThread-list.md](references/commentThread-list.md)
 
 ## Resources
 
-- [references/commentThread-list.md](references/commentThread-list.md): List comment threads.
-- [references/commentThread-insert.md](references/commentThread-insert.md): Insert comment threads.
+- [references/commentThread-insert.md](references/commentThread-insert.md): Detailed usage of `Insert a new comment thread`
+- [references/commentThread-list.md](references/commentThread-list.md): Detailed usage of `List comment threads`

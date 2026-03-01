@@ -1,6 +1,6 @@
 # PlaylistItem Update Command
 
-Update a playlist item's info.
+Update a playlist item. Use this tool when you need to update a playlist item.
 
 ## Usage
 
@@ -23,6 +23,7 @@ yutu playlistItem update [flags]
 ## Examples
 
 ```bash
-# Update item note (description)
-yutu playlistItem update --id ITEM_ID --description "My note"
+yutu playlistItem update --id abc123 --title 'Updated Title'
+yutu playlistItem update --id abc123 --description 'New description' --privacy public
+yutu playlistItem update --id abc123 --privacy private --output json
 ```

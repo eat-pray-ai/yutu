@@ -1,6 +1,6 @@
 # Comment List Command
 
-List YouTube comments.
+List comments. Use this tool when you need to list comments by IDs.
 
 ## Usage
 
@@ -23,6 +23,7 @@ yutu comment list [flags]
 ## Examples
 
 ```bash
-# List replies to a comment
-yutu comment list --parentId PARENT_COMMENT_ID
+yutu comment list --parentId UgyXXXXXXXX --maxResults 10
+yutu comment list --ids abc123,def456 --output json
+yutu comment list --ids abc123 --textFormat plainText
 ```

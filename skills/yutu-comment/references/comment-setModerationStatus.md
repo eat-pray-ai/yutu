@@ -1,6 +1,6 @@
 # Comment SetModerationStatus Command
 
-Set YouTube comments moderation status by ids.
+Set comment moderation status. Use this tool when you need to set comment moderation status.
 
 ## Usage
 
@@ -21,6 +21,7 @@ yutu comment setModerationStatus [flags]
 ## Examples
 
 ```bash
-# Publish a comment held for review
-yutu comment setModerationStatus --ids COMMENT_ID --moderationStatus published
+yutu comment setModerationStatus --ids abc123 --moderationStatus published
+yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview
+yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor
 ```

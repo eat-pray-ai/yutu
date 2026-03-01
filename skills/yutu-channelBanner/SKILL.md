@@ -1,26 +1,22 @@
 ---
 name: yutu-channelBanner
-description: Manage YouTube channel banners using the yutu CLI. Use this skill to insert/upload channel banners.
+description: Manage YouTube channel banners. Use this skill when you need to insert or upload channel banners.
 ---
 
-# Yutu Channel Banner
+# Yutu ChannelBanner
 
 ## Overview
 
-This skill allows you to manage YouTube channel banners using the `yutu` CLI tool. You can upload and insert new banners for channels.
+This skill allows you to manage YouTube channel banners using the `yutu` CLI tool.
 
-## Banner Operations
+## ChannelBanner Operations
 
-### Insert/Upload Banner
+### Insert a YouTube channel banner
 
-Upload and set a new banner image for a channel.
+Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner.
 
 **Reference:** [references/channelBanner-insert.md](references/channelBanner-insert.md)
 
-**Common Tasks:**
-
-- Upload banner: `yutu channelBanner insert --file banner.png`
-
 ## Resources
 
-- [references/channelBanner-insert.md](references/channelBanner-insert.md): Detailed flags and usage for inserting banners.
+- [references/channelBanner-insert.md](references/channelBanner-insert.md): Detailed usage of `Insert a YouTube channel banner`

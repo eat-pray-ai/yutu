@@ -1,6 +1,6 @@
 # Caption Update Command
 
-Update caption of a video.
+Update a video caption. Use this tool when you need to update a video caption.
 
 ## Usage
 
@@ -27,3 +27,11 @@ yutu caption update [flags]
 | `--output` | `-o` | json\|yaml\|silent |
 | `--trackKind` | `-t` | standard\|ASR\|forced (default "standard") |
 | `--videoId` | `-v` | ID of the video |
+
+## Examples
+
+```bash
+yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
+yutu caption update --videoId dQw4w9WgXcQ --language en --name English
+yutu caption update --videoId dQw4w9WgXcQ --file updated.srt
+```

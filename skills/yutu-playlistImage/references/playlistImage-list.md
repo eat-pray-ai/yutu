@@ -1,6 +1,6 @@
 # PlaylistImage List Command
 
-List YouTube playlist images.
+List playlist images. Use this tool when you need to list playlist images.
 
 ## Usage
 
@@ -23,6 +23,6 @@ yutu playlistImage list [flags]
 ## Examples
 
 ```bash
-# List images for a playlist
-yutu playlistImage list --parent PLAYLIST_ID
+yutu playlistImage list --parent PLxxx
+yutu playlistImage list --parent PLxxx --maxResults 10 --output json
 ```

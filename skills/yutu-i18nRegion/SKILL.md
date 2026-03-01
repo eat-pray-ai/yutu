@@ -1,27 +1,22 @@
 ---
 name: yutu-i18nRegion
-description: Manage YouTube i18n regions using the yutu CLI. Use this skill to list available internationalization regions.
+description: Manage YouTube i18n regions. Use this skill when you need to list available internationalization regions.
 ---
 
 # Yutu I18nRegion
 
 ## Overview
 
-This skill allows you to manage YouTube i18n regions using the `yutu` CLI tool. You can retrieve a list of supported regions.
+This skill allows you to manage YouTube i18n regions using the `yutu` CLI tool.
 
 ## I18nRegion Operations
 
-### List Regions
+### List i18n regions
 
-Retrieve a list of supported i18n regions.
+List i18n regions. Use this tool when you need to list available internationalization regions.
 
 **Reference:** [references/i18nRegion-list.md](references/i18nRegion-list.md)
 
-**Common Tasks:**
-
-- List regions: `yutu i18nRegion list`
-- List regions for locale: `yutu i18nRegion list --hl en_US`
-
 ## Resources
 
-- [references/i18nRegion-list.md](references/i18nRegion-list.md): Detailed flags and usage for listing i18n regions.
+- [references/i18nRegion-list.md](references/i18nRegion-list.md): Detailed usage of `List i18n regions`

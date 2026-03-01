@@ -1,49 +1,36 @@
 ---
 name: yutu-subscription
-description: Manage YouTube subscriptions using the yutu CLI. Use this skill to list subscriptions/subscribers, subscribe to channels, or unsubscribe.
+description: Manage YouTube subscriptions. Use this skill when you need to list subscriptions/subscribers, subscribe to channels, or unsubscribe.
 ---
 
 # Yutu Subscription
 
 ## Overview
 
-This skill allows you to manage YouTube subscriptions using the `yutu` CLI tool. You can list your subscriptions, see who subscribed to you, subscribe to new channels, and unsubscribe.
+This skill allows you to manage YouTube subscriptions using the `yutu` CLI tool.
 
 ## Subscription Operations
 
-### List Subscriptions
+### Delete subscriptions
 
-Retrieve information about subscriptions.
-
-**Reference:** [references/subscription-list.md](references/subscription-list.md)
-
-**Common Tasks:**
-
-- List my subscriptions: `yutu subscription list --mine`
-- List my subscribers: `yutu subscription list --mySubscribers`
-
-### Insert/Subscribe
-
-Subscribe to a channel.
-
-**Reference:** [references/subscription-insert.md](references/subscription-insert.md)
-
-**Common Tasks:**
-
-- Subscribe: `yutu subscription insert --channelId CHANNEL_ID`
-
-### Delete/Unsubscribe
-
-Remove a subscription.
+Delete subscriptions. Use this tool when you need to delete subscriptions by IDs.
 
 **Reference:** [references/subscription-delete.md](references/subscription-delete.md)
 
-**Common Tasks:**
+### Insert a YouTube subscription
 
-- Unsubscribe: `yutu subscription delete --ids SUBSCRIPTION_ID`
+Insert a YouTube subscription. Use this tool when you need to insert a YouTube subscription.
+
+**Reference:** [references/subscription-insert.md](references/subscription-insert.md)
+
+### List subscription information
+
+List subscription information. Use this tool when you need to list subscription information.
+
+**Reference:** [references/subscription-list.md](references/subscription-list.md)
 
 ## Resources
 
-- [references/subscription-list.md](references/subscription-list.md): List subscriptions.
-- [references/subscription-insert.md](references/subscription-insert.md): Insert subscriptions.
-- [references/subscription-delete.md](references/subscription-delete.md): Delete subscriptions.
+- [references/subscription-delete.md](references/subscription-delete.md): Detailed usage of `Delete subscriptions`
+- [references/subscription-insert.md](references/subscription-insert.md): Detailed usage of `Insert a YouTube subscription`
+- [references/subscription-list.md](references/subscription-list.md): Detailed usage of `List subscription information`

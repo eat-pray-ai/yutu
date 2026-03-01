@@ -1,6 +1,6 @@
 # Watermark Set Command
 
-Set watermark for channel's video by channel id.
+Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
 
 ## Usage
 
@@ -23,6 +23,7 @@ yutu watermark set [flags]
 ## Examples
 
 ```bash
-# Set watermark for my channel
-yutu watermark set --file watermark.png --inVideoPosition bottomRight
+yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
+yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000
 ```

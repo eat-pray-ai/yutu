@@ -1,6 +1,6 @@
 # VideoCategory List Command
 
-List YouTube video categories' info, such as id, title, assignable, etc.
+List video categories. Use this tool when you need to list available video categories.
 
 ## Usage
 
@@ -18,13 +18,3 @@ yutu videoCategory list [flags]
 | `--output` | `-o` | json\|yaml\|table (default "table") |
 | `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
 | `--regionCode` | `-r` | Region code (default "US") |
-
-## Examples
-
-```bash
-# List video categories for US
-yutu videoCategory list --regionCode US
-
-# List categories for a specific language
-yutu videoCategory list --hl es
-```

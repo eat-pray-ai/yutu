@@ -1,6 +1,6 @@
 # Member List Command
 
-List channel's members' info, such as channelId, displayName, etc.
+List channel members. Use this tool when you need to list information about channel members.
 
 ## Usage
 
@@ -23,9 +23,6 @@ yutu member list [flags]
 ## Examples
 
 ```bash
-# List all current members
-yutu member list
-
-# List members with access to a specific level
-yutu member list --hasAccessToLevel LEVEL_ID
+yutu member list --mode all_current
+yutu member list --maxResults 10
 ```

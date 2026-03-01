@@ -1,27 +1,22 @@
 ---
 name: yutu-activity
-description: Manage YouTube activities using the yutu CLI. Use this skill when you need to list channel activities such as uploads, likes, and favorites.
+description: Manage YouTube activities. Use this skill when you need to list channel activities.
 ---
 
 # Yutu Activity
 
 ## Overview
 
-This skill allows you to manage YouTube activities using the `yutu` CLI tool. You can retrieve a list of activities associated with a channel.
+This skill allows you to manage YouTube activities using the `yutu` CLI tool.
 
 ## Activity Operations
 
-### List Activities
+### List activities
 
-Retrieve a list of activities (uploads, likes, favorites, etc.) for a channel or your own channel.
+List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
 
 **Reference:** [references/activity-list.md](references/activity-list.md)
 
-**Common Tasks:**
-
-- List my activities: `yutu activity list --mine`
-- List channel activities: `yutu activity list --channelId CHANNEL_ID`
-
 ## Resources
 
-- [references/activity-list.md](references/activity-list.md): Detailed flags and usage for listing activities.
+- [references/activity-list.md](references/activity-list.md): Detailed usage of `List activities`

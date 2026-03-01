@@ -1,6 +1,6 @@
 # Comment MarkAsSpam Command
 
-Mark YouTube comments as spam by ids.
+Mark comments as spam. Use this tool when you need to mark comments as spam.
 
 ## Usage
 
@@ -19,6 +19,6 @@ yutu comment markAsSpam [flags]
 ## Examples
 
 ```bash
-# Mark comment as spam
-yutu comment markAsSpam --ids COMMENT_ID
+yutu comment markAsSpam --ids abc123
+yutu comment markAsSpam --ids abc123,def456
 ```

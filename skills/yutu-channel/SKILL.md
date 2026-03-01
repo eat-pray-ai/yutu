@@ -1,40 +1,29 @@
 ---
 name: yutu-channel
-description: Manage YouTube channels using the yutu CLI. Use this skill when you need to list channel information (search by handle, username, id, or mine) or update channel details (title, description, country, etc.).
+description: Manage YouTube channels. Use this skill when you need to list or update channels.
 ---
 
 # Yutu Channel
 
 ## Overview
 
-This skill allows you to manage YouTube channels using the `yutu` CLI tool. You can retrieve detailed information about channels and update channel metadata.
+This skill allows you to manage YouTube channels using the `yutu` CLI tool.
 
 ## Channel Operations
 
-### List Channels
+### List channel information
 
-Retrieve information about channels. You can find channels by ID, handle, username, or list your own channels.
+List channel information. Use this tool when you need to list channel information.
 
 **Reference:** [references/channel-list.md](references/channel-list.md)
 
-**Common Tasks:**
+### Update channel information
 
-- List my channel: `yutu channel list --mine`
-- Find channel by handle: `yutu channel list --forHandle @username`
-- Find channel by ID: `yutu channel list --ids CHANNEL_ID`
-
-### Update Channels
-
-Update channel metadata such as title, description, and default language.
+Update channel information. Use this tool when you need to update channel information.
 
 **Reference:** [references/channel-update.md](references/channel-update.md)
 
-**Common Tasks:**
-
-- Update title: `yutu channel update --id CHANNEL_ID --title "New Title"`
-- Update description: `yutu channel update --id CHANNEL_ID --description "New Description"`
-
 ## Resources
 
-- [references/channel-list.md](references/channel-list.md): Detailed flags and usage for listing channels.
-- [references/channel-update.md](references/channel-update.md): Detailed flags and usage for updating channels.
+- [references/channel-list.md](references/channel-list.md): Detailed usage of `List channel information`
+- [references/channel-update.md](references/channel-update.md): Detailed usage of `Update channel information`

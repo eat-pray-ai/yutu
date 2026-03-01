@@ -1,28 +1,22 @@
 ---
 name: yutu-search
-description: Manage YouTube search using the yutu CLI. Use this skill to search for videos, channels, playlists, and other resources.
+description: Manage YouTube search. Use this skill when you need to search for videos, channels, playlists, and other resources.
 ---
 
 # Yutu Search
 
 ## Overview
 
-This skill allows you to search for YouTube resources using the `yutu` CLI tool. You can search for videos, channels, playlists, and more using various filters.
+This skill allows you to manage YouTube searches using the `yutu` CLI tool.
 
 ## Search Operations
 
-### List Search Results
+### Search resources
 
-Search for resources matching specific criteria.
+Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources.
 
 **Reference:** [references/search-list.md](references/search-list.md)
 
-**Common Tasks:**
-
-- Search videos: `yutu search list --q "query" --types video`
-- Search channels: `yutu search list --q "query" --types channel`
-- Search my content: `yutu search list --forMine`
-
 ## Resources
 
-- [references/search-list.md](references/search-list.md): Detailed flags and usage for search operations.
+- [references/search-list.md](references/search-list.md): Detailed usage of `Search resources`

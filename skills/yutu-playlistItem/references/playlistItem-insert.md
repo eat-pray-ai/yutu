@@ -1,6 +1,6 @@
 # PlaylistItem Insert Command
 
-Insert a playlist item into a playlist.
+Insert a playlist item into a playlist. Use this tool when you need to insert a playlist item into a playlist.
 
 ## Usage
 
@@ -28,6 +28,6 @@ yutu playlistItem insert [flags]
 ## Examples
 
 ```bash
-# Add a video to a playlist
-yutu playlistItem insert --playlistId PLAYLIST_ID --kind video --kVideoId VIDEO_ID
+yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public
 ```

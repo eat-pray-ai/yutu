@@ -1,6 +1,6 @@
 # Caption Insert Command
 
-Insert caption to a video.
+Insert a caption. Use this tool when you need to insert a caption to a video.
 
 ## Usage
 
@@ -31,6 +31,7 @@ yutu caption insert [flags]
 ## Examples
 
 ```bash
-# Upload a caption file
-yutu caption insert --videoId VIDEO_ID --language en --name "English" --file captions.srt
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false
 ```

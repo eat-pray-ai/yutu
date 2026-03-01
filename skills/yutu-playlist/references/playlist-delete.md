@@ -1,6 +1,6 @@
 # Playlist Delete Command
 
-Delete a playlists by ids.
+Delete playlists. Use this tool when you need to delete playlists by IDs.
 
 ## Usage
 
@@ -18,6 +18,6 @@ yutu playlist delete [flags]
 ## Examples
 
 ```bash
-# Delete a playlist
-yutu playlist delete --ids PLAYLIST_ID
+yutu playlist delete --ids PLxxxx
+yutu playlist delete --ids PLxxx1,PLxxx2
 ```

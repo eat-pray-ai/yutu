@@ -1,6 +1,6 @@
 # ChannelSection List Command
 
-List channel sections.
+List channel sections. Use this tool when you need to list channel sections.
 
 ## Usage
 
@@ -24,9 +24,7 @@ yutu channelSection list [flags]
 ## Examples
 
 ```bash
-# List my channel sections
 yutu channelSection list --mine
-
-# List channel sections by ID
-yutu channelSection list --ids SECTION_ID
+yutu channelSection list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+yutu channelSection list --ids abc123,def456 --output json
 ```

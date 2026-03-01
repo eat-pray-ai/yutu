@@ -1,6 +1,6 @@
 # SuperChatEvent List Command
 
-List Super Chat events for a channel.
+List Super Chat events. Use this tool when you need to list Super Chat events.
 
 ## Usage
 
@@ -21,6 +21,5 @@ yutu superChatEvent list [flags]
 ## Examples
 
 ```bash
-# List Super Chat events
-yutu superChatEvent list
+yutu superChatEvent list --maxResults 10
 ```

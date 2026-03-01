@@ -1,6 +1,6 @@
 # Video Insert Command
 
-Upload a video to YouTube.
+Upload a video. Use this tool when you need to upload a video to YouTube.
 
 ## Usage
 
@@ -38,6 +38,7 @@ yutu video insert [flags]
 ## Examples
 
 ```bash
-# Upload a video
-yutu video insert --title "My Video" --file video.mp4 --privacy public
+yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
+yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'
+yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg
 ```

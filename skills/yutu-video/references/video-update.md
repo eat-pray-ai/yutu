@@ -1,6 +1,6 @@
 # Video Update Command
 
-Update a video on YouTube.
+Update a video. Use this tool when you need to update a video.
 
 ## Usage
 
@@ -29,6 +29,7 @@ yutu video update [flags]
 ## Examples
 
 ```bash
-# Update video title
-yutu video update --id VIDEO_ID --title "New Title"
+yutu video update --id dQw4w9WgXcQ --title 'New Title'
+yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10
 ```

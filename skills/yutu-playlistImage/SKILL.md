@@ -1,55 +1,43 @@
 ---
 name: yutu-playlistImage
-description: Manage YouTube playlist images using the yutu CLI. Use this skill to list, insert, update, or delete playlist images.
+description: Manage YouTube playlist images. Use this skill when you need to list, insert, update, or delete playlist images.
 ---
 
-# Yutu Playlist Image
+# Yutu PlaylistImage
 
 ## Overview
 
 This skill allows you to manage YouTube playlist images using the `yutu` CLI tool.
 
-## Playlist Image Operations
+## PlaylistImage Operations
 
-### List Playlist Images
+### Delete playlist images
 
-Retrieve images associated with a playlist.
-
-**Reference:** [references/playlistImage-list.md](references/playlistImage-list.md)
-
-**Common Tasks:**
-
-- List images: `yutu playlistImage list --parent PLAYLIST_ID`
-
-### Insert Playlist Image
-
-Upload a new image for a playlist.
-
-**Reference:** [references/playlistImage-insert.md](references/playlistImage-insert.md)
-
-**Common Tasks:**
-
-- Insert image: `yutu playlistImage insert --playlistId PLAYLIST_ID --file image.png`
-
-### Update Playlist Image
-
-Update an existing playlist image.
-
-**Reference:** [references/playlistImage-update.md](references/playlistImage-update.md)
-
-### Delete Playlist Image
-
-Remove a playlist image.
+Delete playlist images. Use this tool when you need to delete playlist images by IDs.
 
 **Reference:** [references/playlistImage-delete.md](references/playlistImage-delete.md)
 
-**Common Tasks:**
+### Insert a YouTube playlist image
 
-- Delete image: `yutu playlistImage delete --ids IMAGE_ID`
+Insert a YouTube playlist image. Use this tool when you need to insert a YouTube playlist image for a given playlist ID.
+
+**Reference:** [references/playlistImage-insert.md](references/playlistImage-insert.md)
+
+### List playlist images
+
+List playlist images. Use this tool when you need to list playlist images.
+
+**Reference:** [references/playlistImage-list.md](references/playlistImage-list.md)
+
+### Update a playlist image
+
+Update a playlist image. Use this tool when you need to update a playlist image.
+
+**Reference:** [references/playlistImage-update.md](references/playlistImage-update.md)
 
 ## Resources
 
-- [references/playlistImage-list.md](references/playlistImage-list.md): List playlist images.
-- [references/playlistImage-insert.md](references/playlistImage-insert.md): Insert playlist images.
-- [references/playlistImage-update.md](references/playlistImage-update.md): Update playlist images.
-- [references/playlistImage-delete.md](references/playlistImage-delete.md): Delete playlist images.
+- [references/playlistImage-delete.md](references/playlistImage-delete.md): Detailed usage of `Delete playlist images`
+- [references/playlistImage-insert.md](references/playlistImage-insert.md): Detailed usage of `Insert a YouTube playlist image`
+- [references/playlistImage-list.md](references/playlistImage-list.md): Detailed usage of `List playlist images`
+- [references/playlistImage-update.md](references/playlistImage-update.md): Detailed usage of `Update a playlist image`

@@ -1,6 +1,6 @@
 # Comment Update Command
 
-Update a comment on a video.
+Update a comment on a video. Use this tool when you need to update a comment on a video.
 
 ## Usage
 
@@ -22,6 +22,7 @@ yutu comment update [flags]
 ## Examples
 
 ```bash
-# Update comment text
-yutu comment update --id COMMENT_ID --textOriginal "Updated text"
+yutu comment update --id abc123 --textOriginal 'Updated comment'
+yutu comment update --id abc123 --viewerRating like
+yutu comment update --id abc123 --textOriginal 'New text' --canRate
 ```

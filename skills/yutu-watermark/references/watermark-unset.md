@@ -1,6 +1,6 @@
 # Watermark Unset Command
 
-Unset watermark for channel's video by channel id.
+Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos.
 
 ## Usage
 
@@ -17,6 +17,5 @@ yutu watermark unset [flags]
 ## Examples
 
 ```bash
-# Remove watermark
-yutu watermark unset
+yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
 ```

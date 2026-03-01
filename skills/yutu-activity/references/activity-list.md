@@ -1,6 +1,6 @@
 # Activity List Command
 
-List YouTube activities, such as likes, favorites, uploads, etc.
+List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
 
 ## Usage
 
@@ -26,9 +26,7 @@ yutu activity list [flags]
 ## Examples
 
 ```bash
-# List my activities
 yutu activity list --mine
-
-# List activities for a specific channel
-yutu activity list --channelId UCxxxxxxxx
+yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json
 ```

@@ -1,6 +1,6 @@
 # Comment Insert Command
 
-Insert a comment to a video.
+Create a comment. Use this tool when you need to create a comment on a video.
 
 ## Usage
 
@@ -24,9 +24,6 @@ yutu comment insert [flags]
 ## Examples
 
 ```bash
-# Comment on a video
-yutu comment insert --videoId VIDEO_ID --textOriginal "Great video!"
-
-# Reply to a comment
-yutu comment insert --parentId PARENT_COMMENT_ID --textOriginal "I agree!"
+yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate
 ```

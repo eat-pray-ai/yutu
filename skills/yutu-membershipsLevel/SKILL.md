@@ -1,26 +1,22 @@
 ---
 name: yutu-membershipsLevel
-description: Manage YouTube memberships levels using the yutu CLI. Use this skill to list information about channel membership levels.
+description: Manage YouTube memberships levels. Use this skill when you need to list information about channel membership levels.
 ---
 
-# Yutu Memberships Level
+# Yutu MembershipsLevel
 
 ## Overview
 
-This skill allows you to manage YouTube memberships levels using the `yutu` CLI tool. You can retrieve information about the membership levels available on your channel.
+This skill allows you to manage YouTube memberships levels using the `yutu` CLI tool.
 
-## Memberships Level Operations
+## MembershipsLevel Operations
 
-### List Membership Levels
+### List memberships levels
 
-Retrieve information about channel membership levels.
+List memberships levels. Use this tool when you need to list information about channel membership levels.
 
 **Reference:** [references/membershipsLevel-list.md](references/membershipsLevel-list.md)
 
-**Common Tasks:**
-
-- List levels: `yutu membershipsLevel list`
-
 ## Resources
 
-- [references/membershipsLevel-list.md](references/membershipsLevel-list.md): Detailed flags and usage for listing membership levels.
+- [references/membershipsLevel-list.md](references/membershipsLevel-list.md): Detailed usage of `List memberships levels`

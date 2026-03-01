@@ -1,6 +1,6 @@
 # PlaylistImage Delete Command
 
-Delete YouTube playlist images by ids.
+Delete playlist images. Use this tool when you need to delete playlist images by IDs.
 
 ## Usage
 
@@ -18,6 +18,6 @@ yutu playlistImage delete [flags]
 ## Examples
 
 ```bash
-# Delete a playlist image
-yutu playlistImage delete --ids IMAGE_ID
+yutu playlistImage delete --ids abc123
+yutu playlistImage delete --ids abc123,def456
 ```

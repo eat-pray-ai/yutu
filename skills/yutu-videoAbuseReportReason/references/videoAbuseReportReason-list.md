@@ -1,6 +1,6 @@
 # VideoAbuseReportReason List Command
 
-List YouTube video abuse report reasons.
+List video abuse report reasons. Use this tool when you need to list available abuse report reasons.
 
 ## Usage
 
@@ -20,6 +20,5 @@ yutu videoAbuseReportReason list [flags]
 ## Examples
 
 ```bash
-# List abuse report reasons
-yutu videoAbuseReportReason list
+yutu videoAbuseReportReason list --hl en
 ```

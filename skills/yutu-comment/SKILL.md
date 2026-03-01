@@ -1,76 +1,57 @@
 ---
 name: yutu-comment
-description: Manage YouTube comments using the yutu CLI. Use this skill to list, insert, update, delete, mark as spam, or set moderation status for comments.
+description: Manage YouTube comments. Use this skill when you need to list, create, update, delete, mark as spam, or set moderation status for comments.
 ---
 
 # Yutu Comment
 
 ## Overview
 
-This skill allows you to manage YouTube comments using the `yutu` CLI tool. You can perform operations such as listing, replying, updating, deleting, and moderating comments.
+This skill allows you to manage YouTube comments using the `yutu` CLI tool.
 
 ## Comment Operations
 
-### List Comments
+### Delete comments
 
-Retrieve specific comments or replies.
-
-**Reference:** [references/comment-list.md](references/comment-list.md)
-
-**Common Tasks:**
-
-- List replies: `yutu comment list --parentId PARENT_COMMENT_ID`
-
-### Insert/Reply to Comments
-
-Post new comments or replies.
-
-**Reference:** [references/comment-insert.md](references/comment-insert.md)
-
-**Common Tasks:**
-
-- Post comment: `yutu comment insert --videoId VIDEO_ID --textOriginal "Hello"`
-- Reply to comment: `yutu comment insert --parentId PARENT_COMMENT_ID --textOriginal "Reply"`
-
-### Update Comments
-
-Edit the text of an existing comment.
-
-**Reference:** [references/comment-update.md](references/comment-update.md)
-
-**Common Tasks:**
-
-- Update text: `yutu comment update --id COMMENT_ID --textOriginal "New text"`
-
-### Delete Comments
-
-Remove a comment.
+Delete comments. Use this tool when you need to delete comments by IDs.
 
 **Reference:** [references/comment-delete.md](references/comment-delete.md)
 
-**Common Tasks:**
+### Create a comment
 
-- Delete comment: `yutu comment delete --ids COMMENT_ID`
+Create a comment. Use this tool when you need to create a comment on a video.
 
-### Moderation
+**Reference:** [references/comment-insert.md](references/comment-insert.md)
 
-Mark comments as spam or change their moderation status (e.g., publish, reject).
+### List comments
 
-**References:**
+List comments. Use this tool when you need to list comments by IDs.
 
-- [references/comment-markAsSpam.md](references/comment-markAsSpam.md)
-- [references/comment-setModerationStatus.md](references/comment-setModerationStatus.md)
+**Reference:** [references/comment-list.md](references/comment-list.md)
 
-**Common Tasks:**
+### Mark comments as spam
 
-- Mark as spam: `yutu comment markAsSpam --ids COMMENT_ID`
-- Publish comment: `yutu comment setModerationStatus --ids COMMENT_ID --moderationStatus published`
+Mark comments as spam. Use this tool when you need to mark comments as spam.
+
+**Reference:** [references/comment-markAsSpam.md](references/comment-markAsSpam.md)
+
+### Set comment moderation status
+
+Set comment moderation status. Use this tool when you need to set comment moderation status.
+
+**Reference:** [references/comment-setModerationStatus.md](references/comment-setModerationStatus.md)
+
+### Update a comment on a video
+
+Update a comment on a video. Use this tool when you need to update a comment on a video.
+
+**Reference:** [references/comment-update.md](references/comment-update.md)
 
 ## Resources
 
-- [references/comment-list.md](references/comment-list.md): List comments.
-- [references/comment-insert.md](references/comment-insert.md): Insert comments.
-- [references/comment-update.md](references/comment-update.md): Update comments.
-- [references/comment-delete.md](references/comment-delete.md): Delete comments.
-- [references/comment-markAsSpam.md](references/comment-markAsSpam.md): Mark comments as spam.
-- [references/comment-setModerationStatus.md](references/comment-setModerationStatus.md): Set moderation status.
+- [references/comment-delete.md](references/comment-delete.md): Detailed usage of `Delete comments`
+- [references/comment-insert.md](references/comment-insert.md): Detailed usage of `Create a comment`
+- [references/comment-list.md](references/comment-list.md): Detailed usage of `List comments`
+- [references/comment-markAsSpam.md](references/comment-markAsSpam.md): Detailed usage of `Mark comments as spam`
+- [references/comment-setModerationStatus.md](references/comment-setModerationStatus.md): Detailed usage of `Set comment moderation status`
+- [references/comment-update.md](references/comment-update.md): Detailed usage of `Update a comment on a video`

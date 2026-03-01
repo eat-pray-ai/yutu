@@ -1,60 +1,43 @@
 ---
 name: yutu-playlist
-description: Manage YouTube playlists using the yutu CLI. Use this skill to list, create, update, or delete playlists.
+description: Manage YouTube playlists. Use this skill when you need to list, create, update, or delete playlists.
 ---
 
 # Yutu Playlist
 
 ## Overview
 
-This skill allows you to manage YouTube playlists using the `yutu` CLI tool. You can list existing playlists, create new ones, update their details, and delete them.
+This skill allows you to manage YouTube playlists using the `yutu` CLI tool.
 
 ## Playlist Operations
 
-### List Playlists
+### Delete playlists
 
-Retrieve information about playlists.
-
-**Reference:** [references/playlist-list.md](references/playlist-list.md)
-
-**Common Tasks:**
-
-- List my playlists: `yutu playlist list --mine`
-- List channel playlists: `yutu playlist list --channelId CHANNEL_ID`
-
-### Insert/Create Playlist
-
-Create a new playlist.
-
-**Reference:** [references/playlist-insert.md](references/playlist-insert.md)
-
-**Common Tasks:**
-
-- Create playlist: `yutu playlist insert --title "New Playlist" --privacy public`
-
-### Update Playlist
-
-Update playlist metadata.
-
-**Reference:** [references/playlist-update.md](references/playlist-update.md)
-
-**Common Tasks:**
-
-- Update title: `yutu playlist update --id PLAYLIST_ID --title "New Title"`
-
-### Delete Playlist
-
-Remove a playlist.
+Delete playlists. Use this tool when you need to delete playlists by IDs.
 
 **Reference:** [references/playlist-delete.md](references/playlist-delete.md)
 
-**Common Tasks:**
+### Create a new playlist
 
-- Delete playlist: `yutu playlist delete --ids PLAYLIST_ID`
+Create a new playlist. Use this tool when you need to create a new playlist.
+
+**Reference:** [references/playlist-insert.md](references/playlist-insert.md)
+
+### List playlist information
+
+List playlist information. Use this tool when you need to list playlist information.
+
+**Reference:** [references/playlist-list.md](references/playlist-list.md)
+
+### Update a playlist
+
+Update a playlist. Use this tool when you need to update a playlist.
+
+**Reference:** [references/playlist-update.md](references/playlist-update.md)
 
 ## Resources
 
-- [references/playlist-list.md](references/playlist-list.md): List playlists.
-- [references/playlist-insert.md](references/playlist-insert.md): Create playlists.
-- [references/playlist-update.md](references/playlist-update.md): Update playlists.
-- [references/playlist-delete.md](references/playlist-delete.md): Delete playlists.
+- [references/playlist-delete.md](references/playlist-delete.md): Detailed usage of `Delete playlists`
+- [references/playlist-insert.md](references/playlist-insert.md): Detailed usage of `Create a new playlist`
+- [references/playlist-list.md](references/playlist-list.md): Detailed usage of `List playlist information`
+- [references/playlist-update.md](references/playlist-update.md): Detailed usage of `Update a playlist`

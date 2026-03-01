@@ -1,37 +1,29 @@
 ---
 name: yutu-watermark
-description: Manage YouTube watermarks using the yutu CLI. Use this skill to set or unset watermarks for channel videos.
+description: Manage YouTube watermarks. Use this skill when you need to set or unset watermarks for channel videos.
 ---
 
 # Yutu Watermark
 
 ## Overview
 
-This skill allows you to manage YouTube watermarks using the `yutu` CLI tool. You can set a branding watermark for all your videos or remove it.
+This skill allows you to manage YouTube watermarks using the `yutu` CLI tool.
 
 ## Watermark Operations
 
-### Set Watermark
+### Set a watermark for channel's videos
 
-Upload and set a watermark image.
+Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
 
 **Reference:** [references/watermark-set.md](references/watermark-set.md)
 
-**Common Tasks:**
+### Unset a watermark for channel's videos
 
-- Set watermark: `yutu watermark set --file image.png --inVideoPosition bottomRight`
-
-### Unset Watermark
-
-Remove the watermark.
+Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos.
 
 **Reference:** [references/watermark-unset.md](references/watermark-unset.md)
 
-**Common Tasks:**
-
-- Remove watermark: `yutu watermark unset`
-
 ## Resources
 
-- [references/watermark-set.md](references/watermark-set.md): Set watermark.
-- [references/watermark-unset.md](references/watermark-unset.md): Unset watermark.
+- [references/watermark-set.md](references/watermark-set.md): Detailed usage of `Set a watermark for channel's videos`
+- [references/watermark-unset.md](references/watermark-unset.md): Detailed usage of `Unset a watermark for channel's videos`

@@ -1,6 +1,6 @@
 # Video Rate Command
 
-Rate a video on YouTube.
+Rate a video. Use this tool when you need to rate a video.
 
 ## Usage
 
@@ -18,6 +18,7 @@ yutu video rate [flags]
 ## Examples
 
 ```bash
-# Like a video
-yutu video rate --ids VIDEO_ID --rating like
+yutu video rate --ids dQw4w9WgXcQ --rating like
+yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
+yutu video rate --ids dQw4w9WgXcQ --rating none
 ```

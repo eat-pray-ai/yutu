@@ -1,6 +1,6 @@
 # Subscription Insert Command
 
-Insert a YouTube subscription.
+Insert a YouTube subscription. Use this tool when you need to insert a YouTube subscription.
 
 ## Usage
 
@@ -22,6 +22,6 @@ yutu subscription insert [flags]
 ## Examples
 
 ```bash
-# Subscribe to a channel
-yutu subscription insert --channelId CHANNEL_ID
+yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'
 ```

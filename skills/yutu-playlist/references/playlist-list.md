@@ -1,6 +1,6 @@
 # Playlist List Command
 
-List playlist's info.
+List playlist information. Use this tool when you need to list playlist information.
 
 ## Usage
 
@@ -14,7 +14,7 @@ yutu playlist list [flags]
 |------|-----------|-------------|
 | `--channelId` | `-c` | Return the playlists owned by the specified channel id |
 | `--hl` | `-l` | Return content in specified language |
-| `--ids` | `-i` | Return the playlists with the given Ids |
+| `--ids` | `-i` | Return the playlists with the given Ids for Stubby or Apiary |
 | `--jsonPath` | `-j` | JSONPath expression to filter the output |
 | `--maxResults` | `-n` | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--mine` | `-M` | Return the playlists owned by the authenticated user (default true) |
@@ -26,9 +26,7 @@ yutu playlist list [flags]
 ## Examples
 
 ```bash
-# List my playlists
 yutu playlist list --mine
-
-# List channel's playlists
-yutu playlist list --channelId CHANNEL_ID
+yutu playlist list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+yutu playlist list --ids PLxxx1,PLxxx2 --output json
 ```

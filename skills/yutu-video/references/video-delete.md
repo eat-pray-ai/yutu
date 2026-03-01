@@ -1,6 +1,6 @@
 # Video Delete Command
 
-Delete a video on YouTube by ids.
+Delete videos. Use this tool when you need to delete videos by IDs.
 
 ## Usage
 
@@ -17,6 +17,6 @@ yutu video delete [flags]
 ## Examples
 
 ```bash
-# Delete a video
-yutu video delete --ids VIDEO_ID
+yutu video delete --ids dQw4w9WgXcQ
+yutu video delete --ids dQw4w9WgXcQ,abc123
 ```

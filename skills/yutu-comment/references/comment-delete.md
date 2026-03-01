@@ -1,6 +1,6 @@
 # Comment Delete Command
 
-Delete YouTube comments by ids.
+Delete comments. Use this tool when you need to delete comments by IDs.
 
 ## Usage
 
@@ -17,6 +17,6 @@ yutu comment delete [flags]
 ## Examples
 
 ```bash
-# Delete a comment
-yutu comment delete --ids COMMENT_ID
+yutu comment delete --ids abc123
+yutu comment delete --ids abc123,def456
 ```

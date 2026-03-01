@@ -1,6 +1,6 @@
 # Subscription Delete Command
 
-Delete a YouTube subscriptions by ids.
+Delete subscriptions. Use this tool when you need to delete subscriptions by IDs.
 
 ## Usage
 
@@ -17,6 +17,6 @@ yutu subscription delete [flags]
 ## Examples
 
 ```bash
-# Unsubscribe (delete subscription)
-yutu subscription delete --ids SUBSCRIPTION_ID
+yutu subscription delete --ids abc123
+yutu subscription delete --ids abc123,def456
 ```

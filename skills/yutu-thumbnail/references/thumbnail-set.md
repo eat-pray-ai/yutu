@@ -1,6 +1,6 @@
 # Thumbnail Set Command
 
-Set thumbnail for a video.
+Set a thumbnail for a video. Use this tool when you need to set a thumbnail for a video.
 
 ## Usage
 
@@ -20,6 +20,6 @@ yutu thumbnail set [flags]
 ## Examples
 
 ```bash
-# Set video thumbnail
-yutu thumbnail set --videoId VIDEO_ID --file thumbnail.jpg
+yutu thumbnail set --file image.jpg --videoId dQw4w9WgXcQ
+yutu thumbnail set --file image.png --videoId dQw4w9WgXcQ --output json
 ```
