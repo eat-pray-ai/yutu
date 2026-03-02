@@ -15,11 +15,21 @@ This skill allows you to manage YouTube watermarks using the `yutu` CLI tool.
 
 Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
 
+```bash
+# Set a watermark for a channel
+yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+```
+
 **Reference:** [references/watermark-set.md](references/watermark-set.md)
 
 ### Unset a watermark for channel's videos
 
 Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos.
+
+```bash
+# Unset watermark for a channel
+yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+```
 
 **Reference:** [references/watermark-unset.md](references/watermark-unset.md)
 

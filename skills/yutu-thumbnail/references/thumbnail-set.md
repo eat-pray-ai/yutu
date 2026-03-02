@@ -20,6 +20,8 @@ yutu thumbnail set [flags]
 ## Examples
 
 ```bash
+# Set a thumbnail for a video
 yutu thumbnail set --file image.jpg --videoId dQw4w9WgXcQ
+# Set a thumbnail with JSON output
 yutu thumbnail set --file image.png --videoId dQw4w9WgXcQ --output json
 ```

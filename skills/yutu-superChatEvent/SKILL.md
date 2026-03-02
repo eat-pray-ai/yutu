@@ -15,6 +15,11 @@ This skill allows you to manage YouTube super chat events using the `yutu` CLI t
 
 List Super Chat events. Use this tool when you need to list Super Chat events.
 
+```bash
+# List Super Chat events
+yutu superChatEvent list --maxResults 10
+```
+
 **Reference:** [references/superChatEvent-list.md](references/superChatEvent-list.md)
 
 ## Resources

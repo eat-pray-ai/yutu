@@ -19,5 +19,6 @@ yutu membershipsLevel list [flags]
 ## Examples
 
 ```bash
+# List membership levels in JSON format
 yutu membershipsLevel list --output json
 ```

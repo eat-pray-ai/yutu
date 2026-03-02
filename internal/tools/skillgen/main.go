@@ -188,6 +188,13 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 		refFile := fmt.Sprintf("references/%s-%s.md", skill, verbName)
 		b.WriteString(fmt.Sprintf("### %s\n\n", titleCase(verb.Short)))
 		b.WriteString(verb.Long + "\n\n")
+
+		if ex := firstExample(verb.Example); ex != "" {
+			b.WriteString("```bash\n")
+			b.WriteString(ex + "\n")
+			b.WriteString("```\n\n")
+		}
+
 		b.WriteString(fmt.Sprintf("**Reference:** [%s](%s)\n\n", refFile, refFile))
 	}
 
@@ -266,4 +273,27 @@ func pluralize(w string) string {
 		}
 	}
 	return w + "s"
+}
+
+// firstExample extracts the first "# comment\ncommand" pair from an example
+// string. Returns empty string if the example is empty or doesn't start with
+// a comment line.
+func firstExample(example string) string {
+	example = strings.TrimSpace(example)
+	if example == "" {
+		return ""
+	}
+
+	lines := strings.Split(example, "\n")
+	if len(lines) == 0 {
+		return ""
+	}
+
+	// Expect "# comment" followed by "command".
+	if strings.HasPrefix(lines[0], "#") && len(lines) >= 2 {
+		return lines[0] + "\n" + lines[1]
+	}
+
+	// Fallback: return just the first line if no comment prefix.
+	return lines[0]
 }

@@ -1,6 +1,6 @@
 # PlaylistImage Insert Command
 
-Insert a YouTube playlist image. Use this tool when you need to insert a YouTube playlist image for a given playlist ID.
+Insert a playlist image. Use this tool when you need to insert a YouTube playlist image for a given playlist ID.
 
 ## Usage
 
@@ -25,7 +25,10 @@ yutu playlistImage insert [flags]
 ## Examples
 
 ```bash
+# Insert a playlist cover image
 yutu playlistImage insert --file cover.jpg --playlistId PLxxx
+# Insert a hero image
 yutu playlistImage insert --file cover.png --playlistId PLxxx --type hero
+# Insert an image with custom dimensions
 yutu playlistImage insert --file cover.jpg --playlistId PLxxx --width 2048 --height 1152
 ```

@@ -15,6 +15,11 @@ This skill allows you to manage YouTube searches using the `yutu` CLI tool.
 
 Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources.
 
+```bash
+# Search for videos by keyword
+yutu search list --q 'golang tutorial' --maxResults 10
+```
+
 **Reference:** [references/search-list.md](references/search-list.md)
 
 ## Resources

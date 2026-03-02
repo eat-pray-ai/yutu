@@ -28,6 +28,8 @@ yutu playlistItem insert [flags]
 ## Examples
 
 ```bash
+# Add a video to a playlist
 yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+# Add a video to a playlist with privacy setting
 yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public
 ```

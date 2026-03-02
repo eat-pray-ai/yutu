@@ -24,7 +24,10 @@ yutu playlistItem list [flags]
 ## Examples
 
 ```bash
+# List items in a playlist
 yutu playlistItem list --playlistId PLxxx
+# List playlist items with limit in JSON format
 yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json
+# List specific playlist items by IDs
 yutu playlistItem list --ids abc123,def456
 ```

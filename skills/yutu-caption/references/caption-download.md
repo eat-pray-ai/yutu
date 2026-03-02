@@ -22,7 +22,10 @@ yutu caption download [flags]
 ## Examples
 
 ```bash
+# Download a caption as SRT
 yutu caption download --id abc123 --file subtitle.srt
+# Download a caption as VTT
 yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
+# Download a caption translated to French
 yutu caption download --id abc123 --file subtitle.srt --tlang fr
 ```

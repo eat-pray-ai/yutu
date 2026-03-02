@@ -29,7 +29,10 @@ yutu video update [flags]
 ## Examples
 
 ```bash
+# Update video title
 yutu video update --id dQw4w9WgXcQ --title 'New Title'
+# Update video description and privacy
 yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+# Update video tags and category
 yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10
 ```

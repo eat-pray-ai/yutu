@@ -18,6 +18,8 @@ yutu playlist delete [flags]
 ## Examples
 
 ```bash
+# Delete a playlist by ID
 yutu playlist delete --ids PLxxxx
+# Delete multiple playlists
 yutu playlist delete --ids PLxxx1,PLxxx2
 ```

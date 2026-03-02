@@ -20,5 +20,6 @@ yutu videoAbuseReportReason list [flags]
 ## Examples
 
 ```bash
+# List video abuse report reasons
 yutu videoAbuseReportReason list --hl en
 ```

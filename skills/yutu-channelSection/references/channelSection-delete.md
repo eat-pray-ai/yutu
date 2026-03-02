@@ -18,6 +18,8 @@ yutu channelSection delete [flags]
 ## Examples
 
 ```bash
+# Delete a channel section by ID
 yutu channelSection delete --ids abc123
+# Delete multiple channel sections
 yutu channelSection delete --ids abc123,def456
 ```

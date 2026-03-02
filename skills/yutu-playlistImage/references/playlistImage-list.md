@@ -23,6 +23,8 @@ yutu playlistImage list [flags]
 ## Examples
 
 ```bash
+# List images of a playlist
 yutu playlistImage list --parent PLxxx
+# List playlist images with limit in JSON format
 yutu playlistImage list --parent PLxxx --maxResults 10 --output json
 ```

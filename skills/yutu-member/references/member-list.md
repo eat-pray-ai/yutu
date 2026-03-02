@@ -23,6 +23,8 @@ yutu member list [flags]
 ## Examples
 
 ```bash
+# List all current members
 yutu member list --mode all_current
+# List members with limit
 yutu member list --maxResults 10
 ```

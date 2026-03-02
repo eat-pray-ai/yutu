@@ -24,7 +24,10 @@ yutu playlist update [flags]
 ## Examples
 
 ```bash
+# Update playlist title
 yutu playlist update --id PLxxx --title 'Updated Title'
+# Update playlist description and privacy
 yutu playlist update --id PLxxx --description 'New description' --privacy public
+# Update playlist tags
 yutu playlist update --id PLxxx --tags 'music,pop,2024'
 ```

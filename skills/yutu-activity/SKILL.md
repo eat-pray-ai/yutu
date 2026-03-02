@@ -1,6 +1,6 @@
 ---
 name: yutu-activity
-description: Manage YouTube activities. Use this skill when you need to list channel activities.
+description: Manage activities on YouTube. Use this skill when you need to list channel activities.
 ---
 
 # Yutu Activity
@@ -14,6 +14,11 @@ This skill allows you to manage YouTube activities using the `yutu` CLI tool.
 ### List activities
 
 List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
+
+```bash
+# List my activities
+yutu activity list --mine
+```
 
 **Reference:** [references/activity-list.md](references/activity-list.md)
 

@@ -22,7 +22,10 @@ yutu video reportAbuse [flags]
 ## Examples
 
 ```bash
+# Report abuse on a video
 yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V
+# Report abuse with secondary reason and language
 yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V --secondaryReasonId V1 --language en
+# Report abuse with comments
 yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId N --comments 'Spam content'
 ```

@@ -30,8 +30,12 @@ yutu video list [flags]
 ## Examples
 
 ```bash
+# List a video by ID
 yutu video list --ids dQw4w9WgXcQ
+# List multiple videos in JSON format
 yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+# List most popular videos by region
 yutu video list --chart mostPopular --regionCode US --maxResults 10
+# List my liked videos
 yutu video list --myRating like --output yaml
 ```

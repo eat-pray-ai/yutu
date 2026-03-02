@@ -15,6 +15,11 @@ This skill allows you to manage YouTube members using the `yutu` CLI tool.
 
 List channel members. Use this tool when you need to list information about channel members.
 
+```bash
+# List all current members
+yutu member list --mode all_current
+```
+
 **Reference:** [references/member-list.md](references/member-list.md)
 
 ## Resources

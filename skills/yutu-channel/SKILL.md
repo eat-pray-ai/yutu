@@ -15,11 +15,21 @@ This skill allows you to manage YouTube channels using the `yutu` CLI tool.
 
 List channel information. Use this tool when you need to list channel information.
 
+```bash
+# List my channel info
+yutu channel list --mine
+```
+
 **Reference:** [references/channel-list.md](references/channel-list.md)
 
 ### Update channel information
 
 Update channel information. Use this tool when you need to update channel information.
+
+```bash
+# Update channel description
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
+```
 
 **Reference:** [references/channel-update.md](references/channel-update.md)
 

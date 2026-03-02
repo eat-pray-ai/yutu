@@ -19,6 +19,8 @@ yutu caption delete [flags]
 ## Examples
 
 ```bash
+# Delete a caption by ID
 yutu caption delete --ids abc123
+# Delete multiple captions
 yutu caption delete --ids abc123,def456
 ```

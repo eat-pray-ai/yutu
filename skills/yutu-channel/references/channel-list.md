@@ -29,8 +29,12 @@ yutu channel list [flags]
 ## Examples
 
 ```bash
+# List my channel info
 yutu channel list --mine
+# List channel by handle
 yutu channel list --forHandle @GoogleDevelopers
+# List channel by ID in JSON format
 yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+# List channels in table format
 yutu channel list --maxResults 10 --output table
 ```

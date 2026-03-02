@@ -17,6 +17,8 @@ yutu comment delete [flags]
 ## Examples
 
 ```bash
+# Delete a comment by ID
 yutu comment delete --ids abc123
+# Delete multiple comments
 yutu comment delete --ids abc123,def456
 ```

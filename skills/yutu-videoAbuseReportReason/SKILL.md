@@ -15,6 +15,11 @@ This skill allows you to manage YouTube video abuse report reasons using the `yu
 
 List video abuse report reasons. Use this tool when you need to list available abuse report reasons.
 
+```bash
+# List video abuse report reasons
+yutu videoAbuseReportReason list --hl en
+```
+
 **Reference:** [references/videoAbuseReportReason-list.md](references/videoAbuseReportReason-list.md)
 
 ## Resources

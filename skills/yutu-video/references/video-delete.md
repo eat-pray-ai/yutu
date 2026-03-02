@@ -17,6 +17,8 @@ yutu video delete [flags]
 ## Examples
 
 ```bash
+# Delete a video by ID
 yutu video delete --ids dQw4w9WgXcQ
+# Delete multiple videos
 yutu video delete --ids dQw4w9WgXcQ,abc123
 ```

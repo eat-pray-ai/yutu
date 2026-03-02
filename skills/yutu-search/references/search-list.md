@@ -48,8 +48,12 @@ yutu search list [flags]
 ## Examples
 
 ```bash
+# Search for videos by keyword
 yutu search list --q 'golang tutorial' --maxResults 10
+# Search videos by duration in JSON format
 yutu search list --q 'music' --types video --videoDuration medium --output json
+# List latest videos from a channel
 yutu search list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order date --maxResults 5
+# Search for live streams
 yutu search list --q 'live coding' --eventType live --types video
 ```

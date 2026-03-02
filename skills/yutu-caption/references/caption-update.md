@@ -31,7 +31,10 @@ yutu caption update [flags]
 ## Examples
 
 ```bash
+# Publish a draft caption
 yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
+# Update caption language and name
 yutu caption update --videoId dQw4w9WgXcQ --language en --name English
+# Update caption file
 yutu caption update --videoId dQw4w9WgXcQ --file updated.srt
 ```

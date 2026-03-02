@@ -22,6 +22,8 @@ yutu commentThread insert [flags]
 ## Examples
 
 ```bash
+# Post a comment on a video
 yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'
+# Post a comment with JSON output
 yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Nice work!' --output json
 ```

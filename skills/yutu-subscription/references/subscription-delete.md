@@ -17,6 +17,8 @@ yutu subscription delete [flags]
 ## Examples
 
 ```bash
+# Delete a subscription by ID
 yutu subscription delete --ids abc123
+# Delete multiple subscriptions
 yutu subscription delete --ids abc123,def456
 ```

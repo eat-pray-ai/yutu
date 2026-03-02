@@ -24,6 +24,8 @@ yutu comment insert [flags]
 ## Examples
 
 ```bash
+# Reply to a comment
 yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+# Reply with rating enabled
 yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate
 ```

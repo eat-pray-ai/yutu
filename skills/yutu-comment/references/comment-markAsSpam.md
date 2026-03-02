@@ -19,6 +19,8 @@ yutu comment markAsSpam [flags]
 ## Examples
 
 ```bash
+# Mark a comment as spam
 yutu comment markAsSpam --ids abc123
+# Mark multiple comments as spam
 yutu comment markAsSpam --ids abc123,def456
 ```

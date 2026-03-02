@@ -20,6 +20,8 @@ yutu video getRating [flags]
 ## Examples
 
 ```bash
+# Get rating of a video
 yutu video getRating --ids dQw4w9WgXcQ
+# Get ratings of multiple videos in JSON format
 yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json
 ```

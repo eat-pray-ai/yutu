@@ -21,5 +21,6 @@ yutu superChatEvent list [flags]
 ## Examples
 
 ```bash
+# List Super Chat events
 yutu superChatEvent list --maxResults 10
 ```

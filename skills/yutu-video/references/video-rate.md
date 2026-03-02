@@ -18,7 +18,10 @@ yutu video rate [flags]
 ## Examples
 
 ```bash
+# Like a video
 yutu video rate --ids dQw4w9WgXcQ --rating like
+# Dislike multiple videos
 yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
+# Remove rating from a video
 yutu video rate --ids dQw4w9WgXcQ --rating none
 ```

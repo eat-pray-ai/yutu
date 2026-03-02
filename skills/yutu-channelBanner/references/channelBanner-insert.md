@@ -1,6 +1,6 @@
 # ChannelBanner Insert Command
 
-Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner.
+Insert a channel banner. Use this tool when you need to upload a channel banner.
 
 ## Usage
 
@@ -22,6 +22,8 @@ yutu channelBanner insert [flags]
 ## Examples
 
 ```bash
+# Upload a channel banner
 yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+# Upload a channel banner with JSON output
 yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json
 ```

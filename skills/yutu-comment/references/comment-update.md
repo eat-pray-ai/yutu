@@ -22,7 +22,10 @@ yutu comment update [flags]
 ## Examples
 
 ```bash
+# Update comment text
 yutu comment update --id abc123 --textOriginal 'Updated comment'
+# Like a comment
 yutu comment update --id abc123 --viewerRating like
+# Update comment text with rating enabled
 yutu comment update --id abc123 --textOriginal 'New text' --canRate
 ```

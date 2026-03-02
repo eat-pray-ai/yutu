@@ -17,5 +17,6 @@ yutu watermark unset [flags]
 ## Examples
 
 ```bash
+# Unset watermark for a channel
 yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
 ```

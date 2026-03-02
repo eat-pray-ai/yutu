@@ -24,5 +24,6 @@ yutu playlistImage update [flags]
 ## Examples
 
 ```bash
+# Update a playlist image
 yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152
 ```

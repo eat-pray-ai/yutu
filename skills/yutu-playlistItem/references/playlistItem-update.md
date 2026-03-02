@@ -23,7 +23,10 @@ yutu playlistItem update [flags]
 ## Examples
 
 ```bash
+# Update playlist item title
 yutu playlistItem update --id abc123 --title 'Updated Title'
+# Update playlist item description and privacy
 yutu playlistItem update --id abc123 --description 'New description' --privacy public
+# Update playlist item privacy with JSON output
 yutu playlistItem update --id abc123 --privacy private --output json
 ```

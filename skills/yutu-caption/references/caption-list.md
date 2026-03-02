@@ -23,7 +23,10 @@ yutu caption list [flags]
 ## Examples
 
 ```bash
+# List captions of a video
 yutu caption list --videoId dQw4w9WgXcQ
+# List captions in JSON format
 yutu caption list --videoId dQw4w9WgXcQ --output json
+# List specific captions by IDs
 yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ
 ```

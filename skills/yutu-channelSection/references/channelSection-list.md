@@ -24,7 +24,10 @@ yutu channelSection list [flags]
 ## Examples
 
 ```bash
+# List my channel sections
 yutu channelSection list --mine
+# List channel sections by channel ID
 yutu channelSection list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+# List specific channel sections in JSON format
 yutu channelSection list --ids abc123,def456 --output json
 ```
