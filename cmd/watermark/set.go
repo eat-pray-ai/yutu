@@ -20,8 +20,11 @@ const (
 	setTool    = "watermark-set"
 	setShort   = "Set a watermark for channel's videos"
 	setLong    = "Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos."
-	setExample = `yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+	setExample = `# Set a watermark for a channel
+yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+# Set a watermark with position and offset
 yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
+# Set a watermark with duration
 yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
 )
 

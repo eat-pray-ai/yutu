@@ -22,9 +22,13 @@ const (
 	listIdsUsage = "Return the channels with the specified Ids"
 	listShort    = "List channel information"
 	listLong     = "List channel information. Use this tool when you need to list channel information."
-	listExample  = `yutu channel list --mine
+	listExample  = `# List my channel info
+yutu channel list --mine
+# List channel by handle
 yutu channel list --forHandle @GoogleDevelopers
+# List channel by ID in JSON format
 yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+# List channels in table format
 yutu channel list --maxResults 10 --output table`
 )
 

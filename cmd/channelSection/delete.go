@@ -21,7 +21,9 @@ const (
 	deleteIdsUsage = "Delete the channel sections with the given ids"
 	deleteShort    = "Delete channel sections"
 	deleteLong     = "Delete channel sections. Use this tool when you need to delete channel sections by IDs."
-	deleteExample  = `yutu channelSection delete --ids abc123
+	deleteExample  = `# Delete a channel section by ID
+yutu channelSection delete --ids abc123
+# Delete multiple channel sections
 yutu channelSection delete --ids abc123,def456`
 )
 

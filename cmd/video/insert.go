@@ -21,9 +21,12 @@ const (
 	insertTool      = "video-insert"
 	insertLangUsage = "Language of the video"
 	insertShort     = "Upload a video"
-	insertLong      = "Upload a video. Use this tool when you need to upload a video to YouTube."
-	insertExample   = `yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
+	insertLong      = "Upload a video. Use this tool when you need to upload a video."
+	insertExample   = `# Upload a public video
+yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
+# Upload a private video with tags
 yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'
+# Upload an unlisted video with custom thumbnail
 yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg`
 )
 

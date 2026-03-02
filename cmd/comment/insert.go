@@ -22,7 +22,9 @@ const (
 	insertPidUsage = "ID of the parent comment"
 	insertShort    = "Create a comment"
 	insertLong     = "Create a comment. Use this tool when you need to create a comment on a video."
-	insertExample  = `yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+	insertExample  = `# Reply to a comment
+yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+# Reply with rating enabled
 yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate`
 )
 

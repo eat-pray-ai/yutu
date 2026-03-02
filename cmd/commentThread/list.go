@@ -22,8 +22,11 @@ const (
 	listVidUsage = "Returns the comment threads of the specified video"
 	listShort    = "List comment threads"
 	listLong     = "List comment threads. Use this tool when you need to list comment threads."
-	listExample  = `yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
+	listExample  = `# List comment threads on a video
+yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
+# Search comment threads by terms
 yutu commentThread list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --searchTerms 'hello'
+# List specific comment threads in JSON format
 yutu commentThread list --ids abc123,def456 --output json`
 )
 

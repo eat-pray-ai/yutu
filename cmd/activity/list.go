@@ -21,8 +21,11 @@ const (
 	listTool    = "activity-list"
 	listShort   = "List activities"
 	listLong    = "List activities. Use this tool when you need to list activities such as uploads, likes, and favorites."
-	listExample = `yutu activity list --mine
+	listExample = `# List my activities
+yutu activity list --mine
+# List activities by channel ID with limit
 yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+# List activities after a date in JSON format
 yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json`
 )
 

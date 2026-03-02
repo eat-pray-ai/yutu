@@ -22,7 +22,9 @@ const (
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 	insertShort    = "Insert a playlist item into a playlist"
 	insertLong     = "Insert a playlist item into a playlist. Use this tool when you need to insert a playlist item into a playlist."
-	insertExample  = `yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+	insertExample  = `# Add a video to a playlist
+yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+# Add a video to a playlist with privacy setting
 yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public`
 )
 

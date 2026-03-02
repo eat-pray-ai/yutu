@@ -20,7 +20,9 @@ const (
 	deleteIdsUsage = "IDs of the videos to delete"
 	deleteShort    = "Delete videos"
 	deleteLong     = "Delete videos. Use this tool when you need to delete videos by IDs."
-	deleteExample  = `yutu video delete --ids dQw4w9WgXcQ
+	deleteExample  = `# Delete a video by ID
+yutu video delete --ids dQw4w9WgXcQ
+# Delete multiple videos
 yutu video delete --ids dQw4w9WgXcQ,abc123`
 )
 

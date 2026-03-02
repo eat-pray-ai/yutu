@@ -22,7 +22,9 @@ const (
 	grIdsUsage       = "IDs of the videos to get the rating for"
 	getRatingShort   = "Get video ratings"
 	getRatingLong    = "Get video ratings. Use this tool when you need to get video ratings by IDs."
-	getRatingExample = `yutu video getRating --ids dQw4w9WgXcQ
+	getRatingExample = `# Get rating of a video
+yutu video getRating --ids dQw4w9WgXcQ
+# Get ratings of multiple videos in JSON format
 yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json`
 )
 

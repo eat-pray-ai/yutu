@@ -23,9 +23,13 @@ const (
 	listCidUsage = "Return the subscriptions of the given channel owner"
 	listShort    = "List subscription information"
 	listLong     = "List subscription information. Use this tool when you need to list subscription information."
-	listExample  = `yutu subscription list --mine
+	listExample  = `# List my subscriptions
+yutu subscription list --mine
+# List subscriptions by channel ID with limit
 yutu subscription list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+# List specific subscriptions in JSON format
 yutu subscription list --ids abc123,def456 --output json
+# List subscriptions for a channel alphabetically
 yutu subscription list --forChannelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order alphabetical`
 )
 

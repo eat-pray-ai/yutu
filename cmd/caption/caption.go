@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	short         = "Manage YouTube captions"
-	long          = "Manage YouTube captions. Use this tool to list, insert, update, download, or delete video captions."
+	short         = "Manage YouTube video captions"
+	long          = "Manage YouTube video captions. Use this tool to list, insert, update, download, or delete video captions."
 	fileUsage     = "Path to save the caption file"
 	attUsage      = "unknown|primary|commentary|descriptive"
 	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"

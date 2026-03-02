@@ -23,8 +23,11 @@ const (
 	listCidUsage = "Return the playlists owned by the specified channel id"
 	listShort    = "List playlist information"
 	listLong     = "List playlist information. Use this tool when you need to list playlist information."
-	listExample  = `yutu playlist list --mine
+	listExample  = `# List my playlists
+yutu playlist list --mine
+# List playlists by channel ID with limit
 yutu playlist list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+# List specific playlists in JSON format
 yutu playlist list --ids PLxxx1,PLxxx2 --output json`
 )
 

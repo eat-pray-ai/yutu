@@ -21,7 +21,9 @@ const (
 	listTool    = "member-list"
 	listShort   = "List channel members"
 	listLong    = "List channel members. Use this tool when you need to list information about channel members."
-	listExample = `yutu member list --mode all_current
+	listExample = `# List all current members
+yutu member list --mode all_current
+# List members with limit
 yutu member list --maxResults 10`
 )
 

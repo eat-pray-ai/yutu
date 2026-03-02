@@ -20,7 +20,9 @@ const (
 	deleteIdsUsage = "IDs of the subscriptions to delete"
 	deleteShort    = "Delete subscriptions"
 	deleteLong     = "Delete subscriptions. Use this tool when you need to delete subscriptions by IDs."
-	deleteExample  = `yutu subscription delete --ids abc123
+	deleteExample  = `# Delete a subscription by ID
+yutu subscription delete --ids abc123
+# Delete multiple subscriptions
 yutu subscription delete --ids abc123,def456`
 )
 

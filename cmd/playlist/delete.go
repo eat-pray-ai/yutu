@@ -21,7 +21,9 @@ const (
 	deleteIdsUsage = "IDs of the playlists to delete"
 	deleteShort    = "Delete playlists"
 	deleteLong     = "Delete playlists. Use this tool when you need to delete playlists by IDs."
-	deleteExample  = `yutu playlist delete --ids PLxxxx
+	deleteExample  = `# Delete a playlist by ID
+yutu playlist delete --ids PLxxxx
+# Delete multiple playlists
 yutu playlist delete --ids PLxxx1,PLxxx2`
 )
 

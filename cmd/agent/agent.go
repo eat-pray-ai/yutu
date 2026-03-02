@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	agentShort = "Start an agent to automate YouTube workflows"
-	agentLong  = `Start an agent to automate YouTube workflows.
+	short = "Start an agent to automate YouTube workflows"
+	long  = `Start an agent to automate YouTube workflows.
 
 Environment variables:
   YUTU_ADVANCED_MODEL          Model for orchestrator agent (format: provider:modelName, e.g. google:gemini-3.1-pro-preview)
@@ -49,8 +49,8 @@ var launcherArgs string
 
 var agentCmd = &cobra.Command{
 	Use:     "agent",
-	Short:   agentShort,
-	Long:    agentLong,
+	Short:   short,
+	Long:    long,
 	Example: example,
 	Run: func(cmd *cobra.Command, args []string) {
 		if launcherArgs == "" {

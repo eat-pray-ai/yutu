@@ -22,8 +22,11 @@ const (
 	listIdsUsage = "IDs of the captions to list"
 	listShort    = "List captions"
 	listLong     = "List captions. Use this tool when you need to list captions of a video."
-	listExample  = `yutu caption list --videoId dQw4w9WgXcQ
+	listExample  = `# List captions of a video
+yutu caption list --videoId dQw4w9WgXcQ
+# List captions in JSON format
 yutu caption list --videoId dQw4w9WgXcQ --output json
+# List specific captions by IDs
 yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ`
 )
 

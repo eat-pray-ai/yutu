@@ -21,8 +21,11 @@ const (
 	updateTool    = "caption-update"
 	updateShort   = "Update a video caption"
 	updateLong    = "Update a video caption. Use this tool when you need to update a video caption."
-	updateExample = `yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
+	updateExample = `# Publish a draft caption
+yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
+# Update caption language and name
 yutu caption update --videoId dQw4w9WgXcQ --language en --name English
+# Update caption file
 yutu caption update --videoId dQw4w9WgXcQ --file updated.srt`
 )
 

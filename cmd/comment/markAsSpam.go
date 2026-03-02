@@ -21,7 +21,9 @@ const (
 	masTool    = "comment-markAsSpam"
 	masShort   = "Mark comments as spam"
 	masLong    = "Mark comments as spam. Use this tool when you need to mark comments as spam."
-	masExample = `yutu comment markAsSpam --ids abc123
+	masExample = `# Mark a comment as spam
+yutu comment markAsSpam --ids abc123
+# Mark multiple comments as spam
 yutu comment markAsSpam --ids abc123,def456`
 )
 

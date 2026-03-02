@@ -21,7 +21,9 @@ const (
 	deleteIdsUsage = "IDs of the captions to delete"
 	deleteShort    = "Delete captions"
 	deleteLong     = "Delete captions. Use this tool when you need to delete captions of a video by IDs."
-	deleteExample  = `yutu caption delete --ids abc123
+	deleteExample  = `# Delete a caption by ID
+yutu caption delete --ids abc123
+# Delete multiple captions
 yutu caption delete --ids abc123,def456`
 )
 

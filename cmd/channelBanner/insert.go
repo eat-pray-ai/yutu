@@ -19,9 +19,11 @@ import (
 
 const (
 	insertTool    = "channelBanner-insert"
-	insertShort   = "Insert a YouTube channel banner"
-	insertLong    = "Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner."
-	insertExample = `yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+	insertShort   = "Insert a channel banner"
+	insertLong    = "Insert a channel banner. Use this tool when you need to upload a channel banner."
+	insertExample = `# Upload a channel banner
+yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+# Upload a channel banner with JSON output
 yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
 )
 

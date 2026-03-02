@@ -22,8 +22,11 @@ const (
 	insertCidUsage = "Channel id of the playlist"
 	insertShort    = "Create a new playlist"
 	insertLong     = "Create a new playlist. Use this tool when you need to create a new playlist."
-	insertExample  = `yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public
+	insertExample  = `# Create a public playlist
+yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public
+# Create a private playlist with description
 yutu playlist insert --title 'Tutorial Series' --channelId UC_x5X --privacy private --description 'My tutorials'
+# Create an unlisted playlist with tags
 yutu playlist insert --title 'Music' --channelId UC_x5X --privacy unlisted --tags 'music,pop'`
 )
 

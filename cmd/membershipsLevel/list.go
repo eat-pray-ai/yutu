@@ -21,7 +21,8 @@ const (
 	listTool    = "membershipsLevel-list"
 	listShort   = "List memberships levels"
 	listLong    = "List memberships levels. Use this tool when you need to list information about channel membership levels."
-	listExample = "yutu membershipsLevel list --output json"
+	listExample = `# List membership levels in JSON format
+yutu membershipsLevel list --output json`
 )
 
 var listInSchema = &jsonschema.Schema{

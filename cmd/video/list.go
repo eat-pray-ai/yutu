@@ -23,9 +23,13 @@ const (
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 	listShort    = "List video information"
 	listLong     = "List video information. Use this tool when you need to list video information."
-	listExample  = `yutu video list --ids dQw4w9WgXcQ
+	listExample  = `# List a video by ID
+yutu video list --ids dQw4w9WgXcQ
+# List multiple videos in JSON format
 yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+# List most popular videos by region
 yutu video list --chart mostPopular --regionCode US --maxResults 10
+# List my liked videos
 yutu video list --myRating like --output yaml`
 )
 

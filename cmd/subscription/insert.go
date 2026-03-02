@@ -20,9 +20,11 @@ import (
 const (
 	insertTool     = "subscription-insert"
 	insertCidUsage = "ID of the channel to be subscribed"
-	insertShort    = "Insert a YouTube subscription"
-	insertLong     = "Insert a YouTube subscription. Use this tool when you need to insert a YouTube subscription."
-	insertExample  = `yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+	insertShort    = "Insert a new subscription"
+	insertLong     = "Insert a new subscription. Use this tool when you need to insert a new subscription."
+	insertExample  = `# Subscribe to a channel
+yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+# Subscribe with a title
 yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'`
 )
 

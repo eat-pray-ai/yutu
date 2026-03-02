@@ -21,8 +21,11 @@ const (
 	smsTool    = "comment-setModerationStatus"
 	smsShort   = "Set comment moderation status"
 	smsLong    = "Set comment moderation status. Use this tool when you need to set comment moderation status."
-	smsExample = `yutu comment setModerationStatus --ids abc123 --moderationStatus published
+	smsExample = `# Publish a held comment
+yutu comment setModerationStatus --ids abc123 --moderationStatus published
+# Hold multiple comments for review
 yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview
+# Reject a comment and ban author
 yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor`
 )
 

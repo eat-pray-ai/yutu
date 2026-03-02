@@ -21,8 +21,11 @@ const (
 	insertTool    = "caption-insert"
 	insertShort   = "Insert a caption"
 	insertLong    = "Insert a caption. Use this tool when you need to insert a caption to a video."
-	insertExample = `yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+	insertExample = `# Insert a caption to a video
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+# Insert a caption with language and name
 yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
+# Insert a standard caption and publish immediately
 yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
 )
 
