@@ -16,13 +16,11 @@ import (
 )
 
 const (
-	deleteTool  = "comment-delete"
-	deleteShort = "Delete comments"
-	deleteLong  = `Delete comments. Use this tool when you need to delete comments by IDs.
-
-Examples:
-  yutu comment delete --ids abc123
-  yutu comment delete --ids abc123,def456`
+	deleteTool    = "comment-delete"
+	deleteShort   = "Delete comments"
+	deleteLong    = "Delete comments. Use this tool when you need to delete comments by IDs."
+	deleteExample = `yutu comment delete --ids abc123
+yutu comment delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -59,9 +57,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := comment.NewComment(comment.WithIds(ids))
 		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)

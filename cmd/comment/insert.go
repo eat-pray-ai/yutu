@@ -21,11 +21,9 @@ const (
 	insertTool     = "comment-insert"
 	insertPidUsage = "ID of the parent comment"
 	insertShort    = "Create a comment"
-	insertLong     = `Create a comment. Use this tool when you need to create a comment on a video.
-
-Examples:
-  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
-  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate`
+	insertLong     = "Create a comment. Use this tool when you need to create a comment on a video."
+	insertExample  = `yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -91,9 +89,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := comment.NewComment(
 			comment.WithAuthorChannelId(authorChannelId),

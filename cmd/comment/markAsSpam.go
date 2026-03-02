@@ -18,13 +18,11 @@ import (
 )
 
 const (
-	masTool  = "comment-markAsSpam"
-	masShort = "Mark comments as spam"
-	masLong  = `Mark comments as spam. Use this tool when you need to mark comments as spam.
-
-Examples:
-  yutu comment markAsSpam --ids abc123
-  yutu comment markAsSpam --ids abc123,def456`
+	masTool    = "comment-markAsSpam"
+	masShort   = "Mark comments as spam"
+	masLong    = "Mark comments as spam. Use this tool when you need to mark comments as spam."
+	masExample = `yutu comment markAsSpam --ids abc123
+yutu comment markAsSpam --ids abc123,def456`
 )
 
 var markAsSpamInSchema = &jsonschema.Schema{
@@ -69,9 +67,10 @@ func init() {
 }
 
 var markAsSpamCmd = &cobra.Command{
-	Use:   "markAsSpam",
-	Short: masShort,
-	Long:  masLong,
+	Use:     "markAsSpam",
+	Short:   masShort,
+	Long:    masLong,
+	Example: masExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := comment.NewComment(
 			comment.WithIds(ids),

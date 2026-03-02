@@ -20,12 +20,10 @@ const (
 	downloadTool    = "caption-download"
 	downloadIdUsage = "ID of the caption to download"
 	downloadShort   = "Download a caption"
-	downloadLong    = `Download a caption. Use this tool when you need to download a caption from a video.
-
-Examples:
-  yutu caption download --id abc123 --file subtitle.srt
-  yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
-  yutu caption download --id abc123 --file subtitle.srt --tlang fr`
+	downloadLong    = "Download a caption. Use this tool when you need to download a caption from a video."
+	downloadExample = `yutu caption download --id abc123 --file subtitle.srt
+yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
+yutu caption download --id abc123 --file subtitle.srt --tlang fr`
 )
 
 var downloadInSchema = &jsonschema.Schema{
@@ -83,9 +81,10 @@ func init() {
 }
 
 var downloadCmd = &cobra.Command{
-	Use:   "download",
-	Short: downloadShort,
-	Long:  downloadLong,
+	Use:     "download",
+	Short:   downloadShort,
+	Long:    downloadLong,
+	Example: downloadExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCaption(
 			caption.WithIds(ids),

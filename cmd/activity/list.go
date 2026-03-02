@@ -18,14 +18,12 @@ import (
 )
 
 const (
-	listTool  = "activity-list"
-	listShort = "List activities"
-	listLong  = `List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
-
-Examples:
-  yutu activity list --mine
-  yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
-  yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json`
+	listTool    = "activity-list"
+	listShort   = "List activities"
+	listLong    = "List activities. Use this tool when you need to list activities such as uploads, likes, and favorites."
+	listExample = `yutu activity list --mine
+yutu activity list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+yutu activity list --publishedAfter 2024-01-01T00:00:00Z --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -92,9 +90,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := activity.NewActivity(
 			activity.WithChannelId(channelId),

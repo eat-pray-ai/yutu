@@ -18,14 +18,12 @@ import (
 )
 
 const (
-	getRatingTool  = "video-getRating"
-	grIdsUsage     = "IDs of the videos to get the rating for"
-	getRatingShort = "Get video ratings"
-	getRatingLong  = `Get video ratings. Use this tool when you need to get video ratings by IDs.
-
-Examples:
-  yutu video getRating --ids dQw4w9WgXcQ
-  yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json`
+	getRatingTool    = "video-getRating"
+	grIdsUsage       = "IDs of the videos to get the rating for"
+	getRatingShort   = "Get video ratings"
+	getRatingLong    = "Get video ratings. Use this tool when you need to get video ratings by IDs."
+	getRatingExample = `yutu video getRating --ids dQw4w9WgXcQ
+yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json`
 )
 
 var getRatingInSchema = &jsonschema.Schema{
@@ -74,9 +72,10 @@ func init() {
 }
 
 var getRatingCmd = &cobra.Command{
-	Use:   "getRating",
-	Short: getRatingShort,
-	Long:  getRatingLong,
+	Use:     "getRating",
+	Short:   getRatingShort,
+	Long:    getRatingLong,
+	Example: getRatingExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),

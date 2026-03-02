@@ -18,14 +18,12 @@ import (
 )
 
 const (
-	updateTool  = "caption-update"
-	updateShort = "Update a video caption"
-	updateLong  = `Update a video caption. Use this tool when you need to update a video caption.
-
-Examples:
-  yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
-  yutu caption update --videoId dQw4w9WgXcQ --language en --name English
-  yutu caption update --videoId dQw4w9WgXcQ --file updated.srt`
+	updateTool    = "caption-update"
+	updateShort   = "Update a video caption"
+	updateLong    = "Update a video caption. Use this tool when you need to update a video caption."
+	updateExample = `yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
+yutu caption update --videoId dQw4w9WgXcQ --language en --name English
+yutu caption update --videoId dQw4w9WgXcQ --file updated.srt`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -109,9 +107,10 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
+	Use:     "update",
+	Short:   updateShort,
+	Long:    updateLong,
+	Example: updateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCaption(
 			caption.WithFile(file),

@@ -16,12 +16,10 @@ import (
 )
 
 const (
-	unsetTool  = "watermark-unset"
-	unsetShort = "Unset a watermark for channel's videos"
-	unsetLong  = `Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos.
-
-Examples:
-  yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw`
+	unsetTool    = "watermark-unset"
+	unsetShort   = "Unset a watermark for channel's videos"
+	unsetLong    = "Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos."
+	unsetExample = "yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw"
 )
 
 var unsetInSchema = &jsonschema.Schema{
@@ -55,9 +53,10 @@ func init() {
 }
 
 var unsetCmd = &cobra.Command{
-	Use:   "unset",
-	Short: unsetShort,
-	Long:  unsetLong,
+	Use:     "unset",
+	Short:   unsetShort,
+	Long:    unsetLong,
+	Example: unsetExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := watermark.NewWatermark(watermark.WithChannelId(channelId))
 		utils.HandleCmdError(input.Unset(cmd.OutOrStdout()), cmd)

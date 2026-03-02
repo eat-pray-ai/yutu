@@ -39,14 +39,19 @@ Environment variables:
 
 At least one of YUTU_ADVANCED_MODEL or YUTU_LITE_MODEL must be set.
 If only one is set, the other defaults to the same value.`
+	example = `# console mode
+yutu agent --args "console"
+# web mode with three sub-launchers: api, a2a and webui
+yutu agent --args "web api a2a webui"`
 )
 
 var launcherArgs string
 
 var agentCmd = &cobra.Command{
-	Use:   "agent",
-	Short: agentShort,
-	Long:  agentLong,
+	Use:     "agent",
+	Short:   agentShort,
+	Long:    agentLong,
+	Example: example,
 	Run: func(cmd *cobra.Command, args []string) {
 		if launcherArgs == "" {
 			_ = cmd.Help()

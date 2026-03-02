@@ -20,11 +20,9 @@ const (
 	deleteTool     = "playlist-delete"
 	deleteIdsUsage = "IDs of the playlists to delete"
 	deleteShort    = "Delete playlists"
-	deleteLong     = `Delete playlists. Use this tool when you need to delete playlists by IDs.
-
-Examples:
-  yutu playlist delete --ids PLxxxx
-  yutu playlist delete --ids PLxxx1,PLxxx2`
+	deleteLong     = "Delete playlists. Use this tool when you need to delete playlists by IDs."
+	deleteExample  = `yutu playlist delete --ids PLxxxx
+yutu playlist delete --ids PLxxx1,PLxxx2`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -66,9 +64,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlist.NewPlaylist(
 			playlist.WithIds(ids),

@@ -18,12 +18,10 @@ import (
 )
 
 const (
-	listTool  = "membershipsLevel-list"
-	listShort = "List memberships levels"
-	listLong  = `List memberships levels. Use this tool when you need to list information about channel membership levels.
-
-Examples:
-  yutu membershipsLevel list --output json`
+	listTool    = "membershipsLevel-list"
+	listShort   = "List memberships levels"
+	listLong    = "List memberships levels. Use this tool when you need to list information about channel membership levels."
+	listExample = "yutu membershipsLevel list --output json"
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -70,9 +68,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := membershipsLevel.NewMembershipsLevel(
 			membershipsLevel.WithParts(parts),

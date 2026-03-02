@@ -20,11 +20,9 @@ const (
 	deleteTool     = "caption-delete"
 	deleteIdsUsage = "IDs of the captions to delete"
 	deleteShort    = "Delete captions"
-	deleteLong     = `Delete captions. Use this tool when you need to delete captions of a video by IDs.
-
-Examples:
-  yutu caption delete --ids abc123
-  yutu caption delete --ids abc123,def456`
+	deleteLong     = "Delete captions. Use this tool when you need to delete captions of a video by IDs."
+	deleteExample  = `yutu caption delete --ids abc123
+yutu caption delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -68,9 +66,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCaption(
 			caption.WithIds(ids),

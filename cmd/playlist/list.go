@@ -22,12 +22,10 @@ const (
 	listIdsUsage = "Return the playlists with the given Ids for Stubby or Apiary"
 	listCidUsage = "Return the playlists owned by the specified channel id"
 	listShort    = "List playlist information"
-	listLong     = `List playlist information. Use this tool when you need to list playlist information.
-
-Examples:
-  yutu playlist list --mine
-  yutu playlist list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
-  yutu playlist list --ids PLxxx1,PLxxx2 --output json`
+	listLong     = "List playlist information. Use this tool when you need to list playlist information."
+	listExample  = `yutu playlist list --mine
+yutu playlist list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
+yutu playlist list --ids PLxxx1,PLxxx2 --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -107,9 +105,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlist.NewPlaylist(
 			playlist.WithIds(ids),

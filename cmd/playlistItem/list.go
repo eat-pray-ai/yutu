@@ -22,12 +22,10 @@ const (
 	listIdsUsage = "IDs of the playlist items to list"
 	listPidUsage = "Return the playlist items within the given playlist"
 	listShort    = "List playlist items"
-	listLong     = `List playlist items. Use this tool when you need to list playlist items.
-
-Examples:
-  yutu playlistItem list --playlistId PLxxx
-  yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json
-  yutu playlistItem list --ids abc123,def456`
+	listLong     = "List playlist items. Use this tool when you need to list playlist items."
+	listExample  = `yutu playlistItem list --playlistId PLxxx
+yutu playlistItem list --playlistId PLxxx --maxResults 20 --output json
+yutu playlistItem list --ids abc123,def456`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -92,9 +90,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlistItem.NewPlaylistItem(
 			playlistItem.WithIds(ids),

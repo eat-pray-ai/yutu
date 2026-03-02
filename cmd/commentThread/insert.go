@@ -21,11 +21,9 @@ const (
 	insertTool     = "commentThread-insert"
 	insertVidUsage = "ID of the video"
 	insertShort    = "Insert a new comment thread"
-	insertLong     = `Insert a new comment thread. Use this tool when you need to insert a new comment thread.
-
-Examples:
-  yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'
-  yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Nice work!' --output json`
+	insertLong     = "Insert a new comment thread. Use this tool when you need to insert a new comment thread."
+	insertExample  = `yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'
+yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Nice work!' --output json`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -80,9 +78,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := commentThread.NewCommentThread(
 			commentThread.WithAuthorChannelId(authorChannelId),

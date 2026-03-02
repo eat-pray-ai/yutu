@@ -21,12 +21,10 @@ const (
 	insertTool     = "playlist-insert"
 	insertCidUsage = "Channel id of the playlist"
 	insertShort    = "Create a new playlist"
-	insertLong     = `Create a new playlist. Use this tool when you need to create a new playlist.
-
-Examples:
-  yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public
-  yutu playlist insert --title 'Tutorial Series' --channelId UC_x5X --privacy private --description 'My tutorials'
-  yutu playlist insert --title 'Music' --channelId UC_x5X --privacy unlisted --tags 'music,pop'`
+	insertLong     = "Create a new playlist. Use this tool when you need to create a new playlist."
+	insertExample  = `yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public
+yutu playlist insert --title 'Tutorial Series' --channelId UC_x5X --privacy private --description 'My tutorials'
+yutu playlist insert --title 'Music' --channelId UC_x5X --privacy unlisted --tags 'music,pop'`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -86,9 +84,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlist.NewPlaylist(
 			playlist.WithTitle(title),

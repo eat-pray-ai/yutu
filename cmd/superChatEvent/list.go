@@ -18,12 +18,10 @@ import (
 )
 
 const (
-	listTool  = "superChatEvent-list"
-	listShort = "List Super Chat events"
-	listLong  = `List Super Chat events. Use this tool when you need to list Super Chat events.
-
-Examples:
-  yutu superChatEvent list --maxResults 10`
+	listTool    = "superChatEvent-list"
+	listShort   = "List Super Chat events"
+	listLong    = "List Super Chat events. Use this tool when you need to list Super Chat events."
+	listExample = "yutu superChatEvent list --maxResults 10"
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -78,9 +76,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := superChatEvent.NewSuperChatEvent(
 			superChatEvent.WithHl(hl),

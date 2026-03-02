@@ -21,13 +21,11 @@ const (
 	listTool     = "channel-list"
 	listIdsUsage = "Return the channels with the specified Ids"
 	listShort    = "List channel information"
-	listLong     = `List channel information. Use this tool when you need to list channel information.
-
-Examples:
-  yutu channel list --mine
-  yutu channel list --forHandle @GoogleDevelopers
-  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
-  yutu channel list --maxResults 10 --output table`
+	listLong     = "List channel information. Use this tool when you need to list channel information."
+	listExample  = `yutu channel list --mine
+yutu channel list --forHandle @GoogleDevelopers
+yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+yutu channel list --maxResults 10 --output table`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -115,9 +113,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channel.NewChannel(
 			channel.WithCategoryId(categoryId),

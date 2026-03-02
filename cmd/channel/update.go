@@ -21,12 +21,10 @@ const (
 	updateTool    = "channel-update"
 	updateIdUsage = "ID of the channel to update"
 	updateShort   = "Update channel information"
-	updateLong    = `Update channel information. Use this tool when you need to update channel information.
-
-Examples:
-  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
-  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
-  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en`
+	updateLong    = "Update channel information. Use this tool when you need to update channel information."
+	updateExample = `yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -85,9 +83,10 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
+	Use:     "update",
+	Short:   updateShort,
+	Long:    updateLong,
+	Example: updateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channel.NewChannel(
 			channel.WithIds(ids),

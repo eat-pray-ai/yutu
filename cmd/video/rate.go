@@ -20,12 +20,10 @@ const (
 	rateIdsUsage = "IDs of the videos to rate"
 	rateRUsage   = "like|dislike|none"
 	rateShort    = "Rate a video"
-	rateLong     = `Rate a video. Use this tool when you need to rate a video.
-
-Examples:
-  yutu video rate --ids dQw4w9WgXcQ --rating like
-  yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
-  yutu video rate --ids dQw4w9WgXcQ --rating none`
+	rateLong     = "Rate a video. Use this tool when you need to rate a video."
+	rateExample  = `yutu video rate --ids dQw4w9WgXcQ --rating like
+yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
+yutu video rate --ids dQw4w9WgXcQ --rating none`
 )
 
 var rateInSchema = &jsonschema.Schema{
@@ -69,9 +67,10 @@ func init() {
 }
 
 var rateCmd = &cobra.Command{
-	Use:   "rate",
-	Short: rateShort,
-	Long:  rateLong,
+	Use:     "rate",
+	Short:   rateShort,
+	Long:    rateLong,
+	Example: rateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),

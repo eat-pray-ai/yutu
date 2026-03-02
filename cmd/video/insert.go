@@ -21,12 +21,10 @@ const (
 	insertTool      = "video-insert"
 	insertLangUsage = "Language of the video"
 	insertShort     = "Upload a video"
-	insertLong      = `Upload a video. Use this tool when you need to upload a video to YouTube.
-
-Examples:
-  yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
-  yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'
-  yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg`
+	insertLong      = "Upload a video. Use this tool when you need to upload a video to YouTube."
+	insertExample   = `yutu video insert --file video.mp4 --title 'My Video' --categoryId 22 --privacy public
+yutu video insert --file video.mp4 --title 'Tutorial' --categoryId 27 --privacy private --tags 'go,tutorial'
+yutu video insert --file video.mp4 --title 'Music Video' --categoryId 10 --privacy unlisted --thumbnail cover.jpg`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -137,9 +135,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(
 			video.WithAutoLevels(autoLevels),

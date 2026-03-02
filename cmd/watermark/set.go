@@ -17,14 +17,12 @@ import (
 )
 
 const (
-	setTool  = "watermark-set"
-	setShort = "Set a watermark for channel's videos"
-	setLong  = `Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
-
-Examples:
-  yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
-  yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
-  yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
+	setTool    = "watermark-set"
+	setShort   = "Set a watermark for channel's videos"
+	setLong    = "Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos."
+	setExample = `yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
+yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
 )
 
 var setInSchema = &jsonschema.Schema{
@@ -82,9 +80,10 @@ func init() {
 }
 
 var setCmd = &cobra.Command{
-	Use:   "set",
-	Short: setShort,
-	Long:  setLong,
+	Use:     "set",
+	Short:   setShort,
+	Long:    setLong,
+	Example: setExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),

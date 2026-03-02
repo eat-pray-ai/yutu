@@ -21,12 +21,10 @@ const (
 	updateTool    = "comment-update"
 	updateIdUsage = "ID of the comment"
 	updateShort   = "Update a comment on a video"
-	updateLong    = `Update a comment on a video. Use this tool when you need to update a comment on a video.
-
-Examples:
-  yutu comment update --id abc123 --textOriginal 'Updated comment'
-  yutu comment update --id abc123 --viewerRating like
-  yutu comment update --id abc123 --textOriginal 'New text' --canRate`
+	updateLong    = "Update a comment on a video. Use this tool when you need to update a comment on a video."
+	updateExample = `yutu comment update --id abc123 --textOriginal 'Updated comment'
+yutu comment update --id abc123 --viewerRating like
+yutu comment update --id abc123 --textOriginal 'New text' --canRate`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -84,9 +82,10 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
+	Use:     "update",
+	Short:   updateShort,
+	Long:    updateLong,
+	Example: updateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := comment.NewComment(
 			comment.WithIds(ids),

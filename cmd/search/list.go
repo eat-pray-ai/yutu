@@ -18,15 +18,13 @@ import (
 )
 
 const (
-	listTool  = "search-list"
-	listShort = "Search resources"
-	listLong  = `Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources.
-
-Examples:
-  yutu search list --q 'golang tutorial' --maxResults 10
-  yutu search list --q 'music' --types video --videoDuration medium --output json
-  yutu search list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order date --maxResults 5
-  yutu search list --q 'live coding' --eventType live --types video`
+	listTool    = "search-list"
+	listShort   = "Search resources"
+	listLong    = "Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources."
+	listExample = `yutu search list --q 'golang tutorial' --maxResults 10
+yutu search list --q 'music' --types video --videoDuration medium --output json
+yutu search list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --order date --maxResults 5
+yutu search list --q 'live coding' --eventType live --types video`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -192,9 +190,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := search.NewSearch(
 			search.WithChannelId(channelId),

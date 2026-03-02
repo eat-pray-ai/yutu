@@ -21,11 +21,9 @@ const (
 	insertTool     = "subscription-insert"
 	insertCidUsage = "ID of the channel to be subscribed"
 	insertShort    = "Insert a YouTube subscription"
-	insertLong     = `Insert a YouTube subscription. Use this tool when you need to insert a YouTube subscription.
-
-Examples:
-  yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
-  yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'`
+	insertLong     = "Insert a YouTube subscription. Use this tool when you need to insert a YouTube subscription."
+	insertExample  = `yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -76,9 +74,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := subscription.NewSubscription(
 			subscription.WithSubscriberChannelId(subscriberChannelId),

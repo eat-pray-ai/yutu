@@ -21,12 +21,10 @@ const (
 	listTool     = "caption-list"
 	listIdsUsage = "IDs of the captions to list"
 	listShort    = "List captions"
-	listLong     = `List captions. Use this tool when you need to list captions of a video.
-
-Examples:
-  yutu caption list --videoId dQw4w9WgXcQ
-  yutu caption list --videoId dQw4w9WgXcQ --output json
-  yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ`
+	listLong     = "List captions. Use this tool when you need to list captions of a video."
+	listExample  = `yutu caption list --videoId dQw4w9WgXcQ
+yutu caption list --videoId dQw4w9WgXcQ --output json
+yutu caption list --ids abc123,def456 --videoId dQw4w9WgXcQ`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -86,9 +84,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCaption(
 			caption.WithIds(ids),

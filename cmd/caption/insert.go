@@ -18,14 +18,12 @@ import (
 )
 
 const (
-	insertTool  = "caption-insert"
-	insertShort = "Insert a caption"
-	insertLong  = `Insert a caption. Use this tool when you need to insert a caption to a video.
-
-Examples:
-  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
-  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
-  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
+	insertTool    = "caption-insert"
+	insertShort   = "Insert a caption"
+	insertLong    = "Insert a caption. Use this tool when you need to insert a caption to a video."
+	insertExample = `yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -111,9 +109,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := caption.NewCaption(
 			caption.WithFile(file),

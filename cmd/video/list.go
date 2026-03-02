@@ -22,13 +22,11 @@ const (
 	listIdsUsage = "Return videos with the given ids"
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 	listShort    = "List video information"
-	listLong     = `List video information. Use this tool when you need to list video information.
-
-Examples:
-  yutu video list --ids dQw4w9WgXcQ
-  yutu video list --ids dQw4w9WgXcQ,abc123 --output json
-  yutu video list --chart mostPopular --regionCode US --maxResults 10
-  yutu video list --myRating like --output yaml`
+	listLong     = "List video information. Use this tool when you need to list video information."
+	listExample  = `yutu video list --ids dQw4w9WgXcQ
+yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+yutu video list --chart mostPopular --regionCode US --maxResults 10
+yutu video list --myRating like --output yaml`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -111,9 +109,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),

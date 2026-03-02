@@ -19,11 +19,9 @@ const (
 	deleteTool     = "video-delete"
 	deleteIdsUsage = "IDs of the videos to delete"
 	deleteShort    = "Delete videos"
-	deleteLong     = `Delete videos. Use this tool when you need to delete videos by IDs.
-
-Examples:
-  yutu video delete --ids dQw4w9WgXcQ
-  yutu video delete --ids dQw4w9WgXcQ,abc123`
+	deleteLong     = "Delete videos. Use this tool when you need to delete videos by IDs."
+	deleteExample  = `yutu video delete --ids dQw4w9WgXcQ
+yutu video delete --ids dQw4w9WgXcQ,abc123`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -60,9 +58,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(video.WithIds(ids))
 		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)

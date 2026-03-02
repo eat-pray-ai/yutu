@@ -18,13 +18,11 @@ import (
 )
 
 const (
-	listTool  = "member-list"
-	listShort = "List channel members"
-	listLong  = `List channel members. Use this tool when you need to list information about channel members.
-
-Examples:
-  yutu member list --mode all_current
-  yutu member list --maxResults 10`
+	listTool    = "member-list"
+	listShort   = "List channel members"
+	listLong    = "List channel members. Use this tool when you need to list information about channel members."
+	listExample = `yutu member list --mode all_current
+yutu member list --maxResults 10`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -90,9 +88,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := member.NewMember(
 			member.WithMemberChannelId(memberChannelId),

@@ -21,12 +21,10 @@ const (
 	listTool     = "commentThread-list"
 	listVidUsage = "Returns the comment threads of the specified video"
 	listShort    = "List comment threads"
-	listLong     = `List comment threads. Use this tool when you need to list comment threads.
-
-Examples:
-  yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
-  yutu commentThread list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --searchTerms 'hello'
-  yutu commentThread list --ids abc123,def456 --output json`
+	listLong     = "List comment threads. Use this tool when you need to list comment threads."
+	listExample  = `yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
+yutu commentThread list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --searchTerms 'hello'
+yutu commentThread list --ids abc123,def456 --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -115,9 +113,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := commentThread.NewCommentThread(
 			commentThread.WithIds(ids),

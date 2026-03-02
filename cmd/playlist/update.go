@@ -21,12 +21,10 @@ const (
 	updateTool    = "playlist-update"
 	updateIdUsage = "ID of the playlist to update"
 	updateShort   = "Update a playlist"
-	updateLong    = `Update a playlist. Use this tool when you need to update a playlist.
-
-Examples:
-  yutu playlist update --id PLxxx --title 'Updated Title'
-  yutu playlist update --id PLxxx --description 'New description' --privacy public
-  yutu playlist update --id PLxxx --tags 'music,pop,2024'`
+	updateLong    = "Update a playlist. Use this tool when you need to update a playlist."
+	updateExample = `yutu playlist update --id PLxxx --title 'Updated Title'
+yutu playlist update --id PLxxx --description 'New description' --privacy public
+yutu playlist update --id PLxxx --tags 'music,pop,2024'`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -89,9 +87,10 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
+	Use:     "update",
+	Short:   updateShort,
+	Long:    updateLong,
+	Example: updateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		p := playlist.NewPlaylist(
 			playlist.WithIds(ids),

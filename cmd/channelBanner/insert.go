@@ -18,13 +18,11 @@ import (
 )
 
 const (
-	insertTool  = "channelBanner-insert"
-	insertShort = "Insert a YouTube channel banner"
-	insertLong  = `Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner.
-
-Examples:
-  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
-  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
+	insertTool    = "channelBanner-insert"
+	insertShort   = "Insert a YouTube channel banner"
+	insertLong    = "Insert a YouTube channel banner. Use this tool when you need to insert or upload a channel banner."
+	insertExample = `yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -86,9 +84,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channelBanner.NewChannelBanner(
 			channelBanner.WithChannelId(channelId),

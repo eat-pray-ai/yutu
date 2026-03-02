@@ -18,13 +18,11 @@ import (
 )
 
 const (
-	listTool  = "playlistImage-list"
-	listShort = "List playlist images"
-	listLong  = `List playlist images. Use this tool when you need to list playlist images.
-
-Examples:
-  yutu playlistImage list --parent PLxxx
-  yutu playlistImage list --parent PLxxx --maxResults 10 --output json`
+	listTool    = "playlistImage-list"
+	listShort   = "List playlist images"
+	listLong    = "List playlist images. Use this tool when you need to list playlist images."
+	listExample = `yutu playlistImage list --parent PLxxx
+yutu playlistImage list --parent PLxxx --maxResults 10 --output json`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -92,9 +90,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithParent(parent),

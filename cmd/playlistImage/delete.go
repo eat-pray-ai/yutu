@@ -17,13 +17,11 @@ import (
 )
 
 const (
-	deleteTool  = "playlistImage-delete"
-	deleteShort = "Delete playlist images"
-	deleteLong  = `Delete playlist images. Use this tool when you need to delete playlist images by IDs.
-
-Examples:
-  yutu playlistImage delete --ids abc123
-  yutu playlistImage delete --ids abc123,def456`
+	deleteTool    = "playlistImage-delete"
+	deleteShort   = "Delete playlist images"
+	deleteLong    = "Delete playlist images. Use this tool when you need to delete playlist images by IDs."
+	deleteExample = `yutu playlistImage delete --ids abc123
+yutu playlistImage delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -66,9 +64,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithIds(ids),

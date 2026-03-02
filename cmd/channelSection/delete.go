@@ -20,11 +20,9 @@ const (
 	deleteTool     = "channelSection-delete"
 	deleteIdsUsage = "Delete the channel sections with the given ids"
 	deleteShort    = "Delete channel sections"
-	deleteLong     = `Delete channel sections. Use this tool when you need to delete channel sections by IDs.
-
-Examples:
-  yutu channelSection delete --ids abc123
-  yutu channelSection delete --ids abc123,def456`
+	deleteLong     = "Delete channel sections. Use this tool when you need to delete channel sections by IDs."
+	deleteExample  = `yutu channelSection delete --ids abc123
+yutu channelSection delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{
@@ -67,9 +65,10 @@ func init() {
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: deleteShort,
-	Long:  deleteLong,
+	Use:     "delete",
+	Short:   deleteShort,
+	Long:    deleteLong,
+	Example: deleteExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := channelSection.NewChannelSection(
 			channelSection.WithIds(ids),

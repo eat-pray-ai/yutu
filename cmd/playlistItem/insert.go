@@ -21,11 +21,9 @@ const (
 	insertTool     = "playlistItem-insert"
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
 	insertShort    = "Insert a playlist item into a playlist"
-	insertLong     = `Insert a playlist item into a playlist. Use this tool when you need to insert a playlist item into a playlist.
-
-Examples:
-  yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
-  yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public`
+	insertLong     = "Insert a playlist item into a playlist. Use this tool when you need to insert a playlist item into a playlist."
+	insertExample  = `yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -97,9 +95,10 @@ func init() {
 }
 
 var insertCmd = &cobra.Command{
-	Use:   "insert",
-	Short: insertShort,
-	Long:  insertLong,
+	Use:     "insert",
+	Short:   insertShort,
+	Long:    insertLong,
+	Example: insertExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(title),

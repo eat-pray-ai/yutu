@@ -21,12 +21,10 @@ const (
 	listTool     = "comment-list"
 	listPidUsage = "Returns replies to the specified comment"
 	listShort    = "List comments"
-	listLong     = `List comments. Use this tool when you need to list comments by IDs.
-
-Examples:
-  yutu comment list --parentId UgyXXXXXXXX --maxResults 10
-  yutu comment list --ids abc123,def456 --output json
-  yutu comment list --ids abc123 --textFormat plainText`
+	listLong     = "List comments. Use this tool when you need to list comments by IDs."
+	listExample  = `yutu comment list --parentId UgyXXXXXXXX --maxResults 10
+yutu comment list --ids abc123,def456 --output json
+yutu comment list --ids abc123 --textFormat plainText`
 )
 
 var listInSchema = &jsonschema.Schema{
@@ -94,9 +92,10 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
+	Use:     "list",
+	Short:   listShort,
+	Long:    listLong,
+	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := comment.NewComment(
 			comment.WithIds(ids),

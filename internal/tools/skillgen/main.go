@@ -91,17 +91,16 @@ func main() {
 	}
 }
 
-// writeReference generates a reference markdown file for a single verb command.
+// writeReference generates a reference Markdown file for a single verb command.
 func writeReference(path string, parent, verb *cobra.Command) error {
 	var b strings.Builder
 
 	skill := parent.Name()
 	verbName := verb.Name()
 	title := titleCase(skill) + " " + titleCase(verbName)
-	desc := firstLine(verb.Long, verb.Short)
 
 	b.WriteString(fmt.Sprintf("# %s Command\n\n", title))
-	b.WriteString(desc + "\n\n")
+	b.WriteString(verb.Long + "\n\n")
 	b.WriteString("## Usage\n\n")
 	b.WriteString(
 		fmt.Sprintf(
@@ -147,9 +146,9 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 		}
 	}
 
-	if examples := extractExamples(verb.Long); examples != "" {
+	if verb.Example != "" {
 		b.WriteString("\n## Examples\n\n```bash\n")
-		b.WriteString(examples)
+		b.WriteString(strings.TrimSpace(verb.Example) + "\n")
 		b.WriteString("```\n")
 	}
 
@@ -188,7 +187,7 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 		verbName := verb.Name()
 		refFile := fmt.Sprintf("references/%s-%s.md", skill, verbName)
 		b.WriteString(fmt.Sprintf("### %s\n\n", titleCase(verb.Short)))
-		b.WriteString(firstLine(verb.Long, verb.Short) + "\n\n")
+		b.WriteString(verb.Long + "\n\n")
 		b.WriteString(fmt.Sprintf("**Reference:** [%s](%s)\n\n", refFile, refFile))
 	}
 
@@ -208,28 +207,6 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 
-// extractExamples pulls the examples block from a Long description string.
-// It looks for lines after "Examples:" and returns the indented command lines.
-func extractExamples(long string) string {
-	idx := strings.Index(long, "Examples:")
-	if idx < 0 {
-		return ""
-	}
-	block := long[idx+len("Examples:"):]
-	var lines []string
-	for _, line := range strings.Split(block, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if trimmed == "" {
-			continue
-		}
-		lines = append(lines, trimmed)
-	}
-	if len(lines) == 0 {
-		return ""
-	}
-	return strings.Join(lines, "\n") + "\n"
-}
-
 // formatDefault returns a display-friendly default value for a flag.
 func formatDefault(f *pflag.Flag) string {
 	v := f.DefValue
@@ -244,18 +221,6 @@ func escPipe(s string) string {
 	return strings.ReplaceAll(s, "|", "\\|")
 }
 
-// firstLine returns the first line of long (up to the first newline),
-// falling back to fallback when long is empty.
-func firstLine(long, fallback string) string {
-	if long == "" {
-		return fallback
-	}
-	if i := strings.IndexByte(long, '\n'); i >= 0 {
-		return long[:i]
-	}
-	return long
-}
-
 // titleCase capitalises the first letter of a string.
 func titleCase(s string) string {
 	if s == "" {
@@ -268,7 +233,7 @@ func titleCase(s string) string {
 // e.g. "video" -> "videos", "channelBanner" -> "channel banners".
 func humanPlural(skill string) string {
 	var words []string
-	cur := []byte{}
+	var cur []byte
 	for i := range len(skill) {
 		ch := skill[i]
 		if ch >= 'A' && ch <= 'Z' && len(cur) > 0 {

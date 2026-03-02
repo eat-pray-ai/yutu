@@ -22,12 +22,10 @@ const (
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
 	updateShort     = "Update a video"
-	updateLong      = `Update a video. Use this tool when you need to update a video.
-
-Examples:
-  yutu video update --id dQw4w9WgXcQ --title 'New Title'
-  yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
-  yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
+	updateLong      = "Update a video. Use this tool when you need to update a video."
+	updateExample   = `yutu video update --id dQw4w9WgXcQ --title 'New Title'
+yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -103,9 +101,10 @@ func init() {
 }
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: updateShort,
-	Long:  updateLong,
+	Use:     "update",
+	Short:   updateShort,
+	Long:    updateLong,
+	Example: updateExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),
