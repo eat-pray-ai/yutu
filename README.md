@@ -22,7 +22,7 @@
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=988886&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
-`yutu` is a fully functional MCP server and CLI for YouTube to automate your YouTube workflows. It can manipulate almost all YouTube resources, like videos, playlists, channels, comments, captions, and more. [中文文档](./README_zh.md)
+`yutu` is a CLI, MCP server, and AI agent for YouTube that automates your entire YouTube workflow — from uploading and optimizing videos to managing comments, playlists, and channel branding — so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
 
 [![mcp demo](./assets/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
@@ -170,7 +170,16 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ## Agent
 
-`yutu` provides an agent mode to automate YouTube workflows. Currently, the agent mode is in the experimental stage under active development, only supports Google's Gemini models with the following environment variables set:
+`yutu` provides an agent mode to automate YouTube workflows. The system uses a multi-agent architecture where a central orchestrator delegates tasks to specialized agents:
+
+| Agent            | Role                                                                         | Capabilities                                                                                                    |
+|------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| **Orchestrator** | Coordinates the entire workflow, plans strategy, and delegates to sub-agents | YouTube growth strategy, SEO optimization, task routing                                                         |
+| **Retrieval**    | Gathers data from YouTube and the web (read-only)                            | List/search videos, channels, playlists, comments, captions, subscriptions, members, and more; Google Search    |
+| **Modifier**     | Creates and updates YouTube content                                          | Upload videos, create playlists, update metadata, post comments, set thumbnails, manage captions and watermarks |
+| **Destroyer**    | Handles destructive operations with extra caution                            | Delete videos, playlists, comments, captions, subscriptions, channel sections, and watermarks                   |
+
+Currently, the agent mode is under active development, only supports Google's Gemini models with the following environment variables set:
 
 ```shell
 ❯ export YUTU_ADVANCED_MODEL=google:gemini-3.1-pro-preview
@@ -281,41 +290,47 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
 
 ```shell
 ❯ yutu        
-yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources
+yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources.
+
+Environment variables:
+  YUTU_CREDENTIAL    Path/base64/JSON of OAuth client secret (default: client_secret.json)
+  YUTU_CACHE_TOKEN   Path/base64/JSON of cached OAuth token (default: youtube.token.json)
+  YUTU_ROOT          Root directory for file resolution (default: current working directory)
+  YUTU_LOG_LEVEL     Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
 Usage:
   yutu [flags]
   yutu [command]
 
 Available Commands:
-  activity               List YouTube activities
-  agent                  Start agent to automate YouTube workflows
-  auth                   Authenticate with YouTube API
-  caption                Manipulate YouTube captions
-  channel                Manipulate YouTube channels
-  channelBanner          Insert Youtube channel banner
-  channelSection         Manipulate YouTube channel sections
-  comment                Manipulate YouTube comments
-  commentThread          Manipulate YouTube comment threads
+  activity               Manage activities on YouTube
+  agent                  Start an agent to automate YouTube workflows
+  auth                   Authenticate with YouTube APIs
+  caption                Manage YouTube video captions
+  channel                Manage YouTube channels
+  channelBanner          Manage YouTube channel banners
+  channelSection         Manage YouTube channel sections
+  comment                Manage YouTube comments
+  commentThread          Manage YouTube comment threads
   completion             Generate the autocompletion script for the specified shell
   help                   Help about any command
-  i18nLanguage           List YouTube i18n languages
-  i18nRegion             List YouTube i18n regions
+  i18nLanguage           Manage YouTube i18n languages
+  i18nRegion             Manage YouTube i18n regions
   mcp                    Start MCP server
-  member                 List channel's members' info
-  membershipsLevel       List memberships levels' info
-  playlist               Manipulate YouTube playlists
-  playlistImage          Manipulate YouTube playlist images
-  playlistItem           Manipulate YouTube playlist items
-  search                 Search for YouTube resources
-  subscription           Manipulate YouTube subscriptions
-  superChatEvent         List Super Chat events for a channel
-  thumbnail              Set thumbnail for a video
+  member                 Manage YouTube channel members
+  membershipsLevel       Manage YouTube memberships levels
+  playlist               Manage YouTube playlists
+  playlistImage          Manage YouTube playlist images
+  playlistItem           Manage YouTube playlist items
+  search                 Manage YouTube search
+  subscription           Manage YouTube subscriptions
+  superChatEvent         Manage YouTube Super Chat events
+  thumbnail              Manage YouTube video thumbnails
   version                Show the version of yutu
-  video                  Manipulate YouTube videos
-  videoAbuseReportReason List YouTube video abuse report reasons
-  videoCategory          List YouTube video categories
-  watermark              Manipulate YouTube watermarks
+  video                  Manage YouTube videos
+  videoAbuseReportReason Manage YouTube video abuse report reasons
+  videoCategory          Manage YouTube video categories
+  watermark              Manage YouTube watermarks
 
 Flags:
   -h, --help   help for yutu

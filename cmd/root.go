@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	short = "A fully functional MCP server and CLI for YouTube"
-	long  = `yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources.
+	short = "The AI agent that grows your YouTube channel on autopilot"
+	long  = `yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/base64/JSON of OAuth client secret (default: client_secret.json)
