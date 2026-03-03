@@ -1,6 +1,6 @@
 # SuperChatEvent List Command
 
-List Super Chat events. Use this tool when you need to list Super Chat events.
+List Super Chat events.
 
 ## Usage
 

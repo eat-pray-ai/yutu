@@ -1,6 +1,6 @@
 # PlaylistItem Delete Command
 
-Delete items from a playlist. Use this tool when you need to delete items from a playlist by IDs.
+Delete items from a playlist.
 
 ## Usage
 

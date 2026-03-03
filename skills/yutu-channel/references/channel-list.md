@@ -1,6 +1,6 @@
 # Channel List Command
 
-List channel information. Use this tool when you need to list channel information.
+List channel information.
 
 ## Usage
 

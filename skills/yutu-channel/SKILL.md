@@ -1,39 +1,11 @@
 ---
 name: yutu-channel
-description: Manage YouTube channels. Use this skill when you need to list or update channels.
+description: "Manage YouTube channels. Use this skill when you need to list or update channels. Triggers: list channel information, list channel, update channel information, update channel"
 ---
 
 # Yutu Channel
 
-## Overview
-
-This skill allows you to manage YouTube channels using the `yutu` CLI tool.
-
-## Channel Operations
-
-### List channel information
-
-List channel information. Use this tool when you need to list channel information.
-
-```bash
-# List my channel info
-yutu channel list --mine
-```
-
-**Reference:** [references/channel-list.md](references/channel-list.md)
-
-### Update channel information
-
-Update channel information. Use this tool when you need to update channel information.
-
-```bash
-# Update channel description
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
-```
-
-**Reference:** [references/channel-update.md](references/channel-update.md)
-
-## Resources
-
-- [references/channel-list.md](references/channel-list.md): Detailed usage of `List channel information`
-- [references/channel-update.md](references/channel-update.md): Detailed usage of `Update channel information`
+| Operation | Description | Reference |
+|-----------|-------------|----------|
+| list | List channel information | [details](references/channel-list.md) |
+| update | Update channel information | [details](references/channel-update.md) |

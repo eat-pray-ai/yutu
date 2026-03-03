@@ -1,6 +1,6 @@
 # Subscription Delete Command
 
-Delete subscriptions. Use this tool when you need to delete subscriptions by IDs.
+Delete subscriptions.
 
 ## Usage
 

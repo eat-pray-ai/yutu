@@ -1,6 +1,6 @@
 # PlaylistImage Update Command
 
-Update a playlist image. Use this tool when you need to update a playlist image.
+Update a playlist image.
 
 ## Usage
 

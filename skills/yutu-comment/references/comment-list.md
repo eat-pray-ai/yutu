@@ -1,6 +1,6 @@
 # Comment List Command
 
-List comments. Use this tool when you need to list comments by IDs.
+List comments.
 
 ## Usage
 

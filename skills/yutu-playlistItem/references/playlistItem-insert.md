@@ -1,6 +1,6 @@
 # PlaylistItem Insert Command
 
-Insert a playlist item into a playlist. Use this tool when you need to insert a playlist item into a playlist.
+Insert a playlist item into a playlist.
 
 ## Usage
 

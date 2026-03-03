@@ -1,6 +1,6 @@
 # MembershipsLevel List Command
 
-List memberships levels. Use this tool when you need to list information about channel membership levels.
+List memberships levels.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # ChannelSection List Command
 
-List channel sections. Use this tool when you need to list channel sections.
+List channel sections.
 
 ## Usage
 

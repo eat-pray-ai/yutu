@@ -1,6 +1,6 @@
 # Video GetRating Command
 
-Get video ratings. Use this tool when you need to get video ratings by IDs.
+Get video ratings.
 
 ## Usage
 

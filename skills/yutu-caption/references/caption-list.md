@@ -1,6 +1,6 @@
 # Caption List Command
 
-List captions. Use this tool when you need to list captions of a video.
+List captions.
 
 ## Usage
 

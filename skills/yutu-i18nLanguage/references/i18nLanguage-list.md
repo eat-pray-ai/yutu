@@ -1,6 +1,6 @@
 # I18nLanguage List Command
 
-List i18n languages. Use this tool when you need to list available internationalization languages.
+List i18n languages.
 
 ## Usage
 

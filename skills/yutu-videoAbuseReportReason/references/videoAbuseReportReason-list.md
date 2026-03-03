@@ -1,6 +1,6 @@
 # VideoAbuseReportReason List Command
 
-List video abuse report reasons. Use this tool when you need to list available abuse report reasons.
+List video abuse report reasons.
 
 ## Usage
 

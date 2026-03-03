@@ -1,6 +1,6 @@
 # PlaylistImage Delete Command
 
-Delete playlist images. Use this tool when you need to delete playlist images by IDs.
+Delete playlist images.
 
 ## Usage
 

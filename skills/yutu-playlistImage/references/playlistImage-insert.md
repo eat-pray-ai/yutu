@@ -1,6 +1,6 @@
 # PlaylistImage Insert Command
 
-Insert a playlist image. Use this tool when you need to insert a YouTube playlist image for a given playlist ID.
+Insert a playlist image.
 
 ## Usage
 

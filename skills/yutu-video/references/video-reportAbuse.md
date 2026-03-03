@@ -1,6 +1,6 @@
 # Video ReportAbuse Command
 
-Report abuse on a video. Use this tool when you need to report abuse on a video.
+Report abuse on a video.
 
 ## Usage
 

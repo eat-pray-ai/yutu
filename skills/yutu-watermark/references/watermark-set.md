@@ -1,6 +1,6 @@
 # Watermark Set Command
 
-Set a watermark for channel's videos. Use this tool when you need to set a watermark for channel's videos.
+Set a watermark for channel's videos.
 
 ## Usage
 

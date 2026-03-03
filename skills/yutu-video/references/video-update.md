@@ -1,6 +1,6 @@
 # Video Update Command
 
-Update a video. Use this tool when you need to update a video.
+Update a video.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # Caption Insert Command
 
-Insert a caption. Use this tool when you need to insert a caption to a video.
+Insert a caption.
 
 ## Usage
 

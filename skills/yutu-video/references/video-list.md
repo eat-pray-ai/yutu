@@ -1,6 +1,6 @@
 # Video List Command
 
-List video information. Use this tool when you need to list video information.
+List video information.
 
 ## Usage
 

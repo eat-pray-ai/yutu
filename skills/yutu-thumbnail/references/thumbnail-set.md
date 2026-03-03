@@ -1,6 +1,6 @@
 # Thumbnail Set Command
 
-Set a thumbnail for a video. Use this tool when you need to set a thumbnail for a video.
+Set a thumbnail for a video.
 
 ## Usage
 

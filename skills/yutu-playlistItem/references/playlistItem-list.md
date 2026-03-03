@@ -1,6 +1,6 @@
 # PlaylistItem List Command
 
-List playlist items. Use this tool when you need to list playlist items.
+List playlist items.
 
 ## Usage
 

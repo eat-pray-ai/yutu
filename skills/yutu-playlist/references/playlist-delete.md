@@ -1,6 +1,6 @@
 # Playlist Delete Command
 
-Delete playlists. Use this tool when you need to delete playlists by IDs.
+Delete playlists.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # Playlist List Command
 
-List playlist information. Use this tool when you need to list playlist information.
+List playlist information.
 
 ## Usage
 

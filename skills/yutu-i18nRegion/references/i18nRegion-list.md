@@ -1,6 +1,6 @@
 # I18nRegion List Command
 
-List i18n regions. Use this tool when you need to list available internationalization regions.
+List i18n regions.
 
 ## Usage
 

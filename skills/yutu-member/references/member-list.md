@@ -1,6 +1,6 @@
 # Member List Command
 
-List channel members. Use this tool when you need to list information about channel members.
+List channel members.
 
 ## Usage
 

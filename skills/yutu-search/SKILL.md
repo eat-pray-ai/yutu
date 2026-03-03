@@ -1,27 +1,10 @@
 ---
 name: yutu-search
-description: Manage YouTube search. Use this skill when you need to search for videos, channels, playlists, and other resources.
+description: "Manage YouTube search. Use this skill when you need to search for videos, channels, playlists, and other resources. Triggers: search resources, list search"
 ---
 
 # Yutu Search
 
-## Overview
-
-This skill allows you to manage YouTube searches using the `yutu` CLI tool.
-
-## Search Operations
-
-### Search resources
-
-Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources.
-
-```bash
-# Search for videos by keyword
-yutu search list --q 'golang tutorial' --maxResults 10
-```
-
-**Reference:** [references/search-list.md](references/search-list.md)
-
-## Resources
-
-- [references/search-list.md](references/search-list.md): Detailed usage of `Search resources`
+| Operation | Description | Reference |
+|-----------|-------------|----------|
+| list | Search resources | [details](references/search-list.md) |

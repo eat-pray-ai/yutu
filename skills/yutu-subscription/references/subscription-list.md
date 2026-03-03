@@ -1,6 +1,6 @@
 # Subscription List Command
 
-List subscription information. Use this tool when you need to list subscription information.
+List subscription information.
 
 ## Usage
 

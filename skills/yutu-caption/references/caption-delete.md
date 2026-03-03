@@ -1,6 +1,6 @@
 # Caption Delete Command
 
-Delete captions. Use this tool when you need to delete captions of a video by IDs.
+Delete captions.
 
 ## Usage
 

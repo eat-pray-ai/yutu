@@ -1,6 +1,6 @@
 # ChannelSection Delete Command
 
-Delete channel sections. Use this tool when you need to delete channel sections by IDs.
+Delete channel sections.
 
 ## Usage
 

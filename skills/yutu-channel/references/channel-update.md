@@ -1,6 +1,6 @@
 # Channel Update Command
 
-Update channel information. Use this tool when you need to update channel information.
+Update channel information.
 
 ## Usage
 

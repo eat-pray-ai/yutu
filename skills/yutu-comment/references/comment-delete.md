@@ -1,6 +1,6 @@
 # Comment Delete Command
 
-Delete comments. Use this tool when you need to delete comments by IDs.
+Delete comments.
 
 ## Usage
 

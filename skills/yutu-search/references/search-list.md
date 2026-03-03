@@ -1,6 +1,6 @@
 # Search List Command
 
-Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources.
+Search resources.
 
 ## Usage
 

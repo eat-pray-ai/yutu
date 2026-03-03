@@ -1,6 +1,6 @@
 # Video Insert Command
 
-Upload a video. Use this tool when you need to upload a video.
+Upload a video.
 
 ## Usage
 

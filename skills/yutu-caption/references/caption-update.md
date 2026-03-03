@@ -1,6 +1,6 @@
 # Caption Update Command
 
-Update a video caption. Use this tool when you need to update a video caption.
+Update a video caption.
 
 ## Usage
 

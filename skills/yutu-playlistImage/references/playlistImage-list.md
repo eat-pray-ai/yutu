@@ -1,6 +1,6 @@
 # PlaylistImage List Command
 
-List playlist images. Use this tool when you need to list playlist images.
+List playlist images.
 
 ## Usage
 

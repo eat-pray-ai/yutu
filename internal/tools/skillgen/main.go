@@ -100,7 +100,7 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 	title := titleCase(skill) + " " + titleCase(verbName)
 
 	b.WriteString(fmt.Sprintf("# %s Command\n\n", title))
-	b.WriteString(verb.Long + "\n\n")
+	b.WriteString(stripToolPhrase(verb.Long) + "\n\n")
 	b.WriteString("## Usage\n\n")
 	b.WriteString(
 		fmt.Sprintf(
@@ -166,46 +166,24 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 	if desc == "" {
 		desc = c.Short
 	}
+	desc += " Triggers: " + triggerPhrases(skill, verbs)
 
 	b.WriteString("---\n")
 	b.WriteString(fmt.Sprintf("name: yutu-%s\n", skill))
-	b.WriteString(fmt.Sprintf("description: %s\n", desc))
+	b.WriteString(fmt.Sprintf("description: \"%s\"\n", strings.ReplaceAll(desc, `"`, `\"`)))
 	b.WriteString("---\n\n")
 
 	b.WriteString(fmt.Sprintf("# Yutu %s\n\n", titleCase(skill)))
-	b.WriteString("## Overview\n\n")
-	b.WriteString(
-		fmt.Sprintf(
-			"This skill allows you to manage YouTube %s using the `yutu` CLI tool.\n\n",
-			humanPlural(skill),
-		),
-	)
-
-	b.WriteString(fmt.Sprintf("## %s Operations\n\n", titleCase(skill)))
-
-	for _, verb := range verbs {
-		verbName := verb.Name()
-		refFile := fmt.Sprintf("references/%s-%s.md", skill, verbName)
-		b.WriteString(fmt.Sprintf("### %s\n\n", titleCase(verb.Short)))
-		b.WriteString(verb.Long + "\n\n")
-
-		if ex := firstExample(verb.Example); ex != "" {
-			b.WriteString("```bash\n")
-			b.WriteString(ex + "\n")
-			b.WriteString("```\n\n")
-		}
-
-		b.WriteString(fmt.Sprintf("**Reference:** [%s](%s)\n\n", refFile, refFile))
-	}
 
 	if len(verbs) > 0 {
-		b.WriteString("## Resources\n\n")
+		b.WriteString("| Operation | Description | Reference |\n")
+		b.WriteString("|-----------|-------------|----------|\n")
 		for _, verb := range verbs {
 			refFile := fmt.Sprintf("references/%s-%s.md", skill, verb.Name())
-			refDesc := fmt.Sprintf("Detailed usage of `%s`", verb.Short)
 			b.WriteString(
 				fmt.Sprintf(
-					"- [%s](%s): %s\n", refFile, refFile, refDesc,
+					"| %s | %s | [details](%s) |\n",
+					verb.Name(), escPipe(verb.Short), refFile,
 				),
 			)
 		}
@@ -236,13 +214,28 @@ func titleCase(s string) string {
 	return strings.ToUpper(s[:1]) + s[1:]
 }
 
-// humanPlural returns a human-friendly plural noun for a skill name.
-// e.g. "video" -> "videos", "channelBanner" -> "channel banners".
-func humanPlural(skill string) string {
+func stripToolPhrase(s string) string {
+	if i := strings.Index(s, " Use this tool"); i > 0 {
+		return strings.TrimSpace(s[:i])
+	}
+	return s
+}
+
+func triggerPhrases(skill string, verbs []*cobra.Command) string {
+	var phrases []string
+	human := camelToWords(skill)
+	for _, v := range verbs {
+		phrases = append(phrases, strings.ToLower(v.Short))
+		phrases = append(phrases, v.Name()+" "+human)
+	}
+	return strings.Join(phrases, ", ")
+}
+
+func camelToWords(s string) string {
 	var words []string
 	var cur []byte
-	for i := range len(skill) {
-		ch := skill[i]
+	for i := range len(s) {
+		ch := s[i]
 		if ch >= 'A' && ch <= 'Z' && len(cur) > 0 {
 			words = append(words, strings.ToLower(string(cur)))
 			cur = cur[:0]
@@ -252,48 +245,5 @@ func humanPlural(skill string) string {
 	if len(cur) > 0 {
 		words = append(words, strings.ToLower(string(cur)))
 	}
-
-	if n := len(words); n > 0 {
-		words[n-1] = pluralize(words[n-1])
-	}
 	return strings.Join(words, " ")
-}
-
-func pluralize(w string) string {
-	if strings.HasSuffix(w, "s") || strings.HasSuffix(
-		w, "x",
-	) || strings.HasSuffix(w, "z") ||
-		strings.HasSuffix(w, "ch") || strings.HasSuffix(w, "sh") {
-		return w + "es"
-	}
-	if strings.HasSuffix(w, "y") && len(w) > 1 {
-		vowels := "aeiou"
-		if !strings.ContainsRune(vowels, rune(w[len(w)-2])) {
-			return w[:len(w)-1] + "ies"
-		}
-	}
-	return w + "s"
-}
-
-// firstExample extracts the first "# comment\ncommand" pair from an example
-// string. Returns empty string if the example is empty or doesn't start with
-// a comment line.
-func firstExample(example string) string {
-	example = strings.TrimSpace(example)
-	if example == "" {
-		return ""
-	}
-
-	lines := strings.Split(example, "\n")
-	if len(lines) == 0 {
-		return ""
-	}
-
-	// Expect "# comment" followed by "command".
-	if strings.HasPrefix(lines[0], "#") && len(lines) >= 2 {
-		return lines[0] + "\n" + lines[1]
-	}
-
-	// Fallback: return just the first line if no comment prefix.
-	return lines[0]
 }

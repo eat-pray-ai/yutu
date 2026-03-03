@@ -1,6 +1,6 @@
 # Comment SetModerationStatus Command
 
-Set comment moderation status. Use this tool when you need to set comment moderation status.
+Set comment moderation status.
 
 ## Usage
 

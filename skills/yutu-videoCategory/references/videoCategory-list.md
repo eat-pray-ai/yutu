@@ -1,6 +1,6 @@
 # VideoCategory List Command
 
-List video categories. Use this tool when you need to list available video categories.
+List video categories.
 
 ## Usage
 

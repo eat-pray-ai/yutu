@@ -1,6 +1,6 @@
 # ChannelBanner Insert Command
 
-Insert a channel banner. Use this tool when you need to upload a channel banner.
+Insert a channel banner.
 
 ## Usage
 

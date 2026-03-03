@@ -1,6 +1,6 @@
 # Comment Update Command
 
-Update a comment on a video. Use this tool when you need to update a comment on a video.
+Update a comment on a video.
 
 ## Usage
 

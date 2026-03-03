@@ -1,6 +1,6 @@
 # Comment MarkAsSpam Command
 
-Mark comments as spam. Use this tool when you need to mark comments as spam.
+Mark comments as spam.
 
 ## Usage
 

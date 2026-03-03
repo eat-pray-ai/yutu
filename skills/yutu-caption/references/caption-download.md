@@ -1,6 +1,6 @@
 # Caption Download Command
 
-Download a caption. Use this tool when you need to download a caption from a video.
+Download a caption.
 
 ## Usage
 

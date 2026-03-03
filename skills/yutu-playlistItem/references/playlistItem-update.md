@@ -1,6 +1,6 @@
 # PlaylistItem Update Command
 
-Update a playlist item. Use this tool when you need to update a playlist item.
+Update a playlist item.
 
 ## Usage
 

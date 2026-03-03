@@ -1,6 +1,6 @@
 # Watermark Unset Command
 
-Unset a watermark for channel's videos. Use this tool when you need to unset a watermark for a channel's videos.
+Unset a watermark for channel's videos.
 
 ## Usage
 

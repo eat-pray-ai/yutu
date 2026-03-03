@@ -1,6 +1,6 @@
 # Video Rate Command
 
-Rate a video. Use this tool when you need to rate a video.
+Rate a video.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # Playlist Insert Command
 
-Create a new playlist. Use this tool when you need to create a new playlist.
+Create a new playlist.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # Activity List Command
 
-List activities. Use this tool when you need to list activities such as uploads, likes, and favorites.
+List activities.
 
 ## Usage
 

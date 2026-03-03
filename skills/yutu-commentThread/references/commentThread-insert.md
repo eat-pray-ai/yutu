@@ -1,6 +1,6 @@
 # CommentThread Insert Command
 
-Insert a new comment thread. Use this tool when you need to insert a new comment thread.
+Insert a new comment thread.
 
 ## Usage
 

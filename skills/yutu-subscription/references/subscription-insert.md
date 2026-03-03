@@ -1,6 +1,6 @@
 # Subscription Insert Command
 
-Insert a new subscription. Use this tool when you need to insert a new subscription.
+Insert a new subscription.
 
 ## Usage
 

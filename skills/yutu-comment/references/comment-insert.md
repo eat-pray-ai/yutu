@@ -1,6 +1,6 @@
 # Comment Insert Command
 
-Create a comment. Use this tool when you need to create a comment on a video.
+Create a comment.
 
 ## Usage
 

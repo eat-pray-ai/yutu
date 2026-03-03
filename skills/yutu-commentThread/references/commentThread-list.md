@@ -1,6 +1,6 @@
 # CommentThread List Command
 
-List comment threads. Use this tool when you need to list comment threads.
+List comment threads.
 
 ## Usage
 

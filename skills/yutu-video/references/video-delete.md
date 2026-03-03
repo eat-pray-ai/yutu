@@ -1,6 +1,6 @@
 # Video Delete Command
 
-Delete videos. Use this tool when you need to delete videos by IDs.
+Delete videos.
 
 ## Usage
 
