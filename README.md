@@ -30,13 +30,6 @@
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [GitHub Actions](#github-actions)
-  - [Docker](#docker)
-  - [Gopher](#gopher)
-  - [Linux](#linux)
-  - [macOS](#macos)
-  - [Windows](#windows)
-  - [Verifying Installation](#verifying-installation)
 - [Agent](#agent)
 - [MCP Server](#mcp-server)
 - [Skills](#skills)
@@ -110,6 +103,14 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 ## Installation
 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
+
+- [GitHub Actions](#github-actions)
+- [Docker](#docker)
+- [Gopher](#gopher)
+- [Linux](#linux)
+- [macOS](#macos)
+- [Windows](#windows)
+- [Verifying Installation](#verifying-installation)
 
 ### GitHub Actions
 
