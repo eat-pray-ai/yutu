@@ -7,13 +7,11 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
-	"slices"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/agenttool"
 	"google.golang.org/adk/tool/geminitool"
 )
 
@@ -42,13 +40,13 @@ type agentDef struct {
 var agentDefs = map[string]agentDef{
 	"Nina": {
 		name:        "YouTube Copilot",
-		description: "Orchestrates YouTube workflows by delegating to specialized agents.",
+		description: "Orchestrates YouTube workflows by planning multi-step tasks and delegating to specialized agents.",
 		instruction: &orchestratorInstruction,
 		envKey:      "YUTU_AGENT_INSTRUCTION",
 	},
 	"Aagje": {
 		name:        "Retrieval",
-		description: "Retrieves information from YouTube and the internet, such as listing videos, channels, playlists, comments, and more.",
+		description: "Retrieves and analyzes information from YouTube — listing videos, channels, playlists, comments, analytics, and more. Use for read-only queries, research, and analysis.",
 		instruction: &retrievalInstruction,
 		envKey:      "YUTU_RETRIEVAL_INSTRUCTION",
 		toolNames: []string{
@@ -74,10 +72,19 @@ var agentDefs = map[string]agentDef{
 	},
 	"Knorretje": {
 		name:        "Modifier",
-		description: "Creates and updates YouTube content, such as uploading videos, creating playlists, updating metadata, posting comments, and more.",
+		description: "Creates and updates YouTube content — posting comments, uploading videos, creating playlists, updating metadata, setting thumbnails. Can also look up channels, videos, comments, playlists, captions, and subscriptions to gather context needed for modifications.",
 		instruction: &modifierInstruction,
 		envKey:      "YUTU_MODIFIER_INSTRUCTION",
 		toolNames: []string{
+			"caption-list",
+			"channel-list",
+			"comment-list",
+			"commentThread-list",
+			"playlist-list",
+			"playlistItem-list",
+			"search-list",
+			"subscription-list",
+			"video-list",
 			"caption-insert",
 			"caption-update",
 			"channel-update",
@@ -104,10 +111,19 @@ var agentDefs = map[string]agentDef{
 	},
 	"Daan": {
 		name:        "Destroyer",
-		description: "Deletes YouTube content, such as deleting videos, playlists, comments, captions, or subscriptions. Handles destructive operations that require extra caution.",
+		description: "Deletes YouTube content — videos, playlists, comments, captions, subscriptions. Can search and verify targets before deletion. Handles destructive operations requiring extra caution.",
 		instruction: &destroyerInstruction,
 		envKey:      "YUTU_DESTROYER_INSTRUCTION",
 		toolNames: []string{
+			"caption-list",
+			"channel-list",
+			"comment-list",
+			"commentThread-list",
+			"playlist-list",
+			"playlistItem-list",
+			"search-list",
+			"subscription-list",
+			"video-list",
 			"caption-delete",
 			"channelSection-delete",
 			"comment-delete",
@@ -121,9 +137,24 @@ var agentDefs = map[string]agentDef{
 	},
 }
 
-var confirmationToolNames = append(
-	agentDefs["Knorretje"].toolNames, agentDefs["Daan"].toolNames...,
-)
+var confirmationToolNames = computeConfirmationToolNames()
+
+func computeConfirmationToolNames() map[string]struct{} {
+	readOnly := make(map[string]struct{}, len(agentDefs["Aagje"].toolNames))
+	for _, name := range agentDefs["Aagje"].toolNames {
+		readOnly[name] = struct{}{}
+	}
+
+	result := make(map[string]struct{})
+	for _, key := range []string{"Knorretje", "Daan"} {
+		for _, name := range agentDefs[key].toolNames {
+			if _, ok := readOnly[name]; !ok {
+				result[name] = struct{}{}
+			}
+		}
+	}
+	return result
+}
 
 func init() {
 	for _, def := range agentDefs {
@@ -134,7 +165,8 @@ func init() {
 }
 
 func requireConfirmation(name string, _ any) bool {
-	return slices.Contains(confirmationToolNames, name)
+	_, ok := confirmationToolNames[name]
+	return ok
 }
 
 func buildOrchestrator(
@@ -142,43 +174,31 @@ func buildOrchestrator(
 ) (
 	agent.Agent, error,
 ) {
-	def := agentDefs["Aagje"]
-	retrieval, err := llmagent.New(
-		llmagent.Config{
-			Name:        def.name,
-			Model:       liteModel,
-			Description: def.description,
-			Instruction: *def.instruction,
-			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
-			Toolsets: []tool.Toolset{
-				tool.FilterToolset(mcpToolSet, tool.StringPredicate(def.toolNames)),
-			},
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create %s agent: %w", def.name, err)
-	}
-
-	retrievalTool := agenttool.New(retrieval, nil)
-	agents := make(map[string]agent.Agent, 2)
-	for _, key := range []string{"Knorretje", "Daan"} {
-		def = agentDefs[key]
+	subAgents := make([]agent.Agent, 0, 3)
+	for _, key := range []string{"Aagje", "Knorretje", "Daan"} {
+		def := agentDefs[key]
+		var extraTools []tool.Tool
+		if key == "Aagje" {
+			extraTools = []tool.Tool{geminitool.GoogleSearch{}}
+		}
 		a, err := llmagent.New(
 			llmagent.Config{
 				Name:        def.name,
 				Model:       liteModel,
 				Description: def.description,
 				Instruction: *def.instruction,
-				Tools:       []tool.Tool{retrievalTool},
+				Tools:       extraTools,
 				Toolsets: []tool.Toolset{
 					tool.FilterToolset(mcpToolSet, tool.StringPredicate(def.toolNames)),
 				},
+				DisallowTransferToParent: true,
+				DisallowTransferToPeers:  true,
 			},
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create %s agent: %w", def.name, err)
 		}
-		agents[key] = a
+		subAgents = append(subAgents, a)
 	}
 
 	oDef := agentDefs["Nina"]
@@ -188,8 +208,8 @@ func buildOrchestrator(
 			Model:       advancedModel,
 			Description: oDef.description,
 			Instruction: *oDef.instruction,
-			Tools:       []tool.Tool{retrievalTool},
-			SubAgents:   []agent.Agent{agents["Knorretje"], agents["Daan"]},
+			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
+			SubAgents:   subAgents,
 		},
 	)
 	if err != nil {
