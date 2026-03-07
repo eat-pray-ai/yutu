@@ -17,8 +17,10 @@ import (
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
+	"google.golang.org/adk/memory"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/genai"
 )
@@ -159,8 +161,13 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		os.Exit(1)
 	}
 
+	sessionService := session.InMemoryService()
+	memoryService := memory.InMemoryService()
+
 	config := &launcher.Config{
-		AgentLoader: agent.NewSingleLoader(orchestrator),
+		AgentLoader:    agent.NewSingleLoader(orchestrator),
+		SessionService: sessionService,
+		MemoryService:  memoryService,
 	}
 	l := full.NewLauncher()
 	if err := l.Execute(ctx, config, args); err != nil {
