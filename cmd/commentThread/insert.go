@@ -31,7 +31,7 @@ yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChann
 var insertInSchema = &jsonschema.Schema{
 	Type: "object",
 	Required: []string{
-		"author_channel_id", "channel_id", "text_original", "video_id",
+		"channel_id", "text_original", "video_id",
 	},
 	Properties: map[string]*jsonschema.Schema{
 		"author_channel_id": {Type: "string", Description: acidUsage},
@@ -73,7 +73,6 @@ func init() {
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 	insertCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
-	_ = insertCmd.MarkFlagRequired("authorChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
 	_ = insertCmd.MarkFlagRequired("videoId")
