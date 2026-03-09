@@ -20,7 +20,7 @@ import (
 const (
 	listTool    = "member-list"
 	listShort   = "List channel members"
-	listLong    = "List channel members. Use this tool when you need to list information about channel members."
+	listLong    = "List channel members. Use this tool to list information about channel members."
 	listExample = `# List all current members
 yutu member list --mode all_current
 # List members with limit

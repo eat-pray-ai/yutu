@@ -21,7 +21,7 @@ const (
 	listTool     = "channelSection-list"
 	listIdsUsage = "Return the channel sections with the given ids"
 	listShort    = "List channel sections"
-	listLong     = "List channel sections. Use this tool when you need to list channel sections."
+	listLong     = "List channel sections. Use this tool to list channel sections."
 	listExample  = `# List my channel sections
 yutu channelSection list --mine
 # List channel sections by channel ID

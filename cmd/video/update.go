@@ -22,7 +22,7 @@ const (
 	updateIdUsage   = "ID of the video to update"
 	updateLangUsage = "Language of the video"
 	updateShort     = "Update a video"
-	updateLong      = "Update a video. Use this tool when you need to update a video."
+	updateLong      = "Update a video. Use this tool to update a video."
 	updateExample   = `# Update video title
 yutu video update --id dQw4w9WgXcQ --title 'New Title'
 # Update video description and privacy

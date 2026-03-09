@@ -22,7 +22,7 @@ const (
 	listIdsUsage = "Return videos with the given ids"
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 	listShort    = "List video information"
-	listLong     = "List video information. Use this tool when you need to list video information."
+	listLong     = "List video information. Use this tool to list video information."
 	listExample  = `# List a video by ID
 yutu video list --ids dQw4w9WgXcQ
 # List multiple videos in JSON format

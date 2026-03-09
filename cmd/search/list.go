@@ -20,7 +20,7 @@ import (
 const (
 	listTool    = "search-list"
 	listShort   = "Search resources"
-	listLong    = "Search resources. Use this tool when you need to search for videos, channels, playlists, and other resources."
+	listLong    = "Search resources. Use this tool to search for videos, channels, playlists, and other resources."
 	listExample = `# Search for videos by keyword
 yutu search list --q 'golang tutorial' --maxResults 10
 # Search videos by duration in JSON format

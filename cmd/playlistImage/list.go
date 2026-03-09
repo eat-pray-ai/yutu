@@ -20,7 +20,7 @@ import (
 const (
 	listTool    = "playlistImage-list"
 	listShort   = "List playlist images"
-	listLong    = "List playlist images. Use this tool when you need to list playlist images."
+	listLong    = "List playlist images. Use this tool to list playlist images."
 	listExample = `# List images of a playlist
 yutu playlistImage list --parent PLxxx
 # List playlist images with limit in JSON format

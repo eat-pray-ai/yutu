@@ -20,7 +20,7 @@ const (
 	deleteTool     = "playlistItem-delete"
 	deleteIdsUsage = "IDs of the playlist items to delete"
 	deleteShort    = "Delete items from a playlist"
-	deleteLong     = "Delete items from a playlist. Use this tool when you need to delete items from a playlist by IDs."
+	deleteLong     = "Delete items from a playlist. Use this tool to delete items from a playlist by IDs."
 	deleteExample  = `# Delete a playlist item by ID
 yutu playlistItem delete --ids abc123
 # Delete multiple playlist items

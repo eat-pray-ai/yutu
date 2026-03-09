@@ -21,7 +21,7 @@ const (
 	updateTool    = "comment-update"
 	updateIdUsage = "ID of the comment"
 	updateShort   = "Update a comment on a video"
-	updateLong    = "Update a comment on a video. Use this tool when you need to update a comment on a video."
+	updateLong    = "Update a comment on a video. Use this tool to update a comment on a video."
 	updateExample = `# Update comment text
 yutu comment update --id abc123 --textOriginal 'Updated comment'
 # Like a comment

@@ -21,7 +21,7 @@ const (
 	insertTool     = "subscription-insert"
 	insertCidUsage = "ID of the channel to be subscribed"
 	insertShort    = "Insert a new subscription"
-	insertLong     = "Insert a new subscription. Use this tool when you need to insert a new subscription."
+	insertLong     = "Insert a new subscription. Use this tool to insert a new subscription."
 	insertExample  = `# Subscribe to a channel
 yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
 # Subscribe with a title

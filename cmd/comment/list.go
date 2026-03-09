@@ -21,7 +21,7 @@ const (
 	listTool     = "comment-list"
 	listPidUsage = "Returns replies to the specified comment"
 	listShort    = "List comments"
-	listLong     = "List comments. Use this tool when you need to list comments by IDs."
+	listLong     = "List comments. Use this tool to list comments by IDs."
 	listExample  = `# List replies to a comment
 yutu comment list --parentId UgyXXXXXXXX --maxResults 10
 # List specific comments in JSON format

@@ -20,7 +20,7 @@ const (
 	rateIdsUsage = "IDs of the videos to rate"
 	rateRUsage   = "like|dislike|none"
 	rateShort    = "Rate a video"
-	rateLong     = "Rate a video. Use this tool when you need to rate a video."
+	rateLong     = "Rate a video. Use this tool to rate a video."
 	rateExample  = `# Like a video
 yutu video rate --ids dQw4w9WgXcQ --rating like
 # Dislike multiple videos

@@ -21,7 +21,7 @@ const (
 	listTool     = "channel-list"
 	listIdsUsage = "Return the channels with the specified Ids"
 	listShort    = "List channel information"
-	listLong     = "List channel information. Use this tool when you need to list channel information."
+	listLong     = "List channel information. Use this tool to list channel information."
 	listExample  = `# List my channel info
 yutu channel list --mine
 # List channel by handle

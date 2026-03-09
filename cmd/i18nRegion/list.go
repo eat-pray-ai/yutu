@@ -17,7 +17,7 @@ import (
 
 const (
 	listShort = "List i18n regions"
-	listLong  = `List i18n regions. Use this tool when you need to list available internationalization regions.`
+	listLong  = `List i18n regions. Use this tool to list available internationalization regions.`
 )
 
 func init() {

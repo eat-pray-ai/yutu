@@ -17,7 +17,7 @@ import (
 
 const (
 	listShort = "List i18n languages"
-	listLong  = `List i18n languages. Use this tool when you need to list available internationalization languages.`
+	listLong  = `List i18n languages. Use this tool to list available internationalization languages.`
 )
 
 func init() {

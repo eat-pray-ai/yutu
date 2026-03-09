@@ -21,7 +21,7 @@ const (
 	raIdsUsage         = "IDs of the videos to report abuse on"
 	raLangUsage        = "Language that the content was viewed in"
 	reportAbuseShort   = "Report abuse on a video"
-	reportAbuseLong    = "Report abuse on a video. Use this tool when you need to report abuse on a video."
+	reportAbuseLong    = "Report abuse on a video. Use this tool to report abuse on a video."
 	reportAbuseExample = `# Report abuse on a video
 yutu video reportAbuse --ids dQw4w9WgXcQ --reasonId V
 # Report abuse with secondary reason and language

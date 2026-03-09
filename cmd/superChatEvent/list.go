@@ -20,7 +20,7 @@ import (
 const (
 	listTool    = "superChatEvent-list"
 	listShort   = "List Super Chat events"
-	listLong    = "List Super Chat events. Use this tool when you need to list Super Chat events."
+	listLong    = "List Super Chat events. Use this tool to list Super Chat events."
 	listExample = `# List Super Chat events
 yutu superChatEvent list --maxResults 10`
 )

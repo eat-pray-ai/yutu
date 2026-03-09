@@ -20,7 +20,7 @@ import (
 const (
 	smsTool    = "comment-setModerationStatus"
 	smsShort   = "Set comment moderation status"
-	smsLong    = "Set comment moderation status. Use this tool when you need to set comment moderation status."
+	smsLong    = "Set comment moderation status. Use this tool to set comment moderation status."
 	smsExample = `# Publish a held comment
 yutu comment setModerationStatus --ids abc123 --moderationStatus published
 # Hold multiple comments for review

@@ -22,7 +22,7 @@ const (
 	listIdsUsage = "IDs of the playlist items to list"
 	listPidUsage = "Return the playlist items within the given playlist"
 	listShort    = "List playlist items"
-	listLong     = "List playlist items. Use this tool when you need to list playlist items."
+	listLong     = "List playlist items. Use this tool to list playlist items."
 	listExample  = `# List items in a playlist
 yutu playlistItem list --playlistId PLxxx
 # List playlist items with limit in JSON format

@@ -20,7 +20,7 @@ import (
 const (
 	setTool    = "thumbnail-set"
 	setShort   = "Set a thumbnail for a video"
-	setLong    = "Set a thumbnail for a video. Use this tool when you need to set a thumbnail for a video."
+	setLong    = "Set a thumbnail for a video. Use this tool to set a thumbnail for a video."
 	setExample = `# Set a thumbnail for a video
 yutu thumbnail set --file image.jpg --videoId dQw4w9WgXcQ
 # Set a thumbnail with JSON output

@@ -20,7 +20,7 @@ import (
 const (
 	updateTool    = "playlistImage-update"
 	updateShort   = "Update a playlist image"
-	updateLong    = "Update a playlist image. Use this tool when you need to update a playlist image."
+	updateLong    = "Update a playlist image. Use this tool to update a playlist image."
 	updateExample = `# Update a playlist image
 yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152`
 )

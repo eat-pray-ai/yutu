@@ -21,7 +21,7 @@ const (
 	updateTool    = "playlist-update"
 	updateIdUsage = "ID of the playlist to update"
 	updateShort   = "Update a playlist"
-	updateLong    = "Update a playlist. Use this tool when you need to update a playlist."
+	updateLong    = "Update a playlist. Use this tool to update a playlist."
 	updateExample = `# Update playlist title
 yutu playlist update --id PLxxx --title 'Updated Title'
 # Update playlist description and privacy

@@ -21,7 +21,7 @@ const (
 	listTool     = "commentThread-list"
 	listVidUsage = "Returns the comment threads of the specified video"
 	listShort    = "List comment threads"
-	listLong     = "List comment threads. Use this tool when you need to list comment threads."
+	listLong     = "List comment threads. Use this tool to list comment threads."
 	listExample  = `# List comment threads on a video
 yutu commentThread list --videoId dQw4w9WgXcQ --maxResults 10
 # Search comment threads by terms

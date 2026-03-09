@@ -41,7 +41,7 @@ func init() {
 
 const (
 	listShort = "List video categories"
-	listLong  = `List video categories. Use this tool when you need to list available video categories.`
+	listLong  = `List video categories. Use this tool to list available video categories.`
 )
 
 var listCmd = &cobra.Command{

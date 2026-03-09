@@ -20,7 +20,7 @@ const (
 	downloadTool    = "caption-download"
 	downloadIdUsage = "ID of the caption to download"
 	downloadShort   = "Download a caption"
-	downloadLong    = "Download a caption. Use this tool when you need to download a caption from a video."
+	downloadLong    = "Download a caption. Use this tool to download a caption from a video."
 	downloadExample = `# Download a caption as SRT
 yutu caption download --id abc123 --file subtitle.srt
 # Download a caption as VTT

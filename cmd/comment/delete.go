@@ -18,7 +18,7 @@ import (
 const (
 	deleteTool    = "comment-delete"
 	deleteShort   = "Delete comments"
-	deleteLong    = "Delete comments. Use this tool when you need to delete comments by IDs."
+	deleteLong    = "Delete comments. Use this tool to delete comments by IDs."
 	deleteExample = `# Delete a comment by ID
 yutu comment delete --ids abc123
 # Delete multiple comments

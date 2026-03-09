@@ -21,7 +21,7 @@ const (
 	insertTool     = "commentThread-insert"
 	insertVidUsage = "ID of the video"
 	insertShort    = "Insert a new comment thread"
-	insertLong     = "Insert a new comment thread. Use this tool when you need to insert a new comment thread."
+	insertLong     = "Insert a new comment thread. Use this tool to insert a new comment thread."
 	insertExample  = `# Post a comment on a video
 yutu commentThread insert --channelId UC_x5X --videoId dQw4w9WgXcQ --authorChannelId UA_x5X --textOriginal 'Great video!'
 # Post a comment with JSON output

@@ -19,7 +19,7 @@ import (
 const (
 	deleteTool    = "playlistImage-delete"
 	deleteShort   = "Delete playlist images"
-	deleteLong    = "Delete playlist images. Use this tool when you need to delete playlist images by IDs."
+	deleteLong    = "Delete playlist images. Use this tool to delete playlist images by IDs."
 	deleteExample = `# Delete a playlist image by ID
 yutu playlistImage delete --ids abc123
 # Delete multiple playlist images
