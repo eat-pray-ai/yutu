@@ -43,6 +43,7 @@ require (
 	go.opentelemetry.io/contrib/detectors/gcp v1.41.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.66.0 // indirect
 	go.opentelemetry.io/otel v1.41.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.41.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.41.0 // indirect
 	go.opentelemetry.io/otel/log v0.17.0 // indirect
@@ -71,7 +72,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
-	google.golang.org/adk v0.5.0
+	google.golang.org/adk v0.6.0
 	google.golang.org/api v0.269.0
 	google.golang.org/genai v1.48.0
 	google.golang.org/protobuf v1.36.11 // indirect
