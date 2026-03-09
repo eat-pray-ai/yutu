@@ -1,6 +1,6 @@
-# Comment Insert Command
+# Comment Insert
 
-Create a comment.
+Create a comment. Use this skill to create a comment on a video.
 
 ## Usage
 
@@ -10,16 +10,16 @@ yutu comment insert [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--authorChannelId` | `-a` | Channel id of the comment author |
-| `--canRate` | `-R` | Whether the viewer can rate the comment |
-| `--channelId` | `-c` | Channel id of the video owner |
-| `--jsonPath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--parentId` | `-P` | ID of the parent comment |
-| `--textOriginal` | `-t` | Text of the comment |
-| `--videoId` | `-v` | ID of the video |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--authorChannelId` | `-a` |  | Channel id of the comment author |
+| `--canRate` | `-R` |  | Whether the viewer can rate the comment |
+| `--channelId` | `-c` |  | Channel id of the video owner |
+| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--parentId` | `-P` | Yes | ID of the parent comment |
+| `--textOriginal` | `-t` | Yes | Text of the comment |
+| `--videoId` | `-v` |  | ID of the video |
 
 ## Examples
 

@@ -1,6 +1,6 @@
-# Subscription Delete Command
+# Subscription Delete
 
-Delete subscriptions.
+Delete subscriptions. Use this skill to delete subscriptions by IDs.
 
 ## Usage
 
@@ -10,9 +10,9 @@ yutu subscription delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the subscriptions to delete |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the subscriptions to delete |
 
 ## Examples
 

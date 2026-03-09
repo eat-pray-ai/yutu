@@ -1,6 +1,6 @@
-# Caption List Command
+# Caption List
 
-List captions.
+List captions. Use this skill to list captions of a video.
 
 ## Usage
 
@@ -10,15 +10,15 @@ yutu caption list [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the captions to list |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--onBehalfOf` | `-b` | ID of the YouTube account that the content owner is acting on behalf of |
-| `--onBehalfOfContentOwner` | `-B` | ID of the content owner, for YouTube content partners |
-| `--output` | `-o` | json\|yaml\|table (default "table") |
-| `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
-| `--videoId` | `-v` | ID of the video |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` |  | IDs of the captions to list |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--onBehalfOf` | `-b` |  | ID of the YouTube account that the content owner is acting on behalf of |
+| `--onBehalfOfContentOwner` | `-B` |  | ID of the content owner, for YouTube content partners |
+| `--output` | `-o` |  | json\|yaml\|table (default "table") |
+| `--parts` | `-p` |  | Comma separated parts (default [id,snippet]) |
+| `--videoId` | `-v` |  | ID of the video |
 
 ## Examples
 

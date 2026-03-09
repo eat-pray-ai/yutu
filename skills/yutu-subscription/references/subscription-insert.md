@@ -1,6 +1,6 @@
-# Subscription Insert Command
+# Subscription Insert
 
-Insert a new subscription.
+Insert a new subscription. Use this skill to insert a new subscription.
 
 ## Usage
 
@@ -10,14 +10,14 @@ yutu subscription insert [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--channelId` | `-c` | ID of the channel to be subscribed |
-| `--description` | `-d` | Description of the subscription |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--subscriberChannelId` | `-s` | Subscriber's channel id |
-| `--title` | `-t` | Title of the subscription |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--channelId` | `-c` | Yes | ID of the channel to be subscribed |
+| `--description` | `-d` |  | Description of the subscription |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--subscriberChannelId` | `-s` | Yes | Subscriber's channel id |
+| `--title` | `-t` |  | Title of the subscription |
 
 ## Examples
 

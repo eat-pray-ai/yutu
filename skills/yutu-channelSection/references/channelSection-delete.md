@@ -1,6 +1,6 @@
-# ChannelSection Delete Command
+# Channel Section Delete
 
-Delete channel sections.
+Delete channel sections. Use this skill to delete channel sections by IDs.
 
 ## Usage
 
@@ -10,10 +10,10 @@ yutu channelSection delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | Delete the channel sections with the given ids |
-| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | Delete the channel sections with the given ids |
+| `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

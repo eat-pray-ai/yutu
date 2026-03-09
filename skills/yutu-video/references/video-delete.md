@@ -1,6 +1,6 @@
-# Video Delete Command
+# Video Delete
 
-Delete videos.
+Delete videos. Use this skill to delete videos by IDs.
 
 ## Usage
 
@@ -10,9 +10,9 @@ yutu video delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the videos to delete |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the videos to delete |
 
 ## Examples
 

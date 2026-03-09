@@ -1,6 +1,6 @@
-# PlaylistImage Delete Command
+# Playlist Image Delete
 
-Delete playlist images.
+Delete playlist images. Use this skill to delete playlist images by IDs.
 
 ## Usage
 
@@ -10,10 +10,10 @@ yutu playlistImage delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the playlist images to delete |
-| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the playlist images to delete |
+| `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

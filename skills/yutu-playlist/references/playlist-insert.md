@@ -1,6 +1,6 @@
-# Playlist Insert Command
+# Playlist Insert
 
-Create a new playlist.
+Create a new playlist. Use this skill to create a new playlist.
 
 ## Usage
 
@@ -10,16 +10,16 @@ yutu playlist insert [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--channelId` | `-c` | Channel id of the playlist |
-| `--description` | `-d` | Description of the playlist |
-| `--jsonPath` | `-j` | JSONPath expression to filter the output |
-| `--language` | `-l` | Language of the playlist |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--privacy` | `-p` | public\|private\|unlisted |
-| `--tags` | `-a` | Comma separated tags |
-| `--title` | `-t` | Title of the playlist |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--channelId` | `-c` | Yes | Channel id of the playlist |
+| `--description` | `-d` |  | Description of the playlist |
+| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
+| `--language` | `-l` |  | Language of the playlist |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--privacy` | `-p` | Yes | public\|private\|unlisted |
+| `--tags` | `-a` |  | Comma separated tags |
+| `--title` | `-t` | Yes | Title of the playlist |
 
 ## Examples
 

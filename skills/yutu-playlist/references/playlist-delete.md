@@ -1,6 +1,6 @@
-# Playlist Delete Command
+# Playlist Delete
 
-Delete playlists.
+Delete playlists. Use this skill to delete playlists by IDs.
 
 ## Usage
 
@@ -10,10 +10,10 @@ yutu playlist delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the playlists to delete |
-| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the playlists to delete |
+| `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

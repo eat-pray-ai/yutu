@@ -1,6 +1,6 @@
-# Comment Delete Command
+# Comment Delete
 
-Delete comments.
+Delete comments. Use this skill to delete comments by IDs.
 
 ## Usage
 
@@ -10,9 +10,9 @@ yutu comment delete [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of comments |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of comments |
 
 ## Examples
 

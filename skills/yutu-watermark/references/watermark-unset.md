@@ -1,6 +1,6 @@
-# Watermark Unset Command
+# Watermark Unset
 
-Unset a watermark for channel's videos.
+Unset a watermark for channel's videos. Use this skill to unset a watermark for a channel's videos.
 
 ## Usage
 
@@ -10,9 +10,9 @@ yutu watermark unset [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--channelId` | `-c` | ID of the channel |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--channelId` | `-c` | Yes | ID of the channel |
 
 ## Examples
 

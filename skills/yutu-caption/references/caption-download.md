@@ -1,6 +1,6 @@
-# Caption Download Command
+# Caption Download
 
-Download a caption.
+Download a caption. Use this skill to download a caption from a video.
 
 ## Usage
 
@@ -10,14 +10,14 @@ yutu caption download [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--file` | `-f` | Path to save the caption file |
-| `--id` | `-i` | ID of the caption to download |
-| `--onBehalfOf` | `-b` | ID of the YouTube account that the content owner is acting on behalf of |
-| `--onBehalfOfContentOwner` | `-B` | ID of the content owner, for YouTube content partners |
-| `--tfmt` | `-t` | sbv\|srt\|vtt |
-| `--tlang` | `-l` | Translate the captions into this language |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--file` | `-f` | Yes | Path to save the caption file |
+| `--id` | `-i` | Yes | ID of the caption to download |
+| `--onBehalfOf` | `-b` |  | ID of the YouTube account that the content owner is acting on behalf of |
+| `--onBehalfOfContentOwner` | `-B` |  | ID of the content owner, for YouTube content partners |
+| `--tfmt` | `-t` |  | sbv\|srt\|vtt |
+| `--tlang` | `-l` |  | Translate the captions into this language |
 
 ## Examples
 

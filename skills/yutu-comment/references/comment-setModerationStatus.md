@@ -1,6 +1,6 @@
-# Comment SetModerationStatus Command
+# Comment SetModerationStatus
 
-Set comment moderation status.
+Set comment moderation status. Use this skill to set comment moderation status.
 
 ## Usage
 
@@ -10,13 +10,13 @@ yutu comment setModerationStatus [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--banAuthor` | `-A` | If set to true the author of the comment gets added to the ban list |
-| `--ids` | `-i` | IDs of comments |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--moderationStatus` | `-s` | heldForReview\|published\|rejected |
-| `--output` | `-o` | json\|yaml\|silent |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--banAuthor` | `-A` |  | If set to true the author of the comment gets added to the ban list |
+| `--ids` | `-i` | Yes | IDs of comments |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--moderationStatus` | `-s` | Yes | heldForReview\|published\|rejected |
+| `--output` | `-o` |  | json\|yaml\|silent |
 
 ## Examples
 

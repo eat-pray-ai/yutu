@@ -1,6 +1,6 @@
-# CommentThread Insert Command
+# Comment Thread Insert
 
-Insert a new comment thread.
+Insert a new comment thread. Use this skill to insert a new comment thread.
 
 ## Usage
 
@@ -10,14 +10,14 @@ yutu commentThread insert [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--authorChannelId` | `-a` | Channel id of the comment author |
-| `--channelId` | `-c` | Channel id of the video owner |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--textOriginal` | `-t` | Text of the comment |
-| `--videoId` | `-v` | ID of the video |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--authorChannelId` | `-a` |  | Channel id of the comment author |
+| `--channelId` | `-c` | Yes | Channel id of the video owner |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--textOriginal` | `-t` | Yes | Text of the comment |
+| `--videoId` | `-v` | Yes | ID of the video |
 
 ## Examples
 

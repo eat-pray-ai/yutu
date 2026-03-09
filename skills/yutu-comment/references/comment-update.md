@@ -1,6 +1,6 @@
-# Comment Update Command
+# Comment Update
 
-Update a comment on a video.
+Update a comment on a video. Use this skill to update a comment on a video.
 
 ## Usage
 
@@ -10,14 +10,14 @@ yutu comment update [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--canRate` | `-R` | Whether the viewer can rate the comment |
-| `--id` | `-i` | ID of the comment |
-| `--jsonPath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--textOriginal` | `-t` | Text of the comment |
-| `--viewerRating` | `-r` | none\|like\|dislike |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--canRate` | `-R` |  | Whether the viewer can rate the comment |
+| `--id` | `-i` | Yes | ID of the comment |
+| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--textOriginal` | `-t` |  | Text of the comment |
+| `--viewerRating` | `-r` |  | none\|like\|dislike |
 
 ## Examples
 

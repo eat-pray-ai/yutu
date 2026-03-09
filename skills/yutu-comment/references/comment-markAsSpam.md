@@ -1,6 +1,6 @@
-# Comment MarkAsSpam Command
+# Comment MarkAsSpam
 
-Mark comments as spam.
+Mark comments as spam. Use this skill to mark comments as spam.
 
 ## Usage
 
@@ -10,11 +10,11 @@ yutu comment markAsSpam [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of comments |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of comments |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
 
 ## Examples
 

@@ -1,6 +1,6 @@
-# MembershipsLevel List Command
+# Memberships Level List
 
-List memberships levels.
+List memberships levels. Use this skill to list information about channel membership levels.
 
 ## Usage
 
@@ -10,11 +10,11 @@ yutu membershipsLevel list [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|table (default "table") |
-| `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|table (default "table") |
+| `--parts` | `-p` |  | Comma separated parts (default [id,snippet]) |
 
 ## Examples
 

@@ -1,6 +1,6 @@
-# Video GetRating Command
+# Video GetRating
 
-Get video ratings.
+Get video ratings. Use this skill to get video ratings by IDs.
 
 ## Usage
 
@@ -10,12 +10,12 @@ yutu video getRating [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the videos to get the rating for |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
-| `--output` | `-o` | json\|yaml\|table |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the videos to get the rating for |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
+| `--output` | `-o` |  | json\|yaml\|table |
 
 ## Examples
 

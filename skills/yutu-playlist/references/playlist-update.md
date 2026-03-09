@@ -1,6 +1,6 @@
-# Playlist Update Command
+# Playlist Update
 
-Update a playlist.
+Update a playlist. Use this skill to update a playlist.
 
 ## Usage
 
@@ -10,16 +10,16 @@ yutu playlist update [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--description` | `-d` | Description of the playlist |
-| `--id` | `-i` | ID of the playlist to update |
-| `--jsonPath` | `-j` | JSONPath expression to filter the output |
-| `--language` | `-l` | Language of the playlist |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--privacy` | `-p` | public\|private\|unlisted |
-| `--tags` | `-a` | Comma separated tags |
-| `--title` | `-t` | Title of the playlist |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--description` | `-d` |  | Description of the playlist |
+| `--id` | `-i` | Yes | ID of the playlist to update |
+| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
+| `--language` | `-l` |  | Language of the playlist |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--privacy` | `-p` |  | public\|private\|unlisted |
+| `--tags` | `-a` |  | Comma separated tags |
+| `--title` | `-t` |  | Title of the playlist |
 
 ## Examples
 

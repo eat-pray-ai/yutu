@@ -1,6 +1,6 @@
-# Thumbnail Set Command
+# Thumbnail Set
 
-Set a thumbnail for a video.
+Set a thumbnail for a video. Use this skill to set a thumbnail for a video.
 
 ## Usage
 
@@ -10,12 +10,12 @@ yutu thumbnail set [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--file` | `-f` | Path to the thumbnail file |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|silent |
-| `--videoId` | `-v` | ID of the video |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--file` | `-f` | Yes | Path to the thumbnail file |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|silent |
+| `--videoId` | `-v` | Yes | ID of the video |
 
 ## Examples
 

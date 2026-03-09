@@ -1,6 +1,6 @@
-# Watermark Set Command
+# Watermark Set
 
-Set a watermark for channel's videos.
+Set a watermark for channel's videos. Use this skill to set a watermark for channel's videos.
 
 ## Usage
 
@@ -10,15 +10,15 @@ yutu watermark set [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--channelId` | `-c` | ID of the channel |
-| `--durationMs` | `-d` | Duration in milliseconds for which the watermark should be displayed |
-| `--file` | `-f` | Path to the watermark file |
-| `--inVideoPosition` | `-p` | topLeft\|topRight\|bottomLeft\|bottomRight |
-| `--offsetMs` | `-m` | Defines the time at which the watermark will appear |
-| `--offsetType` | `-t` | offsetFromStart\|offsetFromEnd |
-| `--onBehalfOfContentOwner` | `-b` | ID of the content owner, for YouTube content partners |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--channelId` | `-c` | Yes | ID of the channel |
+| `--durationMs` | `-d` |  | Duration in milliseconds for which the watermark should be displayed |
+| `--file` | `-f` | Yes | Path to the watermark file |
+| `--inVideoPosition` | `-p` |  | topLeft\|topRight\|bottomLeft\|bottomRight |
+| `--offsetMs` | `-m` |  | Defines the time at which the watermark will appear |
+| `--offsetType` | `-t` |  | offsetFromStart\|offsetFromEnd |
+| `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 
 ## Examples
 

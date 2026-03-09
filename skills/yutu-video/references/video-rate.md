@@ -1,6 +1,6 @@
-# Video Rate Command
+# Video Rate
 
-Rate a video.
+Rate a video. Use this skill to rate a video.
 
 ## Usage
 
@@ -10,10 +10,10 @@ yutu video rate [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--ids` | `-i` | IDs of the videos to rate |
-| `--rating` | `-r` | like\|dislike\|none |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--ids` | `-i` | Yes | IDs of the videos to rate |
+| `--rating` | `-r` | Yes | like\|dislike\|none |
 
 ## Examples
 

@@ -1,6 +1,6 @@
-# VideoAbuseReportReason List Command
+# Video Abuse Report Reason List
 
-List video abuse report reasons.
+List video abuse report reasons. Use this skill to list available abuse report reasons.
 
 ## Usage
 
@@ -10,12 +10,12 @@ yutu videoAbuseReportReason list [flags]
 
 ## Flags
 
-| Flag | Shorthand | Description |
-|------|-----------|-------------|
-| `--hl` | `-l` | Host language |
-| `--jsonpath` | `-j` | JSONPath expression to filter the output |
-| `--output` | `-o` | json\|yaml\|table (default "table") |
-| `--parts` | `-p` | Comma separated parts (default [id,snippet]) |
+| Flag | Shorthand | Required | Description |
+|------|-----------|----------|-------------|
+| `--hl` | `-l` |  | Host language |
+| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
+| `--output` | `-o` |  | json\|yaml\|table (default "table") |
+| `--parts` | `-p` |  | Comma separated parts (default [id,snippet]) |
 
 ## Examples
 
