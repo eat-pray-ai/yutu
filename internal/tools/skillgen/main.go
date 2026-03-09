@@ -91,16 +91,23 @@ func main() {
 	}
 }
 
-// writeReference generates a reference Markdown file for a single verb command.
+// writeReference generates a reference Markdown file for a single verb
+// command, including required-flag indicators and skill-oriented language.
 func writeReference(path string, parent, verb *cobra.Command) error {
 	var b strings.Builder
 
 	skill := parent.Name()
 	verbName := verb.Name()
-	title := titleCase(skill) + " " + titleCase(verbName)
+	humanSkill := camelToWords(skill)
+	title := titleCase(humanSkill) + " " + titleCase(verbName)
 
-	b.WriteString(fmt.Sprintf("# %s Command\n\n", title))
-	b.WriteString(stripToolPhrase(verb.Long) + "\n\n")
+	b.WriteString(fmt.Sprintf("# %s\n\n", title))
+
+	desc := rewriteToolPhrase(verb.Long)
+	if desc != "" {
+		b.WriteString(desc + "\n\n")
+	}
+
 	b.WriteString("## Usage\n\n")
 	b.WriteString(
 		fmt.Sprintf(
@@ -108,10 +115,13 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 		),
 	)
 
+	requiredFlags := requiredFlagNames(verb)
+
 	type flagEntry struct {
 		name      string
 		shorthand string
 		usage     string
+		required  bool
 	}
 	var flags []flagEntry
 	verb.Flags().VisitAll(
@@ -128,6 +138,7 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 					name:      f.Name,
 					shorthand: f.Shorthand,
 					usage:     escPipe(usage),
+					required:  requiredFlags[f.Name],
 				},
 			)
 		},
@@ -135,14 +146,22 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 
 	if len(flags) > 0 {
 		b.WriteString("\n## Flags\n\n")
-		b.WriteString("| Flag | Shorthand | Description |\n")
-		b.WriteString("|------|-----------|-------------|\n")
+		b.WriteString("| Flag | Shorthand | Required | Description |\n")
+		b.WriteString("|------|-----------|----------|-------------|\n")
 		for _, f := range flags {
 			sh := ""
 			if f.shorthand != "" {
 				sh = "`-" + f.shorthand + "`"
 			}
-			b.WriteString(fmt.Sprintf("| `--%-s` | %s | %s |\n", f.name, sh, f.usage))
+			req := ""
+			if f.required {
+				req = "Yes"
+			}
+			b.WriteString(
+				fmt.Sprintf(
+					"| `--%-s` | %s | %s | %s |\n", f.name, sh, req, f.usage,
+				),
+			)
 		}
 	}
 
@@ -155,25 +174,36 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 
-// writeSkill generates the SKILL.md overview file for a resource command.
+// writeSkill generates the SKILL.md overview file for a resource command
+// following skill-creator best practices: "pushy" description, overview
+// paragraph, progressive-disclosure table, and quick-start snippet.
 func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 	var b strings.Builder
 
 	skill := c.Name()
-	desc := strings.Replace(
-		c.Long, "Use this tool", "Use this skill when you need", 1,
-	)
-	if desc == "" {
-		desc = c.Short
-	}
-	desc += " Triggers: " + triggerPhrases(skill, verbs)
+	humanSkill := camelToWords(skill)
+
+	desc := buildDescription(c, verbs, humanSkill)
 
 	b.WriteString("---\n")
 	b.WriteString(fmt.Sprintf("name: yutu-%s\n", skill))
-	b.WriteString(fmt.Sprintf("description: \"%s\"\n", strings.ReplaceAll(desc, `"`, `\"`)))
+	b.WriteString(
+		fmt.Sprintf(
+			"description: \"%s\"\n", strings.ReplaceAll(desc, `"`, `\"`),
+		),
+	)
 	b.WriteString("---\n\n")
 
-	b.WriteString(fmt.Sprintf("# Yutu %s\n\n", titleCase(skill)))
+	b.WriteString(fmt.Sprintf("# Yutu %s\n\n", titleCase(humanSkill)))
+
+	overview := rewriteToolPhrase(c.Long)
+	if overview == "" {
+		overview = c.Short
+	}
+	b.WriteString(overview + "\n\n")
+
+	b.WriteString("## Operations\n\n")
+	b.WriteString("Read the linked reference for full flag details and examples.\n\n")
 
 	if len(verbs) > 0 {
 		b.WriteString("| Operation | Description | Reference |\n")
@@ -187,9 +217,78 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 				),
 			)
 		}
+		b.WriteString("\n")
 	}
 
+	b.WriteString("## Quick Start\n\n")
+	b.WriteString(
+		fmt.Sprintf(
+			"```bash\n# Show all %s commands\nyutu %s --help\n", humanSkill, skill,
+		),
+	)
+	for _, verb := range verbs {
+		if verb.Name() == "list" {
+			b.WriteString(
+				fmt.Sprintf(
+					"\n# List %s\nyutu %s list\n", humanSkill, skill,
+				),
+			)
+			break
+		}
+	}
+	b.WriteString("```\n")
+
 	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+// buildDescription constructs a "pushy" skill description that encourages
+// broad triggering, even when the user doesn't explicitly name the resource.
+func buildDescription(
+	c *cobra.Command, verbs []*cobra.Command, humanSkill string,
+) string {
+	base := rewriteToolPhrase(c.Long)
+	if base == "" {
+		base = c.Short
+	}
+
+	base += fmt.Sprintf(
+		" Always use this skill when the user mentions %s or wants to perform any operation on YouTube %s, even if they don't explicitly ask for %s management.",
+		humanSkill, humanSkill, humanSkill,
+	)
+
+	base += " Triggers: " + naturalTriggerPhrases(humanSkill, verbs)
+
+	return base
+}
+
+// naturalTriggerPhrases generates trigger phrases that feel like natural user
+// requests rather than mechanical "verb + resource" pairs.
+func naturalTriggerPhrases(humanSkill string, verbs []*cobra.Command) string {
+	var phrases []string
+	for _, v := range verbs {
+		short := strings.ToLower(v.Short)
+		name := v.Name()
+
+		phrases = append(phrases, short)
+		phrases = append(phrases, name+" "+humanSkill)
+		phrases = append(phrases, name+" my "+humanSkill)
+	}
+	return strings.Join(phrases, ", ")
+}
+
+// requiredFlagNames returns the set of flag names marked as required on cmd.
+func requiredFlagNames(cmd *cobra.Command) map[string]bool {
+	required := make(map[string]bool)
+	cmd.Flags().VisitAll(
+		func(f *pflag.Flag) {
+			if ann := f.Annotations; ann != nil {
+				if _, ok := ann[cobra.BashCompOneRequiredFlag]; ok {
+					required[f.Name] = true
+				}
+			}
+		},
+	)
+	return required
 }
 
 // formatDefault returns a display-friendly default value for a flag.
@@ -206,31 +305,26 @@ func escPipe(s string) string {
 	return strings.ReplaceAll(s, "|", "\\|")
 }
 
-// titleCase capitalises the first letter of a string.
+// titleCase capitalises the first letter of each word in s.
 func titleCase(s string) string {
-	if s == "" {
-		return s
+	words := strings.Fields(s)
+	for i, w := range words {
+		if w != "" {
+			words[i] = strings.ToUpper(w[:1]) + w[1:]
+		}
 	}
-	return strings.ToUpper(s[:1]) + s[1:]
+	return strings.Join(words, " ")
 }
 
-func stripToolPhrase(s string) string {
-	if i := strings.Index(s, " Use this tool"); i > 0 {
-		return strings.TrimSpace(s[:i])
-	}
-	return s
+// rewriteToolPhrase replaces "Use this tool" phrasing with skill-oriented
+// language so the text reads naturally inside a skill context.
+func rewriteToolPhrase(s string) string {
+	s = strings.Replace(s, "Use this tool to", "Use this skill to", 1)
+	s = strings.Replace(s, "Use this tool", "Use this skill", 1)
+	return strings.TrimSpace(s)
 }
 
-func triggerPhrases(skill string, verbs []*cobra.Command) string {
-	var phrases []string
-	human := camelToWords(skill)
-	for _, v := range verbs {
-		phrases = append(phrases, strings.ToLower(v.Short))
-		phrases = append(phrases, v.Name()+" "+human)
-	}
-	return strings.Join(phrases, ", ")
-}
-
+// camelToWords splits a camelCase string into lowercase space-separated words.
 func camelToWords(s string) string {
 	var words []string
 	var cur []byte
