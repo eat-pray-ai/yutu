@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	short = "The AI agent that grows your YouTube channel on autopilot"
+	short = "The AI-powered toolkit that grows your YouTube channel on autopilot"
 	long  = `yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
 
 Environment variables:

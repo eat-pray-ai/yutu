@@ -4,6 +4,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"log"
@@ -42,6 +43,9 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/watermark"
 )
 
+//go:embed setup.md
+var setupContent string
+
 func main() {
 	out := flag.String("out", "./skills", "output directory for generated skills")
 	flag.Parse()
@@ -55,11 +59,16 @@ func main() {
 		}
 
 		skill := c.Name()
-		dir := filepath.Join(*out, "yutu-"+skill)
+		dir := filepath.Join(*out, "youtube-"+skill)
 		refDir := filepath.Join(dir, "references")
 
 		if err := os.MkdirAll(refDir, 0o755); err != nil {
 			log.Fatalf("mkdir %s: %v", refDir, err)
+		}
+
+		setupPath := filepath.Join(refDir, "setup.md")
+		if err := writeSetup(setupPath); err != nil {
+			log.Fatalf("write setup %s: %v", setupPath, err)
 		}
 
 		var verbs []*cobra.Command
@@ -89,6 +98,10 @@ func main() {
 
 		fmt.Printf("Generated skill: %s (%d verbs)\n", skill, len(verbs))
 	}
+}
+
+func writeSetup(path string) error {
+	return os.WriteFile(path, []byte(setupContent), 0o644)
 }
 
 // writeReference generates a reference Markdown file for a single verb
@@ -202,6 +215,10 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
 	}
 	b.WriteString(overview + "\n\n")
 
+	b.WriteString("## Before You Begin\n\n")
+	b.WriteString("yutu requires Google Cloud Platform OAuth credentials and a cached token to access the YouTube API. ")
+	b.WriteString("If you haven't set up yutu yet, read the [setup guide](references/setup.md) first.\n\n")
+
 	b.WriteString("## Operations\n\n")
 	b.WriteString("Read the linked reference for full flag details and examples.\n\n")
 
@@ -252,7 +269,7 @@ func buildDescription(
 	}
 
 	base += fmt.Sprintf(
-		" Always use this skill when the user mentions %s or wants to perform any operation on YouTube %s, even if they don't explicitly ask for %s management.",
+		" Always use this skill when the user mentions %s or wants to perform any operation on YouTube %s, even if they don't explicitly ask for %s management. Includes setup and installation instructions for first-time users.",
 		humanSkill, humanSkill, humanSkill,
 	)
 

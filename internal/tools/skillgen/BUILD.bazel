@@ -3,6 +3,7 @@ load("@rules_go//go:def.bzl", "go_binary", "go_library")
 go_library(
     name = "skillgen_lib",
     srcs = ["main.go"],
+    embedsrcs = ["setup.md"],
     importpath = "github.com/eat-pray-ai/yutu/internal/tools/skillgen",
     visibility = ["//visibility:private"],
     deps = [

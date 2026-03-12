@@ -39,57 +39,48 @@
 
 ## Prerequisites
 
-Before you begin, an account on [Google Cloud Platform](https://console.cloud.google.com/) is required to create a **Project** and enable these APIs for this project, in `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`:
+An account on [Google Cloud Platform](https://console.cloud.google.com/) is required. Set up the following:
 
-- [YouTube Data API v3(Required)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
-- [YouTube Analytics API(Optional)](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
-- [YouTube Reporting API(Optional)](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
+1. **Create a GCP Project** and enable these APIs under `APIs & Services -> Enable APIs and services`:
+   - [YouTube Data API v3](https://console.cloud.google.com/apis/api/youtube.googleapis.com/overview) (Required)
+   - [YouTube Analytics API](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview) (Optional)
+   - [YouTube Reporting API](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview) (Optional)
+2. **Create OAuth credentials**:
+   - Go to `APIs & Services -> OAuth consent screen`, create a consent screen with yourself as a test user
+   - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Web Application`
+   - Add `http://localhost:8216` as an authorized redirect URI
+   - Download the credential file and save it as `client_secret.json`, it should look like
+   ```json
+   {
+     "web": {
+       "client_id": "11181119.apps.googleusercontent.com",
+       "project_id": "yutu-11181119",
+       "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+       "token_uri": "https://oauth2.googleapis.com/token",
+       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+       "client_secret": "XXXXXXXXXXXXXXXX",
+       "redirect_uris": [
+         "http://localhost:8216"
+       ]
+     }
+   }
+   ```
+3. **Authenticate**:
+   ```bash
+   yutu auth --credential client_secret.json
+   ```
 
-After enabling the APIs, create an `OAuth content screen` with yourself as test user, then create an `OAuth Client ID` of type `Web Application` with `http://localhost:8216` as the redirect URI.
+   A browser window will open for you to grant YouTube access. After granting permission, a token is saved to `youtube.token.json`.
+   ```json
+   {
+     "access_token": "ya29.XXXXXXXXX",
+     "token_type": "Bearer",
+     "refresh_token": "1//XXXXXXXXXX",
+     "expiry": "2024-05-26T18:49:56.1911165+08:00"
+   }
+   ```
 
-Download this credential to your local machine with name `client_secret.json`, it should look like
-
-```json
-{
-  "web": {
-    "client_id": "11181119.apps.googleusercontent.com",
-    "project_id": "yutu-11181119",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_secret": "XXXXXXXXXXXXXXXX",
-    "redirect_uris": [
-      "http://localhost:8216"
-    ]
-  }
-}
-```
-
-To verify this credential, run the following command
-
-```shell
-❯ yutu auth --credential client_secret.json
-```
-
-A browser window will open asking for your permission to access your YouTube account, after granting the permission, a token will be generated and saved to `youtube.token.json`.
-
-```json
-{
-  "access_token": "ya29.XXXXXXXXX",
-  "token_type": "Bearer",
-  "refresh_token": "1//XXXXXXXXXX",
-  "expiry": "2024-05-26T18:49:56.1911165+08:00"
-}
-```
-
-By default, `yutu` will read `client_secret.json` and `youtube.token.json` from the current directory, `--credential/-c` and `--cacheToken/-t` flags are available only in `auth` subcommand. To modify the default path in all subcommands, set these environment variables
-
-```shell
-❯ export YUTU_CREDENTIAL=client_secret.json
-❯ export YUTU_CACHE_TOKEN=youtube.token.json
-# or
-❯ YUTU_CREDENTIAL=client_secret.json YUTU_CACHE_TOKEN=youtube.token.json yutu subcommand --flag value
-```
+By default, `yutu` will read `client_secret.json` and `youtube.token.json` from the current directory, `--credential/-c` and `--cacheToken/-t` flags are available only in `auth` subcommand. To modify the default path in all subcommands, set these environment variables.
 
 ### Global Environment Variables
 
