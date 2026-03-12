@@ -37,18 +37,18 @@ Install `yutu` using one of these methods:
 brew install yutu
 
 # Linux
-curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
+brew install yutu
 
 # Windows
 winget install yutu
 
-### Go
+# Gopher
 go install github.com/eat-pray-ai/yutu@latest
-
-# Docker
-docker pull ghcr.io/eat-pray-ai/yutu:latest
-docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
 ```
+
+### Other platforms(Linux without Homebrew, etc.)
+
+Download a prebuilt binary from the [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) and place it in your PATH.
 
 ## Environment Variables
 

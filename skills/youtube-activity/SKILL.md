@@ -1,6 +1,6 @@
 ---
 name: youtube-activity
-description: "Manage activities on YouTube. Use this skill to list channel activities. Always use this skill when the user mentions activity or wants to perform any operation on YouTube activity, even if they don't explicitly ask for activity management. Includes setup and installation instructions for first-time users. Triggers: list activities, list activity, list my activity"
+description: "Manage activities on YouTube. Use this skill to list channel activities. Useful when working with YouTube activity — covers listing, creating, updating, and deleting activity via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list activities, list activity, list my activity"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai

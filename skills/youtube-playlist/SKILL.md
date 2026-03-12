@@ -1,6 +1,6 @@
 ---
 name: youtube-playlist
-description: "Manage YouTube playlists. Use this skill to list, create, update, or delete playlists. Always use this skill when the user mentions playlist or wants to perform any operation on YouTube playlist, even if they don't explicitly ask for playlist management. Includes setup and installation instructions for first-time users. Triggers: delete playlists, delete playlist, delete my playlist, create a new playlist, insert playlist, insert my playlist, list playlist information, list playlist, list my playlist, update a playlist, update playlist, update my playlist"
+description: "Manage YouTube playlists. Use this skill to list, create, update, or delete playlists. Useful when working with YouTube playlist — covers listing, creating, updating, and deleting playlist via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete playlists, delete playlist, delete my playlist, create a new playlist, insert playlist, insert my playlist, list playlist information, list playlist, list my playlist, update a playlist, update playlist, update my playlist"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai

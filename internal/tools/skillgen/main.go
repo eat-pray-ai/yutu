@@ -274,8 +274,8 @@ func buildDescription(
 	}
 
 	base += fmt.Sprintf(
-		" Always use this skill when the user mentions %s or wants to perform any operation on YouTube %s, even if they don't explicitly ask for %s management. Includes setup and installation instructions for first-time users.",
-		humanSkill, humanSkill, humanSkill,
+		" Useful when working with YouTube %s — covers listing, creating, updating, and deleting %s via the yutu CLI. Includes setup and installation instructions for first-time users.",
+		humanSkill, humanSkill,
 	)
 
 	base += " Triggers: " + naturalTriggerPhrases(humanSkill, verbs)

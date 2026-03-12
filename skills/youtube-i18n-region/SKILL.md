@@ -1,6 +1,6 @@
 ---
 name: youtube-i18n-region
-description: "Manage YouTube i18n regions. Use this skill to list available internationalization regions. Always use this skill when the user mentions i18n region or wants to perform any operation on YouTube i18n region, even if they don't explicitly ask for i18n region management. Includes setup and installation instructions for first-time users. Triggers: list i18n regions, list i18n region, list my i18n region"
+description: "Manage YouTube i18n regions. Use this skill to list available internationalization regions. Useful when working with YouTube i18n region — covers listing, creating, updating, and deleting i18n region via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list i18n regions, list i18n region, list my i18n region"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai

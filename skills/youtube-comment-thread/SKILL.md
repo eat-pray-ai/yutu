@@ -1,6 +1,6 @@
 ---
 name: youtube-comment-thread
-description: "Manage YouTube comment threads. Use this skill to list or insert new top-level comment threads. Always use this skill when the user mentions comment thread or wants to perform any operation on YouTube comment thread, even if they don't explicitly ask for comment thread management. Includes setup and installation instructions for first-time users. Triggers: insert a new comment thread, insert comment thread, insert my comment thread, list comment threads, list comment thread, list my comment thread"
+description: "Manage YouTube comment threads. Use this skill to list or insert new top-level comment threads. Useful when working with YouTube comment thread — covers listing, creating, updating, and deleting comment thread via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: insert a new comment thread, insert comment thread, insert my comment thread, list comment threads, list comment thread, list my comment thread"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai
