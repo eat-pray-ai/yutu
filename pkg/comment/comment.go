@@ -116,10 +116,17 @@ func (c *Comment) List(writer io.Writer) error {
 		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Author", "Video ID", "Text Display"})
 		for _, comment := range comments {
+			author := ""
+			videoId := ""
+			textDisplay := ""
+			if comment.Snippet != nil {
+				author = comment.Snippet.AuthorDisplayName
+				videoId = comment.Snippet.VideoId
+				textDisplay = comment.Snippet.TextDisplay
+			}
 			tb.AppendRow(
 				table.Row{
-					comment.Id, comment.Snippet.AuthorDisplayName,
-					comment.Snippet.VideoId, comment.Snippet.TextDisplay,
+					comment.Id, author, videoId, textDisplay,
 				},
 			)
 		}

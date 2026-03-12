@@ -123,7 +123,13 @@ func (p *Playlist) List(writer io.Writer) error {
 		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
 		for _, pl := range playlists {
-			tb.AppendRow(table.Row{pl.Id, pl.Snippet.ChannelId, pl.Snippet.Title})
+			channelId := ""
+			title := ""
+			if pl.Snippet != nil {
+				channelId = pl.Snippet.ChannelId
+				title = pl.Snippet.Title
+			}
+			tb.AppendRow(table.Row{pl.Id, channelId, title})
 		}
 	}
 	return err

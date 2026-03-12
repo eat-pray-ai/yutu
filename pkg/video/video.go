@@ -165,11 +165,21 @@ func (v *Video) List(writer io.Writer) error {
 		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Title", "Channel ID", "Views"})
 		for _, video := range videos {
+			title := ""
+			channelId := ""
+			var views uint64
+
+			if video.Snippet != nil {
+				title = video.Snippet.Title
+				channelId = video.Snippet.ChannelId
+			}
+			if video.Statistics != nil {
+				views = video.Statistics.ViewCount
+			}
+
 			tb.AppendRow(
 				table.Row{
-					video.Id, video.Snippet.Title,
-					video.Snippet.ChannelId,
-					video.Statistics.ViewCount,
+					video.Id, title, channelId, views,
 				},
 			)
 		}

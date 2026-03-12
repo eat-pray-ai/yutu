@@ -118,17 +118,25 @@ func (pi *PlaylistItem) List(writer io.Writer) error {
 		tb.AppendHeader(table.Row{"ID", "Title", "Kind", "Resource ID"})
 		for _, item := range playlistItems {
 			var resourceId string
-			switch item.Snippet.ResourceId.Kind {
-			case "youtube#video":
-				resourceId = item.Snippet.ResourceId.VideoId
-			case "youtube#channel":
-				resourceId = item.Snippet.ResourceId.ChannelId
-			case "youtube#playlist":
-				resourceId = item.Snippet.ResourceId.PlaylistId
+			var title string
+			var kind string
+			if item.Snippet != nil {
+				title = item.Snippet.Title
+				if item.Snippet.ResourceId != nil {
+					kind = item.Snippet.ResourceId.Kind
+					switch item.Snippet.ResourceId.Kind {
+					case "youtube#video":
+						resourceId = item.Snippet.ResourceId.VideoId
+					case "youtube#channel":
+						resourceId = item.Snippet.ResourceId.ChannelId
+					case "youtube#playlist":
+						resourceId = item.Snippet.ResourceId.PlaylistId
+					}
+				}
 			}
 			tb.AppendRow(
 				table.Row{
-					item.Id, item.Snippet.Title, item.Snippet.ResourceId.Kind, resourceId,
+					item.Id, title, kind, resourceId,
 				},
 			)
 		}

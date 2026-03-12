@@ -24,9 +24,9 @@ const (
 	listShort    = "List video information"
 	listLong     = "List video information. Use this tool to list video information."
 	listExample  = `# List a video by ID
-yutu video list --ids dQw4w9WgXcQ
+yutu video list --ids IBju0NwjQRc
 # List multiple videos in JSON format
-yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+yutu video list --ids IBju0NwjQRc,wZ9z3FUuNvQ --output json
 # List most popular videos by region
 yutu video list --chart mostPopular --regionCode US --maxResults 10
 # List my liked videos
@@ -64,7 +64,7 @@ var listInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet","status"]`),
+			Default: json.RawMessage(`["id","snippet","status","statistics"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
@@ -106,7 +106,7 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet", "status", "statistics"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
 	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)

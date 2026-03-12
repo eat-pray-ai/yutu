@@ -130,8 +130,14 @@ func (c *Channel) List(writer io.Writer) error {
 		tb.SetStyle(pkg.TableStyle)
 		tb.AppendHeader(table.Row{"ID", "Title", "Country"})
 		for _, channel := range channels {
+			title := ""
+			country := ""
+			if channel.Snippet != nil {
+				title = channel.Snippet.Title
+				country = channel.Snippet.Country
+			}
 			tb.AppendRow(
-				table.Row{channel.Id, channel.Snippet.Title, channel.Snippet.Country},
+				table.Row{channel.Id, title, country},
 			)
 		}
 	}
