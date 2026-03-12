@@ -1,6 +1,9 @@
 ---
-name: yutu-channel
+name: youtube-channel
 description: "Manage YouTube channels. Use this skill to list or update channels. Always use this skill when the user mentions channel or wants to perform any operation on YouTube channel, even if they don't explicitly ask for channel management. Includes setup and installation instructions for first-time users. Triggers: list channel information, list channel, list my channel, update channel information, update channel, update my channel"
+compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
+metadata:
+  author: eat-pray-ai
 ---
 
 # Yutu Channel

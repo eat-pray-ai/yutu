@@ -1,6 +1,9 @@
 ---
-name: yutu-playlistImage
+name: youtube-playlist-image
 description: "Manage YouTube playlist images. Use this skill to list, insert, update, or delete playlist images. Always use this skill when the user mentions playlist image or wants to perform any operation on YouTube playlist image, even if they don't explicitly ask for playlist image management. Includes setup and installation instructions for first-time users. Triggers: delete playlist images, delete playlist image, delete my playlist image, insert a playlist image, insert playlist image, insert my playlist image, list playlist images, list playlist image, list my playlist image, update a playlist image, update playlist image, update my playlist image"
+compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
+metadata:
+  author: eat-pray-ai
 ---
 
 # Yutu Playlist Image

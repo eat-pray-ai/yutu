@@ -59,7 +59,8 @@ func main() {
 		}
 
 		skill := c.Name()
-		dir := filepath.Join(*out, "youtube-"+skill)
+		kebabSkill := camelToKebab(skill)
+		dir := filepath.Join(*out, "youtube-"+kebabSkill)
 		refDir := filepath.Join(dir, "references")
 
 		if err := os.MkdirAll(refDir, 0o755); err != nil {
@@ -92,7 +93,7 @@ func main() {
 		}
 
 		skillPath := filepath.Join(dir, "SKILL.md")
-		if err := writeSkill(skillPath, c, verbs); err != nil {
+		if err := writeSkill(skillPath, c, verbs, kebabSkill); err != nil {
 			log.Fatalf("write skill %s: %v", skillPath, err)
 		}
 
@@ -190,21 +191,25 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 // writeSkill generates the SKILL.md overview file for a resource command
 // following skill-creator best practices: "pushy" description, overview
 // paragraph, progressive-disclosure table, and quick-start snippet.
-func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command) error {
+func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command, kebabSkill string) error {
 	var b strings.Builder
 
 	skill := c.Name()
 	humanSkill := camelToWords(skill)
 
 	desc := buildDescription(c, verbs, humanSkill)
+	skillName := "youtube-" + kebabSkill
 
 	b.WriteString("---\n")
-	b.WriteString(fmt.Sprintf("name: yutu-%s\n", skill))
+	b.WriteString(fmt.Sprintf("name: %s\n", skillName))
 	b.WriteString(
 		fmt.Sprintf(
 			"description: \"%s\"\n", strings.ReplaceAll(desc, `"`, `\"`),
 		),
 	)
+	b.WriteString("compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.\n")
+	b.WriteString("metadata:\n")
+	b.WriteString("  author: eat-pray-ai\n")
 	b.WriteString("---\n\n")
 
 	b.WriteString(fmt.Sprintf("# Yutu %s\n\n", titleCase(humanSkill)))
@@ -343,6 +348,14 @@ func rewriteToolPhrase(s string) string {
 
 // camelToWords splits a camelCase string into lowercase space-separated words.
 func camelToWords(s string) string {
+	return strings.Join(camelSplit(s), " ")
+}
+
+func camelToKebab(s string) string {
+	return strings.Join(camelSplit(s), "-")
+}
+
+func camelSplit(s string) []string {
 	var words []string
 	var cur []byte
 	for i := range len(s) {
@@ -356,5 +369,5 @@ func camelToWords(s string) string {
 	if len(cur) > 0 {
 		words = append(words, strings.ToLower(string(cur)))
 	}
-	return strings.Join(words, " ")
+	return words
 }

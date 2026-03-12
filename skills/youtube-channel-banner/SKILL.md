@@ -1,6 +1,9 @@
 ---
-name: yutu-channelBanner
+name: youtube-channel-banner
 description: "Manage YouTube channel banners. Use this skill to insert or upload channel banners. Always use this skill when the user mentions channel banner or wants to perform any operation on YouTube channel banner, even if they don't explicitly ask for channel banner management. Includes setup and installation instructions for first-time users. Triggers: insert a channel banner, insert channel banner, insert my channel banner"
+compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
+metadata:
+  author: eat-pray-ai
 ---
 
 # Yutu Channel Banner

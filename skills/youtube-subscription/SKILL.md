@@ -1,6 +1,9 @@
 ---
-name: yutu-subscription
+name: youtube-subscription
 description: "Manage YouTube subscriptions. Use this skill to list subscriptions/subscribers, subscribe to channels, or unsubscribe. Always use this skill when the user mentions subscription or wants to perform any operation on YouTube subscription, even if they don't explicitly ask for subscription management. Includes setup and installation instructions for first-time users. Triggers: delete subscriptions, delete subscription, delete my subscription, insert a new subscription, insert subscription, insert my subscription, list subscription information, list subscription, list my subscription"
+compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
+metadata:
+  author: eat-pray-ai
 ---
 
 # Yutu Subscription

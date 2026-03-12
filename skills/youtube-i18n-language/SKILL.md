@@ -1,6 +1,9 @@
 ---
-name: yutu-i18nLanguage
+name: youtube-i18n-language
 description: "Manage YouTube i18n languages. Use this skill to list available internationalization languages. Always use this skill when the user mentions i18n language or wants to perform any operation on YouTube i18n language, even if they don't explicitly ask for i18n language management. Includes setup and installation instructions for first-time users. Triggers: list i18n languages, list i18n language, list my i18n language"
+compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
+metadata:
+  author: eat-pray-ai
 ---
 
 # Yutu I18n Language
