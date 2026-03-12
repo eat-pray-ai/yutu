@@ -1,9 +1,15 @@
 ---
 name: youtube-super-chat-event
-description: "Manage YouTube Super Chat events. Use this skill to list Super Chat events for a channel. Useful when working with YouTube super chat event — covers listing, creating, updating, and deleting super chat event via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list super chat events, list super chat event, list my super chat event"
+description: "Manage YouTube Super Chat events. Use this skill to list Super Chat events for a channel. Useful when working with YouTube super chat event — provides commands to list super chat event via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list super chat events, list super chat event, list my super chat event"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai
+  required_config_paths:
+    - client_secret.json
+    - youtube.token.json
+  env:
+    - YUTU_CREDENTIAL
+    - YUTU_CACHE_TOKEN
 ---
 
 # YouTube Super Chat Event

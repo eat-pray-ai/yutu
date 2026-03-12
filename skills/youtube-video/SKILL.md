@@ -1,9 +1,15 @@
 ---
 name: youtube-video
-description: "Manage YouTube videos. Use this skill to list, upload, update, delete, get rating, or report videos. Useful when working with YouTube video — covers listing, creating, updating, and deleting video via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete videos, delete video, delete my video, get video ratings, getRating video, getRating my video, upload a video, insert video, insert my video, list video information, list video, list my video, rate a video, rate video, rate my video, report abuse on a video, reportAbuse video, reportAbuse my video, update a video, update video, update my video"
+description: "Manage YouTube videos. Use this skill to list, upload, update, delete, get rating, or report videos. Useful when working with YouTube video — provides commands to delete, getRating, insert, list, rate, reportAbuse, and update video via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete videos, delete video, delete my video, get video ratings, getRating video, getRating my video, upload a video, insert video, insert my video, list video information, list video, list my video, rate a video, rate video, rate my video, report abuse on a video, reportAbuse video, reportAbuse my video, update a video, update video, update my video"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai
+  required_config_paths:
+    - client_secret.json
+    - youtube.token.json
+  env:
+    - YUTU_CREDENTIAL
+    - YUTU_CACHE_TOKEN
 ---
 
 # YouTube Video

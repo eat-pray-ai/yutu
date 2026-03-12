@@ -1,9 +1,15 @@
 ---
 name: youtube-video-abuse-report-reason
-description: "Manage YouTube video abuse report reasons. Use this skill to list available abuse report reasons. Useful when working with YouTube video abuse report reason — covers listing, creating, updating, and deleting video abuse report reason via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list video abuse report reasons, list video abuse report reason, list my video abuse report reason"
+description: "Manage YouTube video abuse report reasons. Use this skill to list available abuse report reasons. Useful when working with YouTube video abuse report reason — provides commands to list video abuse report reason via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list video abuse report reasons, list video abuse report reason, list my video abuse report reason"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai
+  required_config_paths:
+    - client_secret.json
+    - youtube.token.json
+  env:
+    - YUTU_CREDENTIAL
+    - YUTU_CACHE_TOKEN
 ---
 
 # YouTube Video Abuse Report Reason

@@ -1,9 +1,15 @@
 ---
 name: youtube-memberships-level
-description: "Manage YouTube memberships levels. Use this skill to list information about channel membership levels. Useful when working with YouTube memberships level — covers listing, creating, updating, and deleting memberships level via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list memberships levels, list memberships level, list my memberships level"
+description: "Manage YouTube memberships levels. Use this skill to list information about channel membership levels. Useful when working with YouTube memberships level — provides commands to list memberships level via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: list memberships levels, list memberships level, list my memberships level"
 compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
   author: eat-pray-ai
+  required_config_paths:
+    - client_secret.json
+    - youtube.token.json
+  env:
+    - YUTU_CREDENTIAL
+    - YUTU_CACHE_TOKEN
 ---
 
 # YouTube Memberships Level

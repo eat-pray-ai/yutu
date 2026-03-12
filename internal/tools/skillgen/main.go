@@ -212,6 +212,12 @@ func writeSkill(
 	b.WriteString("compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.\n")
 	b.WriteString("metadata:\n")
 	b.WriteString("  author: eat-pray-ai\n")
+	b.WriteString("  required_config_paths:\n")
+	b.WriteString("    - client_secret.json\n")
+	b.WriteString("    - youtube.token.json\n")
+	b.WriteString("  env:\n")
+	b.WriteString("    - YUTU_CREDENTIAL\n")
+	b.WriteString("    - YUTU_CACHE_TOKEN\n")
 	b.WriteString("---\n\n")
 
 	b.WriteString(fmt.Sprintf("# YouTube %s\n\n", titleCase(humanSkill)))
@@ -275,9 +281,25 @@ func buildDescription(
 		base = c.Short
 	}
 
+	var verbNames []string
+	for _, v := range verbs {
+		verbNames = append(verbNames, v.Name())
+	}
+
+	actions := "manage"
+	if len(verbNames) > 0 {
+		if len(verbNames) == 1 {
+			actions = verbNames[0]
+		} else if len(verbNames) == 2 {
+			actions = verbNames[0] + " and " + verbNames[1]
+		} else {
+			actions = strings.Join(verbNames[:len(verbNames)-1], ", ") + ", and " + verbNames[len(verbNames)-1]
+		}
+	}
+
 	base += fmt.Sprintf(
-		" Useful when working with YouTube %s — covers listing, creating, updating, and deleting %s via the yutu CLI. Includes setup and installation instructions for first-time users.",
-		humanSkill, humanSkill,
+		" Useful when working with YouTube %s — provides commands to %s %s via the yutu CLI. Includes setup and installation instructions for first-time users.",
+		humanSkill, actions, humanSkill,
 	)
 
 	base += " Triggers: " + naturalTriggerPhrases(humanSkill, verbs)
