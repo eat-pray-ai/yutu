@@ -1,0 +1,30 @@
+---
+name: yutu-i18nLanguage
+description: "Manage YouTube i18n languages. Use this skill to list available internationalization languages. Always use this skill when the user mentions i18n language or wants to perform any operation on YouTube i18n language, even if they don't explicitly ask for i18n language management. Includes setup and installation instructions for first-time users. Triggers: list i18n languages, list i18n language, list my i18n language"
+---
+
+# Yutu I18n Language
+
+Manage YouTube i18n languages. Use this skill to list available internationalization languages.
+
+## Before You Begin
+
+yutu requires Google Cloud Platform OAuth credentials and a cached token to access the YouTube API. If you haven't set up yutu yet, read the [setup guide](references/setup.md) first.
+
+## Operations
+
+Read the linked reference for full flag details and examples.
+
+| Operation | Description | Reference |
+|-----------|-------------|----------|
+| list | List i18n languages | [details](references/i18nLanguage-list.md) |
+
+## Quick Start
+
+```bash
+# Show all i18n language commands
+yutu i18nLanguage --help
+
+# List i18n language
+yutu i18nLanguage list
+```
