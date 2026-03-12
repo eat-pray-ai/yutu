@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Search
+# YouTube Search
 
 Manage YouTube search. Use this skill to search for videos, channels, playlists, and other resources.
 

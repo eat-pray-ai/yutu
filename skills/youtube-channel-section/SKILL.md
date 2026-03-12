@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Channel Section
+# YouTube Channel Section
 
 Manage YouTube channel sections. Use this skill to list or delete channel sections.
 

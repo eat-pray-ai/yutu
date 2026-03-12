@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Memberships Level
+# YouTube Memberships Level
 
 Manage YouTube memberships levels. Use this skill to list information about channel membership levels.
 

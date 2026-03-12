@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Caption
+# YouTube Caption
 
 Manage YouTube video captions. Use this skill to list, insert, update, download, or delete video captions.
 

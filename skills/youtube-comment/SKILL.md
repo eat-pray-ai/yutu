@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Comment
+# YouTube Comment
 
 Manage YouTube comments. Use this skill to list, create, update, delete, mark as spam, or set moderation status for comments.
 

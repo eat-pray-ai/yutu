@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Channel
+# YouTube Channel
 
 Manage YouTube channels. Use this skill to list or update channels.
 

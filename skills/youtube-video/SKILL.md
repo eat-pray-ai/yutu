@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Video
+# YouTube Video
 
 Manage YouTube videos. Use this skill to list, upload, update, delete, get rating, or report videos.
 

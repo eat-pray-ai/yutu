@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Video Abuse Report Reason
+# YouTube Video Abuse Report Reason
 
 Manage YouTube video abuse report reasons. Use this skill to list available abuse report reasons.
 

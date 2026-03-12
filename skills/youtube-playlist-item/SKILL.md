@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Playlist Item
+# YouTube Playlist Item
 
 Manage YouTube playlist items. Use this skill to list items in a playlist, add new items, update items, or remove items.
 

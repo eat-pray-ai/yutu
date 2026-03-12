@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Watermark
+# YouTube Watermark
 
 Manage YouTube watermarks. Use this skill to set or unset watermarks for channel videos.
 

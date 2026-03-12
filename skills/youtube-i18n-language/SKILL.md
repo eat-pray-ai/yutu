@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu I18n Language
+# YouTube I18n Language
 
 Manage YouTube i18n languages. Use this skill to list available internationalization languages.
 

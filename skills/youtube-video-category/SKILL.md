@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Video Category
+# YouTube Video Category
 
 Manage YouTube video categories. Use this skill to list available video categories.
 

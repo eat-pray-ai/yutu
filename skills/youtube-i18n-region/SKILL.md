@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu I18n Region
+# YouTube I18n Region
 
 Manage YouTube i18n regions. Use this skill to list available internationalization regions.
 

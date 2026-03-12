@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Super Chat Event
+# YouTube Super Chat Event
 
 Manage YouTube Super Chat events. Use this skill to list Super Chat events for a channel.
 

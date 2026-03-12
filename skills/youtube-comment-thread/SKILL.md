@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Comment Thread
+# YouTube Comment Thread
 
 Manage YouTube comment threads. Use this skill to list or insert new top-level comment threads.
 

@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Member
+# YouTube Member
 
 Manage YouTube channel members. Use this skill to list information about channel members.
 

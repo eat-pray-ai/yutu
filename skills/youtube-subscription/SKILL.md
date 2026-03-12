@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Subscription
+# YouTube Subscription
 
 Manage YouTube subscriptions. Use this skill to list subscriptions/subscribers, subscribe to channels, or unsubscribe.
 

@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Channel Banner
+# YouTube Channel Banner
 
 Manage YouTube channel banners. Use this skill to insert or upload channel banners.
 

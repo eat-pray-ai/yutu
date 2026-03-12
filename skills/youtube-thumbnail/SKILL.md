@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Thumbnail
+# YouTube Thumbnail
 
 Manage YouTube video thumbnails. Use this skill to set custom thumbnails for videos.
 

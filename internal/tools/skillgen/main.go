@@ -191,7 +191,9 @@ func writeReference(path string, parent, verb *cobra.Command) error {
 // writeSkill generates the SKILL.md overview file for a resource command
 // following skill-creator best practices: "pushy" description, overview
 // paragraph, progressive-disclosure table, and quick-start snippet.
-func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command, kebabSkill string) error {
+func writeSkill(
+	path string, c *cobra.Command, verbs []*cobra.Command, kebabSkill string,
+) error {
 	var b strings.Builder
 
 	skill := c.Name()
@@ -212,7 +214,7 @@ func writeSkill(path string, c *cobra.Command, verbs []*cobra.Command, kebabSkil
 	b.WriteString("  author: eat-pray-ai\n")
 	b.WriteString("---\n\n")
 
-	b.WriteString(fmt.Sprintf("# Yutu %s\n\n", titleCase(humanSkill)))
+	b.WriteString(fmt.Sprintf("# YouTube %s\n\n", titleCase(humanSkill)))
 
 	overview := rewriteToolPhrase(c.Long)
 	if overview == "" {

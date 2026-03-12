@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Playlist
+# YouTube Playlist
 
 Manage YouTube playlists. Use this skill to list, create, update, or delete playlists.
 

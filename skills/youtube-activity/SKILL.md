@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Activity
+# YouTube Activity
 
 Manage activities on YouTube. Use this skill to list channel activities.
 

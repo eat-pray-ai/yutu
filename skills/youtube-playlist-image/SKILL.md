@@ -6,7 +6,7 @@ metadata:
   author: eat-pray-ai
 ---
 
-# Yutu Playlist Image
+# YouTube Playlist Image
 
 Manage YouTube playlist images. Use this skill to list, insert, update, or delete playlist images.
 

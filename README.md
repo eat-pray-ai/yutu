@@ -251,30 +251,30 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
 <details>
 <summary>Available Skills</summary>
 
-| Skill                                                             | Description                               |
-|-------------------------------------------------------------------|-------------------------------------------|
-| [yutu-activity](skills/yutu-activity)                             | Manage activities on YouTube              |
-| [yutu-caption](skills/yutu-caption)                               | Manage YouTube video captions             |
-| [yutu-channel](skills/yutu-channel)                               | Manage YouTube channels                   |
-| [yutu-channelBanner](skills/yutu-channelBanner)                   | Manage YouTube channel banners            |
-| [yutu-channelSection](skills/yutu-channelSection)                 | Manage YouTube channel sections           |
-| [yutu-comment](skills/yutu-comment)                               | Manage YouTube comments                   |
-| [yutu-commentThread](skills/yutu-commentThread)                   | Manage YouTube comment threads            |
-| [yutu-i18nLanguage](skills/yutu-i18nLanguage)                     | Manage YouTube i18n languages             |
-| [yutu-i18nRegion](skills/yutu-i18nRegion)                         | Manage YouTube i18n regions               |
-| [yutu-member](skills/yutu-member)                                 | Manage YouTube channel members            |
-| [yutu-membershipsLevel](skills/yutu-membershipsLevel)             | Manage YouTube memberships levels         |
-| [yutu-playlist](skills/yutu-playlist)                             | Manage YouTube playlists                  |
-| [yutu-playlistImage](skills/yutu-playlistImage)                   | Manage YouTube playlist images            |
-| [yutu-playlistItem](skills/yutu-playlistItem)                     | Manage YouTube playlist items             |
-| [yutu-search](skills/yutu-search)                                 | Manage YouTube search                     |
-| [yutu-subscription](skills/yutu-subscription)                     | Manage YouTube subscriptions              |
-| [yutu-superChatEvent](skills/yutu-superChatEvent)                 | Manage YouTube Super Chat events          |
-| [yutu-thumbnail](skills/yutu-thumbnail)                           | Manage YouTube video thumbnails           |
-| [yutu-video](skills/yutu-video)                                   | Manage YouTube videos                     |
-| [yutu-videoAbuseReportReason](skills/yutu-videoAbuseReportReason) | Manage YouTube video abuse report reasons |
-| [yutu-videoCategory](skills/yutu-videoCategory)                   | Manage YouTube video categories           |
-| [yutu-watermark](skills/yutu-watermark)                           | Manage YouTube watermarks                 |
+| Skill                                                                      | Description                               |
+|----------------------------------------------------------------------------|-------------------------------------------|
+| [youtube-activity](skills/youtube-activity)                                | Manage activities on YouTube              |
+| [youtube-caption](skills/youtube-caption)                                  | Manage YouTube video captions             |
+| [youtube-channel](skills/youtube-channel)                                  | Manage YouTube channels                   |
+| [youtube-channelBanner](skills/youtube-channel-banner)                     | Manage YouTube channel banners            |
+| [youtube-channelSection](skills/youtube-channel-section)                   | Manage YouTube channel sections           |
+| [youtube-comment](skills/youtube-comment)                                  | Manage YouTube comments                   |
+| [youtube-commentThread](skills/youtube-comment-thread)                     | Manage YouTube comment threads            |
+| [youtube-i18nLanguage](skills/youtube-i18n-language)                       | Manage YouTube i18n languages             |
+| [youtube-i18nRegion](skills/youtube-i18n-region)                           | Manage YouTube i18n regions               |
+| [youtube-member](skills/youtube-member)                                    | Manage YouTube channel members            |
+| [youtube-membershipsLevel](skills/youtube-memberships-level)               | Manage YouTube memberships levels         |
+| [youtube-playlist](skills/youtube-playlist)                                | Manage YouTube playlists                  |
+| [youtube-playlistImage](skills/youtube-playlist-image)                     | Manage YouTube playlist images            |
+| [youtube-playlistItem](skills/youtube-playlist-item)                       | Manage YouTube playlist items             |
+| [youtube-search](skills/youtube-search)                                    | Manage YouTube search                     |
+| [youtube-subscription](skills/youtube-subscription)                        | Manage YouTube subscriptions              |
+| [youtube-superChatEvent](skills/youtube-super-chat-event)                  | Manage YouTube Super Chat events          |
+| [youtube-thumbnail](skills/youtube-thumbnail)                              | Manage YouTube video thumbnails           |
+| [youtube-video](skills/youtube-video)                                      | Manage YouTube videos                     |
+| [youtube-videoAbuseReportReason](skills/youtube-video-abuse-report-reason) | Manage YouTube video abuse report reasons |
+| [youtube-videoCategory](skills/youtube-video-category)                     | Manage YouTube video categories           |
+| [youtube-watermark](skills/youtube-watermark)                              | Manage YouTube watermarks                 |
 
 </details>
 
