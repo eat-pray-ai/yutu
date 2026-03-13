@@ -33,6 +33,9 @@ Install `yutu` using one of these methods:
 
 
 ```bash
+# Node.js (all platforms)
+npm i -g @eat-pray-ai/yutu
+
 # macOS
 brew install yutu
 
@@ -46,7 +49,7 @@ winget install yutu
 go install github.com/eat-pray-ai/yutu@latest
 ```
 
-### Other platforms(Linux without Homebrew, etc.)
+### Other platforms
 
 Download a prebuilt binary from the [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) and place it in your PATH.
 

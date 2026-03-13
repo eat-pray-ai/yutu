@@ -16,8 +16,8 @@ metadata:
     emoji: "\U0001F3AC\U0001F430"
     homepage: https://github.com/eat-pray-ai/yutu
     install:
-      - kind: brew
-        formula: yutu
+      - kind: node
+        package: "@eat-pray-ai/yutu"
         bins: [yutu]
 ---
 

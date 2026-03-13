@@ -19,6 +19,7 @@
 [![Homebrew Formula Version](https://img.shields.io/homebrew/v/yutu?style=flat-square&logo=homebrew)](https://formulae.brew.sh/formula/yutu)
 [![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget
 )](https://winstall.app/apps/eat-pray-ai.yutu)
+[![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
 [![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=988886&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
 
@@ -96,6 +97,7 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
 
 - [GitHub Actions](#github-actions)
+- [Node.js](#nodejs)
 - [Docker](#docker)
 - [Gopher](#gopher)
 - [Linux](#linux)
@@ -106,6 +108,12 @@ You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu
 ### GitHub Actions
 
 There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [youtube-action](https://github.com/eat-pray-ai/youtube-action) and [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader) for more information.
+
+### Node.js
+
+```shell
+❯ npm i -g @eat-pray-ai/yutu
+```
 
 ### Docker
 
