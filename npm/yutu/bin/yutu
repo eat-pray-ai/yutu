@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+"use strict";
+
+const { execFileSync } = require("child_process");
+const os = require("os");
+
+const PLATFORMS = {
+  "darwin arm64": "@eat-pray-ai/yutu-darwin-arm64",
+  "darwin x64": "@eat-pray-ai/yutu-darwin-x64",
+  "linux arm64": "@eat-pray-ai/yutu-linux-arm64",
+  "linux x64": "@eat-pray-ai/yutu-linux-x64",
+  "win32 arm64": "@eat-pray-ai/yutu-win32-arm64",
+  "win32 x64": "@eat-pray-ai/yutu-win32-x64",
+};
+
+function getBinaryPath() {
+  const platformKey = `${process.platform} ${os.arch()}`;
+  const pkg = PLATFORMS[platformKey];
+
+  if (!pkg) {
+    throw new Error(
+      `Unsupported platform: ${platformKey}. ` +
+        `yutu supports: ${Object.keys(PLATFORMS).join(", ")}`
+    );
+  }
+
+  const binaryName = process.platform === "win32" ? "yutu.exe" : "yutu";
+
+  try {
+    return require.resolve(`${pkg}/bin/${binaryName}`);
+  } catch (e) {
+    for (const [key, otherPkg] of Object.entries(PLATFORMS)) {
+      if (otherPkg === pkg) continue;
+      const otherBin = key.startsWith("win32") ? "yutu.exe" : "yutu";
+      try {
+        require.resolve(`${otherPkg}/bin/${otherBin}`);
+      } catch (_) {
+        continue;
+      }
+      throw new Error(
+        `You installed yutu for ${key} but this platform is ${platformKey}.\n` +
+          `This can happen when copying node_modules between platforms.\n` +
+          `Run "npm install" on this platform to fix.`
+      );
+    }
+
+    throw new Error(
+      `The package "${pkg}" could not be found, and is needed by yutu.\n\n` +
+        `If you installed with npm, make sure you don't use the "--no-optional"\n` +
+        `or "--omit=optional" flags. The "optionalDependencies" feature is used\n` +
+        `by yutu to install the correct binary for your platform.`
+    );
+  }
+}
+
+const binPath = getBinaryPath();
+
+try {
+  execFileSync(binPath, process.argv.slice(2), {
+    stdio: "inherit",
+    env: process.env,
+  });
+} catch (e) {
+  if (e.status !== null) {
+    process.exit(e.status);
+  }
+  throw e;
+}

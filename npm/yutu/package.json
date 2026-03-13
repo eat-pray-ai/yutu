@@ -1,0 +1,41 @@
+{
+  "name": "@eat-pray-ai/yutu",
+  "version": "0.0.0",
+  "description": "The AI-powered toolkit that grows your YouTube channel on autopilot",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eat-pray-ai/yutu.git"
+  },
+  "author": {
+    "name": "OpenWaygate"
+  },
+  "homepage": "https://github.com/eat-pray-ai/yutu",
+  "bugs": {
+    "url": "https://github.com/eat-pray-ai/yutu/issues"
+  },
+  "license": "Apache-2.0",
+  "bin": {
+    "yutu": "bin/yutu"
+  },
+  "keywords": [
+    "cli",
+    "youtube",
+    "mcp",
+    "ai-agent",
+    "video",
+    "automation",
+    "agent-skills",
+    "oauth2"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@eat-pray-ai/yutu-darwin-arm64": "0.0.0",
+    "@eat-pray-ai/yutu-darwin-x64": "0.0.0",
+    "@eat-pray-ai/yutu-linux-arm64": "0.0.0",
+    "@eat-pray-ai/yutu-linux-x64": "0.0.0",
+    "@eat-pray-ai/yutu-win32-arm64": "0.0.0",
+    "@eat-pray-ai/yutu-win32-x64": "0.0.0"
+  }
+}

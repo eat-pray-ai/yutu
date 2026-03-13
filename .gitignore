@@ -52,3 +52,4 @@ dist/
 # except for the following files
 !winres/*
 !server.json
+!npm/**/*

@@ -1,0 +1,20 @@
+{
+  "name": "@eat-pray-ai/yutu-win32-x64",
+  "version": "0.0.0",
+  "description": "The Windows x64 binary for yutu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eat-pray-ai/yutu.git"
+  },
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "engines": {
+    "node": ">=16"
+  },
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ]
+}
