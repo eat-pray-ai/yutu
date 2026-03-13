@@ -120,8 +120,6 @@ jobs:
           name: binary
           path: ${{ github.workspace }}/dist
       - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           scripts/npm-publish.sh "$VERSION" "${{ github.workspace }}/dist"
