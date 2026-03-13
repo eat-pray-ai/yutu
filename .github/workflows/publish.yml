@@ -113,8 +113,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
-          registry-url: "https://registry.npmjs.org"
+          node-version: "24"
       - uses: actions/download-artifact@v7
         with:
           name: binary
