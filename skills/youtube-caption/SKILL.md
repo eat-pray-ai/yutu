@@ -1,15 +1,24 @@
 ---
 name: youtube-caption
 description: "Manage YouTube video captions. Use this skill to list, insert, update, download, or delete video captions. Useful when working with YouTube caption — provides commands to delete, download, insert, list, and update caption via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete captions, delete caption, delete my caption, download a caption, download caption, download my caption, insert a caption, insert caption, insert my caption, list captions, list caption, list my caption, update a video caption, update caption, update my caption"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Caption

@@ -1,15 +1,24 @@
 ---
 name: youtube-playlist
 description: "Manage YouTube playlists. Use this skill to list, create, update, or delete playlists. Useful when working with YouTube playlist — provides commands to delete, insert, list, and update playlist via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete playlists, delete playlist, delete my playlist, create a new playlist, insert playlist, insert my playlist, list playlist information, list playlist, list my playlist, update a playlist, update playlist, update my playlist"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Playlist

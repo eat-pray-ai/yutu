@@ -1,15 +1,24 @@
 ---
 name: youtube-search
 description: "Manage YouTube search. Use this skill to search for videos, channels, playlists, and other resources. Useful when working with YouTube search — provides commands to list search via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: search resources, list search, list my search"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Search

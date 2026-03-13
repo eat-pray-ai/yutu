@@ -1,15 +1,24 @@
 ---
 name: youtube-playlist-item
 description: "Manage YouTube playlist items. Use this skill to list items in a playlist, add new items, update items, or remove items. Useful when working with YouTube playlist item — provides commands to delete, insert, list, and update playlist item via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete items from a playlist, delete playlist item, delete my playlist item, insert a playlist item into a playlist, insert playlist item, insert my playlist item, list playlist items, list playlist item, list my playlist item, update a playlist item, update playlist item, update my playlist item"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Playlist Item

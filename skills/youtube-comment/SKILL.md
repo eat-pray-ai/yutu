@@ -1,15 +1,24 @@
 ---
 name: youtube-comment
 description: "Manage YouTube comments. Use this skill to list, create, update, delete, mark as spam, or set moderation status for comments. Useful when working with YouTube comment — provides commands to delete, insert, list, markAsSpam, setModerationStatus, and update comment via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: delete comments, delete comment, delete my comment, create a comment, insert comment, insert my comment, list comments, list comment, list my comment, mark comments as spam, markAsSpam comment, markAsSpam my comment, set comment moderation status, setModerationStatus comment, setModerationStatus my comment, update a comment on a video, update comment, update my comment"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Comment

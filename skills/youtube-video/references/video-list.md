@@ -23,7 +23,7 @@ yutu video list [flags]
 | `--myRating` | `-R` |  | Return videos liked/disliked by the authenticated user |
 | `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` |  | json\|yaml\|table (default "table") |
-| `--parts` | `-p` |  | Comma separated parts (default [id,snippet,status]) |
+| `--parts` | `-p` |  | Comma separated parts (default [id,snippet,status,statistics]) |
 | `--regionCode` | `-r` |  | Specific to the specified region |
 | `--videoCategoryId` | `-g` |  | Category of the video |
 
@@ -31,9 +31,9 @@ yutu video list [flags]
 
 ```bash
 # List a video by ID
-yutu video list --ids dQw4w9WgXcQ
+yutu video list --ids IBju0NwjQRc
 # List multiple videos in JSON format
-yutu video list --ids dQw4w9WgXcQ,abc123 --output json
+yutu video list --ids IBju0NwjQRc,wZ9z3FUuNvQ --output json
 # List most popular videos by region
 yutu video list --chart mostPopular --regionCode US --maxResults 10
 # List my liked videos

@@ -202,25 +202,34 @@ func writeSkill(
 	desc := buildDescription(c, verbs, humanSkill)
 	skillName := "youtube-" + kebabSkill
 
-	b.WriteString("---\n")
-	b.WriteString(fmt.Sprintf("name: %s\n", skillName))
-	b.WriteString(
-		fmt.Sprintf(
-			"description: \"%s\"\n", strings.ReplaceAll(desc, `"`, `\"`),
-		),
-	)
-	b.WriteString("compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.\n")
-	b.WriteString("metadata:\n")
-	b.WriteString("  author: eat-pray-ai\n")
-	b.WriteString("  required_config_paths:\n")
-	b.WriteString("    - client_secret.json\n")
-	b.WriteString("    - youtube.token.json\n")
-	b.WriteString("  env:\n")
-	b.WriteString("    - YUTU_CREDENTIAL\n")
-	b.WriteString("    - YUTU_CACHE_TOKEN\n")
-	b.WriteString("---\n\n")
+	_, _ = fmt.Fprintf(
+		&b, `---
+name: %s
+description: "%s"
+metadata:
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
+---
 
-	b.WriteString(fmt.Sprintf("# YouTube %s\n\n", titleCase(humanSkill)))
+`, skillName, strings.ReplaceAll(desc, `"`, `\"`),
+	)
+
+	_, _ = fmt.Fprintf(&b, "# YouTube %s\n\n", titleCase(humanSkill))
 
 	overview := rewriteToolPhrase(c.Long)
 	if overview == "" {
@@ -240,29 +249,21 @@ func writeSkill(
 		b.WriteString("|-----------|-------------|----------|\n")
 		for _, verb := range verbs {
 			refFile := fmt.Sprintf("references/%s-%s.md", skill, verb.Name())
-			b.WriteString(
-				fmt.Sprintf(
-					"| %s | %s | [details](%s) |\n",
-					verb.Name(), escPipe(verb.Short), refFile,
-				),
+			_, _ = fmt.Fprintf(
+				&b, "| %s | %s | [details](%s) |\n",
+				verb.Name(), escPipe(verb.Short), refFile,
 			)
 		}
 		b.WriteString("\n")
 	}
 
-	b.WriteString("## Quick Start\n\n")
-	b.WriteString(
-		fmt.Sprintf(
-			"```bash\n# Show all %s commands\nyutu %s --help\n", humanSkill, skill,
-		),
+	_, _ = fmt.Fprintf(
+		&b, "## Quick Start\n\n```bash\n# Show all %s commands\nyutu %s --help\n",
+		humanSkill, skill,
 	)
 	for _, verb := range verbs {
 		if verb.Name() == "list" {
-			b.WriteString(
-				fmt.Sprintf(
-					"\n# List %s\nyutu %s list\n", humanSkill, skill,
-				),
-			)
+			_, _ = fmt.Fprintf(&b, "\n# List %s\nyutu %s list\n", humanSkill, skill)
 			break
 		}
 	}
@@ -293,7 +294,9 @@ func buildDescription(
 		} else if len(verbNames) == 2 {
 			actions = verbNames[0] + " and " + verbNames[1]
 		} else {
-			actions = strings.Join(verbNames[:len(verbNames)-1], ", ") + ", and " + verbNames[len(verbNames)-1]
+			actions = strings.Join(
+				verbNames[:len(verbNames)-1], ", ",
+			) + ", and " + verbNames[len(verbNames)-1]
 		}
 	}
 

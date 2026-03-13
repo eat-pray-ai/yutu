@@ -1,15 +1,24 @@
 ---
 name: youtube-comment-thread
 description: "Manage YouTube comment threads. Use this skill to list or insert new top-level comment threads. Useful when working with YouTube comment thread — provides commands to insert and list comment thread via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: insert a new comment thread, insert comment thread, insert my comment thread, list comment threads, list comment thread, list my comment thread"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Comment Thread

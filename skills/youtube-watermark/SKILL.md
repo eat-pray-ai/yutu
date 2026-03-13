@@ -1,15 +1,24 @@
 ---
 name: youtube-watermark
 description: "Manage YouTube watermarks. Use this skill to set or unset watermarks for channel videos. Useful when working with YouTube watermark — provides commands to set and unset watermark via the yutu CLI. Includes setup and installation instructions for first-time users. Triggers: set a watermark for channel's videos, set watermark, set my watermark, unset a watermark for channel's videos, unset watermark, unset my watermark"
-compatibility: Requires the yutu CLI (brew install yutu), Google Cloud OAuth credentials (client_secret.json), and a cached OAuth token (youtube.token.json). Needs network access to the YouTube Data API.
 metadata:
-  author: eat-pray-ai
-  required_config_paths:
-    - client_secret.json
-    - youtube.token.json
-  env:
-    - YUTU_CREDENTIAL
-    - YUTU_CACHE_TOKEN
+  openclaw:
+    requires:
+      env:
+        - YUTU_CREDENTIAL
+        - YUTU_CACHE_TOKEN
+      bins:
+        - yutu
+      config:
+        - client_secret.json
+        - youtube.token.json
+    primaryEnv: YUTU_CREDENTIAL
+    emoji: "\U0001F3AC\U0001F430"
+    homepage: https://github.com/eat-pray-ai/yutu
+    install:
+      - kind: brew
+        formula: yutu
+        bins: [yutu]
 ---
 
 # YouTube Watermark
