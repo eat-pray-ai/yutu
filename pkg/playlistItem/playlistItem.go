@@ -262,7 +262,7 @@ func (pi *PlaylistItem) Delete(writer io.Writer) error {
 			return errors.Join(errDeletePlaylistItem, err)
 		}
 
-		_, _ = fmt.Fprintf(writer, "Playlsit Item %s deleted", id)
+		_, _ = fmt.Fprintf(writer, "Playlist Item %s deleted\n", id)
 	}
 	return nil
 }

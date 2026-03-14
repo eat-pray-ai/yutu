@@ -153,6 +153,7 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 	)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to create MCP tool set", "error", err)
+		os.Exit(1)
 	}
 
 	orchestrator, err := buildOrchestrator(advancedModel, liteModel, mcpToolSet)

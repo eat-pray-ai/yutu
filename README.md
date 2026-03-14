@@ -250,7 +250,7 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
 
 ```shell
 # Install a single skill (e.g. video management)
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/yutu-video
+❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube-video
 
 # Install all skills at once
 ❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills

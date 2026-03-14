@@ -116,7 +116,7 @@
 
 ### GitHub Actions
 
-yutu 有两个可用的 GutHub Action，一个是通用 action，另一个专用于上传视频到 YouTube。更多信息请参考 [youtube-action](https://github.com/eat-pray-ai/youtube-action) 和 [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader)。
+yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用于上传视频到 YouTube。更多信息请参考 [youtube-action](https://github.com/eat-pray-ai/youtube-action) 和 [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader)。
 
 ### Node.js
 
@@ -258,7 +258,7 @@ yutu 有两个可用的 GutHub Action，一个是通用 action，另一个专用
 
 ```shell
 # 安装单个 skill（例如视频管理）
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/yutu-video
+❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube-video
 
 # 一次安装所有 skills
 ❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills
