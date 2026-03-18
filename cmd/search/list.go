@@ -98,25 +98,25 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"video_embeddable": {
 			Type: "string", Description: veUsage,
-			Enum: []any{"videoEmbeddableUnspecified", "any", "true", ""},
+			Enum: []any{"videoEmbeddableUnspecified", "any", "true"},
 		},
 		"video_license": {
 			Type: "string", Description: vlUsage,
-			Enum: []any{"any", "youtube", "creativeCommon", ""},
+			Enum: []any{"any", "youtube", "creativeCommon"},
 		},
 		"video_paid_product_placement": {
 			Type: "string", Description: vpppUsage,
 			Enum: []any{
-				"videoPaidProductPlacementUnspecified", "any", "true", "",
+				"videoPaidProductPlacementUnspecified", "any", "true",
 			},
 		},
 		"video_syndicated": {
 			Type: "string", Description: vsUsage,
-			Enum: []any{"videoSyndicatedUnspecified", "any", "true", ""},
+			Enum: []any{"videoSyndicatedUnspecified", "any", "true"},
 		},
 		"video_type": {
 			Type: "string", Description: vtUsage,
-			Enum: []any{"videoTypeUnspecified", "any", "movie", "episode", ""},
+			Enum: []any{"videoTypeUnspecified", "any", "movie", "episode"},
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,

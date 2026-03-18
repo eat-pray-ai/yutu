@@ -42,11 +42,11 @@ var updateInSchema = &jsonschema.Schema{
 		"description": {Type: "string", Description: descUsage},
 		"privacy": {
 			Type: "string", Description: privacyUsage,
-			Enum: []any{"public", "private", "unlisted", ""},
+			Enum: []any{"public", "private", "unlisted"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

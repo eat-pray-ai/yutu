@@ -55,11 +55,11 @@ var updateInSchema = &jsonschema.Schema{
 		"category_id": {Type: "string", Description: caidUsage},
 		"privacy": {
 			Type: "string", Description: privacyUsage,
-			Enum: []any{"public", "private", "unlisted", ""},
+			Enum: []any{"public", "private", "unlisted"},
 		},
 		"embeddable": {Type: "boolean", Description: embeddableUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

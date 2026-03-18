@@ -34,7 +34,7 @@ var setInSchema = &jsonschema.Schema{
 		"file":     {Type: "string", Description: fileUsage},
 		"video_id": {Type: "string", Description: vidUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

@@ -53,7 +53,7 @@ var insertInSchema = &jsonschema.Schema{
 		"category_id": {Type: "string", Description: caidUsage},
 		"privacy": {
 			Type: "string", Description: privacyUsage,
-			Enum: []any{"public", "private", "unlisted", ""},
+			Enum: []any{"public", "private", "unlisted"},
 		},
 		"for_kids":              {Type: "boolean", Description: fkUsage},
 		"embeddable":            {Type: "boolean", Description: embeddableUsage},
@@ -71,7 +71,7 @@ var insertInSchema = &jsonschema.Schema{
 			Description: pkg.OBOCOCUsage,
 		},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

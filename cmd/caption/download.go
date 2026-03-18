@@ -40,7 +40,7 @@ var downloadInSchema = &jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
 		"tfmt": {
 			Type: "string", Description: tfmtUsage,
-			Enum: []any{"sbv", "srt", "vtt", ""},
+			Enum: []any{"sbv", "srt", "vtt"},
 		},
 		"tlang":                      {Type: "string", Description: tlangUsage},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},

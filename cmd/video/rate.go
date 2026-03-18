@@ -39,7 +39,7 @@ var rateInSchema = &jsonschema.Schema{
 		},
 		"rating": {
 			Type: "string", Description: rateRUsage,
-			Enum: []any{"like", "dislike", "none", ""},
+			Enum: []any{"like", "dislike", "none"},
 		},
 	},
 }

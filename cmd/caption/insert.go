@@ -56,7 +56,7 @@ var insertInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Description: pkg.SilentUsage,
-			Enum:    []any{"json", "yaml", "silent", ""},
+			Enum:    []any{"json", "yaml", "silent"},
 			Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

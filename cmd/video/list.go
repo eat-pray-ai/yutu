@@ -43,7 +43,7 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"chart": {
 			Type: "string", Description: chartUsage,
-			Enum: []any{"chartUnspecified", "mostPopular", ""},
+			Enum: []any{"chartUnspecified", "mostPopular"},
 		},
 		"hl":          {Type: "string", Description: hlUsage},
 		"locale":      {Type: "string", Description: localeUsage},

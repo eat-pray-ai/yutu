@@ -37,7 +37,7 @@ var insertInSchema = &jsonschema.Schema{
 		"channel_id":            {Type: "string", Description: insertCidUsage},
 		"title":                 {Type: "string", Description: titleUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

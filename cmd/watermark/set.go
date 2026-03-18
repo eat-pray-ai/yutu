@@ -36,13 +36,13 @@ var setInSchema = &jsonschema.Schema{
 		"file":       {Type: "string", Description: fileUsage},
 		"in_video_position": {
 			Type: "string", Description: ivpUsage,
-			Enum: []any{"topLeft", "topRight", "bottomLeft", "bottomRight", ""},
+			Enum: []any{"topLeft", "topRight", "bottomLeft", "bottomRight"},
 		},
 		"duration_ms": {Type: "number", Description: dmUsage},
 		"offset_ms":   {Type: "number", Description: omUsage},
 		"offset_type": {
 			Type: "string", Description: otUsage,
-			Enum: []any{"offsetFromStart", "offsetFromEnd", ""},
+			Enum: []any{"offsetFromStart", "offsetFromEnd"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 	},

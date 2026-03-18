@@ -36,7 +36,7 @@ var insertInSchema = &jsonschema.Schema{
 		"description": {Type: "string", Description: descUsage},
 		"kind": {
 			Type: "string", Description: kindUsage,
-			Enum: []any{"video", "channel", "playlist", ""},
+			Enum: []any{"video", "channel", "playlist"},
 		},
 		"k_video_id":    {Type: "string", Description: kvidUsage},
 		"k_channel_id":  {Type: "string", Description: kcidUsage},
@@ -45,11 +45,11 @@ var insertInSchema = &jsonschema.Schema{
 		"channel_id":    {Type: "string", Description: cidUsage},
 		"privacy": {
 			Type: "string", Description: privacyUsage,
-			Enum: []any{"public", "private", "unlisted", ""},
+			Enum: []any{"public", "private", "unlisted"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

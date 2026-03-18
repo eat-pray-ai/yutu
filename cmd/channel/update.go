@@ -44,7 +44,7 @@ var updateInSchema = &jsonschema.Schema{
 		"description":      {Type: "string", Description: descUsage},
 		"title":            {Type: "string", Description: titleUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

@@ -44,10 +44,10 @@ var insertInSchema = &jsonschema.Schema{
 		"channel_id": {Type: "string", Description: insertCidUsage},
 		"privacy": {
 			Type: "string", Description: privacyUsage,
-			Enum: []any{"public", "private", "unlisted", ""},
+			Enum: []any{"public", "private", "unlisted"},
 		},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

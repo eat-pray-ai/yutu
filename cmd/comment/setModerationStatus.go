@@ -39,11 +39,11 @@ var setModerationStatusInSchema = &jsonschema.Schema{
 		},
 		"moderation_status": {
 			Type: "string", Description: msUsage,
-			Enum: []any{"heldForReview", "published", "rejected", ""},
+			Enum: []any{"heldForReview", "published", "rejected"},
 		},
 		"ban_author": {Type: "boolean", Description: baUsage},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},

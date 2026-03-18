@@ -42,10 +42,10 @@ var updateInSchema = &jsonschema.Schema{
 		"text_original": {Type: "string", Description: toUsage},
 		"viewer_rating": {
 			Type: "string", Description: vrUsage,
-			Enum: []any{"none", "like", "dislike", ""},
+			Enum: []any{"none", "like", "dislike"},
 		},
 		"output": {
-			Type: "string", Enum: []any{"json", "yaml", "silent", ""},
+			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
 		"jsonpath": {Type: "string", Description: pkg.JPUsage},
