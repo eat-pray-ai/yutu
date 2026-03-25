@@ -14,7 +14,6 @@ yutu comment update [flags]
 |------|-----------|----------|-------------|
 | `--canRate` | `-R` |  | Whether the viewer can rate the comment |
 | `--id` | `-i` | Yes | ID of the comment |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--textOriginal` | `-t` |  | Text of the comment |
 | `--viewerRating` | `-r` |  | none\|like\|dislike |

@@ -14,7 +14,6 @@ yutu activity list [flags]
 |------|-----------|----------|-------------|
 | `--channelId` | `-c` |  | ID of the channel |
 | `--home` | `-H` |  | true\|false\|null (default true) |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--mine` | `-M` |  | true\|false\|null (default true) |
 | `--output` | `-o` |  | json\|yaml\|table (default "table") |

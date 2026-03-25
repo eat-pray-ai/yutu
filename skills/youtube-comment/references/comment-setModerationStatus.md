@@ -14,7 +14,6 @@ yutu comment setModerationStatus [flags]
 |------|-----------|----------|-------------|
 | `--banAuthor` | `-A` |  | If set to true the author of the comment gets added to the ban list |
 | `--ids` | `-i` | Yes | IDs of comments |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--moderationStatus` | `-s` | Yes | heldForReview\|published\|rejected |
 | `--output` | `-o` |  | json\|yaml\|silent |
 

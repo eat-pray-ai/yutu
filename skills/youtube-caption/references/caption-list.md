@@ -13,7 +13,6 @@ yutu caption list [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--ids` | `-i` |  | IDs of the captions to list |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--onBehalfOf` | `-b` |  | ID of the YouTube account that the content owner is acting on behalf of |
 | `--onBehalfOfContentOwner` | `-B` |  | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` |  | json\|yaml\|table (default "table") |

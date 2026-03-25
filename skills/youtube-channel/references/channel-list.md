@@ -17,7 +17,6 @@ yutu channel list [flags]
 | `--forUsername` | `-u` |  | Return the channel associated with a YouTube username |
 | `--hl` | `-l` |  | Specifies the localization language of the metadata |
 | `--ids` | `-i` |  | Return the channels with the specified Ids |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--managedByMe` | `-E` |  | Return the channels managed by the authenticated user |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--mine` | `-M` |  | Return the ids of channels owned by the authenticated user (default true) |

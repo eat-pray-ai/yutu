@@ -14,7 +14,6 @@ yutu playlist update [flags]
 |------|-----------|----------|-------------|
 | `--description` | `-d` |  | Description of the playlist |
 | `--id` | `-i` | Yes | ID of the playlist to update |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--language` | `-l` |  | Language of the playlist |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--privacy` | `-p` |  | public\|private\|unlisted |

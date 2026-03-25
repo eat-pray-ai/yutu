@@ -13,7 +13,6 @@ yutu playlistItem list [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--ids` | `-i` |  | IDs of the playlist items to list |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` |  | json\|yaml\|table (default "table") |

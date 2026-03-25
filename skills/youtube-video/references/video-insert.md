@@ -19,7 +19,6 @@ yutu video insert [flags]
 | `--embeddable` | `-E` |  | Whether the video is embeddable (default true) |
 | `--file` | `-f` | Yes | Path to the video file |
 | `--forKids` | `-K` |  | Whether the video is for kids |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--language` | `-l` |  | Language of the video |
 | `--license` | `-L` |  | youtube\|creativeCommon (default "youtube") |
 | `--notifySubscribers` | `-N` |  | Notify the channel subscribers about the new video (default true) |

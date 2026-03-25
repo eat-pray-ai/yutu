@@ -14,7 +14,6 @@ yutu playlist insert [flags]
 |------|-----------|----------|-------------|
 | `--channelId` | `-c` | Yes | Channel id of the playlist |
 | `--description` | `-d` |  | Description of the playlist |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--language` | `-l` |  | Language of the playlist |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--privacy` | `-p` | Yes | public\|private\|unlisted |

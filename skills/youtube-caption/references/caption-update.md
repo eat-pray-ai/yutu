@@ -19,7 +19,6 @@ yutu caption update [flags]
 | `--isDraft` | `-D` |  | whether the caption track is a draft |
 | `--isEasyReader` | `-E` |  | Whether caption track is formatted for 'easy reader' |
 | `--isLarge` | `-L` |  | Whether the caption track uses large text for the vision-impaired |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--language` | `-l` |  | Language of the caption track |
 | `--name` | `-n` |  | Name of the caption track |
 | `--onBehalfOf` | `-b` |  | ID of the YouTube account that the content owner is acting on behalf of |

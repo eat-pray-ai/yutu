@@ -13,7 +13,6 @@ yutu playlistImage update [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--height` | `-H` |  | The image height |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 | `--onBehalfOfContentOwnerChannel` | `-B` |  | YouTube channel ID linked to the content owner |
 | `--output` | `-o` |  | json\|yaml\|silent |

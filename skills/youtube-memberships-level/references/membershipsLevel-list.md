@@ -12,7 +12,6 @@ yutu membershipsLevel list [flags]
 
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|table (default "table") |
 | `--parts` | `-p` |  | Comma separated parts (default [id,snippet]) |
 

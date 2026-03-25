@@ -14,7 +14,6 @@ yutu playlistItem insert [flags]
 |------|-----------|----------|-------------|
 | `--channelId` | `-c` | Yes | ID that YouTube uses to uniquely identify the user that added the item to the playlist |
 | `--description` | `-d` |  | Description of the playlist item |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--kChannelId` | `-C` |  | ID of the channel if kind is channel |
 | `--kPlaylistId` | `-Y` |  | ID of the playlist if kind is playlist |
 | `--kVideoId` | `-V` |  | ID of the video if kind is video |

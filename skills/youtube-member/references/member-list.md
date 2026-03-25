@@ -13,7 +13,6 @@ yutu member list [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--hasAccessToLevel` | `-a` |  | Filter members in the results set to the ones that have access to a level |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--memberChannelId` | `-c` |  | Comma separated list of channel Ids. Only data about members that are part of this list will be included |
 | `--mode` | `-m` |  | listMembersModeUnknown, updates, or all_current (default "all_current") |

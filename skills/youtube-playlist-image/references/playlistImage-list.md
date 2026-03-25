@@ -12,7 +12,6 @@ yutu playlistImage list [flags]
 
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 | `--onBehalfOfContentOwnerChannel` | `-B` |  | YouTube channel ID linked to the content owner |

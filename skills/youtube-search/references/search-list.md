@@ -18,7 +18,6 @@ yutu search list [flags]
 | `--forContentOwner` |  |  | Search owned by content owner |
 | `--forDeveloper` |  |  | Only retrieve videos uploaded using the project id of the authenticated user |
 | `--forMine` |  |  | Search for the private videos of the authenticated user |
-| `--jsonpath` |  |  | JSONPath expression to filter the output |
 | `--location` |  |  | Filter on location of the video |
 | `--locationRadius` |  |  | Filter on distance from the location |
 | `--maxResults` |  |  | The maximum number of items that should be returned, 0 for no limit (default 5) |

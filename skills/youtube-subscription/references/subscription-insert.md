@@ -14,7 +14,6 @@ yutu subscription insert [flags]
 |------|-----------|----------|-------------|
 | `--channelId` | `-c` | Yes | ID of the channel to be subscribed |
 | `--description` | `-d` |  | Description of the subscription |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--subscriberChannelId` | `-s` | Yes | Subscriber's channel id |
 | `--title` | `-t` |  | Title of the subscription |

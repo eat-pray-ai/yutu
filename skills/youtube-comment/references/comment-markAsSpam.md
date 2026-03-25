@@ -13,7 +13,6 @@ yutu comment markAsSpam [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--ids` | `-i` | Yes | IDs of comments |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 
 ## Examples

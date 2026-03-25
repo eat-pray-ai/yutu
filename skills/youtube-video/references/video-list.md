@@ -15,7 +15,6 @@ yutu video list [flags]
 | `--chart` | `-c` |  | chartUnspecified\|mostPopular |
 | `--hl` | `-l` |  | Specifies the localization language |
 | `--ids` | `-i` |  | Return videos with the given ids |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--locale` | `-L` |  | Locale of the video metadata to return |
 | `--maxHeight` | `-H` |  | Max height of the embedded player in pixels |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |

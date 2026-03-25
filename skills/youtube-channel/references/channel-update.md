@@ -17,7 +17,6 @@ yutu channel update [flags]
 | `--defaultLanguage` | `-l` |  | The language of the channel's default title and description |
 | `--description` | `-d` |  | Description of the channel |
 | `--id` | `-i` | Yes | ID of the channel to update |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--title` | `-t` |  | Title of the channel |
 

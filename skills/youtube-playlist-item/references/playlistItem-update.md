@@ -14,7 +14,6 @@ yutu playlistItem update [flags]
 |------|-----------|----------|-------------|
 | `--description` | `-d` |  | Description of the playlist item |
 | `--id` | `-i` | Yes | ID of the playlist item to update |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--onBehalfOfContentOwner` | `-b` |  | ID of the content owner, for YouTube content partners |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--privacy` | `-p` |  | public\|private\|unlisted |

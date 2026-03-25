@@ -15,7 +15,6 @@ yutu comment insert [flags]
 | `--authorChannelId` | `-a` |  | Channel id of the comment author |
 | `--canRate` | `-R` |  | Whether the viewer can rate the comment |
 | `--channelId` | `-c` |  | Channel id of the video owner |
-| `--jsonPath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--parentId` | `-P` | Yes | ID of the parent comment |
 | `--textOriginal` | `-t` | Yes | Text of the comment |

@@ -15,7 +15,6 @@ yutu commentThread list [flags]
 | `--allThreadsRelatedToChannelId` | `-a` |  | Returns the comment threads of all videos of the channel and the channel comments as well |
 | `--channelId` | `-c` |  | Channel id of the video owner |
 | `--ids` | `-i` |  | IDs of the comment threads |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--maxResults` | `-n` |  | The maximum number of items that should be returned, 0 for no limit (default 5) |
 | `--moderationStatus` | `-m` |  | published\|heldForReview\|likelySpam\|rejected (default "published") |
 | `--order` | `-O` |  | orderUnspecified\|time\|relevance (default "time") |

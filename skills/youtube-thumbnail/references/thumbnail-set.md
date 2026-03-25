@@ -13,7 +13,6 @@ yutu thumbnail set [flags]
 | Flag | Shorthand | Required | Description |
 |------|-----------|----------|-------------|
 | `--file` | `-f` | Yes | Path to the thumbnail file |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--videoId` | `-v` | Yes | ID of the video |
 

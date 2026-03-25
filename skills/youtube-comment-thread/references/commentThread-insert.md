@@ -14,7 +14,6 @@ yutu commentThread insert [flags]
 |------|-----------|----------|-------------|
 | `--authorChannelId` | `-a` |  | Channel id of the comment author |
 | `--channelId` | `-c` | Yes | Channel id of the video owner |
-| `--jsonpath` | `-j` |  | JSONPath expression to filter the output |
 | `--output` | `-o` |  | json\|yaml\|silent |
 | `--textOriginal` | `-t` | Yes | Text of the comment |
 | `--videoId` | `-v` | Yes | ID of the video |
