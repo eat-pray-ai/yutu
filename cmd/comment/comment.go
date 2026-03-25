@@ -39,7 +39,6 @@ var (
 	viewerRating     string
 	parts            []string
 	output           string
-	jsonpath         string
 )
 
 var commentCmd = &cobra.Command{

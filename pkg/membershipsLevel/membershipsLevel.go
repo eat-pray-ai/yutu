@@ -60,9 +60,9 @@ func (m *MembershipsLevel) List(writer io.Writer) error {
 
 	switch m.Output {
 	case "json":
-		utils.PrintJSON(membershipsLevels, m.Jsonpath, writer)
+		utils.PrintJSON(membershipsLevels, writer)
 	case "yaml":
-		utils.PrintYAML(membershipsLevels, m.Jsonpath, writer)
+		utils.PrintYAML(membershipsLevels, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -77,8 +77,7 @@ func (m *MembershipsLevel) List(writer io.Writer) error {
 }
 
 var (
-	WithParts    = common.WithParts[*MembershipsLevel]
-	WithOutput   = common.WithOutput[*MembershipsLevel]
-	WithJsonpath = common.WithJsonpath[*MembershipsLevel]
-	WithService  = common.WithService[*MembershipsLevel]
+	WithParts   = common.WithParts[*MembershipsLevel]
+	WithOutput  = common.WithOutput[*MembershipsLevel]
+	WithService = common.WithService[*MembershipsLevel]
 )

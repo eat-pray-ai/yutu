@@ -118,77 +118,27 @@ func TestIsJson(t *testing.T) {
 }
 
 func TestPrintJSON(t *testing.T) {
-	type args struct {
-		data     any
-		jsonpath string
-	}
 	tests := []struct {
 		name       string
-		args       args
+		data       any
 		wantWriter string
 	}{
 		{
-			name:       "empty jsonpath",
-			args:       args{data: map[string]string{"key": "value"}, jsonpath: ""},
+			name:       "simple json",
+			data:       map[string]string{"key": "value"},
 			wantWriter: "{\n  \"key\": \"value\"\n}\n",
 		},
 		{
-			name:       "simple json",
-			args:       args{data: map[string]string{"key": "value"}, jsonpath: "$"},
-			wantWriter: "[\n  {\n    \"key\": \"value\"\n  }\n]\n",
-		},
-		{
-			name: "invalid jsonpath",
-			args: args{
-				data: map[string]string{"key": "value"}, jsonpath: "//",
-			},
-			wantWriter: "Invalid JSONPath: //\n",
-		},
-		{
-			name: "extract specific field",
-			args: args{
-				data: map[string]any{
-					"key":     "value",
-					"another": "field",
-				}, jsonpath: "$.key",
-			},
-			wantWriter: "[\n  \"value\"\n]\n",
-		},
-		{
-			name: "nested jsonpath",
-			args: args{
-				data: map[string]any{
-					"item1": map[string]string{"key1": "value1"},
-					"item2": map[string]string{"key2": "value2"},
-					"count": 2,
-				},
-				jsonpath: "$.*.key1",
-			},
-			wantWriter: "[\n  \"value1\"\n]\n",
-		},
-		{
-			name: "array jsonpath",
-			args: args{
-				data: []map[string]string{
-					{"key1": "value1"},
-					{"key2": "value2"},
-					{"key1": "value3"},
-				},
-				jsonpath: "$[*].key1",
-			},
-			wantWriter: "[\n  \"value1\",\n  \"value3\"\n]\n",
-		},
-		{
 			name:       "nil data",
-			args:       args{data: nil, jsonpath: "$"},
-			wantWriter: "[\n  null\n]\n",
+			data:       nil,
+			wantWriter: "null\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintJSON(tt.args.data, tt.args.jsonpath, writer)
+				PrintJSON(tt.data, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintJSON() = %v, want %v", gotWriter, tt.wantWriter)
 				}
@@ -198,77 +148,27 @@ func TestPrintJSON(t *testing.T) {
 }
 
 func TestPrintYAML(t *testing.T) {
-	type args struct {
-		data     any
-		jsonpath string
-	}
 	tests := []struct {
 		name       string
-		args       args
+		data       any
 		wantWriter string
 	}{
 		{
-			name:       "empty jsonpath",
-			args:       args{data: map[string]string{"key": "value"}, jsonpath: ""},
+			name:       "simple yaml",
+			data:       map[string]string{"key": "value"},
 			wantWriter: "key: value\n\n",
 		},
 		{
-			name:       "simple yaml",
-			args:       args{data: map[string]string{"key": "value"}, jsonpath: "$"},
-			wantWriter: "- key: value\n\n",
-		},
-		{
-			name: "invalid jsonpath",
-			args: args{
-				data: map[string]string{"key": "value"}, jsonpath: "//",
-			},
-			wantWriter: "Invalid JSONPath: //\n",
-		},
-		{
-			name: "extract specific field",
-			args: args{
-				data: map[string]any{
-					"key":     "value",
-					"another": "field",
-				}, jsonpath: "$.key",
-			},
-			wantWriter: "- value\n\n",
-		},
-		{
-			name: "nested jsonpath",
-			args: args{
-				data: map[string]any{
-					"item1": map[string]string{"key1": "value1"},
-					"item2": map[string]string{"key2": "value2"},
-					"count": 2,
-				},
-				jsonpath: "$.*.key1",
-			},
-			wantWriter: "- value1\n\n",
-		},
-		{
-			name: "array jsonpath",
-			args: args{
-				data: []map[string]string{
-					{"key1": "value1"},
-					{"key2": "value2"},
-					{"key1": "value3"},
-				},
-				jsonpath: "$[*].key1",
-			},
-			wantWriter: "- value1\n- value3\n\n",
-		},
-		{
 			name:       "nil data",
-			args:       args{data: nil, jsonpath: "$"},
-			wantWriter: "- null\n\n",
+			data:       nil,
+			wantWriter: "null\n\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
 				writer := &bytes.Buffer{}
-				PrintYAML(tt.args.data, tt.args.jsonpath, writer)
+				PrintYAML(tt.data, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {
 					t.Errorf("PrintYAML() = %v, want %v", gotWriter, tt.wantWriter)
 				}

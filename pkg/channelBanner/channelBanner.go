@@ -68,9 +68,9 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 
 	switch cb.Output {
 	case "json":
-		utils.PrintJSON(res, cb.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, cb.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)
@@ -103,7 +103,6 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 }
 
 var (
-	WithOutput   = common.WithOutput[*ChannelBanner]
-	WithJsonpath = common.WithJsonpath[*ChannelBanner]
-	WithService  = common.WithService[*ChannelBanner]
+	WithOutput  = common.WithOutput[*ChannelBanner]
+	WithService = common.WithService[*ChannelBanner]
 )

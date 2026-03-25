@@ -47,16 +47,14 @@ func TestNewCommentThread(t *testing.T) {
 					WithVideoId("video123"),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &CommentThread{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"id", "snippet"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"id", "snippet"},
+					Output:  "json",
 				},
 				Ids:                          []string{"thread1", "thread2"},
 				AllThreadsRelatedToChannelId: "relatedChannel123",
@@ -117,14 +115,12 @@ func TestNewCommentThread(t *testing.T) {
 					WithVideoId(""),
 					WithParts(nil),
 					WithOutput(""),
-					WithJsonpath(""),
 				},
 			},
 			want: &CommentThread{
 				Fields: &common.Fields{
-					Parts:    nil,
-					Output:   "",
-					Jsonpath: "",
+					Parts:  nil,
+					Output: "",
 				},
 				AllThreadsRelatedToChannelId: "",
 				AuthorChannelId:              "",
@@ -334,7 +330,8 @@ func TestCommentThread_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "thread-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

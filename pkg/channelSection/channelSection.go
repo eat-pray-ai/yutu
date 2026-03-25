@@ -88,9 +88,9 @@ func (cs *ChannelSection) List(writer io.Writer) error {
 
 	switch cs.Output {
 	case "json":
-		utils.PrintJSON(channelSections, cs.Jsonpath, writer)
+		utils.PrintJSON(channelSections, writer)
 	case "yaml":
-		utils.PrintYAML(channelSections, cs.Jsonpath, writer)
+		utils.PrintYAML(channelSections, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -155,8 +155,7 @@ func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*ChannelSection]
-	WithOutput   = common.WithOutput[*ChannelSection]
-	WithJsonpath = common.WithJsonpath[*ChannelSection]
-	WithService  = common.WithService[*ChannelSection]
+	WithParts   = common.WithParts[*ChannelSection]
+	WithOutput  = common.WithOutput[*ChannelSection]
+	WithService = common.WithService[*ChannelSection]
 )

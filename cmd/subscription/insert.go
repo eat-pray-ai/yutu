@@ -40,7 +40,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -69,7 +68,6 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
@@ -87,7 +85,6 @@ var insertCmd = &cobra.Command{
 			subscription.WithChannelId(channelId),
 			subscription.WithTitle(title),
 			subscription.WithOutput(output),
-			subscription.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
 	},

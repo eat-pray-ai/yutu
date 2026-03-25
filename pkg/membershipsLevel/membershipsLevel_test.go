@@ -34,16 +34,14 @@ func TestNewMembershipsLevel(t *testing.T) {
 				opts: []Option{
 					WithParts([]string{"snippet"}),
 					WithOutput("json"),
-					WithJsonpath("items"),
 					WithService(svc),
 				},
 			},
 			want: &MembershipsLevel{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet"},
-					Output:   "json",
-					Jsonpath: "items",
+					Service: svc,
+					Parts:   []string{"snippet"},
+					Output:  "json",
 				},
 			},
 		},

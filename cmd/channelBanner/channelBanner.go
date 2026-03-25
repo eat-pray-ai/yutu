@@ -19,7 +19,6 @@ var (
 	channelId string
 	file      string
 	output    string
-	jsonpath  string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

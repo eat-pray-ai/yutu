@@ -53,16 +53,14 @@ func TestNewComment(t *testing.T) {
 					WithViewerRating("like"),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &Comment{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"id", "snippet"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"id", "snippet"},
+					Output:  "json",
 				},
 				Ids:              []string{"comment1", "comment2"},
 				AuthorChannelId:  "author123",
@@ -307,7 +305,8 @@ func TestComment_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "comment-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

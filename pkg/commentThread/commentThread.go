@@ -113,9 +113,9 @@ func (c *CommentThread) List(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(commentThreads, c.Jsonpath, writer)
+		utils.PrintJSON(commentThreads, writer)
 	case "yaml":
-		utils.PrintYAML(commentThreads, c.Jsonpath, writer)
+		utils.PrintYAML(commentThreads, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -160,9 +160,9 @@ func (c *CommentThread) Insert(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "CommentThread inserted: %s\n", res.Id)
@@ -242,8 +242,7 @@ func WithVideoId(videoId string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*CommentThread]
-	WithOutput   = common.WithOutput[*CommentThread]
-	WithJsonpath = common.WithJsonpath[*CommentThread]
-	WithService  = common.WithService[*CommentThread]
+	WithParts   = common.WithParts[*CommentThread]
+	WithOutput  = common.WithOutput[*CommentThread]
+	WithService = common.WithService[*CommentThread]
 )

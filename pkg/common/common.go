@@ -12,10 +12,9 @@ import (
 )
 
 type Fields struct {
-	Service  *youtube.Service `yaml:"-" json:"-"`
-	Parts    []string         `yaml:"parts" json:"parts,omitempty"`
-	Output   string           `yaml:"output" json:"output,omitempty"`
-	Jsonpath string           `yaml:"jsonpath" json:"jsonpath,omitempty"`
+	Service *youtube.Service `yaml:"-" json:"-"`
+	Parts   []string         `yaml:"parts" json:"parts,omitempty"`
+	Output  string           `yaml:"output" json:"output,omitempty"`
 }
 
 func (d *Fields) GetFields() *Fields {
@@ -49,12 +48,6 @@ func WithParts[T HasFields](parts []string) func(T) {
 func WithOutput[T HasFields](output string) func(T) {
 	return func(t T) {
 		t.GetFields().Output = output
-	}
-}
-
-func WithJsonpath[T HasFields](jsonpath string) func(T) {
-	return func(t T) {
-		t.GetFields().Jsonpath = jsonpath
 	}
 }
 

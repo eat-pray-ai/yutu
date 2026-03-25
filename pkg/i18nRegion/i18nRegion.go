@@ -61,9 +61,9 @@ func (i *I18nRegion) List(writer io.Writer) error {
 
 	switch i.Output {
 	case "json":
-		utils.PrintJSON(i18nRegions, i.Jsonpath, writer)
+		utils.PrintJSON(i18nRegions, writer)
 	case "yaml":
-		utils.PrintYAML(i18nRegions, i.Jsonpath, writer)
+		utils.PrintYAML(i18nRegions, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -84,8 +84,7 @@ func WithHl(hl string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*I18nRegion]
-	WithOutput   = common.WithOutput[*I18nRegion]
-	WithJsonpath = common.WithJsonpath[*I18nRegion]
-	WithService  = common.WithService[*I18nRegion]
+	WithParts   = common.WithParts[*I18nRegion]
+	WithOutput  = common.WithOutput[*I18nRegion]
+	WithService = common.WithService[*I18nRegion]
 )

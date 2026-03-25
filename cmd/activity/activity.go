@@ -30,7 +30,6 @@ var (
 	regionCode      string
 	parts           []string
 	output          string
-	jsonpath        string
 )
 
 var activityCmd = &cobra.Command{

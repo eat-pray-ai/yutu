@@ -16,33 +16,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ohler55/ojg/jp"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"gopkg.in/yaml.v3"
 )
 
-func PrintJSON(data any, jsonpath string, writer io.Writer) {
-	j, err := jp.ParseString(jsonpath)
-	if err != nil && jsonpath != "" {
-		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
-		return
-	} else if jsonpath != "" {
-		data = j.Get(data)
-	}
+func PrintJSON(data any, writer io.Writer) {
 	marshalled, _ := json.MarshalIndent(data, "", "  ")
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
-func PrintYAML(data any, jsonpath string, writer io.Writer) {
-	j, err := jp.ParseString(jsonpath)
-	if err != nil && jsonpath != "" {
-		_, _ = fmt.Fprintln(writer, "Invalid JSONPath:", jsonpath)
-		return
-	} else if jsonpath != "" {
-		data = j.Get(data)
-	}
+func PrintYAML(data any, writer io.Writer) {
 	marshalled, _ := yaml.Marshal(data)
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }

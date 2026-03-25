@@ -57,16 +57,14 @@ func TestNewSubscription(t *testing.T) {
 					WithTitle("Test Subscription"),
 					WithParts([]string{"snippet", "contentDetails"}),
 					WithOutput("json"),
-					WithJsonpath("$.items[0].id"),
 					WithService(svc),
 				},
 			},
 			want: &Subscription{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet", "contentDetails"},
-					Output:   "json",
-					Jsonpath: "$.items[0].id",
+					Service: svc,
+					Parts:   []string{"snippet", "contentDetails"},
+					Output:  "json",
 				},
 				Ids:                           []string{"sub1", "sub2"},
 				SubscriberChannelId:           "subscriber123",
@@ -375,7 +373,8 @@ func TestSubscription_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "sub-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

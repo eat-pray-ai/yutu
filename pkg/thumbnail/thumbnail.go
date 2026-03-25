@@ -52,9 +52,9 @@ func (t *Thumbnail) Set(writer io.Writer) error {
 
 	switch t.Output {
 	case "json":
-		utils.PrintJSON(res, t.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, t.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Thumbnail set for video %s", t.VideoId)
@@ -75,7 +75,6 @@ func WithFile(file string) Option {
 }
 
 var (
-	WithOutput   = common.WithOutput[*Thumbnail]
-	WithJsonpath = common.WithJsonpath[*Thumbnail]
-	WithService  = common.WithService[*Thumbnail]
+	WithOutput  = common.WithOutput[*Thumbnail]
+	WithService = common.WithService[*Thumbnail]
 )

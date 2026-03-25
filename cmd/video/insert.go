@@ -74,7 +74,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -130,7 +129,6 @@ func init() {
 		pkg.OBOCOCUsage,
 	)
 	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")
@@ -165,7 +163,6 @@ var insertCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			video.WithOutput(output),
-			video.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
 	},

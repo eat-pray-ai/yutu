@@ -54,7 +54,6 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -81,7 +80,6 @@ func init() {
 		&parts, "parts", "p", []string{"id", "kind", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
@@ -102,7 +100,6 @@ var listCmd = &cobra.Command{
 			playlistImage.WithMaxResults(maxResults),
 			playlistImage.WithParts(parts),
 			playlistImage.WithOutput(output),
-			playlistImage.WithJsonpath(jsonpath),
 			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			playlistImage.WithService(nil),

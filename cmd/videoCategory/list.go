@@ -36,7 +36,6 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 const (
@@ -55,7 +54,6 @@ var listCmd = &cobra.Command{
 			videoCategory.WithRegionCode(regionCode),
 			videoCategory.WithParts(parts),
 			videoCategory.WithOutput(output),
-			videoCategory.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.List(cmd.OutOrStdout()), cmd)
 	},

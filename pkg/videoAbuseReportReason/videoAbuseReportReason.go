@@ -63,9 +63,9 @@ func (va *VideoAbuseReportReason) List(writer io.Writer) error {
 
 	switch va.Output {
 	case "json":
-		utils.PrintJSON(videoAbuseReportReasons, va.Jsonpath, writer)
+		utils.PrintJSON(videoAbuseReportReasons, writer)
 	case "yaml":
-		utils.PrintYAML(videoAbuseReportReasons, va.Jsonpath, writer)
+		utils.PrintYAML(videoAbuseReportReasons, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -86,8 +86,7 @@ func WithHL(hl string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*VideoAbuseReportReason]
-	WithOutput   = common.WithOutput[*VideoAbuseReportReason]
-	WithJsonpath = common.WithJsonpath[*VideoAbuseReportReason]
-	WithService  = common.WithService[*VideoAbuseReportReason]
+	WithParts   = common.WithParts[*VideoAbuseReportReason]
+	WithOutput  = common.WithOutput[*VideoAbuseReportReason]
+	WithService = common.WithService[*VideoAbuseReportReason]
 )

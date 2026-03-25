@@ -72,16 +72,14 @@ func TestNewSearch(t *testing.T) {
 					WithVideoType("movie"),
 					WithParts([]string{"snippet"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &Search{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"snippet"},
+					Output:  "json",
 				},
 				ChannelId:                 "channel123",
 				ChannelType:               "any",
@@ -472,7 +470,8 @@ func TestSearch_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": {"videoId": "video-%d"}}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

@@ -63,9 +63,9 @@ func (i *I18nLanguage) List(writer io.Writer) error {
 
 	switch i.Output {
 	case "json":
-		utils.PrintJSON(i18nLanguages, i.Jsonpath, writer)
+		utils.PrintJSON(i18nLanguages, writer)
 	case "yaml":
-		utils.PrintYAML(i18nLanguages, i.Jsonpath, writer)
+		utils.PrintYAML(i18nLanguages, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -86,8 +86,7 @@ func WithHl(hl string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*I18nLanguage]
-	WithOutput   = common.WithOutput[*I18nLanguage]
-	WithJsonpath = common.WithJsonpath[*I18nLanguage]
-	WithService  = common.WithService[*I18nLanguage]
+	WithParts   = common.WithParts[*I18nLanguage]
+	WithOutput  = common.WithOutput[*I18nLanguage]
+	WithService = common.WithService[*I18nLanguage]
 )

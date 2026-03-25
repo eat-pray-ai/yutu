@@ -79,9 +79,9 @@ func (s *SuperChatEvent) List(writer io.Writer) error {
 
 	switch s.Output {
 	case "json":
-		utils.PrintJSON(events, s.Jsonpath, writer)
+		utils.PrintJSON(events, writer)
 	case "yaml":
-		utils.PrintYAML(events, s.Jsonpath, writer)
+		utils.PrintYAML(events, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -118,8 +118,7 @@ func WithMaxResults(maxResults int64) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*SuperChatEvent]
-	WithOutput   = common.WithOutput[*SuperChatEvent]
-	WithJsonpath = common.WithJsonpath[*SuperChatEvent]
-	WithService  = common.WithService[*SuperChatEvent]
+	WithParts   = common.WithParts[*SuperChatEvent]
+	WithOutput  = common.WithOutput[*SuperChatEvent]
+	WithService = common.WithService[*SuperChatEvent]
 )

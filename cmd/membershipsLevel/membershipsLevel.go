@@ -14,9 +14,8 @@ const (
 )
 
 var (
-	parts    []string
-	output   string
-	jsonpath string
+	parts  []string
+	output string
 )
 
 var membershipsLevelCmd = &cobra.Command{

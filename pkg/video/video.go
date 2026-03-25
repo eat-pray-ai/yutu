@@ -155,9 +155,9 @@ func (v *Video) List(writer io.Writer) error {
 
 	switch v.Output {
 	case "json":
-		utils.PrintJSON(videos, v.Jsonpath, writer)
+		utils.PrintJSON(videos, writer)
 	case "yaml":
-		utils.PrintYAML(videos, v.Jsonpath, writer)
+		utils.PrintYAML(videos, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -262,7 +262,6 @@ func (v *Video) Insert(writer io.Writer) error {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(v.Service),
 			thumbnail.WithOutput("silent"),
-			thumbnail.WithJsonpath(""),
 		)
 		_ = t.Set(nil)
 	}
@@ -278,7 +277,6 @@ func (v *Video) Insert(writer io.Writer) error {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(v.Service),
 			playlistItem.WithOutput("silent"),
-			playlistItem.WithJsonpath(""),
 		)
 
 		_ = pi.Insert(writer)
@@ -286,9 +284,9 @@ func (v *Video) Insert(writer io.Writer) error {
 
 	switch v.Output {
 	case "json":
-		utils.PrintJSON(res, v.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, v.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video inserted: %s\n", res.Id)
@@ -354,7 +352,6 @@ func (v *Video) Update(writer io.Writer) error {
 			thumbnail.WithFile(v.Thumbnail),
 			thumbnail.WithService(v.Service),
 			thumbnail.WithOutput("silent"),
-			thumbnail.WithJsonpath(""),
 		)
 		_ = t.Set(nil)
 	}
@@ -370,7 +367,6 @@ func (v *Video) Update(writer io.Writer) error {
 			playlistItem.WithPrivacy(res.Status.PrivacyStatus),
 			playlistItem.WithService(v.Service),
 			playlistItem.WithOutput("silent"),
-			playlistItem.WithJsonpath(""),
 		)
 
 		_ = pi.Insert(writer)
@@ -378,9 +374,9 @@ func (v *Video) Update(writer io.Writer) error {
 
 	switch v.Output {
 	case "json":
-		utils.PrintJSON(res, v.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, v.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Video updated: %s\n", res.Id)
@@ -414,9 +410,9 @@ func (v *Video) GetRating(writer io.Writer) error {
 
 	switch v.Output {
 	case "json":
-		utils.PrintJSON(res.Items, v.Jsonpath, writer)
+		utils.PrintJSON(res.Items, writer)
 	case "yaml":
-		utils.PrintYAML(res.Items, v.Jsonpath, writer)
+		utils.PrintYAML(res.Items, writer)
 	default:
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -683,8 +679,7 @@ func WithSecondaryReasonId(secondaryReasonId string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Video]
-	WithOutput   = common.WithOutput[*Video]
-	WithJsonpath = common.WithJsonpath[*Video]
-	WithService  = common.WithService[*Video]
+	WithParts   = common.WithParts[*Video]
+	WithOutput  = common.WithOutput[*Video]
+	WithService = common.WithService[*Video]
 )

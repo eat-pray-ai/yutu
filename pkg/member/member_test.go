@@ -41,16 +41,14 @@ func TestNewMember(t *testing.T) {
 					WithMode("all_current"),
 					WithParts([]string{"snippet"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &Member{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"snippet"},
+					Output:  "json",
 				},
 				MemberChannelId:  "member123",
 				HasAccessToLevel: "level1",
@@ -257,7 +255,8 @@ func TestMember_Get_Pagination(t *testing.T) {
 				items[i] = `{"kind": "youtube#member"}`
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

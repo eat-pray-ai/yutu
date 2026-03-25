@@ -21,7 +21,6 @@ use_repo(
     "com_github_google_jsonschema_go",
     "com_github_jedib0t_go_pretty_v6",
     "com_github_modelcontextprotocol_go_sdk",
-    "com_github_ohler55_ojg",
     "com_github_savioxavier_termlink",
     "com_github_spf13_cobra",
     "com_github_spf13_pflag",

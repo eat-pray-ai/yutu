@@ -58,16 +58,14 @@ func TestNewChannel(t *testing.T) {
 					WithTitle("Test Channel"),
 					WithParts([]string{"snippet", "contentDetails"}),
 					WithOutput("json"),
-					WithJsonpath("$.items[0].id"),
 					WithService(svc),
 				},
 			},
 			want: &Channel{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet", "contentDetails"},
-					Output:   "json",
-					Jsonpath: "$.items[0].id",
+					Service: svc,
+					Parts:   []string{"snippet", "contentDetails"},
+					Output:  "json",
 				},
 				CategoryId:             "category123",
 				ForHandle:              "@testhandle",
@@ -442,7 +440,8 @@ func TestChannel_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "channel-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

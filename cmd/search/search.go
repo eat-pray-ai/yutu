@@ -73,7 +73,6 @@ var (
 	videoType                 string
 	parts                     []string
 	output                    string
-	jsonpath                  string
 )
 
 var searchCmd = &cobra.Command{

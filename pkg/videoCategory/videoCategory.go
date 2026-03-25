@@ -69,9 +69,9 @@ func (vc *VideoCategory) List(writer io.Writer) error {
 
 	switch vc.Output {
 	case "json":
-		utils.PrintJSON(videoCategories, vc.Jsonpath, writer)
+		utils.PrintJSON(videoCategories, writer)
 	case "yaml":
-		utils.PrintYAML(videoCategories, vc.Jsonpath, writer)
+		utils.PrintYAML(videoCategories, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -104,8 +104,7 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*VideoCategory]
-	WithOutput   = common.WithOutput[*VideoCategory]
-	WithJsonpath = common.WithJsonpath[*VideoCategory]
-	WithService  = common.WithService[*VideoCategory]
+	WithParts   = common.WithParts[*VideoCategory]
+	WithOutput  = common.WithOutput[*VideoCategory]
+	WithService = common.WithService[*VideoCategory]
 )

@@ -49,7 +49,6 @@ func init() {
 		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -61,7 +60,6 @@ var listCmd = &cobra.Command{
 			i18nLanguage.WithHl(hl),
 			i18nLanguage.WithParts(parts),
 			i18nLanguage.WithOutput(output),
-			i18nLanguage.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.List(cmd.OutOrStdout()), cmd)
 	},
@@ -72,7 +70,6 @@ var hlHandler = cobramcp.GenResourceHandler(
 		input := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithParts(defaultParts),
 			i18nLanguage.WithOutput("json"),
-			i18nLanguage.WithJsonpath("$.*.snippet.hl"),
 		)
 		return input.List(w)
 	},

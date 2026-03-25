@@ -23,7 +23,6 @@ var (
 	mode             string
 	parts            []string
 	output           string
-	jsonpath         string
 )
 
 var memberCmd = &cobra.Command{

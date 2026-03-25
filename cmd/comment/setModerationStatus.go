@@ -46,7 +46,6 @@ var setModerationStatusInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -81,9 +80,6 @@ func init() {
 	setModerationStatusCmd.Flags().StringVarP(
 		&output, "output", "o", "", pkg.SilentUsage,
 	)
-	setModerationStatusCmd.Flags().StringVarP(
-		&jsonpath, "jsonpath", "j", "", pkg.JPUsage,
-	)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
 	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
@@ -100,7 +96,6 @@ var setModerationStatusCmd = &cobra.Command{
 			comment.WithModerationStatus(moderationStatus),
 			comment.WithBanAuthor(banAuthor),
 			comment.WithOutput(output),
-			comment.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.SetModerationStatus(cmd.OutOrStdout()), cmd)
 	},

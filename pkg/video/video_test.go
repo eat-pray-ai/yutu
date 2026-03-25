@@ -85,16 +85,14 @@ func TestNewVideo(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
 					WithParts([]string{"snippet", "contentDetails"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &Video{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet", "contentDetails"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"snippet", "contentDetails"},
+					Output:  "json",
 				},
 				Ids:                           []string{"video1", "video2"},
 				AutoLevels:                    &autoLevelsTrue,
@@ -431,7 +429,8 @@ func TestVideo_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "video-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

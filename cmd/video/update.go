@@ -62,7 +62,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -98,7 +97,6 @@ func init() {
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -122,7 +120,6 @@ var updateCmd = &cobra.Command{
 			video.WithPrivacy(privacy),
 			video.WithEmbeddable(embeddable),
 			video.WithOutput(output),
-			video.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)
 	},

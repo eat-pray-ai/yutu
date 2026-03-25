@@ -187,9 +187,9 @@ func (s *Search) List(writer io.Writer) error {
 
 	switch s.Output {
 	case "json":
-		utils.PrintJSON(results, s.Jsonpath, writer)
+		utils.PrintJSON(results, writer)
 	case "yaml":
-		utils.PrintYAML(results, s.Jsonpath, writer)
+		utils.PrintYAML(results, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -400,8 +400,7 @@ func WithVideoType(videoType string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Search]
-	WithOutput   = common.WithOutput[*Search]
-	WithJsonpath = common.WithJsonpath[*Search]
-	WithService  = common.WithService[*Search]
+	WithParts   = common.WithParts[*Search]
+	WithOutput  = common.WithOutput[*Search]
+	WithService = common.WithService[*Search]
 )

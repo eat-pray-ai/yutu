@@ -47,16 +47,14 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
-					WithJsonpath("$.items[*].id"),
 					WithService(svc),
 				},
 			},
 			want: &PlaylistImage{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"id", "snippet"},
-					Output:   "json",
-					Jsonpath: "$.items[*].id",
+					Service: svc,
+					Parts:   []string{"id", "snippet"},
+					Output:  "json",
 				},
 				Ids:                           []string{"image1", "image2"},
 				Height:                        1080,
@@ -274,7 +272,8 @@ func TestPlaylistImage_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "image-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

@@ -39,16 +39,14 @@ func TestNewSuperChatEvent(t *testing.T) {
 					WithMaxResults(50),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
-					WithJsonpath("$.items[*].id"),
 					WithService(svc),
 				},
 			},
 			want: &SuperChatEvent{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"id", "snippet"},
-					Output:   "json",
-					Jsonpath: "$.items[*].id",
+					Service: svc,
+					Parts:   []string{"id", "snippet"},
+					Output:  "json",
 				},
 				Hl:         "en",
 				MaxResults: 50,
@@ -215,7 +213,8 @@ func TestSuperChatEvent_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "event-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

@@ -97,9 +97,9 @@ func (c *Caption) List(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(captions, c.Jsonpath, writer)
+		utils.PrintJSON(captions, writer)
 	case "yaml":
-		utils.PrintYAML(captions, c.Jsonpath, writer)
+		utils.PrintYAML(captions, writer)
 	case "table":
 		tb := table.NewWriter()
 		tb.SetOutputMirror(writer)
@@ -158,9 +158,9 @@ func (c *Caption) Insert(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
@@ -235,9 +235,9 @@ func (c *Caption) Update(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)
@@ -419,8 +419,7 @@ func WithTlang(tlang string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Caption]
-	WithOutput   = common.WithOutput[*Caption]
-	WithJsonpath = common.WithJsonpath[*Caption]
-	WithService  = common.WithService[*Caption]
+	WithParts   = common.WithParts[*Caption]
+	WithOutput  = common.WithOutput[*Caption]
+	WithService = common.WithService[*Caption]
 )

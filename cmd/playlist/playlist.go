@@ -35,7 +35,6 @@ var (
 	privacy     string
 	parts       []string
 	output      string
-	jsonpath    string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

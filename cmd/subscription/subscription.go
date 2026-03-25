@@ -38,7 +38,6 @@ var (
 	title                         string
 	parts                         []string
 	output                        string
-	jsonpath                      string
 )
 
 var subscriptionCmd = &cobra.Command{

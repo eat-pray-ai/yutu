@@ -41,7 +41,6 @@ var getRatingInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -68,7 +67,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", pkg.TableUsage)
-	getRatingCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }
@@ -83,7 +81,6 @@ var getRatingCmd = &cobra.Command{
 			video.WithIds(ids),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithOutput(output),
-			video.WithJsonpath(jsonpath),
 			video.WithService(nil),
 		)
 		utils.HandleCmdError(input.GetRating(cmd.OutOrStdout()), cmd)

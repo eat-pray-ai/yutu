@@ -37,7 +37,6 @@ var setInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -62,7 +61,6 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	setCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
@@ -78,7 +76,6 @@ var setCmd = &cobra.Command{
 			thumbnail.WithFile(file),
 			thumbnail.WithVideoId(videoId),
 			thumbnail.WithOutput(output),
-			thumbnail.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.Set(cmd.OutOrStdout()), cmd)
 	},

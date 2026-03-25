@@ -73,7 +73,6 @@ var (
 	maxResults        int64
 	parts             []string
 	output            string
-	jsonpath          string
 
 	notifySubscribers             = new(false)
 	publicStatsViewable           = new(false)

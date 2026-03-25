@@ -39,7 +39,6 @@ var markAsSpamInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -63,7 +62,6 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	markAsSpamCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 }
@@ -77,7 +75,6 @@ var markAsSpamCmd = &cobra.Command{
 		input := comment.NewComment(
 			comment.WithIds(ids),
 			comment.WithOutput(output),
-			comment.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.MarkAsSpam(cmd.OutOrStdout()), cmd)
 	},

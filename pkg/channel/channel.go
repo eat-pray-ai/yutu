@@ -120,9 +120,9 @@ func (c *Channel) List(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(channels, c.Jsonpath, writer)
+		utils.PrintJSON(channels, writer)
 	case "yaml":
-		utils.PrintYAML(channels, c.Jsonpath, writer)
+		utils.PrintYAML(channels, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -179,9 +179,9 @@ func (c *Channel) Update(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)
@@ -291,8 +291,7 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Channel]
-	WithOutput   = common.WithOutput[*Channel]
-	WithJsonpath = common.WithJsonpath[*Channel]
-	WithService  = common.WithService[*Channel]
+	WithParts   = common.WithParts[*Channel]
+	WithOutput  = common.WithOutput[*Channel]
+	WithService = common.WithService[*Channel]
 )

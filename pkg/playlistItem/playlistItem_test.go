@@ -50,16 +50,14 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithOnBehalfOfContentOwner("owner123"),
 					WithParts([]string{"snippet", "status"}),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &PlaylistItem{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"snippet", "status"},
-					Output:   "json",
-					Jsonpath: "items.id",
+					Service: svc,
+					Parts:   []string{"snippet", "status"},
+					Output:  "json",
 				},
 				Ids:                    []string{"item1", "item2"},
 				Title:                  "Test Item",
@@ -123,11 +121,10 @@ func TestNewPlaylistItem(t *testing.T) {
 					WithPrivacy(""),
 					WithOnBehalfOfContentOwner(""),
 					WithOutput(""),
-					WithJsonpath(""),
 				},
 			},
 			want: &PlaylistItem{
-				Fields:                 &common.Fields{Output: "", Jsonpath: ""},
+				Fields:                 &common.Fields{Output: ""},
 				Title:                  "",
 				Description:            "",
 				Kind:                   "",
@@ -309,7 +306,8 @@ func TestPlaylistItem_Get_Pagination(t *testing.T) {
 				items[i] = fmt.Sprintf(`{"id": "item-%d"}`, i)
 			}
 			_, _ = w.Write(
-				fmt.Appendf(nil,
+				fmt.Appendf(
+					nil,
 					`{
 				"items": [%s],
 				"nextPageToken": "page-2"

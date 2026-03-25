@@ -87,9 +87,9 @@ func (m *Member) List(writer io.Writer) error {
 
 	switch m.Output {
 	case "json":
-		utils.PrintJSON(members, m.Jsonpath, writer)
+		utils.PrintJSON(members, writer)
 	case "yaml":
-		utils.PrintYAML(members, m.Jsonpath, writer)
+		utils.PrintYAML(members, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -138,8 +138,7 @@ func WithMode(mode string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Member]
-	WithOutput   = common.WithOutput[*Member]
-	WithJsonpath = common.WithJsonpath[*Member]
-	WithService  = common.WithService[*Member]
+	WithParts   = common.WithParts[*Member]
+	WithOutput  = common.WithOutput[*Member]
+	WithService = common.WithService[*Member]
 )

@@ -31,7 +31,6 @@ var (
 	maxResults int64
 	parts      []string
 	output     string
-	jsonpath   string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

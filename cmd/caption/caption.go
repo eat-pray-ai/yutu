@@ -47,7 +47,6 @@ var (
 	tfmt                   string
 	tlang                  string
 	output                 string
-	jsonpath               string
 )
 
 var captionCmd = &cobra.Command{

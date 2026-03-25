@@ -58,7 +58,6 @@ var updateInSchema = &jsonschema.Schema{
 			Enum:    []any{"json", "yaml", "silent"},
 			Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -104,7 +103,6 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("videoId")
 }
@@ -130,7 +128,6 @@ var updateCmd = &cobra.Command{
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithOutput(output),
-			caption.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)
 	},

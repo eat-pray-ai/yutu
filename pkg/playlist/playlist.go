@@ -113,9 +113,9 @@ func (p *Playlist) List(writer io.Writer) error {
 
 	switch p.Output {
 	case "json":
-		utils.PrintJSON(playlists, p.Jsonpath, writer)
+		utils.PrintJSON(playlists, writer)
 	case "yaml":
-		utils.PrintYAML(playlists, p.Jsonpath, writer)
+		utils.PrintYAML(playlists, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -164,9 +164,9 @@ func (p *Playlist) Insert(writer io.Writer) error {
 
 	switch p.Output {
 	case "json":
-		utils.PrintJSON(res, p.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, p.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
@@ -212,9 +212,9 @@ func (p *Playlist) Update(writer io.Writer) error {
 
 	switch p.Output {
 	case "json":
-		utils.PrintJSON(res, p.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, p.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)
@@ -319,8 +319,7 @@ func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Playlist]
-	WithOutput   = common.WithOutput[*Playlist]
-	WithJsonpath = common.WithJsonpath[*Playlist]
-	WithService  = common.WithService[*Playlist]
+	WithParts   = common.WithParts[*Playlist]
+	WithOutput  = common.WithOutput[*Playlist]
+	WithService = common.WithService[*Playlist]
 )

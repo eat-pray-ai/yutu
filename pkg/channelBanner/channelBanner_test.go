@@ -152,15 +152,13 @@ func TestNewChannelBanner(t *testing.T) {
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
 					WithOutput("json"),
-					WithJsonpath("items.id"),
 					WithService(svc),
 				},
 			},
 			want: &ChannelBanner{
 				Fields: &common.Fields{
-					Output:   "json",
-					Jsonpath: "items.id",
-					Service:  svc,
+					Output:  "json",
+					Service: svc,
 				},
 				ChannelId:                     "channel123",
 				File:                          "/path/to/banner.jpg",
@@ -184,13 +182,11 @@ func TestNewChannelBanner(t *testing.T) {
 					WithOnBehalfOfContentOwner(""),
 					WithOnBehalfOfContentOwnerChannel(""),
 					WithOutput(""),
-					WithJsonpath(""),
 				},
 			},
 			want: &ChannelBanner{
 				Fields: &common.Fields{
-					Output:   "",
-					Jsonpath: "",
+					Output: "",
 				},
 				ChannelId:                     "",
 				File:                          "",

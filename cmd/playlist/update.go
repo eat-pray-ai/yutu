@@ -55,7 +55,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -84,7 +83,6 @@ func init() {
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(&jsonpath, "jsonPath", "j", "", pkg.JPUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 }
@@ -103,7 +101,6 @@ var updateCmd = &cobra.Command{
 			playlist.WithLanguage(language),
 			playlist.WithPrivacy(privacy),
 			playlist.WithOutput(output),
-			playlist.WithJsonpath(jsonpath),
 		)
 		err := p.Update(cmd.OutOrStdout())
 		utils.HandleCmdError(err, cmd)

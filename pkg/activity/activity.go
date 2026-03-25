@@ -104,9 +104,9 @@ func (a *Activity) List(writer io.Writer) error {
 
 	switch a.Output {
 	case "json":
-		utils.PrintJSON(activities, a.Jsonpath, writer)
+		utils.PrintJSON(activities, writer)
 	case "yaml":
-		utils.PrintYAML(activities, a.Jsonpath, writer)
+		utils.PrintYAML(activities, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -177,8 +177,7 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Activity]
-	WithOutput   = common.WithOutput[*Activity]
-	WithJsonpath = common.WithJsonpath[*Activity]
-	WithService  = common.WithService[*Activity]
+	WithParts   = common.WithParts[*Activity]
+	WithOutput  = common.WithOutput[*Activity]
+	WithService = common.WithService[*Activity]
 )

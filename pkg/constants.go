@@ -12,7 +12,6 @@ const (
 	MRUsage     = "The maximum number of items that should be returned, 0 for no limit"
 	TableUsage  = "json|yaml|table"
 	SilentUsage = "json|yaml|silent"
-	JPUsage     = "JSONPath expression to filter the output"
 	JsonMIME    = "application/json"
 	PerPage     = 20
 	OBOUsage    = "ID of the YouTube account that the content owner is acting on behalf of"

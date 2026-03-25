@@ -70,7 +70,6 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "table"},
 			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
 		},
-		"jsonpath": {Type: "string", Description: pkg.JPUsage},
 	},
 }
 
@@ -106,10 +105,10 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
 	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status", "statistics"}, pkg.PartsUsage,
+		&parts, "parts", "p", []string{"id", "snippet", "status", "statistics"},
+		pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -132,7 +131,6 @@ var listCmd = &cobra.Command{
 			video.WithRating(rating),
 			video.WithParts(parts),
 			video.WithOutput(output),
-			video.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.List(cmd.OutOrStdout()), cmd)
 	},

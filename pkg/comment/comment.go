@@ -106,9 +106,9 @@ func (c *Comment) List(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(comments, c.Jsonpath, writer)
+		utils.PrintJSON(comments, writer)
 	case "yaml":
-		utils.PrintYAML(comments, c.Jsonpath, writer)
+		utils.PrintYAML(comments, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -160,9 +160,9 @@ func (c *Comment) Insert(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment inserted: %s\n", res.Id)
@@ -203,9 +203,9 @@ func (c *Comment) Update(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(res, c.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, c.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment updated: %s\n", res.Id)
@@ -223,9 +223,9 @@ func (c *Comment) MarkAsSpam(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(c, c.Jsonpath, writer)
+		utils.PrintJSON(c, writer)
 	case "yaml":
-		utils.PrintYAML(c, c.Jsonpath, writer)
+		utils.PrintYAML(c, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.Ids)
@@ -248,9 +248,9 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 
 	switch c.Output {
 	case "json":
-		utils.PrintJSON(c, c.Jsonpath, writer)
+		utils.PrintJSON(c, writer)
 	case "yaml":
-		utils.PrintYAML(c, c.Jsonpath, writer)
+		utils.PrintYAML(c, writer)
 	case "silent":
 	default:
 		_, _ = fmt.Fprintf(
@@ -356,8 +356,7 @@ func WithViewerRating(viewerRating string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Comment]
-	WithOutput   = common.WithOutput[*Comment]
-	WithJsonpath = common.WithJsonpath[*Comment]
-	WithService  = common.WithService[*Comment]
+	WithParts   = common.WithParts[*Comment]
+	WithOutput  = common.WithOutput[*Comment]
+	WithService = common.WithService[*Comment]
 )

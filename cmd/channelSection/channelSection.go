@@ -25,7 +25,6 @@ var (
 	onBehalfOfContentOwner string
 	parts                  []string
 	output                 string
-	jsonpath               string
 )
 
 var channelSectionCmd = &cobra.Command{

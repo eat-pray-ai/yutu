@@ -35,16 +35,14 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 					WithHL("en"),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
-					WithJsonpath("$.items[*].id"),
 					WithService(svc),
 				},
 			},
 			want: &VideoAbuseReportReason{
 				Fields: &common.Fields{
-					Service:  svc,
-					Parts:    []string{"id", "snippet"},
-					Output:   "json",
-					Jsonpath: "$.items[*].id",
+					Service: svc,
+					Parts:   []string{"id", "snippet"},
+					Output:  "json",
 				},
 				Hl: "en",
 			},
@@ -62,12 +60,11 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				opts: []Option{
 					WithHL(""),
 					WithOutput(""),
-					WithJsonpath(""),
 				},
 			},
 			want: &VideoAbuseReportReason{
 				Fields: &common.Fields{
-					Output: "", Jsonpath: "",
+					Output: "",
 				},
 				Hl: "",
 			},

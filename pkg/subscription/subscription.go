@@ -120,9 +120,9 @@ func (s *Subscription) List(writer io.Writer) error {
 
 	switch s.Output {
 	case "json":
-		utils.PrintJSON(subscriptions, s.Jsonpath, writer)
+		utils.PrintJSON(subscriptions, writer)
 	case "yaml":
-		utils.PrintYAML(subscriptions, s.Jsonpath, writer)
+		utils.PrintYAML(subscriptions, writer)
 	case "table":
 		tb := table.NewWriter()
 		defer tb.Render()
@@ -170,9 +170,9 @@ func (s *Subscription) Insert(writer io.Writer) error {
 
 	switch s.Output {
 	case "json":
-		utils.PrintJSON(res, s.Jsonpath, writer)
+		utils.PrintJSON(res, writer)
 	case "yaml":
-		utils.PrintYAML(res, s.Jsonpath, writer)
+		utils.PrintYAML(res, writer)
 	default:
 		_, _ = fmt.Fprintf(writer, "Subscription inserted: %s\n", res.Id)
 	}
@@ -283,8 +283,7 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts    = common.WithParts[*Subscription]
-	WithOutput   = common.WithOutput[*Subscription]
-	WithJsonpath = common.WithJsonpath[*Subscription]
-	WithService  = common.WithService[*Subscription]
+	WithParts   = common.WithParts[*Subscription]
+	WithOutput  = common.WithOutput[*Subscription]
+	WithService = common.WithService[*Subscription]
 )

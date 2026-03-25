@@ -45,7 +45,6 @@ var (
 	title           string
 	parts           []string
 	output          string
-	jsonpath        string
 
 	onBehalfOfContentOwner string
 )

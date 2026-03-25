@@ -38,7 +38,6 @@ func init() {
 		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(&jsonpath, "jsonpath", "j", "", pkg.JPUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -50,7 +49,6 @@ var listCmd = &cobra.Command{
 			i18nRegion.WithHl(hl),
 			i18nRegion.WithParts(parts),
 			i18nRegion.WithOutput(output),
-			i18nRegion.WithJsonpath(jsonpath),
 		)
 		utils.HandleCmdError(input.List(cmd.OutOrStdout()), cmd)
 	},
