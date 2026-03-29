@@ -92,6 +92,10 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 | `YUTU_ROOT`        | Root directory for file resolution           | Current working directory |
 | `YUTU_LOG_LEVEL`   | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO`                    |
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/eat-pray-ai-yutu).
+
 ## Installation
 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
