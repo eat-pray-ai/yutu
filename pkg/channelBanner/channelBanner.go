@@ -5,13 +5,11 @@ package channelBanner
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -66,15 +64,7 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 		return errors.Join(errInsertChannelBanner, err)
 	}
 
-	switch cb.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "ChannelBanner inserted: %s\n", res.Url)
-	}
+	common.PrintResult(cb.Output, res, writer, "ChannelBanner inserted: %s\n", res.Url)
 	return nil
 }
 

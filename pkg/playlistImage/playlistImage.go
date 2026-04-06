@@ -11,7 +11,6 @@ import (
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -80,23 +79,9 @@ func (pi *PlaylistImage) List(writer io.Writer) error {
 		return err
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(playlistImages, writer)
-	case "yaml":
-		utils.PrintYAML(playlistImages, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Kind", "Playlist ID", "Type"})
-		for _, img := range playlistImages {
-			tb.AppendRow(
-				table.Row{img.Id, img.Kind, img.Snippet.PlaylistId, img.Snippet.Type},
-			)
-		}
-	}
+	common.PrintList(pi.Output, playlistImages, writer, table.Row{"ID", "Kind", "Playlist ID", "Type"}, func(img *youtube.PlaylistImage) table.Row {
+		return table.Row{img.Id, img.Kind, img.Snippet.PlaylistId, img.Snippet.Type}
+	})
 	return err
 }
 
@@ -136,15 +121,7 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 		return errors.Join(errInsertPlaylistImage, err)
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "PlaylistImage inserted: %s\n", res.Id)
-	}
+	common.PrintResult(pi.Output, res, writer, "PlaylistImage inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -196,15 +173,7 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 		return errors.Join(errUpdatePlaylistImage, err)
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "PlaylistImage updated: %s\n", res.Id)
-	}
+	common.PrintResult(pi.Output, res, writer, "PlaylistImage updated: %s\n", res.Id)
 	return nil
 }
 

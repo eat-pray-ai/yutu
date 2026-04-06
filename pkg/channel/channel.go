@@ -5,12 +5,9 @@ package channel
 
 import (
 	"errors"
-	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"google.golang.org/api/youtube/v3"
@@ -96,29 +93,15 @@ func (c *Channel) List(writer io.Writer) error {
 		return err
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(channels, writer)
-	case "yaml":
-		utils.PrintYAML(channels, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Title", "Country"})
-		for _, channel := range channels {
-			title := ""
-			country := ""
-			if channel.Snippet != nil {
-				title = channel.Snippet.Title
-				country = channel.Snippet.Country
-			}
-			tb.AppendRow(
-				table.Row{channel.Id, title, country},
-			)
+	common.PrintList(c.Output, channels, writer, table.Row{"ID", "Title", "Country"}, func(ch *youtube.Channel) table.Row {
+		title := ""
+		country := ""
+		if ch.Snippet != nil {
+			title = ch.Snippet.Title
+			country = ch.Snippet.Country
 		}
-	}
+		return table.Row{ch.Id, title, country}
+	})
 	return err
 }
 
@@ -155,15 +138,7 @@ func (c *Channel) Update(writer io.Writer) error {
 		return errors.Join(errUpdateChannel, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Channel updated: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "Channel updated: %s\n", res.Id)
 	return nil
 }
 

@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -57,26 +55,14 @@ func (i *I18nLanguage) Get() (
 }
 
 func (i *I18nLanguage) List(writer io.Writer) error {
-	i18nLanguages, err := i.Get()
+	languages, err := i.Get()
 	if err != nil {
 		return err
 	}
 
-	switch i.Output {
-	case "json":
-		utils.PrintJSON(i18nLanguages, writer)
-	case "yaml":
-		utils.PrintYAML(i18nLanguages, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Hl", "Name"})
-		for _, lang := range i18nLanguages {
-			tb.AppendRow(table.Row{lang.Id, lang.Snippet.Hl, lang.Snippet.Name})
-		}
-	}
+	common.PrintList(i.Output, languages, writer, table.Row{"ID", "Hl", "Name"}, func(l *youtube.I18nLanguage) table.Row {
+		return table.Row{l.Id, l.Snippet.Hl, l.Snippet.Name}
+	})
 	return nil
 }
 

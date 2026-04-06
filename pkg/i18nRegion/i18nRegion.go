@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -55,26 +53,14 @@ func (i *I18nRegion) Get() ([]*youtube.I18nRegion, error) {
 }
 
 func (i *I18nRegion) List(writer io.Writer) error {
-	i18nRegions, err := i.Get()
+	regions, err := i.Get()
 	if err != nil {
 		return err
 	}
 
-	switch i.Output {
-	case "json":
-		utils.PrintJSON(i18nRegions, writer)
-	case "yaml":
-		utils.PrintYAML(i18nRegions, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Gl", "Name"})
-		for _, region := range i18nRegions {
-			tb.AppendRow(table.Row{region.Id, region.Snippet.Gl, region.Snippet.Name})
-		}
-	}
+	common.PrintList(i.Output, regions, writer, table.Row{"ID", "Gl", "Name"}, func(r *youtube.I18nRegion) table.Row {
+		return table.Row{r.Id, r.Snippet.Gl, r.Snippet.Name}
+	})
 	return nil
 }
 

@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -96,34 +94,18 @@ func (s *Subscription) List(writer io.Writer) error {
 		return err
 	}
 
-	switch s.Output {
-	case "json":
-		utils.PrintJSON(subscriptions, writer)
-	case "yaml":
-		utils.PrintYAML(subscriptions, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Kind", "Resource ID", "Channel Title"})
-		for _, sub := range subscriptions {
-			var resourceId string
-			switch sub.Snippet.ResourceId.Kind {
-			case "youtube#video":
-				resourceId = sub.Snippet.ResourceId.VideoId
-			case "youtube#channel":
-				resourceId = sub.Snippet.ResourceId.ChannelId
-			case "youtube#playlist":
-				resourceId = sub.Snippet.ResourceId.PlaylistId
-			}
-			tb.AppendRow(
-				table.Row{
-					sub.Id, sub.Snippet.ResourceId.Kind, resourceId, sub.Snippet.Title,
-				},
-			)
+	common.PrintList(s.Output, subscriptions, writer, table.Row{"ID", "Kind", "Resource ID", "Channel Title"}, func(sub *youtube.Subscription) table.Row {
+		var resourceId string
+		switch sub.Snippet.ResourceId.Kind {
+		case "youtube#video":
+			resourceId = sub.Snippet.ResourceId.VideoId
+		case "youtube#channel":
+			resourceId = sub.Snippet.ResourceId.ChannelId
+		case "youtube#playlist":
+			resourceId = sub.Snippet.ResourceId.PlaylistId
 		}
-	}
+		return table.Row{sub.Id, sub.Snippet.ResourceId.Kind, resourceId, sub.Snippet.Title}
+	})
 	return err
 }
 
@@ -148,14 +130,7 @@ func (s *Subscription) Insert(writer io.Writer) error {
 		return errors.Join(errInsertSubscription, err)
 	}
 
-	switch s.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	default:
-		_, _ = fmt.Fprintf(writer, "Subscription inserted: %s\n", res.Id)
-	}
+	common.PrintResult(s.Output, res, writer, "Subscription inserted: %s\n", res.Id)
 	return nil
 }
 

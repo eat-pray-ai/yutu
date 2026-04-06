@@ -5,12 +5,9 @@ package commentThread
 
 import (
 	"errors"
-	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -90,27 +87,10 @@ func (c *CommentThread) List(writer io.Writer) error {
 		return err
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(commentThreads, writer)
-	case "yaml":
-		utils.PrintYAML(commentThreads, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Author", "Video ID", "Text Display"})
-		for _, cot := range commentThreads {
-			snippet := cot.Snippet.TopLevelComment.Snippet
-			tb.AppendRow(
-				table.Row{
-					cot.Id, snippet.AuthorDisplayName,
-					snippet.VideoId, snippet.TextDisplay,
-				},
-			)
-		}
-	}
+	common.PrintList(c.Output, commentThreads, writer, table.Row{"ID", "Author", "Video ID", "Text Display"}, func(cot *youtube.CommentThread) table.Row {
+		snippet := cot.Snippet.TopLevelComment.Snippet
+		return table.Row{cot.Id, snippet.AuthorDisplayName, snippet.VideoId, snippet.TextDisplay}
+	})
 	return err
 }
 
@@ -139,15 +119,7 @@ func (c *CommentThread) Insert(writer io.Writer) error {
 		return errors.Join(errInsertCommentThread, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "CommentThread inserted: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "CommentThread inserted: %s\n", res.Id)
 	return nil
 }
 

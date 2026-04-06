@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//pkg",
         "//pkg/common",
-        "//pkg/utils",
     ],
 )
 

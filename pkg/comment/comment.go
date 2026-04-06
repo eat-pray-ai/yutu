@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -83,33 +81,17 @@ func (c *Comment) List(writer io.Writer) error {
 		return err
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(comments, writer)
-	case "yaml":
-		utils.PrintYAML(comments, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Author", "Video ID", "Text Display"})
-		for _, comment := range comments {
-			author := ""
-			videoId := ""
-			textDisplay := ""
-			if comment.Snippet != nil {
-				author = comment.Snippet.AuthorDisplayName
-				videoId = comment.Snippet.VideoId
-				textDisplay = comment.Snippet.TextDisplay
-			}
-			tb.AppendRow(
-				table.Row{
-					comment.Id, author, videoId, textDisplay,
-				},
-			)
+	common.PrintList(c.Output, comments, writer, table.Row{"ID", "Author", "Video ID", "Text Display"}, func(cm *youtube.Comment) table.Row {
+		author := ""
+		videoId := ""
+		textDisplay := ""
+		if cm.Snippet != nil {
+			author = cm.Snippet.AuthorDisplayName
+			videoId = cm.Snippet.VideoId
+			textDisplay = cm.Snippet.TextDisplay
 		}
-	}
+		return table.Row{cm.Id, author, videoId, textDisplay}
+	})
 	return err
 }
 
@@ -139,15 +121,7 @@ func (c *Comment) Insert(writer io.Writer) error {
 		return errors.Join(errInsertComment, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Comment inserted: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "Comment inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -184,15 +158,7 @@ func (c *Comment) Update(writer io.Writer) error {
 		return errors.Join(errUpdateComment, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Comment updated: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "Comment updated: %s\n", res.Id)
 	return nil
 }
 
@@ -206,15 +172,7 @@ func (c *Comment) MarkAsSpam(writer io.Writer) error {
 		return errors.Join(errMarkAsSpam, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(c, writer)
-	case "yaml":
-		utils.PrintYAML(c, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Comment marked as spam: %s\n", c.Ids)
-	}
+	common.PrintResult(c.Output, c, writer, "Comment marked as spam: %s\n", c.Ids)
 	return nil
 }
 
@@ -233,18 +191,7 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 		return errors.Join(errSetModerationStatus, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(c, writer)
-	case "yaml":
-		utils.PrintYAML(c, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(
-			writer, "Comment moderation status set to %s: %s\n",
-			c.ModerationStatus, c.Ids,
-		)
-	}
+	common.PrintResult(c.Output, c, writer, "Comment moderation status set to %s: %s\n", c.ModerationStatus, c.Ids)
 	return nil
 }
 

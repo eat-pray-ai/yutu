@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -88,27 +86,15 @@ func (p *Playlist) List(writer io.Writer) error {
 		return err
 	}
 
-	switch p.Output {
-	case "json":
-		utils.PrintJSON(playlists, writer)
-	case "yaml":
-		utils.PrintYAML(playlists, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Channel ID", "Title"})
-		for _, pl := range playlists {
-			channelId := ""
-			title := ""
-			if pl.Snippet != nil {
-				channelId = pl.Snippet.ChannelId
-				title = pl.Snippet.Title
-			}
-			tb.AppendRow(table.Row{pl.Id, channelId, title})
+	common.PrintList(p.Output, playlists, writer, table.Row{"ID", "Channel ID", "Title"}, func(pl *youtube.Playlist) table.Row {
+		channelId := ""
+		title := ""
+		if pl.Snippet != nil {
+			channelId = pl.Snippet.ChannelId
+			title = pl.Snippet.Title
 		}
-	}
+		return table.Row{pl.Id, channelId, title}
+	})
 	return err
 }
 
@@ -141,15 +127,7 @@ func (p *Playlist) Insert(writer io.Writer) error {
 		return errors.Join(errInsertPlaylist, err)
 	}
 
-	switch p.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Playlist inserted: %s\n", res.Id)
-	}
+	common.PrintResult(p.Output, res, writer, "Playlist inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -191,15 +169,7 @@ func (p *Playlist) Update(writer io.Writer) error {
 		return errors.Join(errUpdatePlaylist, err)
 	}
 
-	switch p.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Playlist updated: %s\n", res.Id)
-	}
+	common.PrintResult(p.Output, res, writer, "Playlist updated: %s\n", res.Id)
 	return nil
 }
 

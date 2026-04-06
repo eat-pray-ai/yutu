@@ -130,37 +130,19 @@ func (v *Video) List(writer io.Writer) error {
 		return err
 	}
 
-	switch v.Output {
-	case "json":
-		utils.PrintJSON(videos, writer)
-	case "yaml":
-		utils.PrintYAML(videos, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Title", "Channel ID", "Views"})
-		for _, video := range videos {
-			title := ""
-			channelId := ""
-			var views uint64
-
-			if video.Snippet != nil {
-				title = video.Snippet.Title
-				channelId = video.Snippet.ChannelId
-			}
-			if video.Statistics != nil {
-				views = video.Statistics.ViewCount
-			}
-
-			tb.AppendRow(
-				table.Row{
-					video.Id, title, channelId, views,
-				},
-			)
+	common.PrintList(v.Output, videos, writer, table.Row{"ID", "Title", "Channel ID", "Views"}, func(video *youtube.Video) table.Row {
+		title := ""
+		channelId := ""
+		var views uint64
+		if video.Snippet != nil {
+			title = video.Snippet.Title
+			channelId = video.Snippet.ChannelId
 		}
-	}
+		if video.Statistics != nil {
+			views = video.Statistics.ViewCount
+		}
+		return table.Row{video.Id, title, channelId, views}
+	})
 	return err
 }
 
@@ -261,15 +243,7 @@ func (v *Video) Insert(writer io.Writer) error {
 		_ = pi.Insert(writer)
 	}
 
-	switch v.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Video inserted: %s\n", res.Id)
-	}
+	common.PrintResult(v.Output, res, writer, "Video inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -353,15 +327,7 @@ func (v *Video) Update(writer io.Writer) error {
 		_ = pi.Insert(writer)
 	}
 
-	switch v.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Video updated: %s\n", res.Id)
-	}
+	common.PrintResult(v.Output, res, writer, "Video updated: %s\n", res.Id)
 	return nil
 }
 

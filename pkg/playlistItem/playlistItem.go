@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -82,42 +80,26 @@ func (pi *PlaylistItem) List(writer io.Writer) error {
 		return err
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(playlistItems, writer)
-	case "yaml":
-		utils.PrintYAML(playlistItems, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Title", "Kind", "Resource ID"})
-		for _, item := range playlistItems {
-			var resourceId string
-			var title string
-			var kind string
-			if item.Snippet != nil {
-				title = item.Snippet.Title
-				if item.Snippet.ResourceId != nil {
-					kind = item.Snippet.ResourceId.Kind
-					switch item.Snippet.ResourceId.Kind {
-					case "youtube#video":
-						resourceId = item.Snippet.ResourceId.VideoId
-					case "youtube#channel":
-						resourceId = item.Snippet.ResourceId.ChannelId
-					case "youtube#playlist":
-						resourceId = item.Snippet.ResourceId.PlaylistId
-					}
+	common.PrintList(pi.Output, playlistItems, writer, table.Row{"ID", "Title", "Kind", "Resource ID"}, func(item *youtube.PlaylistItem) table.Row {
+		title := ""
+		kind := ""
+		resourceId := ""
+		if item.Snippet != nil {
+			title = item.Snippet.Title
+			if item.Snippet.ResourceId != nil {
+				kind = item.Snippet.ResourceId.Kind
+				switch kind {
+				case "youtube#video":
+					resourceId = item.Snippet.ResourceId.VideoId
+				case "youtube#channel":
+					resourceId = item.Snippet.ResourceId.ChannelId
+				case "youtube#playlist":
+					resourceId = item.Snippet.ResourceId.PlaylistId
 				}
 			}
-			tb.AppendRow(
-				table.Row{
-					item.Id, title, kind, resourceId,
-				},
-			)
 		}
-	}
+		return table.Row{item.Id, title, kind, resourceId}
+	})
 	return err
 }
 
@@ -169,15 +151,7 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 		return errors.Join(errInsertPlaylistItem, err)
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Playlist Item inserted: %s\n", res.Id)
-	}
+	common.PrintResult(pi.Output, res, writer, "Playlist Item inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -218,15 +192,7 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 		return errors.Join(errUpdatePlaylistItem, err)
 	}
 
-	switch pi.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Playlist Item updated: %s\n", res.Id)
-	}
+	common.PrintResult(pi.Output, res, writer, "Playlist Item updated: %s\n", res.Id)
 	return nil
 }
 

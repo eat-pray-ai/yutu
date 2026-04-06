@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -62,26 +60,14 @@ func (vc *VideoCategory) Get() ([]*youtube.VideoCategory, error) {
 }
 
 func (vc *VideoCategory) List(writer io.Writer) error {
-	videoCategories, err := vc.Get()
+	categories, err := vc.Get()
 	if err != nil {
 		return err
 	}
 
-	switch vc.Output {
-	case "json":
-		utils.PrintJSON(videoCategories, writer)
-	case "yaml":
-		utils.PrintYAML(videoCategories, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Title", "Assignable"})
-		for _, cat := range videoCategories {
-			tb.AppendRow(table.Row{cat.Id, cat.Snippet.Title, cat.Snippet.Assignable})
-		}
-	}
+	common.PrintList(vc.Output, categories, writer, table.Row{"ID", "Title", "Assignable"}, func(c *youtube.VideoCategory) table.Row {
+		return table.Row{c.Id, c.Snippet.Title, c.Snippet.Assignable}
+	})
 	return nil
 }
 

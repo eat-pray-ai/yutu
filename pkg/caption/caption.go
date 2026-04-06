@@ -11,7 +11,6 @@ import (
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -94,26 +93,9 @@ func (c *Caption) List(writer io.Writer) error {
 		return err
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(captions, writer)
-	case "yaml":
-		utils.PrintYAML(captions, writer)
-	case "table":
-		tb := table.NewWriter()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Video ID", "Name", "Language"})
-		defer tb.Render()
-		for _, caption := range captions {
-			tb.AppendRow(
-				table.Row{
-					caption.Id, caption.Snippet.VideoId,
-					caption.Snippet.Name, caption.Snippet.Language,
-				},
-			)
-		}
-	}
+	common.PrintList(c.Output, captions, writer, table.Row{"ID", "Video ID", "Name", "Language"}, func(cap *youtube.Caption) table.Row {
+		return table.Row{cap.Id, cap.Snippet.VideoId, cap.Snippet.Name, cap.Snippet.Language}
+	})
 	return nil
 }
 
@@ -157,15 +139,7 @@ func (c *Caption) Insert(writer io.Writer) error {
 		return errors.Join(errInsertCaption, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Caption inserted: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "Caption inserted: %s\n", res.Id)
 	return nil
 }
 
@@ -234,15 +208,7 @@ func (c *Caption) Update(writer io.Writer) error {
 		return errors.Join(errUpdateCaption, err)
 	}
 
-	switch c.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Caption updated: %s\n", res.Id)
-	}
+	common.PrintResult(c.Output, res, writer, "Caption updated: %s\n", res.Id)
 	return nil
 }
 

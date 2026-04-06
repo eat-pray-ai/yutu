@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -55,26 +53,14 @@ func (m *MembershipsLevel) Get() ([]*youtube.MembershipsLevel, error) {
 }
 
 func (m *MembershipsLevel) List(writer io.Writer) error {
-	membershipsLevels, err := m.Get()
+	levels, err := m.Get()
 	if err != nil {
 		return err
 	}
 
-	switch m.Output {
-	case "json":
-		utils.PrintJSON(membershipsLevels, writer)
-	case "yaml":
-		utils.PrintYAML(membershipsLevels, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Display Name"})
-		for _, ml := range membershipsLevels {
-			tb.AppendRow(table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName})
-		}
-	}
+	common.PrintList(m.Output, levels, writer, table.Row{"ID", "Display Name"}, func(ml *youtube.MembershipsLevel) table.Row {
+		return table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName}
+	})
 	return nil
 }
 

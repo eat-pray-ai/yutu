@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -164,32 +162,18 @@ func (s *Search) List(writer io.Writer) error {
 		return err
 	}
 
-	switch s.Output {
-	case "json":
-		utils.PrintJSON(results, writer)
-	case "yaml":
-		utils.PrintYAML(results, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"Kind", "Title", "Resource ID"})
-		for _, result := range results {
-			var resourceId string
-			switch result.Id.Kind {
-			case "youtube#video":
-				resourceId = result.Id.VideoId
-			case "youtube#channel":
-				resourceId = result.Id.ChannelId
-			case "youtube#playlist":
-				resourceId = result.Id.PlaylistId
-			}
-			tb.AppendRow(
-				table.Row{result.Id.Kind, result.Snippet.Title, resourceId},
-			)
+	common.PrintList(s.Output, results, writer, table.Row{"Kind", "Title", "Resource ID"}, func(r *youtube.SearchResult) table.Row {
+		var resourceId string
+		switch r.Id.Kind {
+		case "youtube#video":
+			resourceId = r.Id.VideoId
+		case "youtube#channel":
+			resourceId = r.Id.ChannelId
+		case "youtube#playlist":
+			resourceId = r.Id.PlaylistId
 		}
-	}
+		return table.Row{r.Id.Kind, r.Snippet.Title, resourceId}
+	})
 	return err
 }
 

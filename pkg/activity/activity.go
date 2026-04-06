@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -82,26 +80,9 @@ func (a *Activity) List(writer io.Writer) error {
 		return err
 	}
 
-	switch a.Output {
-	case "json":
-		utils.PrintJSON(activities, writer)
-	case "yaml":
-		utils.PrintYAML(activities, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Title", "Type", "Time"})
-		for _, activity := range activities {
-			tb.AppendRow(
-				table.Row{
-					activity.Id, activity.Snippet.Title,
-					activity.Snippet.Type, activity.Snippet.PublishedAt,
-				},
-			)
-		}
-	}
+	common.PrintList(a.Output, activities, writer, table.Row{"ID", "Title", "Type", "Time"}, func(a *youtube.Activity) table.Row {
+		return table.Row{a.Id, a.Snippet.Title, a.Snippet.Type, a.Snippet.PublishedAt}
+	})
 	return err
 }
 

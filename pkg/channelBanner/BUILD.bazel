@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//pkg",
         "//pkg/common",
-        "//pkg/utils",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

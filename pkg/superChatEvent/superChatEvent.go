@@ -7,9 +7,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"google.golang.org/api/youtube/v3"
 )
@@ -57,26 +55,9 @@ func (s *SuperChatEvent) List(writer io.Writer) error {
 		return err
 	}
 
-	switch s.Output {
-	case "json":
-		utils.PrintJSON(events, writer)
-	case "yaml":
-		utils.PrintYAML(events, writer)
-	case "table":
-		tb := table.NewWriter()
-		defer tb.Render()
-		tb.SetOutputMirror(writer)
-		tb.SetStyle(pkg.TableStyle)
-		tb.AppendHeader(table.Row{"ID", "Amount", "Comment", "Supporter"})
-		for _, event := range events {
-			tb.AppendRow(
-				table.Row{
-					event.Id, event.Snippet.DisplayString, event.Snippet.CommentText,
-					event.Snippet.SupporterDetails.DisplayName,
-				},
-			)
-		}
-	}
+	common.PrintList(s.Output, events, writer, table.Row{"ID", "Amount", "Comment", "Supporter"}, func(e *youtube.SuperChatEvent) table.Row {
+		return table.Row{e.Id, e.Snippet.DisplayString, e.Snippet.CommentText, e.Snippet.SupporterDetails.DisplayName}
+	})
 	return err
 }
 

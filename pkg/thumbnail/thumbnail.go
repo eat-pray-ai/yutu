@@ -5,12 +5,10 @@ package thumbnail
 
 import (
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 )
 
 var (
@@ -52,15 +50,7 @@ func (t *Thumbnail) Set(writer io.Writer) error {
 		return errors.Join(errSetThumbnail, err)
 	}
 
-	switch t.Output {
-	case "json":
-		utils.PrintJSON(res, writer)
-	case "yaml":
-		utils.PrintYAML(res, writer)
-	case "silent":
-	default:
-		_, _ = fmt.Fprintf(writer, "Thumbnail set for video %s", t.VideoId)
-	}
+	common.PrintResult(t.Output, res, writer, "Thumbnail set for video %s", t.VideoId)
 	return nil
 }
 
