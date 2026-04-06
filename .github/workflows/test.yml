@@ -8,6 +8,7 @@ on:
     paths:
       - "go.*"
       - "**/*.go"
+      - "!**/*.md"
       - "**/*.bazel"
       - "scripts/**"
       - ".github/workflows/test.yml"
@@ -19,6 +20,7 @@ on:
     paths:
       - "go.*"
       - "**/*.go"
+      - "!**/*.md"
       - "**/*.bazel"
       - "scripts/**"
       - ".github/workflows/test.yml"

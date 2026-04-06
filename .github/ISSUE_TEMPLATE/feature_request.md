@@ -10,6 +10,7 @@ assignees: ''
 ## 🚀 Feature Request
 
 ### 📝 Feature Summary
+
 <!-- Provide a brief, clear summary of the feature you'd like to see -->
 
 ### 🎯 Motivation
@@ -20,6 +21,7 @@ assignees: ''
 <!-- Ex: "I'm always frustrated when I have to manually..." -->
 
 #### Use Case
+
 <!-- Describe specific scenarios where this feature would be useful -->
 
 ### 💡 Proposed Solution
@@ -69,6 +71,7 @@ yutu [new-command] [new-subcommand] [flags]
 #### YouTube API Reference
 
 <!-- Link to relevant YouTube API documentation if applicable -->
+
 - API Endpoint: <!-- e.g., https://developers.google.com/youtube/v3/docs/videos/list -->
 
 #### Similar Features
