@@ -5,18 +5,15 @@ package playlist
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -295,33 +292,21 @@ func TestPlaylist_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.Header().Set("Content-Type", "application/json")
+						_, _ = w.Write(
+							[]byte(`{
 					"items": [
 						{"id": "playlist-1", "snippet": {"title": "Playlist 1"}}
 					]
 				}`),
-							)
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+						)
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				p := NewPlaylist(opts...)
@@ -367,17 +352,7 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 			)
 		}
 	}
-	ts := httptest.NewServer(http.HandlerFunc(handler))
-	defer ts.Close()
-
-	svc, err := youtube.NewService(
-		context.Background(),
-		option.WithEndpoint(ts.URL),
-		option.WithAPIKey("test-key"),
-	)
-	if err != nil {
-		t.Fatalf("failed to create service: %v", err)
-	}
+	svc := common.NewTestService(t, http.HandlerFunc(handler))
 
 	p := NewPlaylist(
 		WithService(svc),
@@ -393,12 +368,11 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylist_List(t *testing.T) {
-	ts := httptest.NewServer(
-		http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	svc := common.NewTestService(t, http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write(
+				[]byte(`{
 			"items": [
 				{
 					"id": "playlist-1",
@@ -409,20 +383,9 @@ func TestPlaylist_List(t *testing.T) {
 				}
 			]
 		}`),
-				)
-			},
-		),
-	)
-	defer ts.Close()
-
-	svc, err := youtube.NewService(
-		context.Background(),
-		option.WithEndpoint(ts.URL),
-		option.WithAPIKey("test-key"),
-	)
-	if err != nil {
-		t.Fatalf("failed to create service: %v", err)
-	}
+			)
+		},
+	))
 
 	tests := []struct {
 		name    string
@@ -504,27 +467,15 @@ func TestPlaylist_Insert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							_, _ = w.Write([]byte(`{"id": "new-playlist-id"}`))
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.Header().Set("Content-Type", "application/json")
+						_, _ = w.Write([]byte(`{"id": "new-playlist-id"}`))
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				p := NewPlaylist(opts...)
@@ -630,37 +581,25 @@ func TestPlaylist_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							if r.Method == "GET" {
-								_, _ = w.Write(
-									[]byte(`{
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.Header().Set("Content-Type", "application/json")
+						if r.Method == "GET" {
+							_, _ = w.Write(
+								[]byte(`{
 						"items": [
 							{"id": "playlist-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}
 						]
 					}`),
-								)
-							} else {
-								_, _ = w.Write([]byte(`{"id": "playlist-id", "snippet": {"title": "Updated Title"}}`))
-							}
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+							)
+						} else {
+							_, _ = w.Write([]byte(`{"id": "playlist-id", "snippet": {"title": "Updated Title"}}`))
+						}
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				p := NewPlaylist(opts...)
@@ -716,26 +655,14 @@ func TestPlaylist_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.WriteHeader(http.StatusNoContent)
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.WriteHeader(http.StatusNoContent)
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				p := NewPlaylist(opts...)

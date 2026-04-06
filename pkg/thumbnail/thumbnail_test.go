@@ -5,15 +5,12 @@ package thumbnail
 
 import (
 	"bytes"
-	"context"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"reflect"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -176,33 +173,21 @@ func TestThumbnail_Set(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.Header().Set("Content-Type", "application/json")
+						_, _ = w.Write(
+							[]byte(`{
 					"items": [
 						{"default": {"url": "https://example.com/thumb.jpg"}}
 					]
 				}`),
-							)
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+						)
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				thumb := NewThumbnail(opts...)

@@ -5,17 +5,14 @@ package search
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"math"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -417,33 +414,21 @@ func TestSearch_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				ts := httptest.NewServer(
-					http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(t, http.HandlerFunc(
+					func(w http.ResponseWriter, r *http.Request) {
+						if tt.verify != nil {
+							tt.verify(r)
+						}
+						w.Header().Set("Content-Type", "application/json")
+						_, _ = w.Write(
+							[]byte(`{
 					"items": [
 						{"id": {"videoId": "video-1"}, "snippet": {"title": "Video 1"}}
 					]
 				}`),
-							)
-						},
-					),
-				)
-				defer ts.Close()
-
-				svc, err := youtube.NewService(
-					context.Background(),
-					option.WithEndpoint(ts.URL),
-					option.WithAPIKey("test-key"),
-				)
-				if err != nil {
-					t.Fatalf("failed to create service: %v", err)
-				}
+						)
+					},
+				))
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				s := NewSearch(opts...)
@@ -487,17 +472,7 @@ func TestSearch_Get_Pagination(t *testing.T) {
 			)
 		}
 	}
-	ts := httptest.NewServer(http.HandlerFunc(handler))
-	defer ts.Close()
-
-	svc, err := youtube.NewService(
-		context.Background(),
-		option.WithEndpoint(ts.URL),
-		option.WithAPIKey("test-key"),
-	)
-	if err != nil {
-		t.Fatalf("failed to create service: %v", err)
-	}
+	svc := common.NewTestService(t, http.HandlerFunc(handler))
 
 	s := NewSearch(
 		WithService(svc),
@@ -513,12 +488,11 @@ func TestSearch_Get_Pagination(t *testing.T) {
 }
 
 func TestSearch_List(t *testing.T) {
-	ts := httptest.NewServer(
-		http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	svc := common.NewTestService(t, http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write(
+				[]byte(`{
 			"items": [
 				{
 					"id": {
@@ -531,20 +505,9 @@ func TestSearch_List(t *testing.T) {
 				}
 			]
 		}`),
-				)
-			},
-		),
-	)
-	defer ts.Close()
-
-	svc, err := youtube.NewService(
-		context.Background(),
-		option.WithEndpoint(ts.URL),
-		option.WithAPIKey("test-key"),
-	)
-	if err != nil {
-		t.Fatalf("failed to create service: %v", err)
-	}
+			)
+		},
+	))
 
 	tests := []struct {
 		name    string
