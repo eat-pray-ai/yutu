@@ -153,28 +153,9 @@ func (s *Search) Get() ([]*youtube.SearchResult, error) {
 		call = call.VideoType(s.VideoType)
 	}
 
-	var items []*youtube.SearchResult
-	pageToken := ""
-	for s.MaxResults > 0 {
-		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
-		s.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetSearch, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(s.Fields, call, func(r *youtube.SearchListResponse) ([]*youtube.SearchResult, string) {
+		return r.Items, r.NextPageToken
+	}, errGetSearch)
 }
 
 func (s *Search) List(writer io.Writer) error {

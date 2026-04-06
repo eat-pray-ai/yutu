@@ -11,6 +11,7 @@ go_library(
     deps = [
         "//pkg",
         "//pkg/auth",
+        "@org_golang_google_api//googleapi",
         "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
     ],

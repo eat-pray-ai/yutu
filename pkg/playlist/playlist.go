@@ -77,28 +77,9 @@ func (p *Playlist) Get() ([]*youtube.Playlist, error) {
 		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
 	}
 
-	var items []*youtube.Playlist
-	pageToken := ""
-	for p.MaxResults > 0 {
-		call = call.MaxResults(min(p.MaxResults, pkg.PerPage))
-		p.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetPlaylist, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(p.Fields, call, func(r *youtube.PlaylistListResponse) ([]*youtube.Playlist, string) {
+		return r.Items, r.NextPageToken
+	}, errGetPlaylist)
 }
 
 func (p *Playlist) List(writer io.Writer) error {

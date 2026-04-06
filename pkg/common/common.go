@@ -4,11 +4,13 @@
 package common
 
 import (
+	"errors"
 	"fmt"
 	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
+	"google.golang.org/api/googleapi"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -99,4 +101,41 @@ func WithOnBehalfOfContentOwner[T HasFields](owner string) func(T) {
 	return func(t T) {
 		t.GetFields().OnBehalfOfContentOwner = owner
 	}
+}
+
+// PagedLister is satisfied by all YouTube API *XxxListCall types.
+type PagedLister[C any, R any] interface {
+	MaxResults(int64) C
+	PageToken(string) C
+	Do(opts ...googleapi.CallOption) (*R, error)
+}
+
+// Paginate fetches all pages of results. It handles MaxResults, PageToken,
+// Do(), and error wrapping automatically. The extract function pulls items
+// and the next page token from the response.
+func Paginate[C PagedLister[C, R], R any, T any](
+	f *Fields, call C,
+	extract func(*R) ([]*T, string),
+	errWrap error,
+) ([]*T, error) {
+	var items []*T
+	pageToken := ""
+	for f.MaxResults > 0 {
+		call = call.MaxResults(min(f.MaxResults, pkg.PerPage))
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+		res, err := call.Do()
+		if err != nil {
+			return items, errors.Join(errWrap, err)
+		}
+		got, nextToken := extract(res)
+		f.MaxResults -= pkg.PerPage
+		items = append(items, got...)
+		pageToken = nextToken
+		if pageToken == "" || len(got) == 0 {
+			break
+		}
+	}
+	return items, nil
 }

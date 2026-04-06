@@ -72,28 +72,9 @@ func (c *Comment) Get() ([]*youtube.Comment, error) {
 		call = call.TextFormat(c.TextFormat)
 	}
 
-	var items []*youtube.Comment
-	pageToken := ""
-	for c.MaxResults > 0 {
-		call = call.MaxResults(min(c.MaxResults, pkg.PerPage))
-		c.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetComment, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(c.Fields, call, func(r *youtube.CommentListResponse) ([]*youtube.Comment, string) {
+		return r.Items, r.NextPageToken
+	}, errGetComment)
 }
 
 func (c *Comment) List(writer io.Writer) error {

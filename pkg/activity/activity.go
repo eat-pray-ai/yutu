@@ -71,28 +71,9 @@ func (a *Activity) Get() ([]*youtube.Activity, error) {
 		call = call.RegionCode(a.RegionCode)
 	}
 
-	var items []*youtube.Activity
-	pageToken := ""
-	for a.MaxResults > 0 {
-		call = call.MaxResults(min(a.MaxResults, pkg.PerPage))
-		a.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetActivity, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(a.Fields, call, func(r *youtube.ActivityListResponse) ([]*youtube.Activity, string) {
+		return r.Items, r.NextPageToken
+	}, errGetActivity)
 }
 
 func (a *Activity) List(writer io.Writer) error {

@@ -119,28 +119,9 @@ func (v *Video) Get() ([]*youtube.Video, error) {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
 
-	var items []*youtube.Video
-	pageToken := ""
-	for v.MaxResults > 0 {
-		call = call.MaxResults(min(v.MaxResults, pkg.PerPage))
-		v.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetVideo, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(v.Fields, call, func(r *youtube.VideoListResponse) ([]*youtube.Video, string) {
+		return r.Items, r.NextPageToken
+	}, errGetVideo)
 }
 
 func (v *Video) List(writer io.Writer) error {

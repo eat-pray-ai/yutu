@@ -46,28 +46,9 @@ func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
 		call = call.Hl(s.Hl)
 	}
 
-	var items []*youtube.SuperChatEvent
-	pageToken := ""
-	for s.MaxResults > 0 {
-		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
-		s.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetSuperChatEvent, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(s.Fields, call, func(r *youtube.SuperChatEventListResponse) ([]*youtube.SuperChatEvent, string) {
+		return r.Items, r.NextPageToken
+	}, errGetSuperChatEvent)
 }
 
 func (s *SuperChatEvent) List(writer io.Writer) error {

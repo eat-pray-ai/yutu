@@ -69,28 +69,9 @@ func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
 		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
 	}
 
-	var items []*youtube.PlaylistImage
-	pageToken := ""
-	for pi.MaxResults > 0 {
-		call = call.MaxResults(min(pi.MaxResults, pkg.PerPage))
-		pi.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetPlaylistImage, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(pi.Fields, call, func(r *youtube.PlaylistImageListResponse) ([]*youtube.PlaylistImage, string) {
+		return r.Items, r.NextPageToken
+	}, errGetPlaylistImage)
 }
 
 func (pi *PlaylistImage) List(writer io.Writer) error {

@@ -55,28 +55,9 @@ func (m *Member) Get() ([]*youtube.Member, error) {
 		call = call.Mode(m.Mode)
 	}
 
-	var items []*youtube.Member
-	pageToken := ""
-	for m.MaxResults > 0 {
-		call = call.MaxResults(min(m.MaxResults, pkg.PerPage))
-		m.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetMember, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(m.Fields, call, func(r *youtube.MemberListResponse) ([]*youtube.Member, string) {
+		return r.Items, r.NextPageToken
+	}, errGetMember)
 }
 
 func (m *Member) List(writer io.Writer) error {

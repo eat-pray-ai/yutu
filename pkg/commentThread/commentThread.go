@@ -79,28 +79,9 @@ func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
 		call = call.VideoId(c.VideoId)
 	}
 
-	var items []*youtube.CommentThread
-	pageToken := ""
-	for c.MaxResults > 0 {
-		call = call.MaxResults(min(c.MaxResults, pkg.PerPage))
-		c.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetCommentThread, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(c.Fields, call, func(r *youtube.CommentThreadListResponse) ([]*youtube.CommentThread, string) {
+		return r.Items, r.NextPageToken
+	}, errGetCommentThread)
 }
 
 func (c *CommentThread) List(writer io.Writer) error {

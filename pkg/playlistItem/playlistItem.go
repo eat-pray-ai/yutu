@@ -71,28 +71,9 @@ func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
 		call = call.VideoId(pi.VideoId)
 	}
 
-	var items []*youtube.PlaylistItem
-	pageToken := ""
-	for pi.MaxResults > 0 {
-		call = call.MaxResults(min(pi.MaxResults, pkg.PerPage))
-		pi.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetPlaylistItem, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(pi.Fields, call, func(r *youtube.PlaylistItemListResponse) ([]*youtube.PlaylistItem, string) {
+		return r.Items, r.NextPageToken
+	}, errGetPlaylistItem)
 }
 
 func (pi *PlaylistItem) List(writer io.Writer) error {

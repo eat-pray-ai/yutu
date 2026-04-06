@@ -85,28 +85,9 @@ func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 		call = call.Order(s.Order)
 	}
 
-	var items []*youtube.Subscription
-	pageToken := ""
-	for s.MaxResults > 0 {
-		call = call.MaxResults(min(s.MaxResults, pkg.PerPage))
-		s.MaxResults -= pkg.PerPage
-		if pageToken != "" {
-			call = call.PageToken(pageToken)
-		}
-
-		res, err := call.Do()
-		if err != nil {
-			return items, errors.Join(errGetSubscription, err)
-		}
-
-		items = append(items, res.Items...)
-		pageToken = res.NextPageToken
-		if pageToken == "" || len(res.Items) == 0 {
-			break
-		}
-	}
-
-	return items, nil
+	return common.Paginate(s.Fields, call, func(r *youtube.SubscriptionListResponse) ([]*youtube.Subscription, string) {
+		return r.Items, r.NextPageToken
+	}, errGetSubscription)
 }
 
 func (s *Subscription) List(writer io.Writer) error {
