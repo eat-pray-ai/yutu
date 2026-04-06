@@ -43,7 +43,9 @@ func NewMember(opts ...Option) IMember[youtube.Member] {
 }
 
 func (m *Member) Get() ([]*youtube.Member, error) {
-	m.EnsureService()
+	if err := m.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := m.Service.Members.List(m.Parts)
 	if m.MemberChannelId != "" {
 		call = call.FilterByMemberChannelId(m.MemberChannelId)

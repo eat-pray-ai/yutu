@@ -21,22 +21,23 @@ func (d *Fields) GetFields() *Fields {
 	return d
 }
 
-func (d *Fields) EnsureService() {
+func (d *Fields) EnsureService() error {
 	if d.Service == nil {
 		svc, err := auth.NewY2BService(
 			auth.WithCredential("", pkg.Root.FS()),
 			auth.WithCacheToken("", pkg.Root.FS()),
 		).GetService()
 		if err != nil {
-			panic(fmt.Sprintf("failed to create YouTube service: %v", err))
+			return fmt.Errorf("failed to create YouTube service: %w", err)
 		}
 		d.Service = svc
 	}
+	return nil
 }
 
 type HasFields interface {
 	GetFields() *Fields
-	EnsureService()
+	EnsureService() error
 }
 
 func WithParts[T HasFields](parts []string) func(T) {

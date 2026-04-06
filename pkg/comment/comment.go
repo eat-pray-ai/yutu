@@ -62,7 +62,9 @@ func NewComment(opts ...Option) IComment[youtube.Comment] {
 }
 
 func (c *Comment) Get() ([]*youtube.Comment, error) {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := c.Service.Comments.List(c.Parts)
 	if len(c.Ids) > 0 && c.Ids[0] != "" {
 		call = call.Id(c.Ids...)
@@ -135,7 +137,9 @@ func (c *Comment) List(writer io.Writer) error {
 }
 
 func (c *Comment) Insert(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	comment := &youtube.Comment{
 		Snippet: &youtube.CommentSnippet{
 			AuthorChannelId: &youtube.CommentSnippetAuthorChannelId{
@@ -171,7 +175,9 @@ func (c *Comment) Insert(writer io.Writer) error {
 }
 
 func (c *Comment) Update(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	c.Parts = []string{"id", "snippet"}
 	comments, err := c.Get()
 
@@ -214,7 +220,9 @@ func (c *Comment) Update(writer io.Writer) error {
 }
 
 func (c *Comment) MarkAsSpam(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	call := c.Service.Comments.MarkAsSpam(c.Ids)
 	err := call.Do()
 	if err != nil {
@@ -234,7 +242,9 @@ func (c *Comment) MarkAsSpam(writer io.Writer) error {
 }
 
 func (c *Comment) SetModerationStatus(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	call := c.Service.Comments.SetModerationStatus(c.Ids, c.ModerationStatus)
 
 	if c.BanAuthor != nil {
@@ -262,7 +272,9 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 }
 
 func (c *Comment) Delete(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range c.Ids {
 		call := c.Service.Comments.Delete(id)
 		err := call.Do()

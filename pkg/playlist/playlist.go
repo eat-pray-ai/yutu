@@ -59,7 +59,9 @@ func NewPlaylist(opts ...Option) IPlaylist[youtube.Playlist] {
 }
 
 func (p *Playlist) Get() ([]*youtube.Playlist, error) {
-	p.EnsureService()
+	if err := p.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := p.Service.Playlists.List(p.Parts)
 
 	if len(p.Ids) > 0 {
@@ -136,7 +138,9 @@ func (p *Playlist) List(writer io.Writer) error {
 }
 
 func (p *Playlist) Insert(writer io.Writer) error {
-	p.EnsureService()
+	if err := p.EnsureService(); err != nil {
+		return err
+	}
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
 			Title:           p.Title,
@@ -175,7 +179,9 @@ func (p *Playlist) Insert(writer io.Writer) error {
 }
 
 func (p *Playlist) Update(writer io.Writer) error {
-	p.EnsureService()
+	if err := p.EnsureService(); err != nil {
+		return err
+	}
 	playlists, err := p.Get()
 	if err != nil {
 		return errors.Join(errUpdatePlaylist, err)
@@ -223,7 +229,9 @@ func (p *Playlist) Update(writer io.Writer) error {
 }
 
 func (p *Playlist) Delete(writer io.Writer) error {
-	p.EnsureService()
+	if err := p.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range p.Ids {
 		call := p.Service.Playlists.Delete(id)
 		if p.OnBehalfOfContentOwner != "" {

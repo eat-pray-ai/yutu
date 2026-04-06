@@ -69,7 +69,9 @@ func (c *Caption) GetFields() *common.Fields {
 }
 
 func (c *Caption) Get() ([]*youtube.Caption, error) {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := c.Service.Captions.List(c.Parts, c.VideoId)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
@@ -119,7 +121,9 @@ func (c *Caption) List(writer io.Writer) error {
 }
 
 func (c *Caption) Insert(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(c.File)
 	if err != nil {
 		return errors.Join(errInsertCaption, err)
@@ -246,7 +250,9 @@ func (c *Caption) Update(writer io.Writer) error {
 }
 
 func (c *Caption) Delete(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range c.Ids {
 		call := c.Service.Captions.Delete(id)
 		if c.OnBehalfOf != "" {
@@ -267,7 +273,9 @@ func (c *Caption) Delete(writer io.Writer) error {
 }
 
 func (c *Caption) Download(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	call := c.Service.Captions.Download(c.Ids[0])
 	if c.Tfmt != "" {
 		call = call.Tfmt(c.Tfmt)

@@ -41,7 +41,9 @@ func NewVideoAbuseReportReason(opt ...Option) IVideoAbuseReportReason[youtube.Vi
 func (va *VideoAbuseReportReason) Get() (
 	[]*youtube.VideoAbuseReportReason, error,
 ) {
-	va.EnsureService()
+	if err := va.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := va.Service.VideoAbuseReportReasons.List(va.Parts)
 	if va.Hl != "" {
 		call = call.Hl(va.Hl)

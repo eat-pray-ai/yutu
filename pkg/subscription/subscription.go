@@ -58,7 +58,9 @@ func NewSubscription(opts ...Option) ISubscription[youtube.Subscription] {
 }
 
 func (s *Subscription) Get() ([]*youtube.Subscription, error) {
-	s.EnsureService()
+	if err := s.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := s.Service.Subscriptions.List(s.Parts)
 	if len(s.Ids) > 0 {
 		call = call.Id(s.Ids...)
@@ -150,7 +152,9 @@ func (s *Subscription) List(writer io.Writer) error {
 }
 
 func (s *Subscription) Insert(writer io.Writer) error {
-	s.EnsureService()
+	if err := s.EnsureService(); err != nil {
+		return err
+	}
 	subscription := &youtube.Subscription{
 		Snippet: &youtube.SubscriptionSnippet{
 			ChannelId:   s.SubscriberChannelId,
@@ -180,7 +184,9 @@ func (s *Subscription) Insert(writer io.Writer) error {
 }
 
 func (s *Subscription) Delete(writer io.Writer) error {
-	s.EnsureService()
+	if err := s.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range s.Ids {
 		call := s.Service.Subscriptions.Delete(id)
 		err := call.Do()

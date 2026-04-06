@@ -46,7 +46,9 @@ func NewActivity(opts ...Option) IActivity[youtube.Activity] {
 }
 
 func (a *Activity) Get() ([]*youtube.Activity, error) {
-	a.EnsureService()
+	if err := a.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := a.Service.Activities.List(a.Parts)
 	if a.ChannelId != "" {
 		call = call.ChannelId(a.ChannelId)

@@ -41,7 +41,9 @@ func NewSuperChatEvent(opts ...Option) ISuperChatEvent[youtube.SuperChatEvent] {
 }
 
 func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
-	s.EnsureService()
+	if err := s.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := s.Service.SuperChatEvents.List(s.Parts)
 	if s.Hl != "" {
 		call = call.Hl(s.Hl)

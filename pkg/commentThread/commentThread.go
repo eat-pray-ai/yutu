@@ -54,7 +54,9 @@ func NewCommentThread(opts ...Option) ICommentThread[youtube.CommentThread] {
 }
 
 func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := c.Service.CommentThreads.List(c.Parts)
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
@@ -136,7 +138,9 @@ func (c *CommentThread) List(writer io.Writer) error {
 }
 
 func (c *CommentThread) Insert(writer io.Writer) error {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return err
+	}
 	ct := &youtube.CommentThread{
 		Snippet: &youtube.CommentThreadSnippet{
 			ChannelId: c.ChannelId,

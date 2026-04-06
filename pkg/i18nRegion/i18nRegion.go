@@ -39,7 +39,9 @@ func NewI18nRegion(opts ...Option) II18nRegion[youtube.I18nRegion] {
 }
 
 func (i *I18nRegion) Get() ([]*youtube.I18nRegion, error) {
-	i.EnsureService()
+	if err := i.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := i.Service.I18nRegions.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)

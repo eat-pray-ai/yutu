@@ -43,7 +43,9 @@ func NewChannelBanner(opts ...Option) IChannelBanner {
 }
 
 func (cb *ChannelBanner) Insert(writer io.Writer) error {
-	cb.EnsureService()
+	if err := cb.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(cb.File)
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)

@@ -58,7 +58,9 @@ func NewPlaylistImage(opts ...Option) IPlaylistImage[youtube.PlaylistImage] {
 }
 
 func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := pi.Service.PlaylistImages.List()
 	call = call.Part(pi.Parts...)
 	if pi.Parent != "" {
@@ -122,7 +124,9 @@ func (pi *PlaylistImage) List(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Insert(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(pi.File)
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
@@ -168,7 +172,9 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Update(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	pi.Parts = []string{"id", "kind", "snippet"}
 	playlistImages, err := pi.Get()
 	if err != nil {
@@ -226,7 +232,9 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 }
 
 func (pi *PlaylistImage) Delete(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistImages.Delete()
 		call = call.Id(id)

@@ -41,7 +41,9 @@ func NewVideoCategory(opt ...Option) IVideoCategory[youtube.VideoCategory] {
 }
 
 func (vc *VideoCategory) Get() ([]*youtube.VideoCategory, error) {
-	vc.EnsureService()
+	if err := vc.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := vc.Service.VideoCategories.List(vc.Parts)
 	if len(vc.Ids) > 0 {
 		call = call.Id(vc.Ids...)

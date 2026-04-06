@@ -60,7 +60,9 @@ func NewPlaylistItem(opts ...Option) IPlaylistItem[youtube.PlaylistItem] {
 }
 
 func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := pi.Service.PlaylistItems.List(pi.Parts)
 	if len(pi.Ids) > 0 {
 		call = call.Id(pi.Ids...)
@@ -145,7 +147,9 @@ func (pi *PlaylistItem) List(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Insert(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	var resourceId *youtube.ResourceId
 	switch pi.Kind {
 	case "video":
@@ -203,7 +207,9 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Update(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	pi.Parts = []string{"id", "snippet", "status"}
 	playlistItems, err := pi.Get()
 
@@ -250,7 +256,9 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 }
 
 func (pi *PlaylistItem) Delete(writer io.Writer) error {
-	pi.EnsureService()
+	if err := pi.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistItems.Delete(id)
 		if pi.OnBehalfOfContentOwner != "" {

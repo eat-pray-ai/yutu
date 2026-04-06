@@ -38,7 +38,9 @@ func NewThumbnail(opts ...Option) IThumbnail {
 }
 
 func (t *Thumbnail) Set(writer io.Writer) error {
-	t.EnsureService()
+	if err := t.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)

@@ -42,7 +42,9 @@ func (m *MembershipsLevel) GetFields() *common.Fields {
 }
 
 func (m *MembershipsLevel) Get() ([]*youtube.MembershipsLevel, error) {
-	m.EnsureService()
+	if err := m.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := m.Service.MembershipsLevels.List(m.Parts)
 	res, err := call.Do()
 	if err != nil {

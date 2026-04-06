@@ -41,7 +41,9 @@ func NewI18nLanguage(opts ...Option) II18nLanguage[youtube.I18nLanguage] {
 func (i *I18nLanguage) Get() (
 	[]*youtube.I18nLanguage, error,
 ) {
-	i.EnsureService()
+	if err := i.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := i.Service.I18nLanguages.List(i.Parts)
 	if i.Hl != "" {
 		call = call.Hl(i.Hl)

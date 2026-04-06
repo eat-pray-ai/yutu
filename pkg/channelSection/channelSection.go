@@ -55,7 +55,9 @@ func (cs *ChannelSection) GetFields() *common.Fields {
 func (cs *ChannelSection) Get() (
 	[]*youtube.ChannelSection, error,
 ) {
-	cs.EnsureService()
+	if err := cs.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := cs.Service.ChannelSections.List(cs.Parts)
 	if len(cs.Ids) > 0 {
 		call = call.Id(cs.Ids...)
@@ -105,7 +107,9 @@ func (cs *ChannelSection) List(writer io.Writer) error {
 }
 
 func (cs *ChannelSection) Delete(writer io.Writer) error {
-	cs.EnsureService()
+	if err := cs.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range cs.Ids {
 		call := cs.Service.ChannelSections.Delete(id)
 		if cs.OnBehalfOfContentOwner != "" {

@@ -59,7 +59,9 @@ func NewChannel(opts ...Option) IChannel[youtube.Channel] {
 }
 
 func (c *Channel) Get() ([]*youtube.Channel, error) {
-	c.EnsureService()
+	if err := c.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := c.Service.Channels.List(c.Parts)
 	if c.CategoryId != "" {
 		call = call.CategoryId(c.CategoryId)

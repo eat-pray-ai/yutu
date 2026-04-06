@@ -90,7 +90,9 @@ func NewVideo(opts ...Option) IVideo[youtube.Video] {
 }
 
 func (v *Video) Get() ([]*youtube.Video, error) {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := v.Service.Videos.List(v.Parts)
 	if len(v.Ids) > 0 {
 		call = call.Id(v.Ids...)
@@ -188,7 +190,9 @@ func (v *Video) List(writer io.Writer) error {
 }
 
 func (v *Video) Insert(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(v.File)
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
@@ -295,7 +299,9 @@ func (v *Video) Insert(writer io.Writer) error {
 }
 
 func (v *Video) Update(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	v.Parts = []string{"id", "snippet", "status"}
 	videos, err := v.Get()
 
@@ -385,7 +391,9 @@ func (v *Video) Update(writer io.Writer) error {
 }
 
 func (v *Video) Rate(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range v.Ids {
 		call := v.Service.Videos.Rate(id, v.Rating)
 		err := call.Do()
@@ -398,7 +406,9 @@ func (v *Video) Rate(writer io.Writer) error {
 }
 
 func (v *Video) GetRating(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	call := v.Service.Videos.GetRating(v.Ids)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
@@ -427,7 +437,9 @@ func (v *Video) GetRating(writer io.Writer) error {
 }
 
 func (v *Video) Delete(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range v.Ids {
 		call := v.Service.Videos.Delete(id)
 		if v.OnBehalfOfContentOwner != "" {
@@ -444,7 +456,9 @@ func (v *Video) Delete(writer io.Writer) error {
 }
 
 func (v *Video) ReportAbuse(writer io.Writer) error {
-	v.EnsureService()
+	if err := v.EnsureService(); err != nil {
+		return err
+	}
 	for _, id := range v.Ids {
 		videoAbuseReport := &youtube.VideoAbuseReport{
 			Comments:          v.Comments,

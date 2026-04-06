@@ -47,7 +47,9 @@ func NewWatermark(opts ...Option) IWatermark {
 }
 
 func (w *Watermark) Set(writer io.Writer) error {
-	w.EnsureService()
+	if err := w.EnsureService(); err != nil {
+		return err
+	}
 	file, err := pkg.Root.Open(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)
@@ -89,7 +91,9 @@ func (w *Watermark) Set(writer io.Writer) error {
 }
 
 func (w *Watermark) Unset(writer io.Writer) error {
-	w.EnsureService()
+	if err := w.EnsureService(); err != nil {
+		return err
+	}
 	call := w.Service.Watermarks.Unset(w.ChannelId)
 	if w.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)

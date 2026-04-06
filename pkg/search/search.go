@@ -68,7 +68,9 @@ func NewSearch(opts ...Option) ISearch[youtube.SearchResult] {
 }
 
 func (s *Search) Get() ([]*youtube.SearchResult, error) {
-	s.EnsureService()
+	if err := s.EnsureService(); err != nil {
+		return nil, err
+	}
 	call := s.Service.Search.List(s.Parts)
 	if s.ChannelId != "" {
 		call = call.ChannelId(s.ChannelId)
