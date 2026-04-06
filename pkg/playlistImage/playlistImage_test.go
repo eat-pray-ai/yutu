@@ -49,19 +49,19 @@ func TestNewPlaylistImage(t *testing.T) {
 			},
 			want: &PlaylistImage{
 				Fields: &common.Fields{
-					Service: svc,
-					Parts:   []string{"id", "snippet"},
-					Output:  "json",
+					Service:                svc,
+					Parts:                  []string{"id", "snippet"},
+					Output:                 "json",
+					Ids:                    []string{"image1", "image2"},
+					MaxResults:             50,
+					OnBehalfOfContentOwner: "owner123",
 				},
-				Ids:                           []string{"image1", "image2"},
 				Height:                        1080,
 				PlaylistId:                    "playlist123",
 				Type:                          "hero",
 				Width:                         1920,
 				File:                          "/path/to/image.jpg",
 				Parent:                        "parent123",
-				MaxResults:                    50,
-				OnBehalfOfContentOwner:        "owner123",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
 			},
 		},
@@ -80,8 +80,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields:     &common.Fields{},
-				MaxResults: math.MaxInt64,
+				Fields: &common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -92,8 +91,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields:     &common.Fields{},
-				MaxResults: 1,
+				Fields: &common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -109,12 +107,13 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields:                        &common.Fields{},
+				Fields: &common.Fields{
+					OnBehalfOfContentOwner: "",
+				},
 				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
 				Parent:                        "",
-				OnBehalfOfContentOwner:        "",
 				OnBehalfOfContentOwnerChannel: "",
 			},
 		},
@@ -129,11 +128,12 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields:     &common.Fields{},
+				Fields: &common.Fields{
+					MaxResults: 25,
+				},
 				PlaylistId: "myPlaylist",
 				Type:       "hero",
 				File:       "/images/hero.png",
-				MaxResults: 25,
 			},
 		},
 	}

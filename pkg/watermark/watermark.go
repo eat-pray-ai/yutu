@@ -21,14 +21,11 @@ var (
 
 type Watermark struct {
 	*common.Fields
-	ChannelId       string `yaml:"channel_id" json:"channel_id,omitempty"`
 	File            string `yaml:"file" json:"file,omitempty"`
 	InVideoPosition string `yaml:"in_video_position" json:"in_video_position,omitempty"`
 	DurationMs      uint64 `yaml:"duration_ms" json:"duration_ms,omitempty"`
 	OffsetMs        uint64 `yaml:"offset_ms" json:"offset_ms,omitempty"`
 	OffsetType      string `yaml:"offset_type" json:"offset_type,omitempty"`
-
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 type IWatermark interface {
@@ -108,12 +105,6 @@ func (w *Watermark) Unset(writer io.Writer) error {
 	return nil
 }
 
-func WithChannelId(channelId string) Option {
-	return func(w *Watermark) {
-		w.ChannelId = channelId
-	}
-}
-
 func WithFile(file string) Option {
 	return func(w *Watermark) {
 		w.File = file
@@ -144,10 +135,9 @@ func WithOffsetType(offsetType string) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(w *Watermark) {
-		w.OnBehalfOfContentOwner = onBehalfOfContentOwner
-	}
-}
+var (
+	WithChannelId = common.WithChannelId[*Watermark]
+	WithService   = common.WithService[*Watermark]
 
-var WithService = common.WithService[*Watermark]
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Watermark]
+)

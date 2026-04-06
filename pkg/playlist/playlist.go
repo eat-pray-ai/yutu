@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -25,18 +24,13 @@ var (
 
 type Playlist struct {
 	*common.Fields
-	Ids         []string `yaml:"ids" json:"ids,omitempty"`
 	Title       string   `yaml:"title" json:"title,omitempty"`
 	Description string   `yaml:"description" json:"description,omitempty"`
-	Hl          string   `yaml:"hl" json:"hl,omitempty"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
 	Mine        *bool    `yaml:"mine" json:"mine,omitempty"`
 	Tags        []string `yaml:"tags" json:"tags,omitempty"`
 	Language    string   `yaml:"language" json:"language,omitempty"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -247,12 +241,6 @@ func (p *Playlist) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(p *Playlist) {
-		p.Ids = ids
-	}
-}
-
 func WithTitle(title string) Option {
 	return func(p *Playlist) {
 		p.Title = title
@@ -277,32 +265,9 @@ func WithLanguage(language string) Option {
 	}
 }
 
-func WithChannelId(channelId string) Option {
-	return func(p *Playlist) {
-		p.ChannelId = channelId
-	}
-}
-
 func WithPrivacy(privacy string) Option {
 	return func(p *Playlist) {
 		p.Privacy = privacy
-	}
-}
-
-func WithHl(hl string) Option {
-	return func(p *Playlist) {
-		p.Hl = hl
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(p *Playlist) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		p.MaxResults = maxResults
 	}
 }
 
@@ -314,12 +279,6 @@ func WithMine(mine *bool) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwner(contentOwner string) Option {
-	return func(p *Playlist) {
-		p.OnBehalfOfContentOwner = contentOwner
-	}
-}
-
 func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 	return func(p *Playlist) {
 		p.OnBehalfOfContentOwnerChannel = channel
@@ -327,7 +286,13 @@ func WithOnBehalfOfContentOwnerChannel(channel string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Playlist]
-	WithOutput  = common.WithOutput[*Playlist]
-	WithService = common.WithService[*Playlist]
+	WithParts      = common.WithParts[*Playlist]
+	WithOutput     = common.WithOutput[*Playlist]
+	WithService    = common.WithService[*Playlist]
+	WithIds        = common.WithIds[*Playlist]
+	WithMaxResults = common.WithMaxResults[*Playlist]
+	WithHl         = common.WithHl[*Playlist]
+	WithChannelId  = common.WithChannelId[*Playlist]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Playlist]
 )

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -24,19 +23,15 @@ var (
 
 type Subscription struct {
 	*common.Fields
-	Ids                 []string `yaml:"ids" json:"ids,omitempty"`
-	SubscriberChannelId string   `yaml:"subscriber_channel_id" json:"subscriber_channel_id,omitempty"`
-	Description         string   `yaml:"description" json:"description,omitempty"`
-	ChannelId           string   `yaml:"channel_id" json:"channel_id,omitempty"`
-	ForChannelId        string   `yaml:"for_channel_id" json:"for_channel_id,omitempty"`
-	MaxResults          int64    `yaml:"max_results" json:"max_results,omitempty"`
-	Mine                *bool    `yaml:"mine" json:"mine,omitempty"`
-	MyRecentSubscribers *bool    `yaml:"my_recent_subscribers" json:"my_recent_subscribers,omitempty"`
-	MySubscribers       *bool    `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
-	Order               string   `yaml:"order" json:"order,omitempty"`
-	Title               string   `yaml:"title" json:"title,omitempty"`
+	SubscriberChannelId string `yaml:"subscriber_channel_id" json:"subscriber_channel_id,omitempty"`
+	Description         string `yaml:"description" json:"description,omitempty"`
+	ForChannelId        string `yaml:"for_channel_id" json:"for_channel_id,omitempty"`
+	Mine                *bool  `yaml:"mine" json:"mine,omitempty"`
+	MyRecentSubscribers *bool  `yaml:"my_recent_subscribers" json:"my_recent_subscribers,omitempty"`
+	MySubscribers       *bool  `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	Order               string `yaml:"order" json:"order,omitempty"`
+	Title               string `yaml:"title" json:"title,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -199,12 +194,6 @@ func (s *Subscription) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(s *Subscription) {
-		s.Ids = ids
-	}
-}
-
 func WithSubscriberChannelId(id string) Option {
 	return func(s *Subscription) {
 		s.SubscriberChannelId = id
@@ -217,26 +206,9 @@ func WithDescription(description string) Option {
 	}
 }
 
-func WithChannelId(channelId string) Option {
-	return func(s *Subscription) {
-		s.ChannelId = channelId
-	}
-}
-
 func WithForChannelId(forChannelId string) Option {
 	return func(s *Subscription) {
 		s.ForChannelId = forChannelId
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(s *Subscription) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		s.MaxResults = maxResults
 	}
 }
 
@@ -264,12 +236,6 @@ func WithMySubscribers(mySubscribers *bool) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(s *Subscription) {
-		s.OnBehalfOfContentOwner = onBehalfOfContentOwner
-	}
-}
-
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(s *Subscription) {
 		s.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
@@ -289,7 +255,12 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Subscription]
-	WithOutput  = common.WithOutput[*Subscription]
-	WithService = common.WithService[*Subscription]
+	WithParts      = common.WithParts[*Subscription]
+	WithOutput     = common.WithOutput[*Subscription]
+	WithService    = common.WithService[*Subscription]
+	WithIds        = common.WithIds[*Subscription]
+	WithMaxResults = common.WithMaxResults[*Subscription]
+	WithChannelId  = common.WithChannelId[*Subscription]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Subscription]
 )

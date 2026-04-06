@@ -20,7 +20,6 @@ var (
 
 type I18nLanguage struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type II18nLanguage[T youtube.I18nLanguage] interface {
@@ -81,13 +80,8 @@ func (i *I18nLanguage) List(writer io.Writer) error {
 	return nil
 }
 
-func WithHl(hl string) Option {
-	return func(i *I18nLanguage) {
-		i.Hl = hl
-	}
-}
-
 var (
+	WithHl = common.WithHl[*I18nLanguage]
 	WithParts   = common.WithParts[*I18nLanguage]
 	WithOutput  = common.WithOutput[*I18nLanguage]
 	WithService = common.WithService[*I18nLanguage]

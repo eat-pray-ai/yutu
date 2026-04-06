@@ -47,10 +47,12 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:          &common.Fields{Service: svc},
-				ChannelId:       "test-channel-123",
+				Fields: &common.Fields{
+					Service:    svc,
+					ChannelId:  "test-channel-123",
+					MaxResults: 50,
+				},
 				Home:            &homeTrue,
-				MaxResults:      50,
 				Mine:            &mineTrue,
 				PublishedAfter:  "2024-01-01T00:00:00Z",
 				PublishedBefore: "2024-12-31T23:59:59Z",
@@ -96,8 +98,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:     &common.Fields{},
-				MaxResults: math.MaxInt64,
+				Fields: &common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -108,8 +109,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:     &common.Fields{},
-				MaxResults: 1,
+				Fields: &common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -123,8 +123,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:          &common.Fields{},
-				ChannelId:       "",
+				Fields:          &common.Fields{ChannelId: ""},
 				PublishedAfter:  "",
 				PublishedBefore: "",
 				RegionCode:      "",
@@ -140,9 +139,10 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:     &common.Fields{},
-				ChannelId:  "partial-channel",
-				MaxResults: 25,
+				Fields: &common.Fields{
+					ChannelId:  "partial-channel",
+					MaxResults: 25,
+				},
 				RegionCode: "UK",
 			},
 		},

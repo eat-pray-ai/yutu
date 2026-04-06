@@ -22,12 +22,7 @@ var (
 
 type ChannelSection struct {
 	*common.Fields
-	Ids       []string `yaml:"ids" json:"ids,omitempty"`
-	ChannelId string   `yaml:"channel_id" json:"channel_id,omitempty"`
-	Hl        string   `yaml:"hl" json:"hl,omitempty"`
-	Mine      *bool    `yaml:"mine" json:"mine,omitempty"`
-
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	Mine *bool `yaml:"mine" json:"mine,omitempty"`
 }
 
 type IChannelSection[T any] interface {
@@ -126,24 +121,6 @@ func (cs *ChannelSection) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(cs *ChannelSection) {
-		cs.Ids = ids
-	}
-}
-
-func WithChannelId(channelId string) Option {
-	return func(cs *ChannelSection) {
-		cs.ChannelId = channelId
-	}
-}
-
-func WithHl(hl string) Option {
-	return func(cs *ChannelSection) {
-		cs.Hl = hl
-	}
-}
-
 func WithMine(mine *bool) Option {
 	return func(cs *ChannelSection) {
 		if mine != nil {
@@ -152,14 +129,13 @@ func WithMine(mine *bool) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(cs *ChannelSection) {
-		cs.OnBehalfOfContentOwner = onBehalfOfContentOwner
-	}
-}
-
 var (
-	WithParts   = common.WithParts[*ChannelSection]
-	WithOutput  = common.WithOutput[*ChannelSection]
-	WithService = common.WithService[*ChannelSection]
+	WithParts     = common.WithParts[*ChannelSection]
+	WithOutput    = common.WithOutput[*ChannelSection]
+	WithService   = common.WithService[*ChannelSection]
+	WithIds       = common.WithIds[*ChannelSection]
+	WithHl        = common.WithHl[*ChannelSection]
+	WithChannelId = common.WithChannelId[*ChannelSection]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*ChannelSection]
 )

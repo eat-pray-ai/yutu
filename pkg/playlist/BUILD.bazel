@@ -20,7 +20,6 @@ go_test(
     embed = [":playlist"],
     deps = [
         "//pkg/common",
-        "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

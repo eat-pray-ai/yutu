@@ -6,7 +6,6 @@ package search
 import (
 	"errors"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -21,7 +20,6 @@ var (
 
 type Search struct {
 	*common.Fields
-	ChannelId                 string   `yaml:"channel_id" json:"channel_id,omitempty"`
 	ChannelType               string   `yaml:"channel_type" json:"channel_type,omitempty"`
 	EventType                 string   `yaml:"event_type" json:"event_type,omitempty"`
 	ForContentOwner           *bool    `yaml:"for_content_owner" json:"for_content_owner,omitempty"`
@@ -29,8 +27,6 @@ type Search struct {
 	ForMine                   *bool    `yaml:"for_mine" json:"for_mine,omitempty"`
 	Location                  string   `yaml:"location" json:"location,omitempty"`
 	LocationRadius            string   `yaml:"location_radius" json:"location_radius,omitempty"`
-	MaxResults                int64    `yaml:"max_results" json:"max_results,omitempty"`
-	OnBehalfOfContentOwner    string   `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	Order                     string   `yaml:"order" json:"order,omitempty"`
 	PublishedAfter            string   `yaml:"published_after" json:"published_after,omitempty"`
 	PublishedBefore           string   `yaml:"published_before" json:"published_before,omitempty"`
@@ -216,12 +212,6 @@ func (s *Search) List(writer io.Writer) error {
 	return err
 }
 
-func WithChannelId(channelId string) Option {
-	return func(s *Search) {
-		s.ChannelId = channelId
-	}
-}
-
 func WithChannelType(channelType string) Option {
 	return func(s *Search) {
 		s.ChannelType = channelType
@@ -267,23 +257,6 @@ func WithLocation(location string) Option {
 func WithLocationRadius(locationRadius string) Option {
 	return func(s *Search) {
 		s.LocationRadius = locationRadius
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(s *Search) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		s.MaxResults = maxResults
-	}
-}
-
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(s *Search) {
-		s.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
@@ -402,7 +375,11 @@ func WithVideoType(videoType string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Search]
-	WithOutput  = common.WithOutput[*Search]
-	WithService = common.WithService[*Search]
+	WithParts      = common.WithParts[*Search]
+	WithOutput     = common.WithOutput[*Search]
+	WithService    = common.WithService[*Search]
+	WithMaxResults = common.WithMaxResults[*Search]
+	WithChannelId  = common.WithChannelId[*Search]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Search]
 )

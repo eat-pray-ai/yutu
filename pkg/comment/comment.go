@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -27,11 +26,8 @@ var (
 
 type Comment struct {
 	*common.Fields
-	Ids              []string `yaml:"ids" json:"ids,omitempty"`
 	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
 	CanRate          *bool    `yaml:"can_rate" json:"can_rate,omitempty"`
-	ChannelId        string   `yaml:"channel_id" json:"channel_id,omitempty"`
-	MaxResults       int64    `yaml:"max_results" json:"max_results,omitempty"`
 	ParentId         string   `yaml:"parent_id" json:"parent_id,omitempty"`
 	TextFormat       string   `yaml:"text_format" json:"text_format,omitempty"`
 	TextOriginal     string   `yaml:"text_original" json:"text_original,omitempty"`
@@ -286,12 +282,6 @@ func (c *Comment) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(c *Comment) {
-		c.Ids = ids
-	}
-}
-
 func WithAuthorChannelId(authorChannelId string) Option {
 	return func(c *Comment) {
 		c.AuthorChannelId = authorChannelId
@@ -303,23 +293,6 @@ func WithCanRate(canRate *bool) Option {
 		if canRate != nil {
 			c.CanRate = canRate
 		}
-	}
-}
-
-func WithChannelId(channelId string) Option {
-	return func(c *Comment) {
-		c.ChannelId = channelId
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(c *Comment) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		c.MaxResults = maxResults
 	}
 }
 
@@ -368,7 +341,10 @@ func WithViewerRating(viewerRating string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Comment]
-	WithOutput  = common.WithOutput[*Comment]
-	WithService = common.WithService[*Comment]
+	WithParts      = common.WithParts[*Comment]
+	WithOutput     = common.WithOutput[*Comment]
+	WithService    = common.WithService[*Comment]
+	WithIds        = common.WithIds[*Comment]
+	WithMaxResults = common.WithMaxResults[*Comment]
+	WithChannelId  = common.WithChannelId[*Comment]
 )

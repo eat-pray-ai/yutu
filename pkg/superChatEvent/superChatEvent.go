@@ -6,7 +6,6 @@ package superChatEvent
 import (
 	"errors"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -21,8 +20,6 @@ var (
 
 type SuperChatEvent struct {
 	*common.Fields
-	Hl         string `yaml:"hl" json:"hl,omitempty"`
-	MaxResults int64  `yaml:"max_results" json:"max_results,omitempty"`
 }
 
 type ISuperChatEvent[T any] interface {
@@ -102,25 +99,10 @@ func (s *SuperChatEvent) List(writer io.Writer) error {
 	return err
 }
 
-func WithHl(hl string) Option {
-	return func(s *SuperChatEvent) {
-		s.Hl = hl
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(s *SuperChatEvent) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		s.MaxResults = maxResults
-	}
-}
-
 var (
-	WithParts   = common.WithParts[*SuperChatEvent]
-	WithOutput  = common.WithOutput[*SuperChatEvent]
-	WithService = common.WithService[*SuperChatEvent]
+	WithHl         = common.WithHl[*SuperChatEvent]
+	WithMaxResults = common.WithMaxResults[*SuperChatEvent]
+	WithParts      = common.WithParts[*SuperChatEvent]
+	WithOutput     = common.WithOutput[*SuperChatEvent]
+	WithService    = common.WithService[*SuperChatEvent]
 )

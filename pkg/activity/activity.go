@@ -6,7 +6,6 @@ package activity
 import (
 	"errors"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -21,9 +20,7 @@ var (
 
 type Activity struct {
 	*common.Fields
-	ChannelId       string `yaml:"channel_id" json:"channel_id,omitempty"`
 	Home            *bool  `yaml:"home" json:"home,omitempty"`
-	MaxResults      int64  `yaml:"max_results" json:"max_results,omitempty"`
 	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
 	PublishedAfter  string `yaml:"published_after" json:"published_after,omitempty"`
 	PublishedBefore string `yaml:"published_before" json:"published_before,omitempty"`
@@ -127,28 +124,11 @@ func (a *Activity) List(writer io.Writer) error {
 	return err
 }
 
-func WithChannelId(channelId string) Option {
-	return func(a *Activity) {
-		a.ChannelId = channelId
-	}
-}
-
 func WithHome(home *bool) Option {
 	return func(a *Activity) {
 		if home != nil {
 			a.Home = home
 		}
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(a *Activity) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		a.MaxResults = maxResults
 	}
 }
 
@@ -179,7 +159,9 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Activity]
-	WithOutput  = common.WithOutput[*Activity]
-	WithService = common.WithService[*Activity]
+	WithChannelId  = common.WithChannelId[*Activity]
+	WithMaxResults = common.WithMaxResults[*Activity]
+	WithParts      = common.WithParts[*Activity]
+	WithOutput     = common.WithOutput[*Activity]
+	WithService    = common.WithService[*Activity]
 )

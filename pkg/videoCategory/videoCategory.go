@@ -20,9 +20,7 @@ var (
 
 type VideoCategory struct {
 	*common.Fields
-	Ids        []string `yaml:"ids" json:"ids,omitempty"`
-	Hl         string   `yaml:"hl" json:"hl,omitempty"`
-	RegionCode string   `yaml:"region_code" json:"region_code,omitempty"`
+	RegionCode string `yaml:"region_code" json:"region_code,omitempty"`
 }
 
 type IVideoCategory[T any] interface {
@@ -87,18 +85,6 @@ func (vc *VideoCategory) List(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(vc *VideoCategory) {
-		vc.Ids = ids
-	}
-}
-
-func WithHl(hl string) Option {
-	return func(vc *VideoCategory) {
-		vc.Hl = hl
-	}
-}
-
 func WithRegionCode(regionCode string) Option {
 	return func(vc *VideoCategory) {
 		vc.RegionCode = regionCode
@@ -106,6 +92,8 @@ func WithRegionCode(regionCode string) Option {
 }
 
 var (
+	WithIds     = common.WithIds[*VideoCategory]
+	WithHl      = common.WithHl[*VideoCategory]
 	WithParts   = common.WithParts[*VideoCategory]
 	WithOutput  = common.WithOutput[*VideoCategory]
 	WithService = common.WithService[*VideoCategory]

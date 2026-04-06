@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -23,16 +22,13 @@ var (
 
 type CommentThread struct {
 	*common.Fields
-	Ids              []string `yaml:"ids" json:"ids,omitempty"`
-	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
-	ChannelId        string   `yaml:"channel_id" json:"channel_id,omitempty"`
-	MaxResults       int64    `yaml:"max_results" json:"max_results,omitempty"`
-	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status,omitempty"`
-	Order            string   `yaml:"order" json:"order,omitempty"`
-	SearchTerms      string   `yaml:"search_terms" json:"search_terms,omitempty"`
-	TextFormat       string   `yaml:"text_format" json:"text_format,omitempty"`
-	TextOriginal     string   `yaml:"text_original" json:"text_original,omitempty"`
-	VideoId          string   `yaml:"video_id" json:"video_id,omitempty"`
+	AuthorChannelId  string `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
+	ModerationStatus string `yaml:"moderation_status" json:"moderation_status,omitempty"`
+	Order            string `yaml:"order" json:"order,omitempty"`
+	SearchTerms      string `yaml:"search_terms" json:"search_terms,omitempty"`
+	TextFormat       string `yaml:"text_format" json:"text_format,omitempty"`
+	TextOriginal     string `yaml:"text_original" json:"text_original,omitempty"`
+	VideoId          string `yaml:"video_id" json:"video_id,omitempty"`
 
 	AllThreadsRelatedToChannelId string `yaml:"all_threads_related_to_channel_id" json:"all_threads_related_to_channel_id,omitempty"`
 }
@@ -186,29 +182,6 @@ func WithAuthorChannelId(authorChannelId string) Option {
 	}
 }
 
-func WithChannelId(channelId string) Option {
-	return func(c *CommentThread) {
-		c.ChannelId = channelId
-	}
-}
-
-func WithIds(ids []string) Option {
-	return func(c *CommentThread) {
-		c.Ids = ids
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(c *CommentThread) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		c.MaxResults = maxResults
-	}
-}
-
 func WithModerationStatus(moderationStatus string) Option {
 	return func(c *CommentThread) {
 		c.ModerationStatus = moderationStatus
@@ -246,7 +219,10 @@ func WithVideoId(videoId string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*CommentThread]
-	WithOutput  = common.WithOutput[*CommentThread]
-	WithService = common.WithService[*CommentThread]
+	WithParts      = common.WithParts[*CommentThread]
+	WithOutput     = common.WithOutput[*CommentThread]
+	WithService    = common.WithService[*CommentThread]
+	WithIds        = common.WithIds[*CommentThread]
+	WithMaxResults = common.WithMaxResults[*CommentThread]
+	WithChannelId  = common.WithChannelId[*CommentThread]
 )

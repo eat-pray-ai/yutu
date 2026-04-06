@@ -21,10 +21,8 @@ var (
 
 type ChannelBanner struct {
 	*common.Fields
-	ChannelId string `yaml:"channel_id" json:"channel_id,omitempty"`
-	File      string `yaml:"file" json:"file,omitempty"`
+	File string `yaml:"file" json:"file,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -80,21 +78,9 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 	return nil
 }
 
-func WithChannelId(channelId string) Option {
-	return func(cb *ChannelBanner) {
-		cb.ChannelId = channelId
-	}
-}
-
 func WithFile(file string) Option {
 	return func(cb *ChannelBanner) {
 		cb.File = file
-	}
-}
-
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(cb *ChannelBanner) {
-		cb.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
@@ -105,6 +91,9 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 }
 
 var (
-	WithOutput  = common.WithOutput[*ChannelBanner]
-	WithService = common.WithService[*ChannelBanner]
+	WithChannelId = common.WithChannelId[*ChannelBanner]
+	WithOutput    = common.WithOutput[*ChannelBanner]
+	WithService   = common.WithService[*ChannelBanner]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*ChannelBanner]
 )

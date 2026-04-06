@@ -74,11 +74,13 @@ func TestNewSearch(t *testing.T) {
 			},
 			want: &Search{
 				Fields: &common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
+					Service:                svc,
+					Parts:                  []string{"snippet"},
+					Output:                 "json",
+					MaxResults:             50,
+					ChannelId:              "channel123",
+					OnBehalfOfContentOwner: "owner123",
 				},
-				ChannelId:                 "channel123",
 				ChannelType:               "any",
 				EventType:                 "live",
 				ForContentOwner:           &forContentOwnerTrue,
@@ -86,8 +88,6 @@ func TestNewSearch(t *testing.T) {
 				ForMine:                   &forMineTrue,
 				Location:                  "37.42307,-122.08427",
 				LocationRadius:            "50km",
-				MaxResults:                50,
-				OnBehalfOfContentOwner:    "owner123",
 				Order:                     "relevance",
 				PublishedAfter:            "2024-01-01T00:00:00Z",
 				PublishedBefore:           "2024-12-31T23:59:59Z",
@@ -151,8 +151,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:     &common.Fields{},
-				MaxResults: math.MaxInt64,
+				Fields: &common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -163,8 +162,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:     &common.Fields{},
-				MaxResults: 1,
+				Fields: &common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -198,13 +196,14 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:                    &common.Fields{},
-				ChannelId:                 "",
+				Fields: &common.Fields{
+					ChannelId:              "",
+					OnBehalfOfContentOwner: "",
+				},
 				ChannelType:               "",
 				EventType:                 "",
 				Location:                  "",
 				LocationRadius:            "",
-				OnBehalfOfContentOwner:    "",
 				Order:                     "",
 				PublishedAfter:            "",
 				PublishedBefore:           "",
@@ -237,10 +236,9 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:     &common.Fields{},
-				Q:          "golang tutorial",
-				MaxResults: 25,
-				Order:      "date",
+				Fields: &common.Fields{MaxResults: 25},
+				Q:      "golang tutorial",
+				Order:  "date",
 				RegionCode: "UK",
 				Types:      []string{"video"},
 			},

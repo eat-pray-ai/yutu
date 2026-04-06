@@ -20,7 +20,6 @@ var (
 
 type VideoAbuseReportReason struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type IVideoAbuseReportReason[T any] interface {
@@ -81,13 +80,8 @@ func (va *VideoAbuseReportReason) List(writer io.Writer) error {
 	return nil
 }
 
-func WithHL(hl string) Option {
-	return func(va *VideoAbuseReportReason) {
-		va.Hl = hl
-	}
-}
-
 var (
+	WithHL      = common.WithHl[*VideoAbuseReportReason]
 	WithParts   = common.WithParts[*VideoAbuseReportReason]
 	WithOutput  = common.WithOutput[*VideoAbuseReportReason]
 	WithService = common.WithService[*VideoAbuseReportReason]

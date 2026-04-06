@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -25,20 +24,15 @@ var (
 
 type PlaylistItem struct {
 	*common.Fields
-	Ids         []string `yaml:"ids" json:"ids,omitempty"`
-	Title       string   `yaml:"title" json:"title,omitempty"`
-	Description string   `yaml:"description" json:"description,omitempty"`
-	Kind        string   `yaml:"kind" json:"kind,omitempty"`
-	KVideoId    string   `yaml:"k_video_id" json:"k_video_id,omitempty"`
-	KChannelId  string   `yaml:"k_channel_id" json:"k_channel_id,omitempty"`
-	KPlaylistId string   `yaml:"k_playlist_id" json:"k_playlist_id,omitempty"`
-	VideoId     string   `yaml:"video_id" json:"video_id,omitempty"`
-	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
-	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
-
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	Title       string `yaml:"title" json:"title,omitempty"`
+	Description string `yaml:"description" json:"description,omitempty"`
+	Kind        string `yaml:"kind" json:"kind,omitempty"`
+	KVideoId    string `yaml:"k_video_id" json:"k_video_id,omitempty"`
+	KChannelId  string `yaml:"k_channel_id" json:"k_channel_id,omitempty"`
+	KPlaylistId string `yaml:"k_playlist_id" json:"k_playlist_id,omitempty"`
+	VideoId     string `yaml:"video_id" json:"video_id,omitempty"`
+	PlaylistId  string `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	Privacy     string `yaml:"privacy" json:"privacy,omitempty"`
 }
 
 type IPlaylistItem[T any] interface {
@@ -275,12 +269,6 @@ func (pi *PlaylistItem) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(p *PlaylistItem) {
-		p.Ids = ids
-	}
-}
-
 func WithTitle(title string) Option {
 	return func(p *PlaylistItem) {
 		p.Title = title
@@ -329,37 +317,19 @@ func WithPlaylistId(playlistId string) Option {
 	}
 }
 
-func WithChannelId(channelId string) Option {
-	return func(p *PlaylistItem) {
-		p.ChannelId = channelId
-	}
-}
-
 func WithPrivacy(privacy string) Option {
 	return func(p *PlaylistItem) {
 		p.Privacy = privacy
 	}
 }
 
-func WithMaxResults(maxResults int64) Option {
-	return func(p *PlaylistItem) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		p.MaxResults = maxResults
-	}
-}
-
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(p *PlaylistItem) {
-		p.OnBehalfOfContentOwner = onBehalfOfContentOwner
-	}
-}
-
 var (
-	WithParts   = common.WithParts[*PlaylistItem]
-	WithOutput  = common.WithOutput[*PlaylistItem]
-	WithService = common.WithService[*PlaylistItem]
+	WithParts      = common.WithParts[*PlaylistItem]
+	WithOutput     = common.WithOutput[*PlaylistItem]
+	WithService    = common.WithService[*PlaylistItem]
+	WithIds        = common.WithIds[*PlaylistItem]
+	WithMaxResults = common.WithMaxResults[*PlaylistItem]
+	WithChannelId  = common.WithChannelId[*PlaylistItem]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*PlaylistItem]
 )

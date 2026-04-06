@@ -43,13 +43,13 @@ func TestNewMember(t *testing.T) {
 			},
 			want: &Member{
 				Fields: &common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
+					Service:    svc,
+					Parts:      []string{"snippet"},
+					Output:     "json",
+					MaxResults: 100,
 				},
 				MemberChannelId:  "member123",
 				HasAccessToLevel: "level1",
-				MaxResults:       100,
 				Mode:             "all_current",
 			},
 		},
@@ -68,8 +68,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				Fields:     &common.Fields{},
-				MaxResults: math.MaxInt64,
+				Fields: &common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -80,8 +79,7 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				Fields:     &common.Fields{},
-				MaxResults: 1,
+				Fields: &common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -110,9 +108,11 @@ func TestNewMember(t *testing.T) {
 				},
 			},
 			want: &Member{
-				Fields:          &common.Fields{Parts: []string{"id"}},
+				Fields: &common.Fields{
+					Parts:      []string{"id"},
+					MaxResults: 50,
+				},
 				MemberChannelId: "channel456",
-				MaxResults:      50,
 			},
 		},
 	}

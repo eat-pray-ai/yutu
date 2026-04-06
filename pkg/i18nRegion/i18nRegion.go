@@ -20,7 +20,6 @@ var (
 
 type I18nRegion struct {
 	*common.Fields
-	Hl string `yaml:"hl" json:"hl,omitempty"`
 }
 
 type II18nRegion[T any] interface {
@@ -79,13 +78,8 @@ func (i *I18nRegion) List(writer io.Writer) error {
 	return nil
 }
 
-func WithHl(hl string) Option {
-	return func(i *I18nRegion) {
-		i.Hl = hl
-	}
-}
-
 var (
+	WithHl = common.WithHl[*I18nRegion]
 	WithParts   = common.WithParts[*I18nRegion]
 	WithOutput  = common.WithOutput[*I18nRegion]
 	WithService = common.WithService[*I18nRegion]

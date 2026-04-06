@@ -40,8 +40,8 @@ func TestNewI18nLanguage(t *testing.T) {
 					Service: &youtube.Service{},
 					Parts:   []string{"snippet"},
 					Output:  "json",
+					Hl:      "en",
 				},
-				Hl: "en",
 			},
 		},
 		{
@@ -59,8 +59,7 @@ func TestNewI18nLanguage(t *testing.T) {
 				},
 			},
 			want: &I18nLanguage{
-				Fields: &common.Fields{},
-				Hl:     "",
+				Fields: &common.Fields{Hl: ""},
 			},
 		},
 	}

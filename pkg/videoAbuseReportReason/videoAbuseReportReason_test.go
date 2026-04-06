@@ -40,8 +40,8 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 					Service: svc,
 					Parts:   []string{"id", "snippet"},
 					Output:  "json",
+					Hl:      "en",
 				},
-				Hl: "en",
 			},
 		},
 		{
@@ -62,8 +62,8 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			want: &VideoAbuseReportReason{
 				Fields: &common.Fields{
 					Output: "",
+					Hl:     "",
 				},
-				Hl: "",
 			},
 		},
 		{
@@ -75,8 +75,10 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Fields: &common.Fields{Parts: []string{"snippet"}},
-				Hl:     "ja",
+				Fields: &common.Fields{
+					Parts: []string{"snippet"},
+					Hl:    "ja",
+				},
 			},
 		},
 	}

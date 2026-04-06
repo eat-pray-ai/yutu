@@ -2,12 +2,16 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "common",
-    srcs = ["common.go"],
+    srcs = [
+        "common.go",
+        "testutil.go",
+    ],
     importpath = "github.com/eat-pray-ai/yutu/pkg/common",
     visibility = ["//visibility:public"],
     deps = [
         "//pkg",
         "//pkg/auth",
+        "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

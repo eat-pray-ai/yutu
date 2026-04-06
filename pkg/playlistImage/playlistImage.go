@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -26,16 +25,13 @@ var (
 
 type PlaylistImage struct {
 	*common.Fields
-	Ids        []string `yaml:"ids" json:"ids,omitempty"`
-	Height     int64    `yaml:"height" json:"height,omitempty"`
-	PlaylistId string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
-	Type       string   `yaml:"type" json:"type,omitempty"`
-	Width      int64    `yaml:"width" json:"width,omitempty"`
-	File       string   `yaml:"file" json:"file,omitempty"`
-	Parent     string   `yaml:"parent" json:"parent,omitempty"`
-	MaxResults int64    `yaml:"max_results" json:"max_results,omitempty"`
+	Height     int64  `yaml:"height" json:"height,omitempty"`
+	PlaylistId string `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	Type       string `yaml:"type" json:"type,omitempty"`
+	Width      int64  `yaml:"width" json:"width,omitempty"`
+	File       string `yaml:"file" json:"file,omitempty"`
+	Parent     string `yaml:"parent" json:"parent,omitempty"`
 
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -251,12 +247,6 @@ func (pi *PlaylistImage) Delete(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(pi *PlaylistImage) {
-		pi.Ids = ids
-	}
-}
-
 func WithHeight(height int64) Option {
 	return func(pi *PlaylistImage) {
 		pi.Height = height
@@ -293,23 +283,6 @@ func WithParent(parent string) Option {
 	}
 }
 
-func WithMaxResults(maxResults int64) Option {
-	return func(pi *PlaylistImage) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		pi.MaxResults = maxResults
-	}
-}
-
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(pi *PlaylistImage) {
-		pi.OnBehalfOfContentOwner = onBehalfOfContentOwner
-	}
-}
-
 func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
 	return func(pi *PlaylistImage) {
 		pi.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
@@ -317,7 +290,11 @@ func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Opt
 }
 
 var (
-	WithParts   = common.WithParts[*PlaylistImage]
-	WithOutput  = common.WithOutput[*PlaylistImage]
-	WithService = common.WithService[*PlaylistImage]
+	WithParts      = common.WithParts[*PlaylistImage]
+	WithOutput     = common.WithOutput[*PlaylistImage]
+	WithService    = common.WithService[*PlaylistImage]
+	WithIds        = common.WithIds[*PlaylistImage]
+	WithMaxResults = common.WithMaxResults[*PlaylistImage]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*PlaylistImage]
 )

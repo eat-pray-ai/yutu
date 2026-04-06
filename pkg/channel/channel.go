@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -24,22 +23,17 @@ var (
 
 type Channel struct {
 	*common.Fields
-	CategoryId      string   `yaml:"category_id" json:"category_id,omitempty"`
-	ForHandle       string   `yaml:"for_handle" json:"for_handle,omitempty"`
-	ForUsername     string   `yaml:"for_username" json:"for_username,omitempty"`
-	Hl              string   `yaml:"hl" json:"hl,omitempty"`
-	Ids             []string `yaml:"ids" json:"ids,omitempty"`
-	ManagedByMe     *bool    `yaml:"managed_by_me" json:"managed_by_me,omitempty"`
-	MaxResults      int64    `yaml:"max_results" json:"max_results,omitempty"`
-	Mine            *bool    `yaml:"mine" json:"mine,omitempty"`
-	MySubscribers   *bool    `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
-	Country         string   `yaml:"country" json:"country,omitempty"`
-	CustomUrl       string   `yaml:"custom_url" json:"custom_url,omitempty"`
-	DefaultLanguage string   `yaml:"default_language" json:"default_language,omitempty"`
-	Description     string   `yaml:"description" json:"description,omitempty"`
-	Title           string   `yaml:"title" json:"title,omitempty"`
-
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	CategoryId      string `yaml:"category_id" json:"category_id,omitempty"`
+	ForHandle       string `yaml:"for_handle" json:"for_handle,omitempty"`
+	ForUsername     string `yaml:"for_username" json:"for_username,omitempty"`
+	ManagedByMe     *bool  `yaml:"managed_by_me" json:"managed_by_me,omitempty"`
+	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
+	MySubscribers   *bool  `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	Country         string `yaml:"country" json:"country,omitempty"`
+	CustomUrl       string `yaml:"custom_url" json:"custom_url,omitempty"`
+	DefaultLanguage string `yaml:"default_language" json:"default_language,omitempty"`
+	Description     string `yaml:"description" json:"description,omitempty"`
+	Title           string `yaml:"title" json:"title,omitempty"`
 }
 
 type IChannel[T youtube.Channel] interface {
@@ -209,34 +203,11 @@ func WithForUsername(username string) Option {
 	}
 }
 
-func WithHl(hl string) Option {
-	return func(c *Channel) {
-		c.Hl = hl
-	}
-}
-
-func WithIds(ids []string) Option {
-	return func(c *Channel) {
-		c.Ids = ids
-	}
-}
-
 func WithChannelManagedByMe(managedByMe *bool) Option {
 	return func(c *Channel) {
 		if managedByMe != nil {
 			c.ManagedByMe = managedByMe
 		}
-	}
-}
-
-func WithMaxResults(maxResults int64) Option {
-	return func(c *Channel) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		c.MaxResults = maxResults
 	}
 }
 
@@ -253,12 +224,6 @@ func WithMySubscribers(mySubscribers *bool) Option {
 		if mySubscribers != nil {
 			c.MySubscribers = mySubscribers
 		}
-	}
-}
-
-func WithOnBehalfOfContentOwner(contentOwner string) Option {
-	return func(c *Channel) {
-		c.OnBehalfOfContentOwner = contentOwner
 	}
 }
 
@@ -293,7 +258,12 @@ func WithTitle(title string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Channel]
-	WithOutput  = common.WithOutput[*Channel]
-	WithService = common.WithService[*Channel]
+	WithParts      = common.WithParts[*Channel]
+	WithOutput     = common.WithOutput[*Channel]
+	WithService    = common.WithService[*Channel]
+	WithIds        = common.WithIds[*Channel]
+	WithMaxResults = common.WithMaxResults[*Channel]
+	WithHl         = common.WithHl[*Channel]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Channel]
 )

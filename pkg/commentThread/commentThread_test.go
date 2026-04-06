@@ -49,15 +49,15 @@ func TestNewCommentThread(t *testing.T) {
 			},
 			want: &CommentThread{
 				Fields: &common.Fields{
-					Service: svc,
-					Parts:   []string{"id", "snippet"},
-					Output:  "json",
+					Service:    svc,
+					Parts:      []string{"id", "snippet"},
+					Output:     "json",
+					Ids:        []string{"thread1", "thread2"},
+					MaxResults: 100,
+					ChannelId:  "channel123",
 				},
-				Ids:                          []string{"thread1", "thread2"},
 				AllThreadsRelatedToChannelId: "relatedChannel123",
 				AuthorChannelId:              "author123",
-				ChannelId:                    "channel123",
-				MaxResults:                   100,
 				ModerationStatus:             "published",
 				Order:                        "time",
 				SearchTerms:                  "test search",
@@ -81,8 +81,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields:     &common.Fields{},
-				MaxResults: math.MaxInt64,
+				Fields: &common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -93,8 +92,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields:     &common.Fields{},
-				MaxResults: 1,
+				Fields: &common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -116,12 +114,12 @@ func TestNewCommentThread(t *testing.T) {
 			},
 			want: &CommentThread{
 				Fields: &common.Fields{
-					Parts:  nil,
-					Output: "",
+					Parts:     nil,
+					Output:    "",
+					ChannelId: "",
 				},
 				AllThreadsRelatedToChannelId: "",
 				AuthorChannelId:              "",
-				ChannelId:                    "",
 				ModerationStatus:             "",
 				Order:                        "",
 				SearchTerms:                  "",
@@ -142,11 +140,13 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields:       &common.Fields{Output: "yaml"},
-				Ids:          []string{"thread1"},
+				Fields: &common.Fields{
+					Output:     "yaml",
+					Ids:        []string{"thread1"},
+					MaxResults: 50,
+				},
 				VideoId:      "video456",
 				TextOriginal: "Partial comment thread",
-				MaxResults:   50,
 			},
 		},
 	}

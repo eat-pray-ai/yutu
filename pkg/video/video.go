@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"slices"
 
@@ -33,12 +32,10 @@ var (
 
 type Video struct {
 	*common.Fields
-	Ids         []string `yaml:"ids" json:"ids,omitempty"`
 	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitempty"`
 	File        string   `yaml:"file" json:"file,omitempty"`
 	Title       string   `yaml:"title" json:"title,omitempty"`
 	Description string   `yaml:"description" json:"description,omitempty"`
-	Hl          string   `yaml:"hl" json:"hl,omitempty"`
 	Tags        []string `yaml:"tags" json:"tags,omitempty"`
 	Language    string   `yaml:"language" json:"language,omitempty"`
 	Locale      string   `yaml:"locale" json:"locale,omitempty"`
@@ -46,7 +43,6 @@ type Video struct {
 	Thumbnail   string   `yaml:"thumbnail" json:"thumbnail,omitempty"`
 	Rating      string   `yaml:"rating" json:"rating,omitempty"`
 	Chart       string   `yaml:"chart" json:"chart,omitempty"`
-	ChannelId   string   `yaml:"channel_id" json:"channel_id,omitempty"`
 	Comments    string   `yaml:"comments" json:"comments,omitempty"`
 	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
 	CategoryId  string   `yaml:"category_id" json:"category_id,omitempty"`
@@ -59,12 +55,10 @@ type Video struct {
 	Stabilize   *bool    `yaml:"stabilize" json:"stabilize,omitempty"`
 	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitempty"`
 	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitempty"`
-	MaxResults  int64    `yaml:"max_results" json:"max_results,omitempty"`
 
 	SecondaryReasonId             string `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
 	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitempty"`
 	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitempty"`
-	OnBehalfOfContentOwner        string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -483,12 +477,6 @@ func (v *Video) ReportAbuse(writer io.Writer) error {
 	return nil
 }
 
-func WithIds(ids []string) Option {
-	return func(v *Video) {
-		v.Ids = ids
-	}
-}
-
 func WithAutoLevels(autoLevels *bool) Option {
 	return func(v *Video) {
 		if autoLevels != nil {
@@ -512,12 +500,6 @@ func WithTitle(title string) Option {
 func WithDescription(description string) Option {
 	return func(v *Video) {
 		v.Description = description
-	}
-}
-
-func WithHl(hl string) Option {
-	return func(v *Video) {
-		v.Hl = hl
 	}
 }
 
@@ -591,12 +573,6 @@ func WithPrivacy(privacy string) Option {
 	}
 }
 
-func WithChannelId(channelId string) Option {
-	return func(v *Video) {
-		v.ChannelId = channelId
-	}
-}
-
 func WithPlaylistId(playlistId string) Option {
 	return func(v *Video) {
 		v.PlaylistId = playlistId
@@ -643,28 +619,11 @@ func WithMaxWidth(maxWidth int64) Option {
 	}
 }
 
-func WithMaxResults(maxResults int64) Option {
-	return func(v *Video) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		v.MaxResults = maxResults
-	}
-}
-
 func WithNotifySubscribers(notifySubscribers *bool) Option {
 	return func(v *Video) {
 		if notifySubscribers != nil {
 			v.NotifySubscribers = notifySubscribers
 		}
-	}
-}
-
-func WithOnBehalfOfContentOwner(onBehalfOfContentOwner string) Option {
-	return func(v *Video) {
-		v.OnBehalfOfContentOwner = onBehalfOfContentOwner
 	}
 }
 
@@ -693,7 +652,13 @@ func WithSecondaryReasonId(secondaryReasonId string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Video]
-	WithOutput  = common.WithOutput[*Video]
-	WithService = common.WithService[*Video]
+	WithParts      = common.WithParts[*Video]
+	WithOutput     = common.WithOutput[*Video]
+	WithService    = common.WithService[*Video]
+	WithIds        = common.WithIds[*Video]
+	WithMaxResults = common.WithMaxResults[*Video]
+	WithHl         = common.WithHl[*Video]
+	WithChannelId  = common.WithChannelId[*Video]
+
+	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Video]
 )

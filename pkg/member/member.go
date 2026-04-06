@@ -6,7 +6,6 @@ package member
 import (
 	"errors"
 	"io"
-	"math"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -23,7 +22,6 @@ type Member struct {
 	*common.Fields
 	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id,omitempty"`
 	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level,omitempty"`
-	MaxResults       int64  `yaml:"max_results" json:"max_results,omitempty"`
 	Mode             string `yaml:"mode" json:"mode,omitempty"`
 }
 
@@ -122,17 +120,6 @@ func WithHasAccessToLevel(level string) Option {
 	}
 }
 
-func WithMaxResults(maxResults int64) Option {
-	return func(m *Member) {
-		if maxResults < 0 {
-			maxResults = 1
-		} else if maxResults == 0 {
-			maxResults = math.MaxInt64
-		}
-		m.MaxResults = maxResults
-	}
-}
-
 func WithMode(mode string) Option {
 	return func(m *Member) {
 		m.Mode = mode
@@ -140,7 +127,8 @@ func WithMode(mode string) Option {
 }
 
 var (
-	WithParts   = common.WithParts[*Member]
-	WithOutput  = common.WithOutput[*Member]
-	WithService = common.WithService[*Member]
+	WithMaxResults = common.WithMaxResults[*Member]
+	WithParts      = common.WithParts[*Member]
+	WithOutput     = common.WithOutput[*Member]
+	WithService    = common.WithService[*Member]
 )
