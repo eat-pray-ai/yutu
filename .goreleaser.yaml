@@ -58,7 +58,7 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
-  - formats: ["binary"]
+  - formats: [ "binary" ]
     ids:
       - yutu
     name_template: "{{ .Binary }}"

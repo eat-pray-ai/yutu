@@ -50,7 +50,9 @@ func (t *Thumbnail) Set(writer io.Writer) error {
 		return errors.Join(errSetThumbnail, err)
 	}
 
-	common.PrintResult(t.Output, res, writer, "Thumbnail set for video %s", t.VideoId)
+	common.PrintResult(
+		t.Output, res, writer, "Thumbnail set for video %s", t.VideoId,
+	)
 	return nil
 }
 

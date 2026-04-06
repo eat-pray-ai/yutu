@@ -367,21 +367,23 @@ func TestVideo_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "video-1", "snippet": {"title": "Video 1"}}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -441,11 +443,12 @@ func TestVideo_Get_Pagination(t *testing.T) {
 }
 
 func TestVideo_List(t *testing.T) {
-	svc := common.NewTestService(t, http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write(
-				[]byte(`{
+	svc := common.NewTestService(
+		t, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "video-1",
@@ -459,9 +462,10 @@ func TestVideo_List(t *testing.T) {
 				}
 			]
 		}`),
-			)
-		},
-	))
+				)
+			},
+		),
+	)
 
 	tests := []struct {
 		name    string
@@ -645,15 +649,17 @@ func TestVideo_Insert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write([]byte(`{"id": "new-video-id", "snippet": {"title": "New Video"}, "status": {"privacyStatus": "public"}}`))
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-video-id", "snippet": {"title": "New Video"}, "status": {"privacyStatus": "public"}}`))
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -736,25 +742,27 @@ func TestVideo_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						if r.Method == "GET" {
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{
 						"items": [
 							{"id": "video-id", "snippet": {"title": "Old Title"}}
 						]
 					}`),
-							)
-						} else {
-							_, _ = w.Write([]byte(`{"id": "video-id", "snippet": {"title": "Updated Title"}}`))
-						}
-					},
-				))
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "video-id", "snippet": {"title": "Updated Title"}}`))
+							}
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -798,14 +806,16 @@ func TestVideo_Rate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -858,21 +868,23 @@ func TestVideo_GetRating(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"videoId": "video-id", "rating": "like"}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -931,14 +943,16 @@ func TestVideo_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)
@@ -996,14 +1010,16 @@ func TestVideo_ReportAbuse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				v := NewVideo(opts...)

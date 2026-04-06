@@ -60,9 +60,12 @@ func (va *VideoAbuseReportReason) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(va.Output, reasons, writer, table.Row{"ID", "Label"}, func(r *youtube.VideoAbuseReportReason) table.Row {
-		return table.Row{r.Id, r.Snippet.Label}
-	})
+	common.PrintList(
+		va.Output, reasons, writer, table.Row{"ID", "Label"},
+		func(r *youtube.VideoAbuseReportReason) table.Row {
+			return table.Row{r.Id, r.Snippet.Label}
+		},
+	)
 	return nil
 }
 

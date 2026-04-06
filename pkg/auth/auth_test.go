@@ -155,7 +155,9 @@ func TestGetCodeFromPrompt_Success(t *testing.T) {
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
 
-	code, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
+	code, err := s.getCodeFromPrompt(
+		"http://example.com/auth", "http://localhost:8216",
+	)
 	if err != nil {
 		t.Fatalf("getCodeFromPrompt returned error: %v", err)
 	}
@@ -164,7 +166,9 @@ func TestGetCodeFromPrompt_Success(t *testing.T) {
 	}
 
 	outStr := out.String()
-	if !strings.Contains(outStr, openBrowserHint[:20]) { // basic sanity check that hint was written
+	if !strings.Contains(
+		outStr, openBrowserHint[:20],
+	) { // basic sanity check that hint was written
 		t.Fatalf("expected openBrowserHint to be written to out, got %q", outStr)
 	}
 	if !strings.Contains(outStr, "After completing the authorization flow") {
@@ -181,7 +185,9 @@ func TestGetCodeFromPrompt_URLDecode(t *testing.T) {
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
 
-	code, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
+	code, err := s.getCodeFromPrompt(
+		"http://example.com/auth", "http://localhost:8216",
+	)
 	if err != nil {
 		t.Fatalf("getCodeFromPrompt returned error: %v", err)
 	}

@@ -68,9 +68,12 @@ func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
 		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
 	}
 
-	return common.Paginate(pi.Fields, call, func(r *youtube.PlaylistImageListResponse) ([]*youtube.PlaylistImage, string) {
-		return r.Items, r.NextPageToken
-	}, errGetPlaylistImage)
+	return common.Paginate(
+		pi.Fields, call,
+		func(r *youtube.PlaylistImageListResponse) ([]*youtube.PlaylistImage, string) {
+			return r.Items, r.NextPageToken
+		}, errGetPlaylistImage,
+	)
 }
 
 func (pi *PlaylistImage) List(writer io.Writer) error {
@@ -79,9 +82,13 @@ func (pi *PlaylistImage) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(pi.Output, playlistImages, writer, table.Row{"ID", "Kind", "Playlist ID", "Type"}, func(img *youtube.PlaylistImage) table.Row {
-		return table.Row{img.Id, img.Kind, img.Snippet.PlaylistId, img.Snippet.Type}
-	})
+	common.PrintList(
+		pi.Output, playlistImages, writer,
+		table.Row{"ID", "Kind", "Playlist ID", "Type"},
+		func(img *youtube.PlaylistImage) table.Row {
+			return table.Row{img.Id, img.Kind, img.Snippet.PlaylistId, img.Snippet.Type}
+		},
+	)
 	return err
 }
 
@@ -121,7 +128,9 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 		return errors.Join(errInsertPlaylistImage, err)
 	}
 
-	common.PrintResult(pi.Output, res, writer, "PlaylistImage inserted: %s\n", res.Id)
+	common.PrintResult(
+		pi.Output, res, writer, "PlaylistImage inserted: %s\n", res.Id,
+	)
 	return nil
 }
 
@@ -173,7 +182,9 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 		return errors.Join(errUpdatePlaylistImage, err)
 	}
 
-	common.PrintResult(pi.Output, res, writer, "PlaylistImage updated: %s\n", res.Id)
+	common.PrintResult(
+		pi.Output, res, writer, "PlaylistImage updated: %s\n", res.Id,
+	)
 	return nil
 }
 

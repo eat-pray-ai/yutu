@@ -214,21 +214,23 @@ func TestPlaylistImage_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "image-1", "snippet": {"type": "default"}}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				pi := NewPlaylistImage(opts...)
@@ -290,11 +292,12 @@ func TestPlaylistImage_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylistImage_List(t *testing.T) {
-	svc := common.NewTestService(t, http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write(
-				[]byte(`{
+	svc := common.NewTestService(
+		t, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "image-1",
@@ -306,9 +309,10 @@ func TestPlaylistImage_List(t *testing.T) {
 				}
 			]
 		}`),
-			)
-		},
-	))
+				)
+			},
+		),
+	)
 
 	tests := []struct {
 		name    string
@@ -470,15 +474,17 @@ func TestPlaylistImage_Insert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write([]byte(`{"id": "new-image-id"}`))
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-image-id"}`))
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				pi := NewPlaylistImage(opts...)
@@ -567,25 +573,27 @@ func TestPlaylistImage_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						if r.Method == "GET" {
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{
 						"items": [
 							{"id": "image-id", "snippet": {"type": "default"}}
 						]
 					}`),
-							)
-						} else {
-							_, _ = w.Write([]byte(`{"id": "image-id", "snippet": {"type": "hero"}}`))
-						}
-					},
-				))
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "image-id", "snippet": {"type": "hero"}}`))
+							}
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				pi := NewPlaylistImage(opts...)
@@ -646,14 +654,16 @@ func TestPlaylistImage_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				pi := NewPlaylistImage(opts...)

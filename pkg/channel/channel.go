@@ -82,9 +82,12 @@ func (c *Channel) Get() ([]*youtube.Channel, error) {
 		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
 	}
 
-	return common.Paginate(c.Fields, call, func(r *youtube.ChannelListResponse) ([]*youtube.Channel, string) {
-		return r.Items, r.NextPageToken
-	}, errGetChannel)
+	return common.Paginate(
+		c.Fields, call,
+		func(r *youtube.ChannelListResponse) ([]*youtube.Channel, string) {
+			return r.Items, r.NextPageToken
+		}, errGetChannel,
+	)
 }
 
 func (c *Channel) List(writer io.Writer) error {
@@ -93,15 +96,18 @@ func (c *Channel) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(c.Output, channels, writer, table.Row{"ID", "Title", "Country"}, func(ch *youtube.Channel) table.Row {
-		title := ""
-		country := ""
-		if ch.Snippet != nil {
-			title = ch.Snippet.Title
-			country = ch.Snippet.Country
-		}
-		return table.Row{ch.Id, title, country}
-	})
+	common.PrintList(
+		c.Output, channels, writer, table.Row{"ID", "Title", "Country"},
+		func(ch *youtube.Channel) table.Row {
+			title := ""
+			country := ""
+			if ch.Snippet != nil {
+				title = ch.Snippet.Title
+				country = ch.Snippet.Country
+			}
+			return table.Row{ch.Id, title, country}
+		},
+	)
 	return err
 }
 

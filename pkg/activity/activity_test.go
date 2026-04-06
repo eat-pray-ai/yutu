@@ -287,23 +287,25 @@ func TestActivity_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "1", "snippet": {"title": "A1"}},
 						{"id": "2", "snippet": {"title": "A2"}}
 					],
 					"nextPageToken": ""
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				a := NewActivity(opts...)
@@ -378,12 +380,14 @@ func TestActivity_List(t *testing.T) {
 		"nextPageToken": ""
 	}`
 
-	svc := common.NewTestService(t, http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(mockResponse))
-		},
-	))
+	svc := common.NewTestService(
+		t, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(mockResponse))
+			},
+		),
+	)
 
 	tests := []struct {
 		name    string

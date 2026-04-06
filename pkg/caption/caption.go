@@ -93,9 +93,12 @@ func (c *Caption) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(c.Output, captions, writer, table.Row{"ID", "Video ID", "Name", "Language"}, func(cap *youtube.Caption) table.Row {
-		return table.Row{cap.Id, cap.Snippet.VideoId, cap.Snippet.Name, cap.Snippet.Language}
-	})
+	common.PrintList(
+		c.Output, captions, writer, table.Row{"ID", "Video ID", "Name", "Language"},
+		func(cap *youtube.Caption) table.Row {
+			return table.Row{cap.Id, cap.Snippet.VideoId, cap.Snippet.Name, cap.Snippet.Language}
+		},
+	)
 	return nil
 }
 

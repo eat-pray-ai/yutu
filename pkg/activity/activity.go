@@ -69,9 +69,12 @@ func (a *Activity) Get() ([]*youtube.Activity, error) {
 		call = call.RegionCode(a.RegionCode)
 	}
 
-	return common.Paginate(a.Fields, call, func(r *youtube.ActivityListResponse) ([]*youtube.Activity, string) {
-		return r.Items, r.NextPageToken
-	}, errGetActivity)
+	return common.Paginate(
+		a.Fields, call,
+		func(r *youtube.ActivityListResponse) ([]*youtube.Activity, string) {
+			return r.Items, r.NextPageToken
+		}, errGetActivity,
+	)
 }
 
 func (a *Activity) List(writer io.Writer) error {
@@ -80,9 +83,12 @@ func (a *Activity) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(a.Output, activities, writer, table.Row{"ID", "Title", "Type", "Time"}, func(a *youtube.Activity) table.Row {
-		return table.Row{a.Id, a.Snippet.Title, a.Snippet.Type, a.Snippet.PublishedAt}
-	})
+	common.PrintList(
+		a.Output, activities, writer, table.Row{"ID", "Title", "Type", "Time"},
+		func(a *youtube.Activity) table.Row {
+			return table.Row{a.Id, a.Snippet.Title, a.Snippet.Type, a.Snippet.PublishedAt}
+		},
+	)
 	return err
 }
 

@@ -24,15 +24,15 @@ var (
 
 type Comment struct {
 	*common.Fields
-	AuthorChannelId  string   `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
-	CanRate          *bool    `yaml:"can_rate" json:"can_rate,omitempty"`
-	ParentId         string   `yaml:"parent_id" json:"parent_id,omitempty"`
-	TextFormat       string   `yaml:"text_format" json:"text_format,omitempty"`
-	TextOriginal     string   `yaml:"text_original" json:"text_original,omitempty"`
-	ModerationStatus string   `yaml:"moderation_status" json:"moderation_status,omitempty"`
-	BanAuthor        *bool    `yaml:"ban_author" json:"ban_author,omitempty"`
-	VideoId          string   `yaml:"video_id" json:"video_id,omitempty"`
-	ViewerRating     string   `yaml:"viewer_rating" json:"viewer_rating,omitempty"`
+	AuthorChannelId  string `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
+	CanRate          *bool  `yaml:"can_rate" json:"can_rate,omitempty"`
+	ParentId         string `yaml:"parent_id" json:"parent_id,omitempty"`
+	TextFormat       string `yaml:"text_format" json:"text_format,omitempty"`
+	TextOriginal     string `yaml:"text_original" json:"text_original,omitempty"`
+	ModerationStatus string `yaml:"moderation_status" json:"moderation_status,omitempty"`
+	BanAuthor        *bool  `yaml:"ban_author" json:"ban_author,omitempty"`
+	VideoId          string `yaml:"video_id" json:"video_id,omitempty"`
+	ViewerRating     string `yaml:"viewer_rating" json:"viewer_rating,omitempty"`
 }
 
 type IComment[T any] interface {
@@ -70,9 +70,12 @@ func (c *Comment) Get() ([]*youtube.Comment, error) {
 		call = call.TextFormat(c.TextFormat)
 	}
 
-	return common.Paginate(c.Fields, call, func(r *youtube.CommentListResponse) ([]*youtube.Comment, string) {
-		return r.Items, r.NextPageToken
-	}, errGetComment)
+	return common.Paginate(
+		c.Fields, call,
+		func(r *youtube.CommentListResponse) ([]*youtube.Comment, string) {
+			return r.Items, r.NextPageToken
+		}, errGetComment,
+	)
 }
 
 func (c *Comment) List(writer io.Writer) error {
@@ -81,17 +84,21 @@ func (c *Comment) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(c.Output, comments, writer, table.Row{"ID", "Author", "Video ID", "Text Display"}, func(cm *youtube.Comment) table.Row {
-		author := ""
-		videoId := ""
-		textDisplay := ""
-		if cm.Snippet != nil {
-			author = cm.Snippet.AuthorDisplayName
-			videoId = cm.Snippet.VideoId
-			textDisplay = cm.Snippet.TextDisplay
-		}
-		return table.Row{cm.Id, author, videoId, textDisplay}
-	})
+	common.PrintList(
+		c.Output, comments, writer,
+		table.Row{"ID", "Author", "Video ID", "Text Display"},
+		func(cm *youtube.Comment) table.Row {
+			author := ""
+			videoId := ""
+			textDisplay := ""
+			if cm.Snippet != nil {
+				author = cm.Snippet.AuthorDisplayName
+				videoId = cm.Snippet.VideoId
+				textDisplay = cm.Snippet.TextDisplay
+			}
+			return table.Row{cm.Id, author, videoId, textDisplay}
+		},
+	)
 	return err
 }
 
@@ -191,7 +198,10 @@ func (c *Comment) SetModerationStatus(writer io.Writer) error {
 		return errors.Join(errSetModerationStatus, err)
 	}
 
-	common.PrintResult(c.Output, c, writer, "Comment moderation status set to %s: %s\n", c.ModerationStatus, c.Ids)
+	common.PrintResult(
+		c.Output, c, writer, "Comment moderation status set to %s: %s\n",
+		c.ModerationStatus, c.Ids,
+	)
 	return nil
 }
 

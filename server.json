@@ -6,7 +6,9 @@
   "icons": [
     {
       "mimeType": "image/svg+xml",
-      "sizes": ["any"],
+      "sizes": [
+        "any"
+      ],
       "src": "https://raw.githubusercontent.com/eat-pray-ai/yutu/main/assets/yutu-ico.svg"
     }
   ],
@@ -97,7 +99,12 @@
           "isSecret": false,
           "name": "YUTU_LOG_LEVEL",
           "default": "INFO",
-          "choices": ["DEBUG", "INFO", "WARNING", "ERROR"]
+          "choices": [
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ]
         }
       ]
     }

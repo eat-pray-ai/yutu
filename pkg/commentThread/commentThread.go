@@ -76,9 +76,12 @@ func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
 		call = call.VideoId(c.VideoId)
 	}
 
-	return common.Paginate(c.Fields, call, func(r *youtube.CommentThreadListResponse) ([]*youtube.CommentThread, string) {
-		return r.Items, r.NextPageToken
-	}, errGetCommentThread)
+	return common.Paginate(
+		c.Fields, call,
+		func(r *youtube.CommentThreadListResponse) ([]*youtube.CommentThread, string) {
+			return r.Items, r.NextPageToken
+		}, errGetCommentThread,
+	)
 }
 
 func (c *CommentThread) List(writer io.Writer) error {
@@ -87,10 +90,14 @@ func (c *CommentThread) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(c.Output, commentThreads, writer, table.Row{"ID", "Author", "Video ID", "Text Display"}, func(cot *youtube.CommentThread) table.Row {
-		snippet := cot.Snippet.TopLevelComment.Snippet
-		return table.Row{cot.Id, snippet.AuthorDisplayName, snippet.VideoId, snippet.TextDisplay}
-	})
+	common.PrintList(
+		c.Output, commentThreads, writer,
+		table.Row{"ID", "Author", "Video ID", "Text Display"},
+		func(cot *youtube.CommentThread) table.Row {
+			snippet := cot.Snippet.TopLevelComment.Snippet
+			return table.Row{cot.Id, snippet.AuthorDisplayName, snippet.VideoId, snippet.TextDisplay}
+		},
+	)
 	return err
 }
 
@@ -119,7 +126,9 @@ func (c *CommentThread) Insert(writer io.Writer) error {
 		return errors.Join(errInsertCommentThread, err)
 	}
 
-	common.PrintResult(c.Output, res, writer, "CommentThread inserted: %s\n", res.Id)
+	common.PrintResult(
+		c.Output, res, writer, "CommentThread inserted: %s\n", res.Id,
+	)
 	return nil
 }
 

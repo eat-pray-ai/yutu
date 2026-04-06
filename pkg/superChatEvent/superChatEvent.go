@@ -44,9 +44,12 @@ func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
 		call = call.Hl(s.Hl)
 	}
 
-	return common.Paginate(s.Fields, call, func(r *youtube.SuperChatEventListResponse) ([]*youtube.SuperChatEvent, string) {
-		return r.Items, r.NextPageToken
-	}, errGetSuperChatEvent)
+	return common.Paginate(
+		s.Fields, call,
+		func(r *youtube.SuperChatEventListResponse) ([]*youtube.SuperChatEvent, string) {
+			return r.Items, r.NextPageToken
+		}, errGetSuperChatEvent,
+	)
 }
 
 func (s *SuperChatEvent) List(writer io.Writer) error {
@@ -55,9 +58,12 @@ func (s *SuperChatEvent) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(s.Output, events, writer, table.Row{"ID", "Amount", "Comment", "Supporter"}, func(e *youtube.SuperChatEvent) table.Row {
-		return table.Row{e.Id, e.Snippet.DisplayString, e.Snippet.CommentText, e.Snippet.SupporterDetails.DisplayName}
-	})
+	common.PrintList(
+		s.Output, events, writer, table.Row{"ID", "Amount", "Comment", "Supporter"},
+		func(e *youtube.SuperChatEvent) table.Row {
+			return table.Row{e.Id, e.Snippet.DisplayString, e.Snippet.CommentText, e.Snippet.SupporterDetails.DisplayName}
+		},
+	)
 	return err
 }
 

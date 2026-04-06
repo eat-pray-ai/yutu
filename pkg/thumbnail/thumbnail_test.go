@@ -173,21 +173,23 @@ func TestThumbnail_Set(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"default": {"url": "https://example.com/thumb.jpg"}}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				thumb := NewThumbnail(opts...)

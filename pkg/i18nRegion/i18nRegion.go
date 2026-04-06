@@ -58,14 +58,17 @@ func (i *I18nRegion) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(i.Output, regions, writer, table.Row{"ID", "Gl", "Name"}, func(r *youtube.I18nRegion) table.Row {
-		return table.Row{r.Id, r.Snippet.Gl, r.Snippet.Name}
-	})
+	common.PrintList(
+		i.Output, regions, writer, table.Row{"ID", "Gl", "Name"},
+		func(r *youtube.I18nRegion) table.Row {
+			return table.Row{r.Id, r.Snippet.Gl, r.Snippet.Name}
+		},
+	)
 	return nil
 }
 
 var (
-	WithHl = common.WithHl[*I18nRegion]
+	WithHl      = common.WithHl[*I18nRegion]
 	WithParts   = common.WithParts[*I18nRegion]
 	WithOutput  = common.WithOutput[*I18nRegion]
 	WithService = common.WithService[*I18nRegion]

@@ -53,9 +53,12 @@ func (m *Member) Get() ([]*youtube.Member, error) {
 		call = call.Mode(m.Mode)
 	}
 
-	return common.Paginate(m.Fields, call, func(r *youtube.MemberListResponse) ([]*youtube.Member, string) {
-		return r.Items, r.NextPageToken
-	}, errGetMember)
+	return common.Paginate(
+		m.Fields, call,
+		func(r *youtube.MemberListResponse) ([]*youtube.Member, string) {
+			return r.Items, r.NextPageToken
+		}, errGetMember,
+	)
 }
 
 func (m *Member) List(writer io.Writer) error {
@@ -64,9 +67,12 @@ func (m *Member) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(m.Output, members, writer, table.Row{"Channel ID", "Display Name"}, func(m *youtube.Member) table.Row {
-		return table.Row{m.Snippet.MemberDetails.ChannelId, m.Snippet.MemberDetails.DisplayName}
-	})
+	common.PrintList(
+		m.Output, members, writer, table.Row{"Channel ID", "Display Name"},
+		func(m *youtube.Member) table.Row {
+			return table.Row{m.Snippet.MemberDetails.ChannelId, m.Snippet.MemberDetails.DisplayName}
+		},
+	)
 	return err
 }
 

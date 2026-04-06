@@ -271,22 +271,24 @@ func TestCaption_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "1", "snippet": {"videoId": "video-id"}},
 						{"id": "2", "snippet": {"videoId": "video-id"}}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewCaption(opts...)
@@ -306,11 +308,12 @@ func TestCaption_Get(t *testing.T) {
 }
 
 func TestCaption_List(t *testing.T) {
-	svc := common.NewTestService(t, http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write(
-				[]byte(`{
+	svc := common.NewTestService(
+		t, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "caption-1",
@@ -322,9 +325,10 @@ func TestCaption_List(t *testing.T) {
 				}
 			]
 		}`),
-			)
-		},
-	))
+				)
+			},
+		),
+	)
 
 	tests := []struct {
 		name    string
@@ -451,15 +455,17 @@ func TestCaption_Insert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write([]byte(`{"id": "new-caption-id", "snippet": {"videoId": "video-id"}}`))
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-caption-id", "snippet": {"videoId": "video-id"}}`))
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewCaption(opts...)
@@ -546,25 +552,27 @@ func TestCaption_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						if r.Method == "GET" {
-							_, _ = w.Write(
-								[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{
 						"items": [
 							{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "en"}}
 						]
 					}`),
-							)
-						} else {
-							_, _ = w.Write([]byte(`{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "es"}}`))
-						}
-					},
-				))
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "caption-id", "snippet": {"videoId": "video-id", "language": "es"}}`))
+							}
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewCaption(opts...)
@@ -633,14 +641,16 @@ func TestCaption_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewCaption(opts...)
@@ -740,14 +750,16 @@ func TestCaption_Download(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						_, _ = w.Write([]byte("1\n00:00:01,000 --> 00:00:04,000\nDownloaded Caption"))
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							_, _ = w.Write([]byte("1\n00:00:01,000 --> 00:00:04,000\nDownloaded Caption"))
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewCaption(opts...)

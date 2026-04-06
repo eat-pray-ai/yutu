@@ -55,12 +55,12 @@ func TestNewComment(t *testing.T) {
 			},
 			want: &Comment{
 				Fields: &common.Fields{
-					Service:   svc,
-					Parts:     []string{"id", "snippet"},
-					Output:    "json",
-					Ids:       []string{"comment1", "comment2"},
+					Service:    svc,
+					Parts:      []string{"id", "snippet"},
+					Output:     "json",
+					Ids:        []string{"comment1", "comment2"},
 					MaxResults: 50,
-					ChannelId: "channel123",
+					ChannelId:  "channel123",
 				},
 				AuthorChannelId:  "author123",
 				CanRate:          &canRateTrue,
@@ -242,21 +242,23 @@ func TestComment_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write(
-							[]byte(`{
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write(
+								[]byte(`{
 					"items": [
 						{"id": "comment-1", "snippet": {"textOriginal": "Comment 1"}}
 					]
 				}`),
-						)
-					},
-				))
+							)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)
@@ -318,11 +320,12 @@ func TestComment_Get_Pagination(t *testing.T) {
 }
 
 func TestComment_List(t *testing.T) {
-	svc := common.NewTestService(t, http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write(
-				[]byte(`{
+	svc := common.NewTestService(
+		t, http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(
+					[]byte(`{
 			"items": [
 				{
 					"id": "comment-1",
@@ -334,9 +337,10 @@ func TestComment_List(t *testing.T) {
 				}
 			]
 		}`),
-			)
-		},
-	))
+				)
+			},
+		),
+	)
 
 	tests := []struct {
 		name    string
@@ -440,15 +444,17 @@ func TestComment_Insert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						_, _ = w.Write([]byte(`{"id": "new-comment-id"}`))
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							_, _ = w.Write([]byte(`{"id": "new-comment-id"}`))
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)
@@ -509,21 +515,23 @@ func TestComment_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.Header().Set("Content-Type", "application/json")
-						if r.Method == "GET" {
-							_, _ = w.Write(
-								[]byte(`{"items": [{"id": "comment-id", "snippet": {"textOriginal": "Old Text"}}]}`),
-							)
-						} else {
-							_, _ = w.Write([]byte(`{"id": "comment-id", "snippet": {"textOriginal": "Updated Text"}}`))
-						}
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.Header().Set("Content-Type", "application/json")
+							if r.Method == "GET" {
+								_, _ = w.Write(
+									[]byte(`{"items": [{"id": "comment-id", "snippet": {"textOriginal": "Old Text"}}]}`),
+								)
+							} else {
+								_, _ = w.Write([]byte(`{"id": "comment-id", "snippet": {"textOriginal": "Updated Text"}}`))
+							}
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)
@@ -560,14 +568,16 @@ func TestComment_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)
@@ -607,14 +617,16 @@ func TestComment_MarkAsSpam(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)
@@ -680,14 +692,16 @@ func TestComment_SetModerationStatus(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(t, http.HandlerFunc(
-					func(w http.ResponseWriter, r *http.Request) {
-						if tt.verify != nil {
-							tt.verify(r)
-						}
-						w.WriteHeader(http.StatusNoContent)
-					},
-				))
+				svc := common.NewTestService(
+					t, http.HandlerFunc(
+						func(w http.ResponseWriter, r *http.Request) {
+							if tt.verify != nil {
+								tt.verify(r)
+							}
+							w.WriteHeader(http.StatusNoContent)
+						},
+					),
+				)
 
 				opts := append([]Option{WithService(svc)}, tt.opts...)
 				c := NewComment(opts...)

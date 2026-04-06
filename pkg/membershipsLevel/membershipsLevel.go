@@ -58,9 +58,12 @@ func (m *MembershipsLevel) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(m.Output, levels, writer, table.Row{"ID", "Display Name"}, func(ml *youtube.MembershipsLevel) table.Row {
-		return table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName}
-	})
+	common.PrintList(
+		m.Output, levels, writer, table.Row{"ID", "Display Name"},
+		func(ml *youtube.MembershipsLevel) table.Row {
+			return table.Row{ml.Id, ml.Snippet.LevelDetails.DisplayName}
+		},
+	)
 	return nil
 }
 

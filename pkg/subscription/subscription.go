@@ -83,9 +83,12 @@ func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 		call = call.Order(s.Order)
 	}
 
-	return common.Paginate(s.Fields, call, func(r *youtube.SubscriptionListResponse) ([]*youtube.Subscription, string) {
-		return r.Items, r.NextPageToken
-	}, errGetSubscription)
+	return common.Paginate(
+		s.Fields, call,
+		func(r *youtube.SubscriptionListResponse) ([]*youtube.Subscription, string) {
+			return r.Items, r.NextPageToken
+		}, errGetSubscription,
+	)
 }
 
 func (s *Subscription) List(writer io.Writer) error {
@@ -94,18 +97,22 @@ func (s *Subscription) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(s.Output, subscriptions, writer, table.Row{"ID", "Kind", "Resource ID", "Channel Title"}, func(sub *youtube.Subscription) table.Row {
-		var resourceId string
-		switch sub.Snippet.ResourceId.Kind {
-		case "youtube#video":
-			resourceId = sub.Snippet.ResourceId.VideoId
-		case "youtube#channel":
-			resourceId = sub.Snippet.ResourceId.ChannelId
-		case "youtube#playlist":
-			resourceId = sub.Snippet.ResourceId.PlaylistId
-		}
-		return table.Row{sub.Id, sub.Snippet.ResourceId.Kind, resourceId, sub.Snippet.Title}
-	})
+	common.PrintList(
+		s.Output, subscriptions, writer,
+		table.Row{"ID", "Kind", "Resource ID", "Channel Title"},
+		func(sub *youtube.Subscription) table.Row {
+			var resourceId string
+			switch sub.Snippet.ResourceId.Kind {
+			case "youtube#video":
+				resourceId = sub.Snippet.ResourceId.VideoId
+			case "youtube#channel":
+				resourceId = sub.Snippet.ResourceId.ChannelId
+			case "youtube#playlist":
+				resourceId = sub.Snippet.ResourceId.PlaylistId
+			}
+			return table.Row{sub.Id, sub.Snippet.ResourceId.Kind, resourceId, sub.Snippet.Title}
+		},
+	)
 	return err
 }
 
@@ -130,7 +137,9 @@ func (s *Subscription) Insert(writer io.Writer) error {
 		return errors.Join(errInsertSubscription, err)
 	}
 
-	common.PrintResult(s.Output, res, writer, "Subscription inserted: %s\n", res.Id)
+	common.PrintResult(
+		s.Output, res, writer, "Subscription inserted: %s\n", res.Id,
+	)
 	return nil
 }
 

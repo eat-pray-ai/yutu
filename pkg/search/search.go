@@ -151,9 +151,12 @@ func (s *Search) Get() ([]*youtube.SearchResult, error) {
 		call = call.VideoType(s.VideoType)
 	}
 
-	return common.Paginate(s.Fields, call, func(r *youtube.SearchListResponse) ([]*youtube.SearchResult, string) {
-		return r.Items, r.NextPageToken
-	}, errGetSearch)
+	return common.Paginate(
+		s.Fields, call,
+		func(r *youtube.SearchListResponse) ([]*youtube.SearchResult, string) {
+			return r.Items, r.NextPageToken
+		}, errGetSearch,
+	)
 }
 
 func (s *Search) List(writer io.Writer) error {
@@ -162,18 +165,21 @@ func (s *Search) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(s.Output, results, writer, table.Row{"Kind", "Title", "Resource ID"}, func(r *youtube.SearchResult) table.Row {
-		var resourceId string
-		switch r.Id.Kind {
-		case "youtube#video":
-			resourceId = r.Id.VideoId
-		case "youtube#channel":
-			resourceId = r.Id.ChannelId
-		case "youtube#playlist":
-			resourceId = r.Id.PlaylistId
-		}
-		return table.Row{r.Id.Kind, r.Snippet.Title, resourceId}
-	})
+	common.PrintList(
+		s.Output, results, writer, table.Row{"Kind", "Title", "Resource ID"},
+		func(r *youtube.SearchResult) table.Row {
+			var resourceId string
+			switch r.Id.Kind {
+			case "youtube#video":
+				resourceId = r.Id.VideoId
+			case "youtube#channel":
+				resourceId = r.Id.ChannelId
+			case "youtube#playlist":
+				resourceId = r.Id.PlaylistId
+			}
+			return table.Row{r.Id.Kind, r.Snippet.Title, resourceId}
+		},
+	)
 	return err
 }
 

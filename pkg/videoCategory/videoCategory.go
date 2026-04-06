@@ -65,9 +65,12 @@ func (vc *VideoCategory) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(vc.Output, categories, writer, table.Row{"ID", "Title", "Assignable"}, func(c *youtube.VideoCategory) table.Row {
-		return table.Row{c.Id, c.Snippet.Title, c.Snippet.Assignable}
-	})
+	common.PrintList(
+		vc.Output, categories, writer, table.Row{"ID", "Title", "Assignable"},
+		func(c *youtube.VideoCategory) table.Row {
+			return table.Row{c.Id, c.Snippet.Title, c.Snippet.Assignable}
+		},
+	)
 	return nil
 }
 

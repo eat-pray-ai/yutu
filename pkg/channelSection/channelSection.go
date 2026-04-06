@@ -81,9 +81,12 @@ func (cs *ChannelSection) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(cs.Output, channelSections, writer, table.Row{"ID", "Channel ID", "Title"}, func(s *youtube.ChannelSection) table.Row {
-		return table.Row{s.Id, s.Snippet.ChannelId, s.Snippet.Title}
-	})
+	common.PrintList(
+		cs.Output, channelSections, writer, table.Row{"ID", "Channel ID", "Title"},
+		func(s *youtube.ChannelSection) table.Row {
+			return table.Row{s.Id, s.Snippet.ChannelId, s.Snippet.Title}
+		},
+	)
 	return nil
 }
 

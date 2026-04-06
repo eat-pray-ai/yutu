@@ -69,9 +69,12 @@ func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
 		call = call.VideoId(pi.VideoId)
 	}
 
-	return common.Paginate(pi.Fields, call, func(r *youtube.PlaylistItemListResponse) ([]*youtube.PlaylistItem, string) {
-		return r.Items, r.NextPageToken
-	}, errGetPlaylistItem)
+	return common.Paginate(
+		pi.Fields, call,
+		func(r *youtube.PlaylistItemListResponse) ([]*youtube.PlaylistItem, string) {
+			return r.Items, r.NextPageToken
+		}, errGetPlaylistItem,
+	)
 }
 
 func (pi *PlaylistItem) List(writer io.Writer) error {
@@ -80,26 +83,30 @@ func (pi *PlaylistItem) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(pi.Output, playlistItems, writer, table.Row{"ID", "Title", "Kind", "Resource ID"}, func(item *youtube.PlaylistItem) table.Row {
-		title := ""
-		kind := ""
-		resourceId := ""
-		if item.Snippet != nil {
-			title = item.Snippet.Title
-			if item.Snippet.ResourceId != nil {
-				kind = item.Snippet.ResourceId.Kind
-				switch kind {
-				case "youtube#video":
-					resourceId = item.Snippet.ResourceId.VideoId
-				case "youtube#channel":
-					resourceId = item.Snippet.ResourceId.ChannelId
-				case "youtube#playlist":
-					resourceId = item.Snippet.ResourceId.PlaylistId
+	common.PrintList(
+		pi.Output, playlistItems, writer,
+		table.Row{"ID", "Title", "Kind", "Resource ID"},
+		func(item *youtube.PlaylistItem) table.Row {
+			title := ""
+			kind := ""
+			resourceId := ""
+			if item.Snippet != nil {
+				title = item.Snippet.Title
+				if item.Snippet.ResourceId != nil {
+					kind = item.Snippet.ResourceId.Kind
+					switch kind {
+					case "youtube#video":
+						resourceId = item.Snippet.ResourceId.VideoId
+					case "youtube#channel":
+						resourceId = item.Snippet.ResourceId.ChannelId
+					case "youtube#playlist":
+						resourceId = item.Snippet.ResourceId.PlaylistId
+					}
 				}
 			}
-		}
-		return table.Row{item.Id, title, kind, resourceId}
-	})
+			return table.Row{item.Id, title, kind, resourceId}
+		},
+	)
 	return err
 }
 
@@ -151,7 +158,9 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 		return errors.Join(errInsertPlaylistItem, err)
 	}
 
-	common.PrintResult(pi.Output, res, writer, "Playlist Item inserted: %s\n", res.Id)
+	common.PrintResult(
+		pi.Output, res, writer, "Playlist Item inserted: %s\n", res.Id,
+	)
 	return nil
 }
 
@@ -192,7 +201,9 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 		return errors.Join(errUpdatePlaylistItem, err)
 	}
 
-	common.PrintResult(pi.Output, res, writer, "Playlist Item updated: %s\n", res.Id)
+	common.PrintResult(
+		pi.Output, res, writer, "Playlist Item updated: %s\n", res.Id,
+	)
 	return nil
 }
 

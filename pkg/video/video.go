@@ -119,9 +119,12 @@ func (v *Video) Get() ([]*youtube.Video, error) {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
 
-	return common.Paginate(v.Fields, call, func(r *youtube.VideoListResponse) ([]*youtube.Video, string) {
-		return r.Items, r.NextPageToken
-	}, errGetVideo)
+	return common.Paginate(
+		v.Fields, call,
+		func(r *youtube.VideoListResponse) ([]*youtube.Video, string) {
+			return r.Items, r.NextPageToken
+		}, errGetVideo,
+	)
 }
 
 func (v *Video) List(writer io.Writer) error {
@@ -130,19 +133,22 @@ func (v *Video) List(writer io.Writer) error {
 		return err
 	}
 
-	common.PrintList(v.Output, videos, writer, table.Row{"ID", "Title", "Channel ID", "Views"}, func(video *youtube.Video) table.Row {
-		title := ""
-		channelId := ""
-		var views uint64
-		if video.Snippet != nil {
-			title = video.Snippet.Title
-			channelId = video.Snippet.ChannelId
-		}
-		if video.Statistics != nil {
-			views = video.Statistics.ViewCount
-		}
-		return table.Row{video.Id, title, channelId, views}
-	})
+	common.PrintList(
+		v.Output, videos, writer, table.Row{"ID", "Title", "Channel ID", "Views"},
+		func(video *youtube.Video) table.Row {
+			title := ""
+			channelId := ""
+			var views uint64
+			if video.Snippet != nil {
+				title = video.Snippet.Title
+				channelId = video.Snippet.ChannelId
+			}
+			if video.Statistics != nil {
+				views = video.Statistics.ViewCount
+			}
+			return table.Row{video.Id, title, channelId, views}
+		},
+	)
 	return err
 }
 

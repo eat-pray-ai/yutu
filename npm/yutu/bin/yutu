@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { execFileSync } = require("child_process");
+const {execFileSync} = require("child_process");
 const os = require("os");
 
 const PLATFORMS = {
@@ -21,7 +21,7 @@ function getBinaryPath() {
   if (!pkg) {
     throw new Error(
       `Unsupported platform: ${platformKey}. ` +
-        `yutu supports: ${Object.keys(PLATFORMS).join(", ")}`
+      `yutu supports: ${Object.keys(PLATFORMS).join(", ")}`
     );
   }
 
@@ -40,16 +40,16 @@ function getBinaryPath() {
       }
       throw new Error(
         `You installed yutu for ${key} but this platform is ${platformKey}.\n` +
-          `This can happen when copying node_modules between platforms.\n` +
-          `Run "npm install" on this platform to fix.`
+        `This can happen when copying node_modules between platforms.\n` +
+        `Run "npm install" on this platform to fix.`
       );
     }
 
     throw new Error(
       `The package "${pkg}" could not be found, and is needed by yutu.\n\n` +
-        `If you installed with npm, make sure you don't use the "--no-optional"\n` +
-        `or "--omit=optional" flags. The "optionalDependencies" feature is used\n` +
-        `by yutu to install the correct binary for your platform.`
+      `If you installed with npm, make sure you don't use the "--no-optional"\n` +
+      `or "--omit=optional" flags. The "optionalDependencies" feature is used\n` +
+      `by yutu to install the correct binary for your platform.`
     );
   }
 }

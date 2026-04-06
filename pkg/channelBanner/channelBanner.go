@@ -64,7 +64,9 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 		return errors.Join(errInsertChannelBanner, err)
 	}
 
-	common.PrintResult(cb.Output, res, writer, "ChannelBanner inserted: %s\n", res.Url)
+	common.PrintResult(
+		cb.Output, res, writer, "ChannelBanner inserted: %s\n", res.Url,
+	)
 	return nil
 }
 
