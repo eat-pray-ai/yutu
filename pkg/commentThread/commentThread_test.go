@@ -5,11 +5,10 @@ package commentThread
 
 import (
 	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -308,34 +307,7 @@ func TestCommentThread_Get(t *testing.T) {
 }
 
 func TestCommentThread_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "thread-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "thread-20"}, {"id": "thread-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
+	svc := common.NewTestService(t, common.PaginationHandler("thread"))
 	c := NewCommentThread(
 		WithService(svc),
 		WithMaxResults(22),
@@ -350,12 +322,9 @@ func TestCommentThread_Get_Pagination(t *testing.T) {
 }
 
 func TestCommentThread_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(
+		t,
+		`{
 			"items": [
 				{
 					"id": "thread-1",
@@ -370,69 +339,17 @@ func TestCommentThread_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			c := NewCommentThread(
+				WithService(svc),
+				WithOutput(output),
+				WithIds([]string{"thread-1"}),
+				WithMaxResults(1),
+			)
+			return c.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list comment threads json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithIds([]string{"thread-1"}),
-				WithMaxResults(1),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list comment threads yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithIds([]string{"thread-1"}),
-				WithMaxResults(1),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list comment threads table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithIds([]string{"thread-1"}),
-				WithMaxResults(1),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				c := NewCommentThread(tt.opts...)
-				var buf bytes.Buffer
-				if err := c.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"CommentThread.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("CommentThread.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestCommentThread_Insert(t *testing.T) {

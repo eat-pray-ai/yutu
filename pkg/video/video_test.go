@@ -6,7 +6,7 @@ package video
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io"
 	"math"
 	"mime"
 	"mime/multipart"
@@ -401,33 +401,7 @@ func TestVideo_Get(t *testing.T) {
 }
 
 func TestVideo_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "video-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "video-20"}, {"id": "video-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
+	svc := common.NewTestService(t, common.PaginationHandler("video"))
 
 	v := NewVideo(
 		WithService(svc),
@@ -443,82 +417,32 @@ func TestVideo_Get_Pagination(t *testing.T) {
 }
 
 func TestVideo_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
-			"items": [
-				{
-					"id": "video-1",
-					"snippet": {
-						"channelId": "channel-1",
-						"title": "Video 1"
-					},
-					"statistics": {
-						"viewCount": 100
-					}
+	mockResponse := `{
+		"items": [
+			{
+				"id": "video-1",
+				"snippet": {
+					"channelId": "channel-1",
+					"title": "Video 1"
+				},
+				"statistics": {
+					"viewCount": 100
 				}
-			]
-		}`),
-				)
-			},
-		),
+			}
+		]
+	}`
+
+	common.RunListTest(
+		t, mockResponse,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			v := NewVideo(
+				WithService(svc),
+				WithOutput(output),
+				WithIds([]string{"video-1"}),
+			)
+			return v.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list videos json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithIds([]string{"video-1"}),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list videos yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithIds([]string{"video-1"}),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list videos table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithIds([]string{"video-1"}),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				v := NewVideo(tt.opts...)
-				var buf bytes.Buffer
-				if err := v.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Video.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Video.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestVideo_Insert(t *testing.T) {

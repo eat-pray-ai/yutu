@@ -4,12 +4,10 @@
 package member
 
 import (
-	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -233,33 +231,7 @@ func TestMember_Get(t *testing.T) {
 }
 
 func TestMember_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = `{"kind": "youtube#member"}`
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"kind": "youtube#member"}, {"kind": "youtube#member"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
+	svc := common.NewTestService(t, common.PaginationHandler("member"))
 
 	m := NewMember(
 		WithService(svc),
@@ -275,78 +247,28 @@ func TestMember_Get_Pagination(t *testing.T) {
 }
 
 func TestMember_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
-			"items": [
-				{
-					"snippet": {
-						"memberDetails": {
-							"channelId": "channel-1",
-							"displayName": "Member 1"
-						}
+	mockResponse := `{
+		"items": [
+			{
+				"snippet": {
+					"memberDetails": {
+						"channelId": "channel-1",
+						"displayName": "Member 1"
 					}
 				}
-			]
-		}`),
-				)
-			},
-		),
+			}
+		]
+	}`
+
+	common.RunListTest(
+		t, mockResponse,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			m := NewMember(
+				WithService(svc),
+				WithOutput(output),
+				WithMaxResults(1),
+			)
+			return m.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list members json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithMaxResults(1),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list members yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithMaxResults(1),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list members table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithMaxResults(1),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				m := NewMember(tt.opts...)
-				var buf bytes.Buffer
-				if err := m.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Member.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Member.List() output is empty")
-				}
-			},
-		)
-	}
 }

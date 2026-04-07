@@ -6,7 +6,7 @@ package playlist
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
@@ -322,38 +322,8 @@ func TestPlaylist_Get(t *testing.T) {
 }
 
 func TestPlaylist_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "playlist-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "playlist-20"}, {"id": "playlist-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
-	p := NewPlaylist(
-		WithService(svc),
-		WithMaxResults(22),
-	)
+	svc := common.NewTestService(t, common.PaginationHandler("playlist"))
+	p := NewPlaylist(WithService(svc), WithMaxResults(22))
 	got, err := p.Get()
 	if err != nil {
 		t.Errorf("Playlist.Get() error = %v", err)
@@ -364,12 +334,7 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylist_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "playlist-1",
@@ -379,64 +344,12 @@ func TestPlaylist_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			p := NewPlaylist(WithService(svc), WithOutput(output), WithIds([]string{"playlist-1"}))
+			return p.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list playlists json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithIds([]string{"playlist-1"}),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list playlists yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithIds([]string{"playlist-1"}),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list playlists table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithIds([]string{"playlist-1"}),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				p := NewPlaylist(tt.opts...)
-				var buf bytes.Buffer
-				if err := p.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Playlist.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Playlist.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestPlaylist_Insert(t *testing.T) {

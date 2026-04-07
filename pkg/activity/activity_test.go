@@ -4,12 +4,10 @@
 package activity
 
 import (
-	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -325,32 +323,7 @@ func TestActivity_Get(t *testing.T) {
 }
 
 func TestActivity_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = `{"id": "id"}`
-			}
-			jsonItems := "[" + strings.Join(items, ",") + "]"
-			_, _ = fmt.Fprintf(
-				w, `{
-                "items": %s,
-                "nextPageToken": "page-2"
-            }`, jsonItems,
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-                "items": [{"id": "21"}, {"id": "22"}],
-                "nextPageToken": ""
-            }`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
+	svc := common.NewTestService(t, common.PaginationHandler("activity"))
 	a := NewActivity(
 		WithService(svc),
 		WithChannelId("channel-id"),
@@ -366,79 +339,16 @@ func TestActivity_Get_Pagination(t *testing.T) {
 }
 
 func TestActivity_List(t *testing.T) {
-	mockResponse := `{
-		"items": [
-			{
-				"id": "activity-1",
-				"snippet": {
-					"title": "Activity 1",
-					"type": "upload",
-					"publishedAt": "2024-01-01T00:00:00Z"
-				}
-			}
-		],
-		"nextPageToken": ""
-	}`
-
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write([]byte(mockResponse))
-			},
-		),
+	common.RunListTest(
+		t,
+		`{"items": [{"id": "activity-1", "snippet": {"title": "Activity 1", "type": "upload", "publishedAt": "2024-01-01T00:00:00Z"}}], "nextPageToken": ""}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			a := NewActivity(
+				WithService(svc),
+				WithOutput(output),
+				WithChannelId("channel-id"),
+			)
+			return a.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list activities json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithChannelId("channel-id"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list activities yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithChannelId("channel-id"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list activities table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithChannelId("channel-id"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				a := NewActivity(tt.opts...)
-				var buf bytes.Buffer
-				if err := a.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Activity.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Activity.List() output is empty")
-				}
-			},
-		)
-	}
 }

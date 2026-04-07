@@ -5,7 +5,7 @@ package playlistImage
 
 import (
 	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"os"
@@ -250,38 +250,8 @@ func TestPlaylistImage_Get(t *testing.T) {
 }
 
 func TestPlaylistImage_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "image-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "image-20"}, {"id": "image-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
-	pi := NewPlaylistImage(
-		WithService(svc),
-		WithMaxResults(22),
-	)
+	svc := common.NewTestService(t, common.PaginationHandler("image"))
+	pi := NewPlaylistImage(WithService(svc), WithMaxResults(22))
 	got, err := pi.Get()
 	if err != nil {
 		t.Errorf("PlaylistImage.Get() error = %v", err)
@@ -292,12 +262,7 @@ func TestPlaylistImage_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylistImage_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "image-1",
@@ -308,63 +273,12 @@ func TestPlaylistImage_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			pi := NewPlaylistImage(WithService(svc), WithOutput(output))
+			return pi.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list playlist images json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list playlist images yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list playlist images table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				pi := NewPlaylistImage(tt.opts...)
-				var buf bytes.Buffer
-				if err := pi.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"PlaylistImage.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("PlaylistImage.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestPlaylistImage_Insert(t *testing.T) {

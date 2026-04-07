@@ -4,7 +4,7 @@
 package membershipsLevel
 
 import (
-	"bytes"
+	"io"
 	"net/http"
 	"reflect"
 	"testing"
@@ -100,12 +100,7 @@ func TestMembershipsLevel_Get(t *testing.T) {
 }
 
 func TestMembershipsLevel_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "level-1",
@@ -116,61 +111,10 @@ func TestMembershipsLevel_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			m := NewMembershipsLevel(WithService(svc), WithOutput(output))
+			return m.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list memberships levels json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list memberships levels yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list memberships levels table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				m := NewMembershipsLevel(tt.opts...)
-				var buf bytes.Buffer
-				if err := m.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"MembershipsLevel.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("MembershipsLevel.List() output is empty")
-				}
-			},
-		)
-	}
 }

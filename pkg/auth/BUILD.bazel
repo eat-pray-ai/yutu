@@ -27,6 +27,7 @@ go_test(
     embed = [":auth"],
     deps = [
         "//pkg",
+        "@org_golang_google_api//youtube/v3:youtube",
         "@org_golang_x_oauth2//:oauth2",
     ],
 )

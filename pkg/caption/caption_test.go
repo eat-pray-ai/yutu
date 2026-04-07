@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -308,80 +309,18 @@ func TestCaption_Get(t *testing.T) {
 }
 
 func TestCaption_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
-			"items": [
-				{
-					"id": "caption-1",
-					"snippet": {
-						"videoId": "video-1",
-						"name": "English",
-						"language": "en"
-					}
-				}
-			]
-		}`),
-				)
-			},
-		),
+	common.RunListTest(
+		t,
+		`{"items": [{"id": "caption-1", "snippet": {"videoId": "video-1", "name": "English", "language": "en"}}]}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			c := NewCaption(
+				WithService(svc),
+				WithOutput(output),
+				WithVideoId("video-1"),
+			)
+			return c.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list captions json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithVideoId("video-1"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list captions yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithVideoId("video-1"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list captions table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithVideoId("video-1"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				c := NewCaption(tt.opts...)
-				var buf bytes.Buffer
-				if err := c.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Caption.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Caption.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestCaption_Insert(t *testing.T) {

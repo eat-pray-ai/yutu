@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "common",
@@ -15,6 +15,16 @@ go_library(
         "@com_github_jedib0t_go_pretty_v6//table",
         "@org_golang_google_api//googleapi",
         "@org_golang_google_api//option",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "common_test",
+    srcs = ["common_test.go"],
+    embed = [":common"],
+    deps = [
+        "@com_github_jedib0t_go_pretty_v6//table",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

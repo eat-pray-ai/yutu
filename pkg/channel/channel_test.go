@@ -5,11 +5,10 @@ package channel
 
 import (
 	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -412,34 +411,7 @@ func TestChannel_Get(t *testing.T) {
 }
 
 func TestChannel_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "channel-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "channel-20"}, {"id": "channel-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
+	svc := common.NewTestService(t, common.PaginationHandler("channel"))
 	c := NewChannel(
 		WithService(svc),
 		WithMaxResults(22),
@@ -454,79 +426,18 @@ func TestChannel_Get_Pagination(t *testing.T) {
 }
 
 func TestChannel_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
-			"items": [
-				{
-					"id": "channel-1",
-					"snippet": {
-						"title": "Channel 1",
-						"country": "US"
-					}
-				}
-			]
-		}`),
-				)
-			},
-		),
+	common.RunListTest(
+		t,
+		`{"items": [{"id": "channel-1", "snippet": {"title": "Channel 1", "country": "US"}}]}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			c := NewChannel(
+				WithService(svc),
+				WithOutput(output),
+				WithIds([]string{"channel-1"}),
+			)
+			return c.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list channels json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithIds([]string{"channel-1"}),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list channels yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithIds([]string{"channel-1"}),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list channels table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithIds([]string{"channel-1"}),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				c := NewChannel(tt.opts...)
-				var buf bytes.Buffer
-				if err := c.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Channel.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Channel.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestChannel_Update(t *testing.T) {

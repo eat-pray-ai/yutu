@@ -4,12 +4,10 @@
 package superChatEvent
 
 import (
-	"bytes"
-	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -190,38 +188,8 @@ func TestSuperChatEvent_Get(t *testing.T) {
 }
 
 func TestSuperChatEvent_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": "event-%d"}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": "event-20"}, {"id": "event-21"}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
-	s := NewSuperChatEvent(
-		WithService(svc),
-		WithMaxResults(22),
-	)
+	svc := common.NewTestService(t, common.PaginationHandler("event"))
+	s := NewSuperChatEvent(WithService(svc), WithMaxResults(22))
 	got, err := s.Get()
 	if err != nil {
 		t.Errorf("SuperChatEvent.Get() error = %v", err)
@@ -232,12 +200,7 @@ func TestSuperChatEvent_Get_Pagination(t *testing.T) {
 }
 
 func TestSuperChatEvent_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "event-1",
@@ -250,61 +213,10 @@ func TestSuperChatEvent_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			s := NewSuperChatEvent(WithService(svc), WithOutput(output))
+			return s.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list super chat events json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list super chat events yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list super chat events table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				s := NewSuperChatEvent(tt.opts...)
-				var buf bytes.Buffer
-				if err := s.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"SuperChatEvent.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("SuperChatEvent.List() output is empty")
-				}
-			},
-		)
-	}
 }

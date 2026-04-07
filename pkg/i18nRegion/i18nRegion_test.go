@@ -4,7 +4,7 @@
 package i18nRegion
 
 import (
-	"bytes"
+	"io"
 	"net/http"
 	"reflect"
 	"testing"
@@ -135,12 +135,7 @@ func TestI18nRegion_Get(t *testing.T) {
 }
 
 func TestI18nRegion_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "US",
@@ -150,59 +145,10 @@ func TestI18nRegion_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			i := NewI18nRegion(WithService(svc), WithOutput(output))
+			return i.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list i18n regions json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list i18n regions yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list i18n regions table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				i := NewI18nRegion(tt.opts...)
-				var buf bytes.Buffer
-				if err := i.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("I18nRegion.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("I18nRegion.List() output is empty")
-				}
-			},
-		)
-	}
 }

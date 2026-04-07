@@ -4,8 +4,8 @@
 package search
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
@@ -446,34 +446,13 @@ func TestSearch_Get(t *testing.T) {
 }
 
 func TestSearch_Get_Pagination(t *testing.T) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		pageToken := r.URL.Query().Get("pageToken")
-		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
-			items := make([]string, 20)
-			for i := range 20 {
-				items[i] = fmt.Sprintf(`{"id": {"videoId": "video-%d"}}`, i)
-			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{
-				"items": [%s],
-				"nextPageToken": "page-2"
-			}`, strings.Join(items, ","),
-				),
-			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(`{
-				"items": [{"id": {"videoId": "video-20"}}, {"id": {"videoId": "video-21"}}],
-				"nextPageToken": ""
-			}`),
-			)
-		}
-	}
-	svc := common.NewTestService(t, http.HandlerFunc(handler))
-
+	svc := common.NewTestService(
+		t, common.PaginationHandler(
+			"search", func(prefix string, i int) string {
+				return fmt.Sprintf(`{"id": {"videoId": "%s-%d"}}`, prefix, i)
+			},
+		),
+	)
 	s := NewSearch(
 		WithService(svc),
 		WithMaxResults(22),
@@ -488,12 +467,9 @@ func TestSearch_Get_Pagination(t *testing.T) {
 }
 
 func TestSearch_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(
+		t,
+		`{
 			"items": [
 				{
 					"id": {
@@ -505,62 +481,14 @@ func TestSearch_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			s := NewSearch(
+				WithService(svc),
+				WithOutput(output),
+				WithQ("test"),
+			)
+			return s.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list search results json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithQ("test"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list search results yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithQ("test"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list search results table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithQ("test"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				s := NewSearch(tt.opts...)
-				var buf bytes.Buffer
-				if err := s.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Search.List() error = %v, wantErr %v", err, tt.wantErr)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("Search.List() output is empty")
-				}
-			},
-		)
-	}
 }

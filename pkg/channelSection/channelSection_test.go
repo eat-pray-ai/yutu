@@ -5,6 +5,7 @@ package channelSection
 
 import (
 	"bytes"
+	"io"
 	"net/http"
 	"reflect"
 	"testing"
@@ -260,12 +261,7 @@ func TestChannelSection_Get(t *testing.T) {
 }
 
 func TestChannelSection_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
+	common.RunListTest(t, `{
 			"items": [
 				{
 					"id": "section-1",
@@ -275,66 +271,12 @@ func TestChannelSection_List(t *testing.T) {
 					}
 				}
 			]
-		}`),
-				)
-			},
-		),
+		}`,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			cs := NewChannelSection(WithService(svc), WithOutput(output), WithChannelId("channel-1"))
+			return cs.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list channel sections json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithChannelId("channel-1"),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list channel sections yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithChannelId("channel-1"),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list channel sections table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithChannelId("channel-1"),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				cs := NewChannelSection(tt.opts...)
-				var buf bytes.Buffer
-				if err := cs.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"ChannelSection.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("ChannelSection.List() output is empty")
-				}
-			},
-		)
-	}
 }
 
 func TestChannelSection_Delete(t *testing.T) {

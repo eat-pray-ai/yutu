@@ -4,7 +4,7 @@
 package videoCategory
 
 import (
-	"bytes"
+	"io"
 	"net/http"
 	"reflect"
 	"testing"
@@ -187,79 +187,27 @@ func TestVideoCategory_Get(t *testing.T) {
 }
 
 func TestVideoCategory_List(t *testing.T) {
-	svc := common.NewTestService(
-		t, http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				_, _ = w.Write(
-					[]byte(`{
-			"items": [
-				{
-					"id": "category-1",
-					"snippet": {
-						"title": "Category 1",
-						"assignable": true
-					}
+	mockResponse := `{
+		"items": [
+			{
+				"id": "category-1",
+				"snippet": {
+					"title": "Category 1",
+					"assignable": true
 				}
-			]
-		}`),
-				)
-			},
-		),
+			}
+		]
+	}`
+
+	common.RunListTest(
+		t, mockResponse,
+		func(svc *youtube.Service, output string) func(io.Writer) error {
+			vc := NewVideoCategory(
+				WithService(svc),
+				WithOutput(output),
+				WithIds([]string{"category-1"}),
+			)
+			return vc.List
+		},
 	)
-
-	tests := []struct {
-		name    string
-		opts    []Option
-		output  string
-		wantErr bool
-	}{
-		{
-			name: "list video categories json",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("json"),
-				WithIds([]string{"category-1"}),
-			},
-			output:  "json",
-			wantErr: false,
-		},
-		{
-			name: "list video categories yaml",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("yaml"),
-				WithIds([]string{"category-1"}),
-			},
-			output:  "yaml",
-			wantErr: false,
-		},
-		{
-			name: "list video categories table",
-			opts: []Option{
-				WithService(svc),
-				WithOutput("table"),
-				WithIds([]string{"category-1"}),
-			},
-			output:  "table",
-			wantErr: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				vc := NewVideoCategory(tt.opts...)
-				var buf bytes.Buffer
-				if err := vc.List(&buf); (err != nil) != tt.wantErr {
-					t.Errorf(
-						"VideoCategory.List() error = %v, wantErr %v", err, tt.wantErr,
-					)
-				}
-				if buf.Len() == 0 {
-					t.Errorf("VideoCategory.List() output is empty")
-				}
-			},
-		)
-	}
 }
