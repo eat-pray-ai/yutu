@@ -17,6 +17,10 @@ func TestInitLogger(t *testing.T) {
 		{"info", "info"},
 		{"warn", "warn"},
 		{"error", "error"},
+		{"DEBUG uppercase", "DEBUG"},
+		{"INFO uppercase", "INFO"},
+		{"WARN uppercase", "WARN"},
+		{"ERROR uppercase", "ERROR"},
 		{"default", ""},
 	}
 

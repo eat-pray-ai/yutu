@@ -43,6 +43,16 @@ func TestStrToBoolPtr(t *testing.T) {
 			args: args{b: new("")},
 			want: nil,
 		},
+		{
+			name: "null",
+			args: args{b: new("null")},
+			want: nil,
+		},
+		{
+			name: "NULL",
+			args: args{b: new("NULL")},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(
@@ -73,6 +83,16 @@ func TestGetFileName(t *testing.T) {
 			name: "without extension",
 			args: args{file: "example"},
 			want: "example",
+		},
+		{
+			name: "with path",
+			args: args{file: "/foo/bar/example.txt"},
+			want: "example",
+		},
+		{
+			name: "double extension",
+			args: args{file: "archive.tar.gz"},
+			want: "archive.tar",
 		},
 	}
 	for _, tt := range tests {
@@ -297,6 +317,17 @@ func TestBoolToStrPtr(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+func TestRandomStage(t *testing.T) {
+	s1 := RandomStage()
+	s2 := RandomStage()
+	if s1 == "" {
+		t.Error("RandomStage() returned empty string")
+	}
+	if s1 == s2 {
+		t.Error("RandomStage() returned same value twice")
 	}
 }
 

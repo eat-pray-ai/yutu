@@ -12,10 +12,12 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"testing/iotest"
 	"time"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"golang.org/x/oauth2"
+	"google.golang.org/api/youtube/v3"
 )
 
 // helper to build a minimal valid Google OAuth2 credential JSON.
@@ -225,5 +227,122 @@ func TestSaveToken_InvalidPath(t *testing.T) {
 	err = s.saveToken(tok)
 	if err == nil {
 		t.Fatalf("expected error from saveToken with invalid path, got nil")
+	}
+}
+
+func TestStartWebServer_Success(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to listen: %v", err)
+	}
+	addr := ln.Addr().String()
+	_ = ln.Close()
+
+	redirectURL := fmt.Sprintf("http://%s", addr)
+	s := NewY2BService().(*svc)
+	s.state = "test-state"
+
+	codeCh, err := s.startWebServer(redirectURL)
+	if err != nil {
+		t.Fatalf("startWebServer error: %v", err)
+	}
+
+	// Send the HTTP request in a goroutine to avoid deadlock:
+	// the handler blocks on codeCh <- code until someone reads from codeCh.
+	go func() {
+		resp, err := http.Get(redirectURL + "/?state=test-state&code=auth-code-123")
+		if err == nil {
+			_ = resp.Body.Close()
+		}
+	}()
+
+	select {
+	case code := <-codeCh:
+		if code != "auth-code-123" {
+			t.Errorf("expected code=auth-code-123, got %s", code)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for code")
+	}
+}
+
+func TestSaveToken_Success(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	origRootDir := *pkg.RootDir
+	origRoot := pkg.Root
+	defer func() {
+		pkg.RootDir = &origRootDir
+		pkg.Root = origRoot
+	}()
+
+	pkg.RootDir = &tmpDir
+	root, err := os.OpenRoot(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to open root: %v", err)
+	}
+	pkg.Root = root
+
+	s := NewY2BService().(*svc)
+	s.tokenFile = "token.json"
+
+	tok := &oauth2.Token{AccessToken: "test-token"}
+	err = s.saveToken(tok)
+	if err != nil {
+		t.Fatalf("saveToken returned error: %v", err)
+	}
+
+	data, err := os.ReadFile(tmpDir + "/token.json")
+	if err != nil {
+		t.Fatalf("failed to read saved token file: %v", err)
+	}
+
+	var savedToken oauth2.Token
+	if err := json.Unmarshal(data, &savedToken); err != nil {
+		t.Fatalf("failed to unmarshal saved token: %v", err)
+	}
+	if savedToken.AccessToken != "test-token" {
+		t.Errorf("expected AccessToken=test-token, got %s", savedToken.AccessToken)
+	}
+}
+
+func TestGetConfig_Scopes(t *testing.T) {
+	s := NewY2BService(
+		WithCredential(validCredentialJSON("http://localhost:8216"), os.DirFS(".")),
+	).(*svc)
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig returned error: %v", err)
+	}
+
+	if len(config.Scopes) != 3 {
+		t.Fatalf("expected 3 scopes, got %d", len(config.Scopes))
+	}
+
+	expectedScopes := []string{
+		youtube.YoutubeScope,
+		youtube.YoutubeForceSslScope,
+		youtube.YoutubeChannelMembershipsCreatorScope,
+	}
+	for i, expected := range expectedScopes {
+		if config.Scopes[i] != expected {
+			t.Errorf("scope[%d] = %q, want %q", i, config.Scopes[i], expected)
+		}
+	}
+}
+
+func TestGetCodeFromPrompt_ReadError(t *testing.T) {
+	errReader := iotest.ErrReader(fmt.Errorf("read error"))
+	var out bytes.Buffer
+
+	s := NewY2BService(WithIO(errReader, &out)).(*svc)
+
+	_, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
+	if err == nil {
+		t.Fatalf("expected error from getCodeFromPrompt, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to read prompt") {
+		t.Errorf("expected error to contain %q, got %q", "failed to read prompt", err.Error())
 	}
 }

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright 2026 eat-pray-ai & OpenWaygate
+# SPDX-License-Identifier: Apache-2.0
+
 set -euo pipefail
 
 # Usage: scripts/npm-publish.sh <version> <dist-dir> [--dry-run]
