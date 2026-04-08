@@ -50,6 +50,7 @@ dist/
 /.clwb/
 
 /docs/superpowers
+.worktrees/
 # except for the following files
 !winres/*
 !server.json

@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
 go_library(
     name = "skillgen_lib",
@@ -31,7 +31,6 @@ go_library(
         "//cmd/videoCategory",
         "//cmd/watermark",
         "@com_github_spf13_cobra//:cobra",
-        "@com_github_spf13_pflag//:pflag",
     ],
 )
 
@@ -39,4 +38,10 @@ go_binary(
     name = "skillgen",
     embed = [":skillgen_lib"],
     visibility = ["//:__subpackages__"],
+)
+
+go_test(
+    name = "skillgen_test",
+    srcs = ["main_test.go"],
+    embed = [":skillgen_lib"],
 )

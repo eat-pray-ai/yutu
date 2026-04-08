@@ -15,7 +15,6 @@ import (
 
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
 	// Blank-import every resource package so that its init() registers the
 	// subcommand (and sub-subcommands) on cmd.RootCmd.
@@ -46,165 +45,164 @@ import (
 //go:embed setup.md
 var setupContent string
 
-func main() {
-	out := flag.String("out", "./skills", "output directory for generated skills")
-	flag.Parse()
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-	root := cmd.RootCmd
-	root.InitDefaultHelpCmd()
+type verbEntry struct {
+	name  string
+	short string
+}
 
-	for _, c := range root.Commands() {
-		if !strings.HasPrefix(c.Short, "Manage") {
+type resourceEntry struct {
+	name  string
+	kebab string
+	human string
+	short string
+	long  string
+	verbs []verbEntry
+}
+
+type categoryGroup struct {
+	name      string
+	resources []resourceEntry
+}
+
+// ---------------------------------------------------------------------------
+// Category mapping
+// ---------------------------------------------------------------------------
+
+var categoryOrder = []string{
+	"Content", "Organization", "Community", "Channel", "Discovery", "Metadata",
+}
+
+var categoryMap = map[string]string{
+	"video":                  "Content",
+	"caption":                "Content",
+	"thumbnail":              "Content",
+	"watermark":              "Content",
+	"playlist":               "Organization",
+	"playlistItem":           "Organization",
+	"playlistImage":          "Organization",
+	"comment":                "Community",
+	"commentThread":          "Community",
+	"subscription":           "Community",
+	"member":                 "Community",
+	"membershipsLevel":       "Community",
+	"superChatEvent":         "Community",
+	"channel":                "Channel",
+	"channelBanner":          "Channel",
+	"channelSection":         "Channel",
+	"search":                 "Discovery",
+	"activity":               "Discovery",
+	"videoCategory":          "Metadata",
+	"videoAbuseReportReason": "Metadata",
+	"i18nLanguage":           "Metadata",
+	"i18nRegion":             "Metadata",
+}
+
+// resourceCategory returns the category for a resource, or "Other" if unmapped.
+func resourceCategory(name string) string {
+	if cat, ok := categoryMap[name]; ok {
+		return cat
+	}
+	return "Other"
+}
+
+// collectResource builds a resourceEntry from a cobra resource command.
+func collectResource(c *cobra.Command) resourceEntry {
+	name := c.Name()
+	var verbs []verbEntry
+	for _, sub := range c.Commands() {
+		if sub.Name() == "help" {
 			continue
 		}
-
-		skill := c.Name()
-		kebabSkill := camelToKebab(skill)
-		dir := filepath.Join(*out, "youtube-"+kebabSkill)
-		refDir := filepath.Join(dir, "references")
-
-		if err := os.MkdirAll(refDir, 0o755); err != nil {
-			log.Fatalf("mkdir %s: %v", refDir, err)
-		}
-
-		setupPath := filepath.Join(refDir, "setup.md")
-		if err := writeSetup(setupPath); err != nil {
-			log.Fatalf("write setup %s: %v", setupPath, err)
-		}
-
-		var verbs []*cobra.Command
-		for _, sub := range c.Commands() {
-			if sub.Name() == "help" {
-				continue
-			}
-			verbs = append(verbs, sub)
-		}
-		sort.Slice(
-			verbs, func(i, j int) bool {
-				return verbs[i].Name() < verbs[j].Name()
-			},
-		)
-
-		for _, verb := range verbs {
-			refPath := filepath.Join(refDir, skill+"-"+verb.Name()+".md")
-			if err := writeReference(refPath, c, verb); err != nil {
-				log.Fatalf("write reference %s: %v", refPath, err)
-			}
-		}
-
-		skillPath := filepath.Join(dir, "SKILL.md")
-		if err := writeSkill(skillPath, c, verbs, kebabSkill); err != nil {
-			log.Fatalf("write skill %s: %v", skillPath, err)
-		}
-
-		fmt.Printf("Generated skill: %s (%d verbs)\n", skill, len(verbs))
+		verbs = append(verbs, verbEntry{name: sub.Name(), short: sub.Short})
+	}
+	sort.Slice(verbs, func(i, j int) bool {
+		return verbs[i].name < verbs[j].name
+	})
+	return resourceEntry{
+		name:  name,
+		kebab: camelToKebab(name),
+		human: camelToWords(name),
+		short: c.Short,
+		long:  c.Long,
+		verbs: verbs,
 	}
 }
 
-func writeSetup(path string) error {
-	return os.WriteFile(path, []byte(setupContent), 0o644)
+// groupByCategory groups resources into categories ordered by categoryOrder,
+// with "Other" appended at the end for any unmapped resources.
+func groupByCategory(resources []resourceEntry) []categoryGroup {
+	byCategory := make(map[string][]resourceEntry)
+	for _, r := range resources {
+		cat := resourceCategory(r.name)
+		byCategory[cat] = append(byCategory[cat], r)
+	}
+
+	var groups []categoryGroup
+	for _, cat := range categoryOrder {
+		if rs, ok := byCategory[cat]; ok {
+			sort.Slice(rs, func(i, j int) bool {
+				return rs[i].name < rs[j].name
+			})
+			groups = append(groups, categoryGroup{name: cat, resources: rs})
+			delete(byCategory, cat)
+		}
+	}
+	// Append "Other" for any remaining unmapped categories.
+	if rs, ok := byCategory["Other"]; ok {
+		sort.Slice(rs, func(i, j int) bool {
+			return rs[i].name < rs[j].name
+		})
+		groups = append(groups, categoryGroup{name: "Other", resources: rs})
+	}
+	return groups
 }
 
-// writeReference generates a reference Markdown file for a single verb
-// command, including required-flag indicators and skill-oriented language.
-func writeReference(path string, parent, verb *cobra.Command) error {
+// ---------------------------------------------------------------------------
+// Unified description builder
+// ---------------------------------------------------------------------------
+
+// buildUnifiedDescription constructs the skill description with high-frequency
+// triggers and a broad fallback. Intentionally concise — no exhaustive verb list.
+func buildUnifiedDescription(_ []categoryGroup) string {
+	return "Use when working with YouTube — upload videos, search content, manage playlists and channels, post and moderate comments, handle subscriptions and memberships, add captions, set thumbnails, check analytics, or any YouTube Data API operation via the yutu CLI."
+}
+
+// ---------------------------------------------------------------------------
+// Static content for SKILL.md sections
+// ---------------------------------------------------------------------------
+
+const workflowSummary = `- **Upload a video**: ` + "`yutu video insert --file video.mp4 --title \"...\" --privacy public`" + `, then optionally set thumbnail
+- **Update video metadata**: Fetch current with ` + "`yutu video list --id VIDEO_ID`" + `, then update changed fields
+- **Create playlist + add videos**: Create with ` + "`yutu playlist insert`" + `, find videos with ` + "`yutu search list --forMine`" + `, add with ` + "`yutu playlistItem insert`" + `
+- **Post a comment**: Get channel ID with ` + "`yutu channel list --mine`" + `, find video, then ` + "`yutu commentThread insert`" + `
+- **Channel analytics**: ` + "`yutu channel list --mine`" + ` + ` + "`yutu search list --forMine`" + ` + ` + "`yutu video list --id ...`" + `
+- **Competitor analysis**: ` + "`yutu channel list --forHandle @handle`" + ` + compare stats and top videos
+- **Delete content**: Always verify with a list command first, then delete — deletions are irreversible
+- **Subscribe/unsubscribe**: Check with ` + "`yutu subscription list --mine --forChannelId ...`" + ` before acting`
+
+const growthTips = `- **Titles**: Use curiosity gaps and power words. Front-load keywords. Keep under 60 characters.
+- **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, and 3-5 hashtags.
+- **Tags**: Mix broad and long-tail keywords. First 2-3 tags carry the most weight.
+- **Thumbnails**: High contrast, 3-4 word text, expressive faces, consistent branding.
+- **Publishing**: Post when audience is active. Maintain consistent schedule.
+- **Engagement**: Pin a comment with a question. Reply within the first hour.`
+
+// ---------------------------------------------------------------------------
+// Unified SKILL.md writer
+// ---------------------------------------------------------------------------
+
+// writeUnifiedSkill generates the single unified SKILL.md for the youtube skill.
+func writeUnifiedSkill(path string, groups []categoryGroup) error {
 	var b strings.Builder
 
-	skill := parent.Name()
-	verbName := verb.Name()
-	humanSkill := camelToWords(skill)
-	title := titleCase(humanSkill) + " " + titleCase(verbName)
+	desc := buildUnifiedDescription(groups)
 
-	b.WriteString(fmt.Sprintf("# %s\n\n", title))
-
-	desc := rewriteToolPhrase(verb.Long)
-	if desc != "" {
-		b.WriteString(desc + "\n\n")
-	}
-
-	b.WriteString("## Usage\n\n")
-	b.WriteString(
-		fmt.Sprintf(
-			"```bash\nyutu %s %s [flags]\n```\n", skill, verbName,
-		),
-	)
-
-	requiredFlags := requiredFlagNames(verb)
-
-	type flagEntry struct {
-		name      string
-		shorthand string
-		usage     string
-		required  bool
-	}
-	var flags []flagEntry
-	verb.Flags().VisitAll(
-		func(f *pflag.Flag) {
-			if f.Name == "help" {
-				return
-			}
-			usage := f.Usage
-			if f.DefValue != "" && f.DefValue != "false" && f.DefValue != "0" && f.DefValue != "[]" {
-				usage += fmt.Sprintf(" (default %s)", formatDefault(f))
-			}
-			flags = append(
-				flags, flagEntry{
-					name:      f.Name,
-					shorthand: f.Shorthand,
-					usage:     escPipe(usage),
-					required:  requiredFlags[f.Name],
-				},
-			)
-		},
-	)
-
-	if len(flags) > 0 {
-		b.WriteString("\n## Flags\n\n")
-		b.WriteString("| Flag | Shorthand | Required | Description |\n")
-		b.WriteString("|------|-----------|----------|-------------|\n")
-		for _, f := range flags {
-			sh := ""
-			if f.shorthand != "" {
-				sh = "`-" + f.shorthand + "`"
-			}
-			req := ""
-			if f.required {
-				req = "Yes"
-			}
-			b.WriteString(
-				fmt.Sprintf(
-					"| `--%-s` | %s | %s | %s |\n", f.name, sh, req, f.usage,
-				),
-			)
-		}
-	}
-
-	if verb.Example != "" {
-		b.WriteString("\n## Examples\n\n```bash\n")
-		b.WriteString(strings.TrimSpace(verb.Example) + "\n")
-		b.WriteString("```\n")
-	}
-
-	return os.WriteFile(path, []byte(b.String()), 0o644)
-}
-
-// writeSkill generates the SKILL.md overview file for a resource command
-// following skill-creator best practices: "pushy" description, overview
-// paragraph, progressive-disclosure table, and quick-start snippet.
-func writeSkill(
-	path string, c *cobra.Command, verbs []*cobra.Command, kebabSkill string,
-) error {
-	var b strings.Builder
-
-	skill := c.Name()
-	humanSkill := camelToWords(skill)
-
-	desc := buildDescription(c, verbs, humanSkill)
-	skillName := "youtube-" + kebabSkill
-
-	_, _ = fmt.Fprintf(
-		&b, `---
-name: %s
+	_, _ = fmt.Fprintf(&b, `---
+name: youtube
 description: "%s"
 metadata:
   openclaw:
@@ -226,151 +224,104 @@ metadata:
         bins: [yutu]
 ---
 
-`, skillName, strings.ReplaceAll(desc, `"`, `\"`),
-	)
+`, strings.ReplaceAll(desc, `"`, `\"`))
 
-	_, _ = fmt.Fprintf(&b, "# YouTube %s\n\n", titleCase(humanSkill))
-
-	overview := rewriteToolPhrase(c.Long)
-	if overview == "" {
-		overview = c.Short
-	}
-	b.WriteString(overview + "\n\n")
+	b.WriteString("# YouTube\n\n")
+	b.WriteString("Manage YouTube resources using the yutu CLI — videos, playlists, comments, channels, captions, subscriptions, and more.\n\n")
 
 	b.WriteString("## Before You Begin\n\n")
 	b.WriteString("yutu requires Google Cloud Platform OAuth credentials and a cached token to access the YouTube API. ")
 	b.WriteString("If you haven't set up yutu yet, read the [setup guide](references/setup.md) first.\n\n")
 
 	b.WriteString("## Operations\n\n")
-	b.WriteString("Read the linked reference for full flag details and examples.\n\n")
+	b.WriteString("Run `yutu <resource> <verb> -h` for full flag details and examples.\n\n")
 
-	if len(verbs) > 0 {
-		b.WriteString("| Operation | Description | Reference |\n")
-		b.WriteString("|-----------|-------------|----------|\n")
-		for _, verb := range verbs {
-			refFile := fmt.Sprintf("references/%s-%s.md", skill, verb.Name())
-			_, _ = fmt.Fprintf(
-				&b, "| %s | %s | [details](%s) |\n",
-				verb.Name(), escPipe(verb.Short), refFile,
-			)
+	for _, g := range groups {
+		_, _ = fmt.Fprintf(&b, "### %s\n\n", g.name)
+		b.WriteString("| Resource | Operation | Description |\n")
+		b.WriteString("|----------|-----------|-------------|\n")
+		for _, r := range g.resources {
+			for _, v := range r.verbs {
+				_, _ = fmt.Fprintf(&b, "| %s | %s | %s |\n", r.human, v.name, escPipe(v.short))
+			}
 		}
 		b.WriteString("\n")
 	}
 
-	_, _ = fmt.Fprintf(
-		&b, "## Quick Start\n\n```bash\n# Show all %s commands\nyutu %s --help\n",
-		humanSkill, skill,
-	)
-	for _, verb := range verbs {
-		if verb.Name() == "list" {
-			_, _ = fmt.Fprintf(&b, "\n# List %s\nyutu %s list\n", humanSkill, skill)
-			break
-		}
-	}
-	b.WriteString("```\n")
+	b.WriteString("## Common Workflows\n\n")
+	b.WriteString("See [references/workflows.md](references/workflows.md) for detailed walkthroughs.\n\n")
+	b.WriteString(workflowSummary + "\n\n")
+
+	b.WriteString("## YouTube Growth Tips\n\n")
+	b.WriteString("See [references/seo-guide.md](references/seo-guide.md) for the full guide.\n\n")
+	b.WriteString(growthTips + "\n")
 
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 
-// buildDescription constructs a "pushy" skill description that encourages
-// broad triggering, even when the user doesn't explicitly name the resource.
-func buildDescription(
-	c *cobra.Command, verbs []*cobra.Command, humanSkill string,
-) string {
-	base := rewriteToolPhrase(c.Long)
-	if base == "" {
-		base = c.Short
+// ---------------------------------------------------------------------------
+// Setup writer
+// ---------------------------------------------------------------------------
+
+func writeSetup(path string) error {
+	return os.WriteFile(path, []byte(setupContent), 0o644)
+}
+
+// ---------------------------------------------------------------------------
+// main
+// ---------------------------------------------------------------------------
+
+func main() {
+	out := flag.String("out", "./skills", "output directory for generated skills")
+	flag.Parse()
+
+	root := cmd.RootCmd
+	root.InitDefaultHelpCmd()
+
+	dir := filepath.Join(*out, "youtube")
+	refDir := filepath.Join(dir, "references")
+
+	if err := os.MkdirAll(refDir, 0o755); err != nil {
+		log.Fatalf("mkdir %s: %v", refDir, err)
 	}
 
-	var verbNames []string
-	for _, v := range verbs {
-		verbNames = append(verbNames, v.Name())
+	setupPath := filepath.Join(refDir, "setup.md")
+	if err := writeSetup(setupPath); err != nil {
+		log.Fatalf("write setup %s: %v", setupPath, err)
 	}
 
-	actions := "manage"
-	if len(verbNames) > 0 {
-		if len(verbNames) == 1 {
-			actions = verbNames[0]
-		} else if len(verbNames) == 2 {
-			actions = verbNames[0] + " and " + verbNames[1]
-		} else {
-			actions = strings.Join(
-				verbNames[:len(verbNames)-1], ", ",
-			) + ", and " + verbNames[len(verbNames)-1]
+	var resources []resourceEntry
+	for _, c := range root.Commands() {
+		if !strings.HasPrefix(c.Short, "Manage") {
+			continue
+		}
+		resources = append(resources, collectResource(c))
+	}
+
+	groups := groupByCategory(resources)
+
+	skillPath := filepath.Join(dir, "SKILL.md")
+	if err := writeUnifiedSkill(skillPath, groups); err != nil {
+		log.Fatalf("write skill %s: %v", skillPath, err)
+	}
+
+	totalVerbs := 0
+	for _, g := range groups {
+		for _, r := range g.resources {
+			totalVerbs += len(r.verbs)
 		}
 	}
-
-	base += fmt.Sprintf(
-		" Useful when working with YouTube %s — provides commands to %s %s via the yutu CLI. Includes setup and installation instructions for first-time users.",
-		humanSkill, actions, humanSkill,
-	)
-
-	base += " Triggers: " + naturalTriggerPhrases(humanSkill, verbs)
-
-	return base
+	fmt.Printf("Generated unified youtube skill: %d resources, %d verbs, %d categories\n",
+		len(resources), totalVerbs, len(groups))
 }
 
-// naturalTriggerPhrases generates trigger phrases that feel like natural user
-// requests rather than mechanical "verb + resource" pairs.
-func naturalTriggerPhrases(humanSkill string, verbs []*cobra.Command) string {
-	var phrases []string
-	for _, v := range verbs {
-		short := strings.ToLower(v.Short)
-		name := v.Name()
-
-		phrases = append(phrases, short)
-		phrases = append(phrases, name+" "+humanSkill)
-		phrases = append(phrases, name+" my "+humanSkill)
-	}
-	return strings.Join(phrases, ", ")
-}
-
-// requiredFlagNames returns the set of flag names marked as required on cmd.
-func requiredFlagNames(cmd *cobra.Command) map[string]bool {
-	required := make(map[string]bool)
-	cmd.Flags().VisitAll(
-		func(f *pflag.Flag) {
-			if ann := f.Annotations; ann != nil {
-				if _, ok := ann[cobra.BashCompOneRequiredFlag]; ok {
-					required[f.Name] = true
-				}
-			}
-		},
-	)
-	return required
-}
-
-// formatDefault returns a display-friendly default value for a flag.
-func formatDefault(f *pflag.Flag) string {
-	v := f.DefValue
-	if f.Value.Type() == "string" && v != "" {
-		return fmt.Sprintf("%q", v)
-	}
-	return v
-}
+// ---------------------------------------------------------------------------
+// String utilities
+// ---------------------------------------------------------------------------
 
 // escPipe escapes pipe characters for markdown table cells.
 func escPipe(s string) string {
 	return strings.ReplaceAll(s, "|", "\\|")
-}
-
-// titleCase capitalises the first letter of each word in s.
-func titleCase(s string) string {
-	words := strings.Fields(s)
-	for i, w := range words {
-		if w != "" {
-			words[i] = strings.ToUpper(w[:1]) + w[1:]
-		}
-	}
-	return strings.Join(words, " ")
-}
-
-// rewriteToolPhrase replaces "Use this tool" phrasing with skill-oriented
-// language so the text reads naturally inside a skill context.
-func rewriteToolPhrase(s string) string {
-	s = strings.Replace(s, "Use this tool to", "Use this skill to", 1)
-	s = strings.Replace(s, "Use this tool", "Use this skill", 1)
-	return strings.TrimSpace(s)
 }
 
 // camelToWords splits a camelCase string into lowercase space-separated words.
