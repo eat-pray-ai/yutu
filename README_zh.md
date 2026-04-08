@@ -254,45 +254,13 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ## Skills
 
-`yutu` 提供了一组 [skills](https://opencode.ai/docs/skills)，为 AI Agent 扩展 YouTube 领域知识。安装单个 skill 可以让您的 Agent 获得针对特定 YouTube 资源的专业能力。
+`yutu` 提供了一个统一的 [skill](https://opencode.ai/docs/skills)，为 AI Agent 扩展 YouTube 领域知识、常用工作流和 SEO 最佳实践——涵盖视频、播放列表、评论、频道、字幕、订阅等。
 
 ```shell
-# 安装单个 skill（例如视频管理）
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube-video
-
-# 一次安装所有 skills
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills
+❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube
 ```
 
-<details>
-<summary>可用 Skills</summary>
-
-| Skill                                                                      | 描述                  |
-|----------------------------------------------------------------------------|---------------------|
-| [youtube-activity](skills/youtube-activity)                                | 管理 YouTube 活动       |
-| [youtube-caption](skills/youtube-caption)                                  | 管理 YouTube 视频字幕     |
-| [youtube-channel](skills/youtube-channel)                                  | 管理 YouTube 频道       |
-| [youtube-channelBanner](skills/youtube-channel-banner)                     | 管理 YouTube 频道横幅     |
-| [youtube-channelSection](skills/youtube-channel-section)                   | 管理 YouTube 频道版块     |
-| [youtube-comment](skills/youtube-comment)                                  | 管理 YouTube 评论       |
-| [youtube-commentThread](skills/youtube-comment-thread)                     | 管理 YouTube 评论线程     |
-| [youtube-i18nLanguage](skills/youtube-i18n-language)                       | 管理 YouTube 国际化语言    |
-| [youtube-i18nRegion](skills/youtube-i18n-region)                           | 管理 YouTube 国际化区域    |
-| [youtube-member](skills/youtube-member)                                    | 管理 YouTube 频道成员     |
-| [youtube-membershipsLevel](skills/youtube-memberships-level)               | 管理 YouTube 会员等级     |
-| [youtube-playlist](skills/youtube-playlist)                                | 管理 YouTube 播放列表     |
-| [youtube-playlistImage](skills/youtube-playlist-image)                     | 管理 YouTube 播放列表图片   |
-| [youtube-playlistItem](skills/youtube-playlist-item)                       | 管理 YouTube 播放列表项    |
-| [youtube-search](skills/youtube-search)                                    | 管理 YouTube 搜索       |
-| [youtube-subscription](skills/youtube-subscription)                        | 管理 YouTube 订阅       |
-| [youtube-superChatEvent](skills/youtube-super-chat-event)                  | 管理 YouTube 超级聊天事件   |
-| [youtube-thumbnail](skills/youtube-thumbnail)                              | 管理 YouTube 视频缩略图    |
-| [youtube-video](skills/youtube-video)                                      | 管理 YouTube 视频       |
-| [youtube-videoAbuseReportReason](skills/youtube-video-abuse-report-reason) | 管理 YouTube 视频滥用举报原因 |
-| [youtube-videoCategory](skills/youtube-video-category)                     | 管理 YouTube 视频类别     |
-| [youtube-watermark](skills/youtube-watermark)                              | 管理 YouTube 水印       |
-
-</details>
+完整的支持操作列表请参见 [skills/youtube/SKILL.md](skills/youtube/SKILL.md)。
 
 ## 使用方法
 

@@ -246,45 +246,13 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
 
 ## Skills
 
-`yutu` provides a set of [skills](https://opencode.ai/docs/skills) that extend AI agents with YouTube domain knowledge. Install individual skills to give your agent specialized capabilities for specific YouTube resources.
+`yutu` provides a unified [skill](https://opencode.ai/docs/skills) that extends AI agents with YouTube domain knowledge, common workflows, and SEO best practices — covering videos, playlists, comments, channels, captions, subscriptions, and more.
 
 ```shell
-# Install a single skill (e.g. video management)
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube-video
-
-# Install all skills at once
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills
+❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube
 ```
 
-<details>
-<summary>Available Skills</summary>
-
-| Skill                                                                      | Description                               |
-|----------------------------------------------------------------------------|-------------------------------------------|
-| [youtube-activity](skills/youtube-activity)                                | Manage activities on YouTube              |
-| [youtube-caption](skills/youtube-caption)                                  | Manage YouTube video captions             |
-| [youtube-channel](skills/youtube-channel)                                  | Manage YouTube channels                   |
-| [youtube-channelBanner](skills/youtube-channel-banner)                     | Manage YouTube channel banners            |
-| [youtube-channelSection](skills/youtube-channel-section)                   | Manage YouTube channel sections           |
-| [youtube-comment](skills/youtube-comment)                                  | Manage YouTube comments                   |
-| [youtube-commentThread](skills/youtube-comment-thread)                     | Manage YouTube comment threads            |
-| [youtube-i18nLanguage](skills/youtube-i18n-language)                       | Manage YouTube i18n languages             |
-| [youtube-i18nRegion](skills/youtube-i18n-region)                           | Manage YouTube i18n regions               |
-| [youtube-member](skills/youtube-member)                                    | Manage YouTube channel members            |
-| [youtube-membershipsLevel](skills/youtube-memberships-level)               | Manage YouTube memberships levels         |
-| [youtube-playlist](skills/youtube-playlist)                                | Manage YouTube playlists                  |
-| [youtube-playlistImage](skills/youtube-playlist-image)                     | Manage YouTube playlist images            |
-| [youtube-playlistItem](skills/youtube-playlist-item)                       | Manage YouTube playlist items             |
-| [youtube-search](skills/youtube-search)                                    | Manage YouTube search                     |
-| [youtube-subscription](skills/youtube-subscription)                        | Manage YouTube subscriptions              |
-| [youtube-superChatEvent](skills/youtube-super-chat-event)                  | Manage YouTube Super Chat events          |
-| [youtube-thumbnail](skills/youtube-thumbnail)                              | Manage YouTube video thumbnails           |
-| [youtube-video](skills/youtube-video)                                      | Manage YouTube videos                     |
-| [youtube-videoAbuseReportReason](skills/youtube-video-abuse-report-reason) | Manage YouTube video abuse report reasons |
-| [youtube-videoCategory](skills/youtube-video-category)                     | Manage YouTube video categories           |
-| [youtube-watermark](skills/youtube-watermark)                              | Manage YouTube watermarks                 |
-
-</details>
+See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supported operations.
 
 ## Usage
 
