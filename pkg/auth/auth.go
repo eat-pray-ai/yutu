@@ -160,12 +160,13 @@ func (s *svc) startWebServer(redirectURL string) (chan string, error) {
 		return nil, fmt.Errorf("%s: %w", listenFailed, err)
 	}
 
-	codeCh := make(chan string)
+	codeCh := make(chan string, 1)
 	go func() {
 		_ = http.Serve(
 			listener, http.HandlerFunc(
 				func(w http.ResponseWriter, r *http.Request) {
 					if r.URL.Path != "/" {
+						http.NotFound(w, r)
 						return
 					}
 					state := r.FormValue("state")
@@ -173,13 +174,21 @@ func (s *svc) startWebServer(redirectURL string) (chan string, error) {
 						slog.Error(
 							stateMatchFailed, "actual", state, "expected", s.state,
 						)
+						http.Error(w, stateMatchFailed, http.StatusBadRequest)
 						return
 					}
 					code := r.FormValue("code")
-					codeCh <- code
-					_ = listener.Close()
-					w.Header().Set("Content-Type", "text/plain")
-					_, _ = fmt.Fprintf(w, receivedCodeHint, code)
+					select {
+					case codeCh <- code:
+						w.Header().Set("Content-Type", "text/plain")
+						_, _ = fmt.Fprintf(w, receivedCodeHint, code)
+						_ = listener.Close()
+					default:
+						http.Error(
+							w, "authorization code already received",
+							http.StatusConflict,
+						)
+					}
 				},
 			),
 		)
