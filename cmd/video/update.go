@@ -77,6 +77,7 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			updateTool, func(input video.Video, writer io.Writer) error {
+				input.MaxResults = 1
 				return input.Update(writer)
 			},
 		),
@@ -119,6 +120,7 @@ var updateCmd = &cobra.Command{
 			video.WithCategory(categoryId),
 			video.WithPrivacy(privacy),
 			video.WithEmbeddable(embeddable),
+			video.WithMaxResults(1),
 			video.WithOutput(output),
 		)
 		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)

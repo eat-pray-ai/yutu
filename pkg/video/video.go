@@ -267,7 +267,32 @@ func (v *Video) Update(writer io.Writer) error {
 		return errGetVideo
 	}
 
-	video := videos[0]
+	original := videos[0]
+
+	// Build a new video with only writable fields to avoid sending
+	// read-only fields (thumbnails, channelId, etc.) that cause
+	// invalidVideoMetadata errors.
+	video := &youtube.Video{
+		Id:      original.Id,
+		Snippet: &youtube.VideoSnippet{},
+		Status:  &youtube.VideoStatus{},
+	}
+	if original.Snippet != nil {
+		video.Snippet.Title = original.Snippet.Title
+		video.Snippet.Description = original.Snippet.Description
+		video.Snippet.Tags = original.Snippet.Tags
+		video.Snippet.CategoryId = original.Snippet.CategoryId
+		video.Snippet.DefaultLanguage = original.Snippet.DefaultLanguage
+	}
+	if original.Status != nil {
+		video.Status.Embeddable = original.Status.Embeddable
+		video.Status.License = original.Status.License
+		video.Status.PrivacyStatus = original.Status.PrivacyStatus
+		video.Status.PublicStatsViewable = original.Status.PublicStatsViewable
+		video.Status.PublishAt = original.Status.PublishAt
+		video.Status.SelfDeclaredMadeForKids = original.Status.SelfDeclaredMadeForKids
+	}
+
 	if v.Title != "" {
 		video.Snippet.Title = v.Title
 	}
@@ -282,7 +307,6 @@ func (v *Video) Update(writer io.Writer) error {
 	}
 	if v.Language != "" {
 		video.Snippet.DefaultLanguage = v.Language
-		video.Snippet.DefaultAudioLanguage = v.Language
 	}
 	if v.License != "" {
 		video.Status.License = v.License
