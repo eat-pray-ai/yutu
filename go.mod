@@ -33,6 +33,7 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/mattn/go-runewidth v0.0.23 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
@@ -71,7 +72,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
-	google.golang.org/adk v1.0.0
+	google.golang.org/adk v1.1.0
 	google.golang.org/api v0.275.0
 	google.golang.org/genai v1.53.0
 	google.golang.org/protobuf v1.36.11 // indirect
