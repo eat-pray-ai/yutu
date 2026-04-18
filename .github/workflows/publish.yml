@@ -108,6 +108,7 @@ jobs:
           sparse-checkout: |
             npm
             scripts/npm-publish.sh
+            server.json
             LICENSE
             README.md
           sparse-checkout-cone-mode: false
@@ -122,3 +123,10 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           scripts/npm-publish.sh "$VERSION" "${{ github.workspace }}/dist"
+      - name: Publish MCP server
+        run: |
+          sed -i "s/0.0.0-dev/${GITHUB_REF_NAME#v}/g" server.json
+          mcp_publisher="mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz"
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/${mcp_publisher}" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish || echo "Failed to publish MCP server"
