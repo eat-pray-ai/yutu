@@ -31,6 +31,8 @@ const (
 	privacyUsage    = "public|private|unlisted"
 	fkUsage         = "Whether the video is for kids"
 	embeddableUsage = "Whether the video is embeddable"
+	csmUsage        = "Whether the video contains altered or synthetic media"
+	rdUsage         = "Date and time when the video was recorded"
 	paUsage         = "Datetime when the video is scheduled to publish"
 	rcUsage         = "Specific to the specified region"
 	ridUsage        = "ID of the reason for reporting abuse"
@@ -63,6 +65,7 @@ var (
 	privacy           string
 	forKids           = new(false)
 	embeddable        = new(false)
+	recordingDate     string
 	publishAt         string
 	regionCode        string
 	reasonId          string
@@ -76,6 +79,7 @@ var (
 
 	notifySubscribers             = new(false)
 	publicStatsViewable           = new(false)
+	containsSyntheticMedia        = new(false)
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 )
@@ -98,12 +102,13 @@ func init() {
 
 func resetFlags(flagSet *pflag.FlagSet) {
 	boolMap := map[string]**bool{
-		"autoLevels":          &autoLevels,
-		"forKids":             &forKids,
-		"embeddable":          &embeddable,
-		"stabilize":           &stabilize,
-		"notifySubscribers":   &notifySubscribers,
-		"publicStatsViewable": &publicStatsViewable,
+		"autoLevels":             &autoLevels,
+		"forKids":                &forKids,
+		"embeddable":             &embeddable,
+		"containsSyntheticMedia": &containsSyntheticMedia,
+		"stabilize":              &stabilize,
+		"notifySubscribers":      &notifySubscribers,
+		"publicStatsViewable":    &publicStatsViewable,
 	}
 
 	utils.ResetBool(boolMap, flagSet)

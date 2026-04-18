@@ -31,6 +31,8 @@ func TestNewVideo(t *testing.T) {
 	forKidsFalse := false
 	embeddableTrue := true
 	embeddableFalse := false
+	containsSyntheticMediaTrue := true
+	containsSyntheticMediaFalse := false
 	stabilizeTrue := true
 	stabilizeFalse := false
 	notifySubscribersTrue := true
@@ -68,6 +70,8 @@ func TestNewVideo(t *testing.T) {
 					WithPrivacy("public"),
 					WithForKids(&forKidsTrue),
 					WithEmbeddable(&embeddableTrue),
+					WithContainsSyntheticMedia(&containsSyntheticMediaTrue),
+					WithRecordingDate("2024-06-15T10:00:00Z"),
 					WithPublishAt("2024-12-31T23:59:59Z"),
 					WithRegionCode("US"),
 					WithReasonId("reason123"),
@@ -113,6 +117,8 @@ func TestNewVideo(t *testing.T) {
 				Privacy:                       "public",
 				ForKids:                       &forKidsTrue,
 				Embeddable:                    &embeddableTrue,
+				ContainsSyntheticMedia:        &containsSyntheticMediaTrue,
+				RecordingDate:                 "2024-06-15T10:00:00Z",
 				PublishAt:                     "2024-12-31T23:59:59Z",
 				RegionCode:                    "US",
 				ReasonId:                      "reason123",
@@ -139,6 +145,7 @@ func TestNewVideo(t *testing.T) {
 					WithAutoLevels(nil),
 					WithForKids(nil),
 					WithEmbeddable(nil),
+					WithContainsSyntheticMedia(nil),
 					WithStabilize(nil),
 					WithNotifySubscribers(nil),
 					WithPublicStatsViewable(nil),
@@ -153,19 +160,21 @@ func TestNewVideo(t *testing.T) {
 					WithAutoLevels(&autoLevelsFalse),
 					WithForKids(&forKidsFalse),
 					WithEmbeddable(&embeddableFalse),
+					WithContainsSyntheticMedia(&containsSyntheticMediaFalse),
 					WithStabilize(&stabilizeFalse),
 					WithNotifySubscribers(&notifySubscribersFalse),
 					WithPublicStatsViewable(&publicStatsViewableFalse),
 				},
 			},
 			want: &Video{
-				Fields:              &common.Fields{},
-				AutoLevels:          &autoLevelsFalse,
-				ForKids:             &forKidsFalse,
-				Embeddable:          &embeddableFalse,
-				Stabilize:           &stabilizeFalse,
-				NotifySubscribers:   &notifySubscribersFalse,
-				PublicStatsViewable: &publicStatsViewableFalse,
+				Fields:                 &common.Fields{},
+				AutoLevels:             &autoLevelsFalse,
+				ForKids:                &forKidsFalse,
+				Embeddable:             &embeddableFalse,
+				ContainsSyntheticMedia: &containsSyntheticMediaFalse,
+				Stabilize:              &stabilizeFalse,
+				NotifySubscribers:      &notifySubscribersFalse,
+				PublicStatsViewable:    &publicStatsViewableFalse,
 			},
 		},
 		{
@@ -209,6 +218,7 @@ func TestNewVideo(t *testing.T) {
 					WithPlaylistId(""),
 					WithCategory(""),
 					WithPrivacy(""),
+					WithRecordingDate(""),
 					WithPublishAt(""),
 					WithRegionCode(""),
 					WithReasonId(""),
@@ -232,6 +242,7 @@ func TestNewVideo(t *testing.T) {
 				PlaylistId:                    "",
 				CategoryId:                    "",
 				Privacy:                       "",
+				RecordingDate:                 "",
 				PublishAt:                     "",
 				RegionCode:                    "",
 				ReasonId:                      "",

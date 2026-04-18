@@ -56,6 +56,8 @@ type Video struct {
 	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitempty"`
 	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitempty"`
 
+	RecordingDate                 string `yaml:"recording_date" json:"recording_date,omitempty"`
+	ContainsSyntheticMedia        *bool  `yaml:"contains_synthetic_media" json:"contains_synthetic_media,omitempty"`
 	SecondaryReasonId             string `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
 	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitempty"`
 	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitempty"`
@@ -186,7 +188,7 @@ func (v *Video) Insert(writer io.Writer) error {
 			License:         v.License,
 			PublishAt:       v.PublishAt,
 			PrivacyStatus:   v.Privacy,
-			ForceSendFields: []string{"SelfDeclaredMadeForKids"},
+			ForceSendFields: []string{"SelfDeclaredMadeForKids", "ContainsSyntheticMedia"},
 		},
 	}
 
@@ -196,11 +198,22 @@ func (v *Video) Insert(writer io.Writer) error {
 	if v.ForKids != nil {
 		video.Status.SelfDeclaredMadeForKids = *v.ForKids
 	}
+	if v.ContainsSyntheticMedia != nil {
+		video.Status.ContainsSyntheticMedia = *v.ContainsSyntheticMedia
+	}
 	if v.PublicStatsViewable != nil {
 		video.Status.PublicStatsViewable = *v.PublicStatsViewable
 	}
 
-	call := v.Service.Videos.Insert([]string{"snippet,status"}, video)
+	insertParts := "snippet,status"
+	if v.RecordingDate != "" {
+		video.RecordingDetails = &youtube.VideoRecordingDetails{
+			RecordingDate: v.RecordingDate,
+		}
+		insertParts += ",recordingDetails"
+	}
+
+	call := v.Service.Videos.Insert([]string{insertParts}, video)
 
 	if v.AutoLevels != nil {
 		call = call.AutoLevels(*v.AutoLevels)
@@ -291,6 +304,7 @@ func (v *Video) Update(writer io.Writer) error {
 		video.Status.PublicStatsViewable = original.Status.PublicStatsViewable
 		video.Status.PublishAt = original.Status.PublishAt
 		video.Status.SelfDeclaredMadeForKids = original.Status.SelfDeclaredMadeForKids
+		video.Status.ContainsSyntheticMedia = original.Status.ContainsSyntheticMedia
 	}
 
 	if v.Title != "" {
@@ -320,8 +334,19 @@ func (v *Video) Update(writer io.Writer) error {
 	if v.Embeddable != nil {
 		video.Status.Embeddable = *v.Embeddable
 	}
+	if v.ContainsSyntheticMedia != nil {
+		video.Status.ContainsSyntheticMedia = *v.ContainsSyntheticMedia
+	}
 
-	call := v.Service.Videos.Update([]string{"snippet,status"}, video)
+	updateParts := "snippet,status"
+	if v.RecordingDate != "" {
+		video.RecordingDetails = &youtube.VideoRecordingDetails{
+			RecordingDate: v.RecordingDate,
+		}
+		updateParts += ",recordingDetails"
+	}
+
+	call := v.Service.Videos.Update([]string{updateParts}, video)
 	if v.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
 	}
@@ -538,6 +563,14 @@ func WithEmbeddable(embeddable *bool) Option {
 	}
 }
 
+func WithContainsSyntheticMedia(containsSyntheticMedia *bool) Option {
+	return func(v *Video) {
+		if containsSyntheticMedia != nil {
+			v.ContainsSyntheticMedia = containsSyntheticMedia
+		}
+	}
+}
+
 func WithCategory(categoryId string) Option {
 	return func(v *Video) {
 		v.CategoryId = categoryId
@@ -567,6 +600,12 @@ func WithPublicStatsViewable(publicStatsViewable *bool) Option {
 func WithPublishAt(publishAt string) Option {
 	return func(v *Video) {
 		v.PublishAt = publishAt
+	}
+}
+
+func WithRecordingDate(recordingDate string) Option {
+	return func(v *Video) {
+		v.RecordingDate = recordingDate
 	}
 }
 

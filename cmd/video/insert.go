@@ -55,12 +55,14 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Description: privacyUsage,
 			Enum: []any{"public", "private", "unlisted"},
 		},
-		"for_kids":              {Type: "boolean", Description: fkUsage},
-		"embeddable":            {Type: "boolean", Description: embeddableUsage},
-		"publish_at":            {Type: "string", Description: paUsage},
-		"stabilize":             {Type: "boolean", Description: stabilizeUsage},
-		"notify_subscribers":    {Type: "boolean", Description: nsUsage},
-		"public_stats_viewable": {Type: "boolean", Description: psvUsage},
+		"for_kids":                 {Type: "boolean", Description: fkUsage},
+		"embeddable":               {Type: "boolean", Description: embeddableUsage},
+		"contains_synthetic_media": {Type: "boolean", Description: csmUsage},
+		"recording_date":           {Type: "string", Description: rdUsage},
+		"publish_at":               {Type: "string", Description: paUsage},
+		"stabilize":                {Type: "boolean", Description: stabilizeUsage},
+		"notify_subscribers":       {Type: "boolean", Description: nsUsage},
+		"public_stats_viewable":    {Type: "boolean", Description: psvUsage},
 
 		"on_behalf_of_content_owner": {
 			Type:        "string",
@@ -113,6 +115,10 @@ func init() {
 	insertCmd.Flags().BoolVarP(
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
+	insertCmd.Flags().BoolVarP(
+		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
+	)
+	insertCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
 	insertCmd.Flags().StringVarP(&publishAt, "publishAt", "U", "", paUsage)
 	insertCmd.Flags().BoolVarP(stabilize, "stabilize", "S", true, stabilizeUsage)
 	insertCmd.Flags().BoolVarP(
@@ -156,6 +162,8 @@ var insertCmd = &cobra.Command{
 			video.WithPrivacy(privacy),
 			video.WithForKids(forKids),
 			video.WithEmbeddable(embeddable),
+			video.WithContainsSyntheticMedia(containsSyntheticMedia),
+			video.WithRecordingDate(recordingDate),
 			video.WithPublishAt(publishAt),
 			video.WithStabilize(stabilize),
 			video.WithNotifySubscribers(notifySubscribers),

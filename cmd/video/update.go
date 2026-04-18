@@ -57,7 +57,9 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Description: privacyUsage,
 			Enum: []any{"public", "private", "unlisted"},
 		},
-		"embeddable": {Type: "boolean", Description: embeddableUsage},
+		"embeddable":               {Type: "boolean", Description: embeddableUsage},
+		"contains_synthetic_media": {Type: "boolean", Description: csmUsage},
+		"recording_date":           {Type: "string", Description: rdUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -97,6 +99,10 @@ func init() {
 	updateCmd.Flags().BoolVarP(
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
+	updateCmd.Flags().BoolVarP(
+		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
+	)
+	updateCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
@@ -120,6 +126,8 @@ var updateCmd = &cobra.Command{
 			video.WithCategory(categoryId),
 			video.WithPrivacy(privacy),
 			video.WithEmbeddable(embeddable),
+			video.WithContainsSyntheticMedia(containsSyntheticMedia),
+			video.WithRecordingDate(recordingDate),
 			video.WithMaxResults(1),
 			video.WithOutput(output),
 		)
