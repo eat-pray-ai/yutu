@@ -1,6 +1,7 @@
 {
   "name": "@eat-pray-ai/yutu",
   "version": "0.0.0",
+  "mcpName": "io.github.eat-pray-ai/yutu",
   "description": "The AI-powered toolkit that grows your YouTube channel on autopilot",
   "repository": {
     "type": "git",
