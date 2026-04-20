@@ -76,7 +76,16 @@
       "version": "0.0.0-dev",
       "transport": {
         "type": "streamable-http",
-        "url": "http://localhost:{--port}/mcp"
+        "url": "http://localhost:{--port}/mcp",
+        "authorization": {
+          "type": "oauth2",
+          "authorizationServers": ["https://accounts.google.com"],
+          "scopes": [
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/youtube.force-ssl",
+            "https://www.googleapis.com/auth/youtube.channel-memberships.creator"
+          ]
+        }
       },
       "packageArguments": [
         {

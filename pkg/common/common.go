@@ -4,6 +4,7 @@
 package common
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -13,11 +14,19 @@ import (
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
+	sdkauth "github.com/modelcontextprotocol/go-sdk/auth"
+	"golang.org/x/oauth2"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
+// RedirectURL is the OAuth redirect URL used by file-based auth (CLI / stdio mode).
+// Set by the command layer before EnsureService is called.
+var RedirectURL = "http://localhost:8216"
+
 type Fields struct {
+	Ctx        context.Context  `yaml:"-" json:"-"`
 	Service    *youtube.Service `yaml:"-" json:"-"`
 	Ids        []string         `yaml:"ids" json:"ids,omitempty"`
 	MaxResults int64            `yaml:"max_results" json:"max_results,omitempty"`
@@ -33,17 +42,45 @@ func (d *Fields) GetFields() *Fields {
 	return d
 }
 
-func (d *Fields) EnsureService() error {
-	if d.Service == nil {
-		svc, err := auth.NewY2BService(
-			auth.WithCredential("", pkg.Root.FS()),
-			auth.WithCacheToken("", pkg.Root.FS()),
-		).GetService()
-		if err != nil {
-			return fmt.Errorf("failed to create YouTube service: %w", err)
-		}
-		d.Service = svc
+// SetContext implements the cobra-mcp ContextAware interface, enabling
+// automatic context injection from MCP tool handlers.
+func (d *Fields) SetContext(ctx context.Context) {
+	if d != nil {
+		d.Ctx = ctx
 	}
+}
+
+func (d *Fields) EnsureService() error {
+	if d.Service != nil {
+		return nil
+	}
+
+	// MCP OAuth path: use access token from auth middleware context.
+	if d.Ctx != nil {
+		if tokenInfo := sdkauth.TokenInfoFromContext(d.Ctx); tokenInfo != nil {
+			if rawToken, ok := tokenInfo.Extra["access_token"].(string); ok {
+				ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawToken})
+				client := oauth2.NewClient(d.Ctx, ts)
+				svc, err := youtube.NewService(d.Ctx, option.WithHTTPClient(client))
+				if err != nil {
+					return fmt.Errorf("failed to create YouTube service: %w", err)
+				}
+				d.Service = svc
+				return nil
+			}
+		}
+	}
+
+	// File-based auth path (CLI / stdio mode).
+	svc, err := auth.NewY2BService(
+		auth.WithCredential("", pkg.Root.FS()),
+		auth.WithCacheToken("", pkg.Root.FS()),
+		auth.WithRedirectURL(RedirectURL),
+	).GetService()
+	if err != nil {
+		return fmt.Errorf("failed to create YouTube service: %w", err)
+	}
+	d.Service = svc
 	return nil
 }
 
@@ -155,9 +192,10 @@ func Paginate[C PagedLister[C, R], R any, T any](
 	errWrap error,
 ) ([]*T, error) {
 	var items []*T
+	remaining := f.MaxResults
 	pageToken := ""
-	for f.MaxResults > 0 {
-		call = call.MaxResults(min(f.MaxResults, pkg.PerPage))
+	for remaining > 0 {
+		call = call.MaxResults(min(remaining, pkg.PerPage))
 		if pageToken != "" {
 			call = call.PageToken(pageToken)
 		}
@@ -166,7 +204,7 @@ func Paginate[C PagedLister[C, R], R any, T any](
 			return items, errors.Join(errWrap, err)
 		}
 		got, nextToken := extract(res)
-		f.MaxResults -= pkg.PerPage
+		remaining -= pkg.PerPage
 		items = append(items, got...)
 		pageToken = nextToken
 		if pageToken == "" || len(got) == 0 {

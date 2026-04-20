@@ -23,7 +23,7 @@ import (
 // helper to build a minimal valid Google OAuth2 credential JSON.
 func validCredentialJSON(redirectURL string) string {
 	cred := map[string]map[string]any{
-		"web": {
+		"installed": {
 			"client_id":                   "test-client-id",
 			"project_id":                  "test-project",
 			"auth_uri":                    "https://accounts.google.com/o/oauth2/auth",
@@ -39,7 +39,7 @@ func validCredentialJSON(redirectURL string) string {
 
 func TestGetConfig_Success(t *testing.T) {
 	s := NewY2BService(
-		WithCredential(validCredentialJSON("http://localhost:8216"), os.DirFS(".")),
+		WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
 	).(*svc)
 
 	config, err := s.getConfig()
@@ -58,14 +58,33 @@ func TestGetConfig_Success(t *testing.T) {
 			"test-secret",
 		)
 	}
+	if config.RedirectURL != "http://localhost" {
+		t.Errorf(
+			"unexpected RedirectURL: got %q, want %q", config.RedirectURL,
+			"http://localhost",
+		)
+	}
+	if len(config.Scopes) == 0 {
+		t.Fatalf("expected scopes to be populated, got none")
+	}
+}
+
+func TestGetConfig_WithRedirectURL(t *testing.T) {
+	s := NewY2BService(
+		WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
+		WithRedirectURL("http://localhost:8216"),
+	).(*svc)
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig returned error: %v", err)
+	}
+
 	if config.RedirectURL != "http://localhost:8216" {
 		t.Errorf(
 			"unexpected RedirectURL: got %q, want %q", config.RedirectURL,
 			"http://localhost:8216",
 		)
-	}
-	if len(config.Scopes) == 0 {
-		t.Fatalf("expected scopes to be populated, got none")
 	}
 }
 
@@ -308,7 +327,7 @@ func TestSaveToken_Success(t *testing.T) {
 
 func TestGetConfig_Scopes(t *testing.T) {
 	s := NewY2BService(
-		WithCredential(validCredentialJSON("http://localhost:8216"), os.DirFS(".")),
+		WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
 	).(*svc)
 
 	config, err := s.getConfig()

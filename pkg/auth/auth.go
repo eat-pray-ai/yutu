@@ -48,13 +48,12 @@ ONLY 'COPY-THIS' part is the code you need to enter on command line.
 `
 )
 
-var (
-	scope = []string{
-		youtube.YoutubeScope,
-		youtube.YoutubeForceSslScope,
-		youtube.YoutubeChannelMembershipsCreatorScope,
-	}
-)
+// Scopes is the set of YouTube OAuth scopes required by yutu.
+var Scopes = []string{
+	youtube.YoutubeScope,
+	youtube.YoutubeForceSslScope,
+	youtube.YoutubeChannelMembershipsCreatorScope,
+}
 
 func (s *svc) GetService() (*youtube.Service, error) {
 	if s.initErr != nil {
@@ -141,9 +140,13 @@ func (s *svc) newClient(config *oauth2.Config) (
 }
 
 func (s *svc) getConfig() (*oauth2.Config, error) {
-	config, err := google.ConfigFromJSON([]byte(s.Credential), scope...)
+	config, err := google.ConfigFromJSON([]byte(s.Credential), Scopes...)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", parseSecretFailed, err)
+	}
+
+	if s.redirectURL != "" {
+		config.RedirectURL = s.redirectURL
 	}
 
 	return config, nil

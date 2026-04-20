@@ -13,9 +13,11 @@ go_library(
         "//pkg/auth",
         "//pkg/utils",
         "@com_github_jedib0t_go_pretty_v6//table",
+        "@com_github_modelcontextprotocol_go_sdk//auth",
         "@org_golang_google_api//googleapi",
         "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
+        "@org_golang_x_oauth2//:oauth2",
     ],
 )
 
@@ -25,6 +27,7 @@ go_test(
     embed = [":common"],
     deps = [
         "@com_github_jedib0t_go_pretty_v6//table",
+        "@com_github_modelcontextprotocol_go_sdk//auth",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
 )

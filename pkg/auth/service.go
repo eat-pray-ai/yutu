@@ -26,13 +26,14 @@ const (
 )
 
 type svc struct {
-	Credential string `yaml:"credential" json:"credential"`
-	CacheToken string `yaml:"cache_token" json:"cache_token"`
-	credFile   string
-	tokenFile  string
-	initErr    error
-	in         io.Reader
-	out        io.Writer
+	Credential  string `yaml:"credential" json:"credential"`
+	CacheToken  string `yaml:"cache_token" json:"cache_token"`
+	credFile    string
+	tokenFile   string
+	redirectURL string
+	initErr     error
+	in          io.Reader
+	out         io.Writer
 
 	service *youtube.Service
 	ctx     context.Context
@@ -57,6 +58,12 @@ func NewY2BService(opts ...Option) Svc {
 		opt(s)
 	}
 	return s
+}
+
+func WithRedirectURL(url string) Option {
+	return func(s *svc) {
+		s.redirectURL = url
+	}
 }
 
 func WithIO(in io.Reader, out io.Writer) Option {

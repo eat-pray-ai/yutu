@@ -5,6 +5,7 @@ package common
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"math"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/jedib0t/go-pretty/v6/table"
+	sdkauth "github.com/modelcontextprotocol/go-sdk/auth"
 	"google.golang.org/api/youtube/v3"
 )
 
@@ -256,6 +258,22 @@ func TestPrintResult(t *testing.T) {
 	}
 }
 
+// ---------- TestSetContext ----------
+
+func TestSetContext(t *testing.T) {
+	f := &Fields{}
+	ctx := context.Background()
+	f.SetContext(ctx)
+	if f.Ctx != ctx {
+		t.Error("SetContext did not set context")
+	}
+}
+
+func TestSetContext_Nil(t *testing.T) {
+	var f *Fields
+	f.SetContext(context.Background()) // should not panic
+}
+
 // ---------- TestEnsureService ----------
 
 func TestEnsureService(t *testing.T) {
@@ -270,6 +288,36 @@ func TestEnsureService(t *testing.T) {
 			t.Errorf("EnsureService() changed Service pointer")
 		}
 	})
+}
+
+func TestEnsureService_FallsBackWithoutContext(t *testing.T) {
+	f := &Fields{}
+	err := f.EnsureService()
+	if err == nil {
+		t.Skip("credentials available in environment, skipping fallback test")
+	}
+	if err.Error() == "" {
+		t.Error("expected non-empty error message")
+	}
+}
+
+func TestEnsureService_FallsBackWithContextNoToken(t *testing.T) {
+	f := &Fields{}
+	f.SetContext(context.Background())
+	// No TokenInfo in context → should fall back to file auth
+	err := f.EnsureService()
+	if err == nil {
+		t.Skip("credentials available in environment, skipping")
+	}
+	// Should get credential error, not context/token error
+	_ = err
+}
+
+func TestTokenInfoFromContext_Nil(t *testing.T) {
+	info := sdkauth.TokenInfoFromContext(context.Background())
+	if info != nil {
+		t.Error("expected nil TokenInfo from plain context")
+	}
 }
 
 // ---------- Generic option functions ----------

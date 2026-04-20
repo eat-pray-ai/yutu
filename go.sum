@@ -23,8 +23,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.7 h1:zbFlGlXEAKlwXpmvle3d8Oe3YnkKIK4xSRTd3
 github.com/cpuguy83/go-md2man/v2 v2.0.7/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/eat-pray-ai/cobra-mcp v0.0.0-20260228180651-db063eaf3fe9 h1:Yw3ySFv1G4PWJwWiRZ+hvHG6C8f1L6P+xLGDLkNVIS8=
-github.com/eat-pray-ai/cobra-mcp v0.0.0-20260228180651-db063eaf3fe9/go.mod h1:bSX0dmXUr046LSzJOplaHq77DwcNhmItnW4jgZYPfyU=
+github.com/eat-pray-ai/cobra-mcp v0.1.0 h1:szHIgFhCH0HqWSRRlyVVWzrB+3c9SMNfQCxlKA4lNLo=
+github.com/eat-pray-ai/cobra-mcp v0.1.0/go.mod h1:45CzaLTw9x2Cq+jN9NblFPj/BscCjMP7yMZkyQru3uM=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
