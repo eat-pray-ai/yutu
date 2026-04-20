@@ -5,12 +5,14 @@ go_library(
     srcs = [
         "auth.go",
         "service.go",
+        "verifier.go",
     ],
     importpath = "github.com/eat-pray-ai/yutu/pkg/auth",
     visibility = ["//visibility:public"],
     deps = [
         "//pkg",
         "//pkg/utils",
+        "@com_github_modelcontextprotocol_go_sdk//auth",
         "@org_golang_google_api//option",
         "@org_golang_google_api//youtube/v3:youtube",
         "@org_golang_x_oauth2//:oauth2",
@@ -23,10 +25,12 @@ go_test(
     srcs = [
         "auth_test.go",
         "service_test.go",
+        "verifier_test.go",
     ],
     embed = [":auth"],
     deps = [
         "//pkg",
+        "@com_github_modelcontextprotocol_go_sdk//auth",
         "@org_golang_google_api//youtube/v3:youtube",
         "@org_golang_x_oauth2//:oauth2",
     ],
