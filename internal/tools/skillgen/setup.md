@@ -15,8 +15,7 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
 
 2. **Create OAuth credentials**:
    - Go to `APIs & Services -> OAuth consent screen`, create a consent screen with yourself as a test user
-   - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Web Application`
-   - Add `http://localhost:8216` as an authorized redirect URI
+   - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Desktop app`
    - Download the credential file and save it as `client_secret.json`
 
 3. **Authenticate**:

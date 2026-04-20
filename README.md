@@ -48,12 +48,11 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
    - [YouTube Reporting API](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview) (Optional)
 2. **Create OAuth credentials**:
    - Go to `APIs & Services -> OAuth consent screen`, create a consent screen with yourself as a test user
-   - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Web Application`
-   - Add `http://localhost:8216` as an authorized redirect URI
+   - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Desktop app`
    - Download the credential file and save it as `client_secret.json`, it should look like
    ```json
    {
-     "web": {
+     "installed": {
        "client_id": "11181119.apps.googleusercontent.com",
        "project_id": "yutu-11181119",
        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -61,7 +60,7 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
        "client_secret": "XXXXXXXXXXXXXXXX",
        "redirect_uris": [
-         "http://localhost:8216"
+         "http://localhost"
        ]
      }
    }
@@ -77,7 +76,8 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
      "access_token": "ya29.XXXXXXXXX",
      "token_type": "Bearer",
      "refresh_token": "1//XXXXXXXXXX",
-     "expiry": "2024-05-26T18:49:56.1911165+08:00"
+     "expiry": "2024-05-26T18:49:56.1911165+08:00",
+     "expires_in": 3599
    }
    ```
 
