@@ -4,6 +4,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -22,6 +23,7 @@ const (
 var (
 	credential string
 	cacheToken string
+	authPort   int
 )
 
 var authCmd = &cobra.Command{
@@ -29,9 +31,11 @@ var authCmd = &cobra.Command{
 	Short: authShort,
 	Long:  authLong,
 	Run: func(cmd *cobra.Command, args []string) {
+		redirectURL := fmt.Sprintf("http://localhost:%d", authPort)
 		if _, err := auth.NewY2BService(
 			auth.WithCredential(credential, pkg.Root.FS()),
 			auth.WithCacheToken(cacheToken, pkg.Root.FS()),
+			auth.WithRedirectURL(redirectURL),
 		).GetService(); err != nil {
 			slog.Error("authentication failed", "error", err)
 			os.Exit(1)
@@ -47,5 +51,8 @@ func init() {
 	)
 	authCmd.Flags().StringVarP(
 		&cacheToken, "cacheToken", "t", "youtube.token.json", cacheUsage,
+	)
+	authCmd.Flags().IntVarP(
+		&authPort, "port", "p", 8216, "Port for OAuth redirect URL",
 	)
 }
