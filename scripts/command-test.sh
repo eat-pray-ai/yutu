@@ -45,18 +45,14 @@ fi
 "$YUTU_PATH" version
 
 # yutu
+echo "======= agent ======="
+"$YUTU_PATH" agent --help
+
 echo "======= auth ======="
 "$YUTU_PATH" auth --help
 
-echo "======= version ======="
-"$YUTU_PATH" version --help
-
-# yutu ai
 echo "======= mcp ======="
 "$YUTU_PATH" mcp --help
-
-echo "======= agent ======="
-"$YUTU_PATH" agent --help
 
 # youtube api
 echo "======= activity ======="
@@ -68,14 +64,14 @@ echo "======= caption ======="
 "$YUTU_PATH" caption --help
 echo "------- delete -------"
 "$YUTU_PATH" caption delete --help
+echo "------- download -------"
+"$YUTU_PATH" caption download --help
 echo "------- insert -------"
 "$YUTU_PATH" caption insert --help
 echo "------- list -------"
 "$YUTU_PATH" caption list --help
 echo "------- update -------"
 "$YUTU_PATH" caption update --help
-echo "------- download -------"
-"$YUTU_PATH" caption download --help
 
 echo "======= channel ======="
 "$YUTU_PATH" channel --help
@@ -93,7 +89,7 @@ echo "======= channelSection ======="
 "$YUTU_PATH" channelSection --help
 echo "------- delete -------"
 "$YUTU_PATH" channelSection delete --help
-echo "------- insert -------"
+echo "------- list -------"
 "$YUTU_PATH" channelSection list --help
 
 echo "======= comment ======="
@@ -113,10 +109,10 @@ echo "------- update -------"
 
 echo "======= commentThread ======="
 "$YUTU_PATH" commentThread --help
-echo "------- list -------"
-"$YUTU_PATH" commentThread list --help
 echo "------- insert -------"
 "$YUTU_PATH" commentThread insert --help
+echo "------- list -------"
+"$YUTU_PATH" commentThread list --help
 
 echo "======= i18nLanguage ======="
 "$YUTU_PATH" i18nLanguage --help
@@ -127,21 +123,6 @@ echo "======= i18nRegion ======="
 "$YUTU_PATH" i18nRegion --help
 echo "------- list -------"
 "$YUTU_PATH" i18nRegion list --help
-
-echo "======= liveBroadcast ======="
-echo "pending implementation"
-
-echo "======= liveChatBan ======="
-echo "pending implementation"
-
-echo "======= liveChatMessage ======="
-echo "pending implementation"
-
-echo "======= liveChatModerator ======="
-echo "pending implementation"
-
-echo "======= liveStream ======="
-echo "pending implementation"
 
 echo "======= member ======="
 "$YUTU_PATH" member --help
@@ -164,17 +145,6 @@ echo "------- list -------"
 echo "------- update -------"
 "$YUTU_PATH" playlist update --help
 
-echo "======= playlistItem ======="
-"$YUTU_PATH" playlistItem --help
-echo "------- delete -------"
-"$YUTU_PATH" playlistItem delete --help
-echo "------- insert -------"
-"$YUTU_PATH" playlistItem insert --help
-echo "------- list -------"
-"$YUTU_PATH" playlistItem list --help
-echo "------- update -------"
-"$YUTU_PATH" playlistItem update --help
-
 echo "======= playlistImage ======="
 "$YUTU_PATH" playlistImage --help
 echo "------- delete -------"
@@ -185,6 +155,17 @@ echo "------- list -------"
 "$YUTU_PATH" playlistImage list --help
 echo "------- update -------"
 "$YUTU_PATH" playlistImage update --help
+
+echo "======= playlistItem ======="
+"$YUTU_PATH" playlistItem --help
+echo "------- delete -------"
+"$YUTU_PATH" playlistItem delete --help
+echo "------- insert -------"
+"$YUTU_PATH" playlistItem insert --help
+echo "------- list -------"
+"$YUTU_PATH" playlistItem list --help
+echo "------- update -------"
+"$YUTU_PATH" playlistItem update --help
 
 echo "======= search ======="
 "$YUTU_PATH" search --help
@@ -205,12 +186,6 @@ echo "======= superChatEvent ======="
 echo "------- list -------"
 "$YUTU_PATH" superChatEvent list --help
 
-echo "======= test ======="
-echo "pending implementation"
-
-echo "======= thirdPartyLink ======="
-echo "pending implementation"
-
 echo "======= thumbnail ======="
 "$YUTU_PATH" thumbnail --help
 echo "------- set -------"
@@ -228,10 +203,10 @@ echo "------- list -------"
 "$YUTU_PATH" video list --help
 echo "------- rate -------"
 "$YUTU_PATH" video rate --help
-echo "------- update -------"
-"$YUTU_PATH" video update --help
 echo "------- reportAbuse -------"
 "$YUTU_PATH" video reportAbuse --help
+echo "------- update -------"
+"$YUTU_PATH" video update --help
 
 echo "======= videoAbuseReportReason ======="
 "$YUTU_PATH" videoAbuseReportReason --help
