@@ -6,6 +6,7 @@ package channel
 import (
 	"encoding/json"
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -81,6 +82,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
+	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -88,7 +90,12 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would update channel: %s", strings.Join(ids, ", "))
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := channel.NewChannel(
 			channel.WithIds(ids),
 			channel.WithCountry(country),
@@ -98,6 +105,6 @@ var updateCmd = &cobra.Command{
 			channel.WithTitle(title),
 			channel.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Update(c.OutOrStdout()), c)
 	},
 }

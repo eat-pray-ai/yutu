@@ -5,6 +5,7 @@ package video
 
 import (
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -67,6 +68,7 @@ func init() {
 
 	_ = rateCmd.MarkFlagRequired("ids")
 	_ = rateCmd.MarkFlagRequired("rating")
+	cmd.AddMutationFlags(rateCmd)
 }
 
 var rateCmd = &cobra.Command{
@@ -74,11 +76,16 @@ var rateCmd = &cobra.Command{
 	Short:   rateShort,
 	Long:    rateLong,
 	Example: rateExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would rate video(s): %s as %s", strings.Join(ids, ", "), rating)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithRating(rating),
 		)
-		utils.HandleCmdError(input.Rate(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Rate(c.OutOrStdout()), c)
 	},
 }

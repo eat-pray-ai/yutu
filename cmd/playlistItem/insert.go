@@ -92,6 +92,7 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("kind")
 	_ = insertCmd.MarkFlagRequired("playlistId")
 	_ = insertCmd.MarkFlagRequired("channelId")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -99,7 +100,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert playlist item")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(title),
 			playlistItem.WithDescription(description),
@@ -113,6 +119,6 @@ var insertCmd = &cobra.Command{
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistItem.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

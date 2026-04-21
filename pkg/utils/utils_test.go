@@ -331,6 +331,16 @@ func TestRandomStage(t *testing.T) {
 	}
 }
 
+func TestHandleCmdError_DryRun(t *testing.T) {
+	c := &cobra.Command{Use: "test"}
+	var stderr bytes.Buffer
+	c.SetErr(&stderr)
+	HandleCmdError(ErrDryRun, c)
+	if stderr.Len() != 0 {
+		t.Errorf("expected no error output for ErrDryRun, got %q", stderr.String())
+	}
+}
+
 func TestHandleCmdError(t *testing.T) {
 	tests := []struct {
 		name    string

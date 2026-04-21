@@ -5,6 +5,7 @@ package playlist
 
 import (
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -63,6 +64,7 @@ func init() {
 	)
 
 	_ = deleteCmd.MarkFlagRequired("ids")
+	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -70,11 +72,16 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would delete playlist(s): %s", strings.Join(ids, ", "))
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := playlist.NewPlaylist(
 			playlist.WithIds(ids),
 			playlist.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
-		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Delete(c.OutOrStdout()), c)
 	},
 }

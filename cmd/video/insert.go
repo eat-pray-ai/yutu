@@ -139,6 +139,7 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("categoryId")
 	_ = insertCmd.MarkFlagRequired("privacy")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -146,7 +147,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert video")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := video.NewVideo(
 			video.WithAutoLevels(autoLevels),
 			video.WithFile(file),
@@ -172,6 +178,6 @@ var insertCmd = &cobra.Command{
 			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			video.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

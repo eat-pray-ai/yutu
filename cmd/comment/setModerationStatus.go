@@ -6,6 +6,7 @@ package comment
 import (
 	"encoding/json"
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -83,6 +84,7 @@ func init() {
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
 	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
+	cmd.AddMutationFlags(setModerationStatusCmd)
 }
 
 var setModerationStatusCmd = &cobra.Command{
@@ -90,13 +92,18 @@ var setModerationStatusCmd = &cobra.Command{
 	Short:   smsShort,
 	Long:    smsLong,
 	Example: smsExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would set moderation status of comment(s): %s to %s", strings.Join(ids, ", "), moderationStatus)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := comment.NewComment(
 			comment.WithIds(ids),
 			comment.WithModerationStatus(moderationStatus),
 			comment.WithBanAuthor(banAuthor),
 			comment.WithOutput(output),
 		)
-		utils.HandleCmdError(input.SetModerationStatus(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.SetModerationStatus(c.OutOrStdout()), c)
 	},
 }

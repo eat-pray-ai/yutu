@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
@@ -99,9 +100,13 @@ func ExtractHl(uri string) string {
 	return ""
 }
 
+// ErrDryRun is returned when --dry-run is set; HandleCmdError silently ignores it.
+var ErrDryRun = errors.New("dry run")
+
 func HandleCmdError(err error, cmd *cobra.Command) {
-	if err != nil {
-		_ = cmd.Help()
-		cmd.PrintErrf("Error: %v\n", err)
+	if err == nil || errors.Is(err, ErrDryRun) {
+		return
 	}
+	_ = cmd.Help()
+	cmd.PrintErrf("Error: %v\n", err)
 }

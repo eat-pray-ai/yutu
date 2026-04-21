@@ -94,6 +94,7 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("playlistId")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -101,7 +102,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		confirmErr := cmd.Confirm(c, "Would insert playlist image")
+		if confirmErr != nil {
+			utils.HandleCmdError(confirmErr, c)
+			return
+		}
 		pi := playlistImage.NewPlaylistImage(
 			playlistImage.WithFile(file),
 			playlistImage.WithPlaylistId(playlistId),
@@ -112,7 +118,7 @@ var insertCmd = &cobra.Command{
 			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 		)
-		err := pi.Insert(cmd.OutOrStdout())
-		utils.HandleCmdError(err, cmd)
+		err := pi.Insert(c.OutOrStdout())
+		utils.HandleCmdError(err, c)
 	},
 }

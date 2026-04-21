@@ -71,6 +71,7 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -78,7 +79,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert subscription")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := subscription.NewSubscription(
 			subscription.WithSubscriberChannelId(subscriberChannelId),
 			subscription.WithDescription(description),
@@ -86,6 +92,6 @@ var insertCmd = &cobra.Command{
 			subscription.WithTitle(title),
 			subscription.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

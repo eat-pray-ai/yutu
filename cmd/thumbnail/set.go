@@ -64,6 +64,7 @@ func init() {
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
+	cmd.AddMutationFlags(setCmd)
 }
 
 var setCmd = &cobra.Command{
@@ -71,12 +72,17 @@ var setCmd = &cobra.Command{
 	Short:   setShort,
 	Long:    setLong,
 	Example: setExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would set thumbnail for video: %s", videoId)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),
 			thumbnail.WithVideoId(videoId),
 			thumbnail.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Set(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Set(c.OutOrStdout()), c)
 	},
 }

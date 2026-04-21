@@ -74,6 +74,7 @@ func init() {
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
 	_ = insertCmd.MarkFlagRequired("videoId")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -81,7 +82,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert comment thread")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := commentThread.NewCommentThread(
 			commentThread.WithAuthorChannelId(authorChannelId),
 			commentThread.WithChannelId(channelId),
@@ -89,6 +95,6 @@ var insertCmd = &cobra.Command{
 			commentThread.WithVideoId(videoId),
 			commentThread.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

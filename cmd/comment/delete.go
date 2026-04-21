@@ -5,6 +5,7 @@ package comment
 
 import (
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -56,6 +57,7 @@ func init() {
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
+	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -63,8 +65,13 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would delete comment(s): %s", strings.Join(ids, ", "))
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := comment.NewComment(comment.WithIds(ids))
-		utils.HandleCmdError(input.Delete(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Delete(c.OutOrStdout()), c)
 	},
 }

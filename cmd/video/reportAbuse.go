@@ -5,6 +5,7 @@ package video
 
 import (
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -82,6 +83,7 @@ func init() {
 
 	_ = reportAbuseCmd.MarkFlagRequired("ids")
 	_ = reportAbuseCmd.MarkFlagRequired("reasonId")
+	cmd.AddMutationFlags(reportAbuseCmd)
 }
 
 var reportAbuseCmd = &cobra.Command{
@@ -89,7 +91,12 @@ var reportAbuseCmd = &cobra.Command{
 	Short:   reportAbuseShort,
 	Long:    reportAbuseLong,
 	Example: reportAbuseExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would report abuse on video(s): %s", strings.Join(ids, ", "))
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithReasonId(reasonId),
@@ -98,6 +105,6 @@ var reportAbuseCmd = &cobra.Command{
 			video.WithLanguage(language),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
-		utils.HandleCmdError(input.ReportAbuse(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.ReportAbuse(c.OutOrStdout()), c)
 	},
 }

@@ -107,6 +107,7 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("videoId")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -114,7 +115,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert caption")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := caption.NewCaption(
 			caption.WithFile(file),
 			caption.WithAudioTrackType(audioTrackType),
@@ -131,6 +137,6 @@ var insertCmd = &cobra.Command{
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			caption.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

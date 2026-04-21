@@ -6,6 +6,7 @@ package comment
 import (
 	"encoding/json"
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -64,6 +65,7 @@ func init() {
 	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
+	cmd.AddMutationFlags(markAsSpamCmd)
 }
 
 var markAsSpamCmd = &cobra.Command{
@@ -71,11 +73,16 @@ var markAsSpamCmd = &cobra.Command{
 	Short:   masShort,
 	Long:    masLong,
 	Example: masExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would mark comment(s) as spam: %s", strings.Join(ids, ", "))
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := comment.NewComment(
 			comment.WithIds(ids),
 			comment.WithOutput(output),
 		)
-		utils.HandleCmdError(input.MarkAsSpam(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.MarkAsSpam(c.OutOrStdout()), c)
 	},
 }

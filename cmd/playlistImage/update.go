@@ -87,6 +87,7 @@ func init() {
 	)
 
 	_ = updateCmd.MarkFlagRequired("playlistId")
+	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -94,7 +95,14 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(
+			c, "Would update playlist image for playlist: %s", playlistId,
+		)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithPlaylistId(playlistId),
 			playlistImage.WithType(type_),
@@ -105,6 +113,6 @@ var updateCmd = &cobra.Command{
 			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 		)
-		utils.HandleCmdError(input.Update(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Update(c.OutOrStdout()), c)
 	},
 }

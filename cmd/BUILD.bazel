@@ -1,9 +1,10 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "cmd",
     srcs = [
         "auth.go",
+        "flags.go",
         "mcp.go",
         "root.go",
         "version.go",
@@ -22,9 +23,18 @@ go_library(
         "//pkg",
         "//pkg/auth",
         "//pkg/common",
+        "//pkg/utils",
         "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
         "@com_github_modelcontextprotocol_go_sdk//oauthex",
         "@com_github_savioxavier_termlink//:termlink",
         "@com_github_spf13_cobra//:cobra",
+        "@org_golang_x_term//:term",
     ],
+)
+
+go_test(
+    name = "cmd_test",
+    srcs = ["flags_test.go"],
+    embed = [":cmd"],
+    deps = ["@com_github_spf13_cobra//:cobra"],
 )

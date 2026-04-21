@@ -6,6 +6,7 @@ package playlist
 import (
 	"encoding/json"
 	"io"
+	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -85,6 +86,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
+	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -92,7 +94,12 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		confirmErr := cmd.Confirm(c, "Would update playlist: %s", strings.Join(ids, ", "))
+		if confirmErr != nil {
+			utils.HandleCmdError(confirmErr, c)
+			return
+		}
 		p := playlist.NewPlaylist(
 			playlist.WithIds(ids),
 			playlist.WithTitle(title),
@@ -102,7 +109,7 @@ var updateCmd = &cobra.Command{
 			playlist.WithPrivacy(privacy),
 			playlist.WithOutput(output),
 		)
-		err := p.Update(cmd.OutOrStdout())
-		utils.HandleCmdError(err, cmd)
+		err := p.Update(c.OutOrStdout())
+		utils.HandleCmdError(err, c)
 	},
 }

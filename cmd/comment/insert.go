@@ -83,6 +83,7 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("parentId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -90,7 +91,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert comment")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := comment.NewComment(
 			comment.WithAuthorChannelId(authorChannelId),
 			comment.WithChannelId(channelId),
@@ -100,6 +106,6 @@ var insertCmd = &cobra.Command{
 			comment.WithVideoId(videoId),
 			comment.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }

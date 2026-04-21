@@ -80,6 +80,7 @@ func init() {
 
 	_ = setCmd.MarkFlagRequired("channelId")
 	_ = setCmd.MarkFlagRequired("file")
+	cmd.AddMutationFlags(setCmd)
 }
 
 var setCmd = &cobra.Command{
@@ -87,7 +88,12 @@ var setCmd = &cobra.Command{
 	Short:   setShort,
 	Long:    setLong,
 	Example: setExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would set watermark for channel: %s", channelId)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),
 			watermark.WithFile(file),
@@ -97,6 +103,6 @@ var setCmd = &cobra.Command{
 			watermark.WithOffsetType(offsetType),
 			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
-		utils.HandleCmdError(input.Set(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Set(c.OutOrStdout()), c)
 	},
 }

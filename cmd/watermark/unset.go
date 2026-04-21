@@ -51,6 +51,7 @@ func init() {
 
 	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	_ = unsetCmd.MarkFlagRequired("channelId")
+	cmd.AddMutationFlags(unsetCmd)
 }
 
 var unsetCmd = &cobra.Command{
@@ -58,8 +59,13 @@ var unsetCmd = &cobra.Command{
 	Short:   unsetShort,
 	Long:    unsetLong,
 	Example: unsetExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would unset watermark for channel: %s", channelId)
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := watermark.NewWatermark(watermark.WithChannelId(channelId))
-		utils.HandleCmdError(input.Unset(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Unset(c.OutOrStdout()), c)
 	},
 }

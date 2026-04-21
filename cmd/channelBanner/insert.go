@@ -81,6 +81,7 @@ func init() {
 
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("file")
+	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -88,7 +89,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(c *cobra.Command, args []string) {
+		err := cmd.Confirm(c, "Would insert channel banner")
+		if err != nil {
+			utils.HandleCmdError(err, c)
+			return
+		}
 		input := channelBanner.NewChannelBanner(
 			channelBanner.WithChannelId(channelId),
 			channelBanner.WithFile(file),
@@ -96,6 +102,6 @@ var insertCmd = &cobra.Command{
 			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			channelBanner.WithOutput(output),
 		)
-		utils.HandleCmdError(input.Insert(cmd.OutOrStdout()), cmd)
+		utils.HandleCmdError(input.Insert(c.OutOrStdout()), c)
 	},
 }
