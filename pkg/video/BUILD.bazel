@@ -21,6 +21,7 @@ go_test(
     srcs = ["video_test.go"],
     embed = [":video"],
     deps = [
+        "//pkg",
         "//pkg/common",
         "@org_golang_google_api//youtube/v3:youtube",
     ],
