@@ -38,8 +38,14 @@ func init() {
 	mcpCmd.Example = example
 	RootCmd.AddCommand(mcpCmd)
 
-	mcpCmd.Flags().BoolVar(&mcpAuth, "auth", false, "Enable MCP OAuth authorization (HTTP mode only)")
-	mcpCmd.Flags().StringVar(&baseURL, "base-url", "", "Base URL for the MCP server (default: http://localhost:<port>)")
+	mcpCmd.Flags().BoolVarP(
+		&mcpAuth, "auth", "a", false,
+		"Enable MCP OAuth authorization (HTTP mode only)",
+	)
+	mcpCmd.Flags().StringVarP(
+		&baseURL, "baseUrl", "b", "",
+		"Base URL for the MCP server (default http://localhost:<port>)",
+	)
 
 	mcpCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
 		port, _ := cmd.Flags().GetInt("port")
