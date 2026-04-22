@@ -46,13 +46,13 @@
 - [YouTube Analytics API（可选）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
 - [YouTube Reporting API（可选）](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
 
-启用 API 后，创建一个 `OAuth content screen`，将您自己设置为测试用户，然后创建一个类型为 `Web Application` 的 `OAuth Client ID`，将 `http://localhost:8216` 作为重定向 URI。
+启用 API 后，创建一个 `OAuth content screen`，将您自己设置为测试用户，然后创建一个类型为 `Desktop app` 的 `OAuth Client ID`。
 
 将此凭据下载到本地机器，命名为 `client_secret.json`，它应该看起来像这样：
 
 ```json
 {
-  "web": {
+  "installed": {
     "client_id": "11181119.apps.googleusercontent.com",
     "project_id": "yutu-11181119",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -60,7 +60,7 @@
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_secret": "XXXXXXXXXXXXXXXX",
     "redirect_uris": [
-      "http://localhost:8216"
+      "http://localhost"
     ]
   }
 }
@@ -79,7 +79,8 @@
   "access_token": "ya29.XXXXXXXXX",
   "token_type":"Bearer",
   "refresh_token":"1//XXXXXXXXXX",
-  "expiry":"2024-05-26T18:49:56.1911165+08:00"
+  "expiry": "2024-05-26T18:49:56.1911165+08:00",
+  "expires_in": 3599
 }
 ```
 
