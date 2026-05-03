@@ -29,4 +29,5 @@ use_repo(
     "org_golang_google_api",
     "org_golang_google_genai",
     "org_golang_x_oauth2",
+    "org_golang_x_term",
 )
