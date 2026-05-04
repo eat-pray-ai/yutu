@@ -21,7 +21,8 @@
 )](https://winstall.app/apps/eat-pray-ai.yutu)
 [![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
-[![yutu - build a fully automated YouTube Channel!](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=988886&theme=light)](https://www.producthunt.com/posts/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-yutu)
+[![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
+Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent)
 
 `yutu` 是一个 YouTube CLI、MCP 服务器和 AI Agent，可以自动化您的整个 YouTube 工作流程——从上传和优化视频到管理评论、播放列表和频道品牌——帮助您获得更多播放量、更高的点击率和更强的观众互动，同时大幅减少手动操作。
 
