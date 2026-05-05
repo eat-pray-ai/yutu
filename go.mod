@@ -72,7 +72,7 @@ require (
 	golang.org/x/text v0.36.0 // indirect
 	google.golang.org/adk v1.2.0
 	google.golang.org/api v0.277.0
-	google.golang.org/genai v1.55.0
+	google.golang.org/genai v1.56.0
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )
