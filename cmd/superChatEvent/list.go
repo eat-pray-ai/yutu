@@ -71,7 +71,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -80,6 +80,7 @@ var listCmd = &cobra.Command{
 	Long:    listLong,
 	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
+		output, _ := cmd.Flags().GetString("output")
 		input := superChatEvent.NewSuperChatEvent(
 			superChatEvent.WithHl(hl),
 			superChatEvent.WithMaxResults(maxResults),

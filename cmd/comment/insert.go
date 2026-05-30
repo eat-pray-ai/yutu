@@ -79,7 +79,7 @@ func init() {
 		&textOriginal, "textOriginal", "t", "", toUsage,
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("parentId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
@@ -92,6 +92,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would insert comment")
 		if err != nil {
 			utils.HandleCmdError(err, c)

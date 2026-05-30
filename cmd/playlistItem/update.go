@@ -78,7 +78,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 	cmd.AddMutationFlags(updateCmd)
@@ -90,6 +90,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(
 			c, "Would update playlist item: %s", strings.Join(ids, ", "),
 		)

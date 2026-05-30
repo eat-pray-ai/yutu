@@ -102,7 +102,7 @@ func init() {
 	updateCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("videoId")
 	cmd.AddMutationFlags(updateCmd)
@@ -114,6 +114,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would update caption for video: %s", videoId)
 		if err != nil {
 			utils.HandleCmdError(err, c)

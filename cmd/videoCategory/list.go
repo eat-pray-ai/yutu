@@ -35,7 +35,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
 }
 
 const (
@@ -48,6 +48,7 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
+		output, _ := cmd.Flags().GetString("output")
 		input := videoCategory.NewVideoCategory(
 			videoCategory.WithIds(ids),
 			videoCategory.WithHl(hl),

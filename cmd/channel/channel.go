@@ -44,7 +44,6 @@ var (
 	description     string
 	title           string
 	parts           []string
-	output          string
 
 	onBehalfOfContentOwner string
 )

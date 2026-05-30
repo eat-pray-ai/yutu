@@ -75,7 +75,6 @@ var (
 	maxWidth          int64
 	maxResults        int64
 	parts             []string
-	output            string
 
 	notifySubscribers             = new(false)
 	publicStatsViewable           = new(false)

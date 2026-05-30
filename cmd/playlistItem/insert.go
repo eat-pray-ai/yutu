@@ -87,7 +87,7 @@ func init() {
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = insertCmd.MarkFlagRequired("kind")
 	_ = insertCmd.MarkFlagRequired("playlistId")
@@ -101,6 +101,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would insert playlist item")
 		if err != nil {
 			utils.HandleCmdError(err, c)

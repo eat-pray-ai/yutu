@@ -188,7 +188,7 @@ func init() {
 	listCmd.Flags().StringSliceVar(
 		&parts, "parts", []string{"id", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVar(&output, "output", "table", pkg.TableUsage)
+	listCmd.Flags().String("output", "table", pkg.TableUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -197,6 +197,7 @@ var listCmd = &cobra.Command{
 	Long:    listLong,
 	Example: listExample,
 	Run: func(cmd *cobra.Command, args []string) {
+		output, _ := cmd.Flags().GetString("output")
 		input := search.NewSearch(
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),

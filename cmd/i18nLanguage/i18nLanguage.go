@@ -22,7 +22,6 @@ const (
 var (
 	hl           string
 	parts        []string
-	output       string
 	defaultParts = []string{"id", "snippet"}
 )
 

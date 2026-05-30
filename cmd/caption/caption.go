@@ -46,7 +46,6 @@ var (
 	parts                  []string
 	tfmt                   string
 	tlang                  string
-	output                 string
 )
 
 var captionCmd = &cobra.Command{

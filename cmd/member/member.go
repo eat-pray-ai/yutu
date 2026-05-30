@@ -22,7 +22,6 @@ var (
 	maxResults       int64
 	mode             string
 	parts            []string
-	output           string
 )
 
 var memberCmd = &cobra.Command{

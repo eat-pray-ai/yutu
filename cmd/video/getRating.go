@@ -66,7 +66,7 @@ func init() {
 	getRatingCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-	getRatingCmd.Flags().StringVarP(&output, "output", "o", "", pkg.TableUsage)
+	getRatingCmd.Flags().StringP("output", "o", "", pkg.TableUsage)
 
 	_ = getRatingCmd.MarkFlagRequired("ids")
 }
@@ -77,6 +77,7 @@ var getRatingCmd = &cobra.Command{
 	Long:    getRatingLong,
 	Example: getRatingExample,
 	Run: func(cmd *cobra.Command, args []string) {
+		output, _ := cmd.Flags().GetString("output")
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),

@@ -24,7 +24,6 @@ var (
 	mine                   = new(false)
 	onBehalfOfContentOwner string
 	parts                  []string
-	output                 string
 )
 
 var channelSectionCmd = &cobra.Command{

@@ -48,7 +48,7 @@ func init() {
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringVarP(&output, "output", "o", "table", pkg.TableUsage)
+	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
 }
 
 var listCmd = &cobra.Command{
@@ -56,6 +56,7 @@ var listCmd = &cobra.Command{
 	Short: listShort,
 	Long:  listLong,
 	Run: func(cmd *cobra.Command, args []string) {
+		output, _ := cmd.Flags().GetString("output")
 		input := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithHl(hl),
 			i18nLanguage.WithParts(parts),

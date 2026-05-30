@@ -29,7 +29,6 @@ var (
 	publishedBefore string
 	regionCode      string
 	parts           []string
-	output          string
 )
 
 var activityCmd = &cobra.Command{

@@ -36,7 +36,6 @@ var (
 	maxResults  int64
 	privacy     string
 	parts       []string
-	output      string
 
 	onBehalfOfContentOwner string
 )

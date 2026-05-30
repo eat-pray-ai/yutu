@@ -78,9 +78,7 @@ func init() {
 	setModerationStatusCmd.Flags().BoolVarP(
 		banAuthor, "banAuthor", "A", false, baUsage,
 	)
-	setModerationStatusCmd.Flags().StringVarP(
-		&output, "output", "o", "", pkg.SilentUsage,
-	)
+	setModerationStatusCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = setModerationStatusCmd.MarkFlagRequired("ids")
 	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
@@ -93,6 +91,7 @@ var setModerationStatusCmd = &cobra.Command{
 	Long:    smsLong,
 	Example: smsExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would set moderation status of comment(s): %s to %s", strings.Join(ids, ", "), moderationStatus)
 		if err != nil {
 			utils.HandleCmdError(err, c)

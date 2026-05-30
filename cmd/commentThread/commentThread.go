@@ -35,7 +35,6 @@ var (
 	textOriginal                 string
 	videoId                      string
 	parts                        []string
-	output                       string
 )
 
 var commentThreadCmd = &cobra.Command{

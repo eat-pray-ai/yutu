@@ -83,7 +83,7 @@ func init() {
 	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 	cmd.AddMutationFlags(updateCmd)
@@ -95,6 +95,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		confirmErr := cmd.Confirm(c, "Would update playlist: %s", strings.Join(ids, ", "))
 		if confirmErr != nil {
 			utils.HandleCmdError(confirmErr, c)

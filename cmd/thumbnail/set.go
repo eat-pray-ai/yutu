@@ -60,7 +60,7 @@ func init() {
 
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	setCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	setCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
@@ -73,6 +73,7 @@ var setCmd = &cobra.Command{
 	Long:    setLong,
 	Example: setExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would set thumbnail for video: %s", videoId)
 		if err != nil {
 			utils.HandleCmdError(err, c)

@@ -23,7 +23,6 @@ var (
 	hl           string
 	regionCode   string
 	parts        []string
-	output       string
 	defaultParts = []string{"id", "snippet"}
 )
 

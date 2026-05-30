@@ -38,7 +38,6 @@ var (
 	videoId          string
 	viewerRating     string
 	parts            []string
-	output           string
 )
 
 var commentCmd = &cobra.Command{

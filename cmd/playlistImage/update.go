@@ -77,7 +77,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
 	updateCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
@@ -96,6 +96,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(
 			c, "Would update playlist image for playlist: %s", playlistId,
 		)

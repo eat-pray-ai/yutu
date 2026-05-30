@@ -83,7 +83,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
 	insertCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
 	insertCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	insertCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	insertCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
@@ -103,6 +103,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		confirmErr := cmd.Confirm(c, "Would insert playlist image")
 		if confirmErr != nil {
 			utils.HandleCmdError(confirmErr, c)

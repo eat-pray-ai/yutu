@@ -104,7 +104,7 @@ func init() {
 		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
 	)
 	updateCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
-	updateCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = updateCmd.MarkFlagRequired("id")
 	cmd.AddMutationFlags(updateCmd)
@@ -116,6 +116,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would update video: %s", strings.Join(ids, ", "))
 		if err != nil {
 			utils.HandleCmdError(err, c)

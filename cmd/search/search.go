@@ -72,7 +72,6 @@ var (
 	videoSyndicated           string
 	videoType                 string
 	parts                     []string
-	output                    string
 )
 
 var searchCmd = &cobra.Command{

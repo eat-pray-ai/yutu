@@ -30,7 +30,6 @@ var (
 	parent     string
 	maxResults int64
 	parts      []string
-	output     string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

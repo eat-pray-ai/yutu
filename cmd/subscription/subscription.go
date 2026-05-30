@@ -37,7 +37,6 @@ var (
 	order                         string
 	title                         string
 	parts                         []string
-	output                        string
 )
 
 var subscriptionCmd = &cobra.Command{

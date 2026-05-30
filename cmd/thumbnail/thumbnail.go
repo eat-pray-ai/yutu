@@ -18,7 +18,6 @@ const (
 var (
 	file    string
 	videoId string
-	output  string
 )
 
 var thumbnailCmd = &cobra.Command{

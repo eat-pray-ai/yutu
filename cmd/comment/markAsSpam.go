@@ -62,7 +62,7 @@ func init() {
 	commentCmd.AddCommand(markAsSpamCmd)
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
-	markAsSpamCmd.Flags().StringVarP(&output, "output", "o", "", pkg.SilentUsage)
+	markAsSpamCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
 	cmd.AddMutationFlags(markAsSpamCmd)
@@ -74,6 +74,7 @@ var markAsSpamCmd = &cobra.Command{
 	Long:    masLong,
 	Example: masExample,
 	Run: func(c *cobra.Command, args []string) {
+		output, _ := c.Flags().GetString("output")
 		err := cmd.Confirm(c, "Would mark comment(s) as spam: %s", strings.Join(ids, ", "))
 		if err != nil {
 			utils.HandleCmdError(err, c)

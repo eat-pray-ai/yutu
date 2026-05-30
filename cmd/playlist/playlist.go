@@ -34,7 +34,6 @@ var (
 	channelId   string
 	privacy     string
 	parts       []string
-	output      string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

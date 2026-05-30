@@ -18,7 +18,6 @@ const (
 var (
 	channelId string
 	file      string
-	output    string
 
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string

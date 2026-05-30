@@ -18,7 +18,6 @@ var (
 	hl         string
 	maxResults int64
 	parts      []string
-	output     string
 )
 
 var superChatEventCmd = &cobra.Command{
