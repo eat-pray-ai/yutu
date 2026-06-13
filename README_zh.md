@@ -107,26 +107,24 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 
 您可以直接从[发布页面](https://github.com/eat-pray-ai/yutu/releases/latest)下载 `yutu`，或使用以下您喜欢的方法。
 
-- [GitHub Actions](#github-actions)
-- [Node.js](#nodejs)
-- [Docker](#docker)
-- [Gopher](#gopher)
-- [Linux](#linux)
-- [macOS](#macos)
-- [Windows](#windows)
-- [验证安装](#验证安装)
-
-### GitHub Actions
+<details>
+<summary>GitHub Actions</summary>
 
 yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用于上传视频到 YouTube。更多信息请参考 [youtube-action](https://github.com/eat-pray-ai/youtube-action) 和 [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader)。
 
-### Node.js
+</details>
+
+<details>
+<summary>Node.js</summary>
 
 ```shell
 ❯ npm i -g @eat-pray-ai/yutu
 ```
 
-### Docker
+</details>
+
+<details>
+<summary>Docker</summary>
 
 ```shell
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
@@ -135,19 +133,28 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 ❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
 ```
 
-### Gopher
+</details>
+
+<details>
+<summary>Gopher</summary>
 
 ```shell
 ❯ go install github.com/eat-pray-ai/yutu@latest
 ```
 
-### Linux
+</details>
+
+<details>
+<summary>Linux</summary>
 
 ```shell
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
-### macOS
+</details>
+
+<details>
+<summary>macOS</summary>
 
 使用 [Homebrew🍺](https://brew.sh/) 安装 `yutu`（推荐），或运行 shell 脚本。
 
@@ -158,13 +165,19 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
-### Windows
+</details>
+
+<details>
+<summary>Windows</summary>
 
 ```shell
 ❯ winget install yutu
 ```
 
-### 验证安装
+</details>
+
+<details>
+<summary>验证安装</summary>
 
 使用其关联的加密签名证明来验证 `yutu` 的完整性和来源。
 
@@ -178,6 +191,8 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 # Windows
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
+
+</details>
 
 ## Agent
 
@@ -229,14 +244,52 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ## MCP 服务器
 
-[![在 VS Code 中安装](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
-[![在 Cursor 中安装](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
-
-作为一个 [MCP 服务器](https://modelcontextprotocol.io/introduction)，`yutu` 可以在 MCP 客户端中使用，如 [Claude Desktop](https://modelcontextprotocol.io/quickstart/user)、[VS Code](https://code.visualstudio.com/) 或 [Cursor](https://docs.cursor.com/) 等，这允许您通过聊天的形式与 YouTube 资源进行交互。
-
 在将 `yutu` 用作 MCP 服务器之前，请确保已安装 `yutu`（参见[安装](#安装)部分），并且您有有效的 `client_secret.json` 和 `youtube.token.json` 文件（参考[前提条件](#前提条件)部分）。
 
-您可以通过点击上面相应的徽章将 `yutu` 添加为 VS Code 或 Cursor 中的 MCP 服务器，或手动将以下配置添加到您的 MCP 客户端。记得将 `YUTU_CREDENTIAL` 和 `YUTU_CACHE_TOKEN` 的值替换为您本地机器上的正确路径。
+您可以通过点击下方徽章将 `yutu` 添加为 VS Code 或 Cursor 中的 MCP 服务器，或使用下面的 CLI 命令。
+
+[![在 VS Code 中安装](https://img.shields.io/badge/VS_Code-Install_YUTU-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
+[![在 Cursor 中安装](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+
+<details>
+<summary>Claude Code</summary>
+
+```shell
+# Stdio 模式
+❯ claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+  yutu -- yutu mcp
+
+# HTTP 模式（先启动服务器：yutu mcp --mode http --auth）
+❯ claude mcp add --transport http \
+  --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
+  --client-secret \
+  yutu http://localhost:8216/mcp
+```
+
+</details>
+
+<details>
+<summary>Codex</summary>
+
+```shell
+# Stdio 模式
+❯ codex mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+  yutu -- yutu mcp
+
+# HTTP 模式（先启动服务器：yutu mcp --mode http --auth）
+❯ codex mcp add --url http://localhost:8216/mcp \
+  --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
+  yutu
+```
+
+</details>
+
+<details>
+<summary>手动配置（VS Code、Cursor、OpenCode 等）</summary>
+
+将以下配置添加到您的 MCP 设置中。记得将 `YUTU_CREDENTIAL` 和 `YUTU_CACHE_TOKEN` 的值替换为您本地机器上的正确路径。
 
 ```json
 {
@@ -253,6 +306,8 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
   }
 }
 ```
+
+</details>
 
 ## Skills
 

@@ -97,26 +97,24 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
 
-- [GitHub Actions](#github-actions)
-- [Node.js](#nodejs)
-- [Docker](#docker)
-- [Gopher](#gopher)
-- [Linux](#linux)
-- [macOS](#macos)
-- [Windows](#windows)
-- [Verifying Installation](#verifying-installation)
-
-### GitHub Actions
+<details>
+<summary>GitHub Actions</summary>
 
 There are two actions available for yutu, one is for general purpose and the other is for uploading video to YouTube. Refer to [youtube-action](https://github.com/eat-pray-ai/youtube-action) and [youtube-uploader](https://github.com/eat-pray-ai/youtube-uploader) for more information.
 
-### Node.js
+</details>
+
+<details>
+<summary>Node.js</summary>
 
 ```shell
 ❯ npm i -g @eat-pray-ai/yutu
 ```
 
-### Docker
+</details>
+
+<details>
+<summary>Docker</summary>
 
 ```shell
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
@@ -125,19 +123,28 @@ There are two actions available for yutu, one is for general purpose and the oth
 ❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
 ```
 
-### Gopher
+</details>
+
+<details>
+<summary>Gopher</summary>
 
 ```shell
 ❯ go install github.com/eat-pray-ai/yutu@latest
 ```
 
-### Linux
+</details>
+
+<details>
+<summary>Linux</summary>
 
 ```shell
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
-### macOS
+</details>
+
+<details>
+<summary>macOS</summary>
 
 Install `yutu` using [Homebrew🍺](https://brew.sh/)(recommended), or run the shell script.
 
@@ -148,13 +155,19 @@ Install `yutu` using [Homebrew🍺](https://brew.sh/)(recommended), or run the s
 ❯ curl -sSfL https://raw.githubusercontent.com/eat-pray-ai/yutu/main/scripts/install.sh | bash
 ```
 
-### Windows
+</details>
+
+<details>
+<summary>Windows</summary>
 
 ```shell
 ❯ winget install yutu
 ```
 
-### Verifying Installation
+</details>
+
+<details>
+<summary>Verifying Installation</summary>
 
 Verify the integrity and provenance of `yutu` using its associated cryptographically signed attestations.
 
@@ -168,6 +181,8 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 # Windows
 ❯ gh attestation verify $(where.exe yutu.exe) --repo eat-pray-ai/yutu
 ```
+
+</details>
 
 ## Agent
 
@@ -220,14 +235,52 @@ Then run the following command for detail usage:
 
 ## MCP Server
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
-
-As a [MCP server](https://modelcontextprotocol.io/introduction), `yutu` can be used in MCP clients like [Claude Desktop](https://modelcontextprotocol.io/quickstart/user), [VS Code](https://code.visualstudio.com/) or [Cursor](https://docs.cursor.com/), which allows you to interact with YouTube resources in a chat-like interface.
-
 Before using `yutu` as an MCP server, make sure `yutu` is installed(see [Installation](#installation) section), and you have a valid `client_secret.json` and `youtube.token.json` files(refer to [Prerequisites](#prerequisites) section).
 
-You can add `yutu` as a MCP server in VS Code or Cursor by clicking corresponding badge above, or add the following configuration manually to your MCP client. Remember to replace the values of `YUTU_CREDENTIAL` and `YUTU_CACHE_TOKEN` with correct paths on your local machine.
+You can add `yutu` as an MCP server in VS Code or Cursor by clicking corresponding badge, or use the CLI commands below for your preferred tool.
+
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_YUTU-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+
+<details>
+<summary>Claude Code</summary>
+
+```shell
+# Stdio mode
+❯ claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+  yutu -- yutu mcp
+
+# HTTP mode (start the server first: yutu mcp --mode http --auth)
+❯ claude mcp add --transport http \
+  --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
+  --client-secret \
+  yutu http://localhost:8216/mcp
+```
+
+</details>
+
+<details>
+<summary>Codex</summary>
+
+```shell
+# Stdio mode
+❯ codex mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+  yutu -- yutu mcp
+
+# HTTP mode (start the server first: yutu mcp --mode http --auth)
+❯ codex mcp add --url http://localhost:8216/mcp \
+  --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
+  yutu
+```
+
+</details>
+
+<details>
+<summary>Manual Configuration (VS Code, Cursor, OpenCode, etc.)</summary>
+
+Add the following to your MCP settings. Remember to replace the values of `YUTU_CREDENTIAL` and `YUTU_CACHE_TOKEN` with correct paths on your local machine.
 
 ```json
 {
@@ -244,6 +297,8 @@ You can add `yutu` as a MCP server in VS Code or Cursor by clicking correspondin
   }
 }
 ```
+
+</details>
 
 ## Skills
 
