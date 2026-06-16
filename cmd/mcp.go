@@ -9,7 +9,6 @@ import (
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
 	"github.com/eat-pray-ai/yutu/pkg/common"
-	"github.com/modelcontextprotocol/go-sdk/oauthex"
 	"github.com/spf13/cobra"
 )
 
@@ -29,10 +28,7 @@ var mcpConfig = &cobramcp.Config{
 
 var Server, mcpCmd = cobramcp.ServerAndCommand(mcpConfig)
 
-var (
-	mcpAuth bool
-	baseURL string
-)
+var mcpAuth bool
 
 func init() {
 	mcpCmd.Example = example
@@ -42,29 +38,16 @@ func init() {
 		&mcpAuth, "auth", "a", false,
 		"Enable MCP OAuth authorization (HTTP mode only)",
 	)
-	mcpCmd.Flags().StringVarP(
-		&baseURL, "baseUrl", "b", "",
-		"Base URL for the MCP server (default http://localhost:<port>)",
-	)
 
 	mcpCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-		port, _ := cmd.Flags().GetInt("port")
-
 		if mcpAuth {
-			if baseURL == "" {
-				baseURL = fmt.Sprintf("http://localhost:%d", port)
-			}
 			mcpConfig.Auth = &cobramcp.AuthConfig{
-				ResourceMetadata: &oauthex.ProtectedResourceMetadata{
-					Resource:             baseURL + "/mcp",
-					AuthorizationServers: []string{"https://accounts.google.com"},
-					ScopesSupported:      auth.Scopes,
-				},
-				ResourceMetadataURL: baseURL + "/.well-known/oauth-protected-resource",
-				TokenVerifier:       auth.GoogleTokenVerifier,
-				Scopes:              auth.Scopes,
+				TokenVerifier:        auth.GoogleTokenVerifier,
+				Scopes:               auth.Scopes,
+				AuthorizationServers: []string{"https://accounts.google.com"},
 			}
 		} else {
+			port, _ := cmd.Flags().GetInt("port")
 			redirectURL := fmt.Sprintf("http://localhost:%d", port)
 			cmd.SetContext(common.CtxWithRedirectURL(cmd.Context(), redirectURL))
 		}
