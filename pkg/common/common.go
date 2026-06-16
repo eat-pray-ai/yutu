@@ -21,19 +21,23 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-// RedirectURL is the OAuth redirect URL used by file-based auth (CLI / stdio mode).
-// Set by the command layer before EnsureService is called.
-var RedirectURL = "http://localhost:8216"
+type redirectURLKey struct{}
+
+// CtxWithRedirectURL returns a child context carrying the OAuth redirect URL.
+func CtxWithRedirectURL(ctx context.Context, url string) context.Context {
+	return context.WithValue(ctx, redirectURLKey{}, url)
+}
 
 type Fields struct {
-	Ctx        context.Context  `yaml:"-" json:"-"`
-	Service    *youtube.Service `yaml:"-" json:"-"`
-	Ids        []string         `yaml:"ids" json:"ids,omitempty"`
-	MaxResults int64            `yaml:"max_results" json:"max_results,omitempty"`
-	Hl         string           `yaml:"hl" json:"hl,omitempty"`
-	ChannelId  string           `yaml:"channel_id" json:"channel_id,omitempty"`
-	Parts      []string         `yaml:"parts" json:"parts,omitempty"`
-	Output     string           `yaml:"output" json:"output,omitempty"`
+	Ctx         context.Context  `yaml:"-" json:"-"`
+	Service     *youtube.Service `yaml:"-" json:"-"`
+	RedirectURL string           `yaml:"-" json:"-"`
+	Ids         []string         `yaml:"ids" json:"ids,omitempty"`
+	MaxResults  int64            `yaml:"max_results" json:"max_results,omitempty"`
+	Hl          string           `yaml:"hl" json:"hl,omitempty"`
+	ChannelId   string           `yaml:"channel_id" json:"channel_id,omitempty"`
+	Parts       []string         `yaml:"parts" json:"parts,omitempty"`
+	Output      string           `yaml:"output" json:"output,omitempty"`
 
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
@@ -47,6 +51,11 @@ func (d *Fields) GetFields() *Fields {
 func (d *Fields) SetContext(ctx context.Context) {
 	if d != nil {
 		d.Ctx = ctx
+		if d.RedirectURL == "" {
+			if url, ok := ctx.Value(redirectURLKey{}).(string); ok {
+				d.RedirectURL = url
+			}
+		}
 	}
 }
 
@@ -72,10 +81,13 @@ func (d *Fields) EnsureService() error {
 	}
 
 	// File-based auth path (CLI / stdio mode).
+	if d.RedirectURL == "" {
+		d.RedirectURL = "http://localhost:8216"
+	}
 	svc, err := auth.NewY2BService(
 		auth.WithCredential("", pkg.Root.FS()),
 		auth.WithCacheToken("", pkg.Root.FS()),
-		auth.WithRedirectURL(RedirectURL),
+		auth.WithRedirectURL(d.RedirectURL),
 	).GetService()
 	if err != nil {
 		return fmt.Errorf("failed to create YouTube service: %w", err)

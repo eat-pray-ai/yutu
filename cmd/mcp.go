@@ -65,7 +65,8 @@ func init() {
 				Scopes:              auth.Scopes,
 			}
 		} else {
-			common.RedirectURL = fmt.Sprintf("http://localhost:%d", port)
+			redirectURL := fmt.Sprintf("http://localhost:%d", port)
+			cmd.SetContext(common.CtxWithRedirectURL(cmd.Context(), redirectURL))
 		}
 
 		return nil
