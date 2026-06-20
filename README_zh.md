@@ -98,8 +98,8 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 
 | 变量                 | 描述                                 | 默认值                  |
 |--------------------|------------------------------------|----------------------|
-| `YUTU_CREDENTIAL`  | OAuth 客户端密钥的路径、base64 或 JSON       | `client_secret.json` |
-| `YUTU_CACHE_TOKEN` | 缓存的 OAuth 令牌的路径、base64 或 JSON      | `youtube.token.json` |
+| `YUTU_CREDENTIAL`  | OAuth 客户端密钥的路径、Base64 或 JSON       | `client_secret.json` |
+| `YUTU_CACHE_TOKEN` | 缓存的 OAuth 令牌的路径、Base64 或 JSON      | `youtube.token.json` |
 | `YUTU_ROOT`        | 文件解析的根目录                           | 当前工作目录               |
 | `YUTU_LOG_LEVEL`   | 日志级别：`DEBUG`、`INFO`、`WARN`、`ERROR` | `INFO`               |
 
@@ -326,8 +326,8 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources.
 
 Environment variables:
-  YUTU_CREDENTIAL    Path/base64/JSON of OAuth client secret (default: client_secret.json)
-  YUTU_CACHE_TOKEN   Path/base64/JSON of cached OAuth token (default: youtube.token.json)
+  YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
+  YUTU_CACHE_TOKEN   Path/Base64/JSON of cached OAuth token (default: youtube.token.json)
   YUTU_ROOT          Root directory for file resolution (default: current working directory)
   YUTU_LOG_LEVEL     Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 

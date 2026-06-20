@@ -83,7 +83,7 @@ func WithCredential(cred string, fsys fs.FS) Option {
 			cred = s.credFile
 		}
 		// 1. cred is a file path
-		// 2. cred is a base64 encoded string
+		// 2. cred is a Base64 encoded string
 		// 3. cred is a JSON string
 		absCred, _ := filepath.Abs(cred)
 		relCred, _ := filepath.Rel(*pkg.RootDir, absCred)
@@ -124,7 +124,7 @@ func WithCacheToken(token string, fsys fs.FS) Option {
 		}
 
 		// 1. token is a file path
-		// 2. token is a base64 encoded string
+		// 2. token is a Base64 encoded string
 		// 3. token is a JSON string
 		absToken, _ := filepath.Abs(token)
 		relToken, _ := filepath.Rel(*pkg.RootDir, absToken)

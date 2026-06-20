@@ -54,11 +54,11 @@ Download a prebuilt binary from the [releases page](https://github.com/eat-pray-
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `YUTU_CREDENTIAL` | Path, base64, or JSON of OAuth client secret | `client_secret.json` |
-| `YUTU_CACHE_TOKEN` | Path, base64, or JSON of cached OAuth token | `youtube.token.json` |
-| `YUTU_ROOT` | Root directory for file resolution | Current working directory |
-| `YUTU_LOG_LEVEL` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR` | `INFO` |
+| Variable | Description                                  | Default |
+|----------|----------------------------------------------|---------|
+| `YUTU_CREDENTIAL` | Path, Base64, or JSON of OAuth client secret | `client_secret.json` |
+| `YUTU_CACHE_TOKEN` | Path, Base64, or JSON of cached OAuth token  | `youtube.token.json` |
+| `YUTU_ROOT` | Root directory for file resolution           | Current working directory |
+| `YUTU_LOG_LEVEL` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO` |
 
 For more details, see the [yutu README](https://github.com/eat-pray-ai/yutu#readme).

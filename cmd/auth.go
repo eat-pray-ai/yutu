@@ -16,8 +16,8 @@ import (
 const (
 	authShort  = "Authenticate with YouTube APIs"
 	authLong   = "Authenticate with YouTube APIs to access and manage YouTube resources."
-	credUsage  = "Path to client secret file, or base64 encoded string, or json string (env: YUTU_CREDENTIAL)"
-	cacheUsage = "Path to token cache file, or base64 encoded string, or json string (env: YUTU_CACHE_TOKEN)"
+	credUsage  = "Path to client secret file, or Base64 encoded string, or JSON string (env: YUTU_CREDENTIAL)"
+	cacheUsage = "Path to token cache file, or Base64 encoded string, or JSON string (env: YUTU_CACHE_TOKEN)"
 )
 
 var (

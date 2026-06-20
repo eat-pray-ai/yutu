@@ -40,14 +40,14 @@
       ],
       "environmentVariables": [
         {
-          "description": "GCP project credential for yutu, base64 encoded JSON or path to JSON file",
+          "description": "GCP project credential for yutu, Base64 encoded JSON or path to JSON file",
           "isRequired": true,
           "format": "string",
           "isSecret": true,
           "name": "YUTU_CREDENTIAL"
         },
         {
-          "description": "YouTube authentication token, base64 encoded JSON or path to JSON file",
+          "description": "YouTube authentication token, Base64 encoded JSON or path to JSON file",
           "isRequired": true,
           "format": "string",
           "isSecret": true,
@@ -106,14 +106,14 @@
       ],
       "environmentVariables": [
         {
-          "description": "GCP project credential for yutu, base64 encoded JSON or path to JSON file",
+          "description": "GCP project credential for yutu, Base64 encoded JSON or path to JSON file",
           "isRequired": true,
           "format": "string",
           "isSecret": true,
           "name": "YUTU_CREDENTIAL"
         },
         {
-          "description": "YouTube authentication token, base64 encoded JSON or path to JSON file",
+          "description": "YouTube authentication token, Base64 encoded JSON or path to JSON file",
           "isRequired": true,
           "format": "string",
           "isSecret": true,

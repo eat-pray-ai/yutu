@@ -64,7 +64,7 @@ func TestNewY2BService(t *testing.T) {
 			},
 		},
 		{
-			name: "with all options - base64",
+			name: "with all options - Base64",
 			args: args{
 				opts: []Option{
 					WithCredential(credB64, mockFS),

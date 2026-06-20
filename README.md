@@ -88,8 +88,8 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 
 | Variable           | Description                                  | Default                   |
 |--------------------|----------------------------------------------|---------------------------|
-| `YUTU_CREDENTIAL`  | Path, base64, or JSON of OAuth client secret | `client_secret.json`      |
-| `YUTU_CACHE_TOKEN` | Path, base64, or JSON of cached OAuth token  | `youtube.token.json`      |
+| `YUTU_CREDENTIAL`  | Path, Base64, or JSON of OAuth client secret | `client_secret.json`      |
+| `YUTU_CACHE_TOKEN` | Path, Base64, or JSON of cached OAuth token  | `youtube.token.json`      |
 | `YUTU_ROOT`        | Root directory for file resolution           | Current working directory |
 | `YUTU_LOG_LEVEL`   | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO`                    |
 
@@ -317,8 +317,8 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources.
 
 Environment variables:
-  YUTU_CREDENTIAL    Path/base64/JSON of OAuth client secret (default: client_secret.json)
-  YUTU_CACHE_TOKEN   Path/base64/JSON of cached OAuth token (default: youtube.token.json)
+  YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
+  YUTU_CACHE_TOKEN   Path/Base64/JSON of cached OAuth token (default: youtube.token.json)
   YUTU_ROOT          Root directory for file resolution (default: current working directory)
   YUTU_LOG_LEVEL     Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
