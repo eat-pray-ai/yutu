@@ -186,6 +186,17 @@ echo "======= superChatEvent ======="
 echo "------- list -------"
 "$YUTU_PATH" superChatEvent list --help
 
+echo "======= thirdPartyLink ======="
+"$YUTU_PATH" thirdPartyLink --help
+echo "------- delete -------"
+"$YUTU_PATH" thirdPartyLink delete --help
+echo "------- insert -------"
+"$YUTU_PATH" thirdPartyLink insert --help
+echo "------- list -------"
+"$YUTU_PATH" thirdPartyLink list --help
+echo "------- update -------"
+"$YUTU_PATH" thirdPartyLink update --help
+
 echo "======= thumbnail ======="
 "$YUTU_PATH" thumbnail --help
 echo "------- set -------"

@@ -1,6 +1,8 @@
 // Copyright 2026 eat-pray-ai & OpenWaygate
 // SPDX-License-Identifier: Apache-2.0
 
+//go:generate go run ../importgen -cmd ../../../cmd -out imports_gen.go
+
 package main
 
 import (
@@ -32,6 +34,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/search"
 	_ "github.com/eat-pray-ai/yutu/cmd/subscription"
 	_ "github.com/eat-pray-ai/yutu/cmd/superChatEvent"
+	_ "github.com/eat-pray-ai/yutu/cmd/thirdPartyLink"
 	_ "github.com/eat-pray-ai/yutu/cmd/thumbnail"
 	_ "github.com/eat-pray-ai/yutu/cmd/video"
 	_ "github.com/eat-pray-ai/yutu/cmd/videoAbuseReportReason"

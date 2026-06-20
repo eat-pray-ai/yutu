@@ -35,6 +35,7 @@ go_library(
         "//cmd/search",
         "//cmd/subscription",
         "//cmd/superChatEvent",
+        "//cmd/thirdPartyLink",
         "//cmd/thumbnail",
         "//cmd/video",
         "//cmd/videoAbuseReportReason",

@@ -93,6 +93,10 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | channel banner | insert | Insert a channel banner |
 | channel section | delete | Delete channel sections |
 | channel section | list | List channel sections |
+| third party link | delete | Delete a third-party link |
+| third party link | insert | Insert a new third-party link |
+| third party link | list | List third-party links |
+| third party link | update | Update a third-party link |
 
 ### Discovery
 
