@@ -314,7 +314,7 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 
 ```shell
 ❯ yutu        
-yutu is a fully functional MCP server and CLI for YouTube, which can manipulate almost all YouTube resources.
+yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
@@ -349,6 +349,7 @@ Available Commands:
   search                 Manage YouTube search
   subscription           Manage YouTube subscriptions
   superChatEvent         Manage YouTube Super Chat events
+  thirdPartyLink         Manage YouTube third-party links
   thumbnail              Manage YouTube video thumbnails
   version                Show the version of yutu
   video                  Manage YouTube videos

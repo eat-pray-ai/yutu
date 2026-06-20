@@ -352,31 +352,31 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>tool</td>
     </tr>
     <tr>
-      <td>tests</td>
-      <td>🟡 insert</td>
+      <td><s>tests</s></td>
+      <td>🟡 <s>insert</s></td>
       <td>?</td>
       <td></td>
     </tr>
     <tr>
       <td rowspan="4">thirdPartyLinks</td>
-      <td>🟡 list</td>
+      <td>🟢 list</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 update</td>
+      <td>🟢 update</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td>thumbnails</td>
