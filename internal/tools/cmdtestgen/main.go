@@ -161,15 +161,10 @@ func generate() string {
 }
 
 func main() {
-	out := flag.String("out", "", "output file (default: stdout)")
+	out := flag.String("out", "./scripts/command-test.sh", "output file")
 	flag.Parse()
 
 	content := generate()
-
-	if *out == "" {
-		fmt.Print(content)
-		return
-	}
 
 	if err := os.WriteFile(*out, []byte(content), 0o755); err != nil {
 		log.Fatalf("write %s: %v", *out, err)
