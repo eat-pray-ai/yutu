@@ -36,7 +36,7 @@ func TestNewI18nLanguage(t *testing.T) {
 				},
 			},
 			want: &I18nLanguage{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service: &youtube.Service{},
 					Parts:   []string{"snippet"},
 					Output:  "json",
@@ -49,7 +49,7 @@ func TestNewI18nLanguage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &I18nLanguage{Fields: &common.Fields{}},
+			want: &I18nLanguage{Fields: common.Fields{}},
 		},
 		{
 			name: "with empty string value",
@@ -59,7 +59,7 @@ func TestNewI18nLanguage(t *testing.T) {
 				},
 			},
 			want: &I18nLanguage{
-				Fields: &common.Fields{Hl: ""},
+				Fields: common.Fields{Hl: ""},
 			},
 		},
 	}

@@ -31,7 +31,7 @@ var (
 )
 
 type Video struct {
-	*common.Fields
+	common.Fields
 	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitempty"`
 	File        string   `yaml:"file" json:"file,omitempty"`
 	Title       string   `yaml:"title" json:"title,omitempty"`
@@ -78,7 +78,7 @@ type IVideo[T any] interface {
 type Option func(*Video)
 
 func NewVideo(opts ...Option) IVideo[youtube.Video] {
-	v := &Video{Fields: &common.Fields{}}
+	v := &Video{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(v)
 	}
@@ -122,7 +122,7 @@ func (v *Video) Get() ([]*youtube.Video, error) {
 	}
 
 	return common.Paginate(
-		v.Fields, call,
+		&v.Fields, call,
 		func(r *youtube.VideoListResponse) ([]*youtube.Video, string) {
 			return r.Items, r.NextPageToken
 		}, errGetVideo,

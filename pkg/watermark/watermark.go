@@ -20,7 +20,7 @@ var (
 )
 
 type Watermark struct {
-	*common.Fields
+	common.Fields
 	File            string `yaml:"file" json:"file,omitempty"`
 	InVideoPosition string `yaml:"in_video_position" json:"in_video_position,omitempty"`
 	DurationMs      uint64 `yaml:"duration_ms" json:"duration_ms,omitempty"`
@@ -36,7 +36,7 @@ type IWatermark interface {
 type Option func(*Watermark)
 
 func NewWatermark(opts ...Option) IWatermark {
-	w := &Watermark{Fields: &common.Fields{}}
+	w := &Watermark{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(w)
 	}

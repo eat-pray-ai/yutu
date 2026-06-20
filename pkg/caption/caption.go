@@ -24,7 +24,7 @@ var (
 )
 
 type Caption struct {
-	*common.Fields
+	common.Fields
 	File           string `yaml:"file" json:"file,omitempty"`
 	AudioTrackType string `yaml:"audio_track_type" json:"audio_track_type,omitempty"`
 	IsAutoSynced   *bool  `yaml:"is_auto_synced" json:"is_auto_synced,omitempty"`
@@ -53,16 +53,13 @@ type ICaption[T youtube.Caption] interface {
 type Option func(*Caption)
 
 func NewCaption(opts ...Option) ICaption[youtube.Caption] {
-	c := &Caption{Fields: &common.Fields{}}
+	c := &Caption{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
 	return c
 }
 
-func (c *Caption) GetFields() *common.Fields {
-	return c.Fields
-}
 
 func (c *Caption) Get() ([]*youtube.Caption, error) {
 	if err := c.EnsureService(); err != nil {

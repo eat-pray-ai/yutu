@@ -45,7 +45,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:    svc,
 					ChannelId:  "test-channel-123",
 					MaxResults: 50,
@@ -62,7 +62,7 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Activity{Fields: &common.Fields{}},
+			want: &Activity{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -72,7 +72,7 @@ func TestNewActivity(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Activity{Fields: &common.Fields{}},
+			want: &Activity{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -83,7 +83,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields: &common.Fields{},
+				Fields: common.Fields{},
 				Home:   &homeFalse,
 				Mine:   &mineFalse,
 			},
@@ -96,7 +96,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -107,7 +107,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -121,7 +121,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields:          &common.Fields{ChannelId: ""},
+				Fields:          common.Fields{ChannelId: ""},
 				PublishedAfter:  "",
 				PublishedBefore: "",
 				RegionCode:      "",
@@ -137,7 +137,7 @@ func TestNewActivity(t *testing.T) {
 				},
 			},
 			want: &Activity{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					ChannelId:  "partial-channel",
 					MaxResults: 25,
 				},

@@ -17,7 +17,7 @@ var (
 )
 
 type Member struct {
-	*common.Fields
+	common.Fields
 	MemberChannelId  string `yaml:"member_channel_id" json:"member_channel_id,omitempty"`
 	HasAccessToLevel string `yaml:"has_access_to_level" json:"has_access_to_level,omitempty"`
 	Mode             string `yaml:"mode" json:"mode,omitempty"`
@@ -31,7 +31,7 @@ type IMember[T any] interface {
 type Option func(*Member)
 
 func NewMember(opts ...Option) IMember[youtube.Member] {
-	m := &Member{Fields: &common.Fields{}}
+	m := &Member{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(m)
 	}
@@ -54,7 +54,7 @@ func (m *Member) Get() ([]*youtube.Member, error) {
 	}
 
 	return common.Paginate(
-		m.Fields, call,
+		&m.Fields, call,
 		func(r *youtube.MemberListResponse) ([]*youtube.Member, string) {
 			return r.Items, r.NextPageToken
 		}, errGetMember,

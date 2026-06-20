@@ -17,7 +17,7 @@ var (
 )
 
 type Activity struct {
-	*common.Fields
+	common.Fields
 	Home            *bool  `yaml:"home" json:"home,omitempty"`
 	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
 	PublishedAfter  string `yaml:"published_after" json:"published_after,omitempty"`
@@ -33,7 +33,7 @@ type IActivity[T any] interface {
 type Option func(*Activity)
 
 func NewActivity(opts ...Option) IActivity[youtube.Activity] {
-	a := &Activity{Fields: &common.Fields{}}
+	a := &Activity{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(a)
 	}
@@ -70,7 +70,7 @@ func (a *Activity) Get() ([]*youtube.Activity, error) {
 	}
 
 	return common.Paginate(
-		a.Fields, call,
+		&a.Fields, call,
 		func(r *youtube.ActivityListResponse) ([]*youtube.Activity, string) {
 			return r.Items, r.NextPageToken
 		}, errGetActivity,

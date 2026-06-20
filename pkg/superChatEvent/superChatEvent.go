@@ -17,7 +17,7 @@ var (
 )
 
 type SuperChatEvent struct {
-	*common.Fields
+	common.Fields
 }
 
 type ISuperChatEvent[T any] interface {
@@ -28,7 +28,7 @@ type ISuperChatEvent[T any] interface {
 type Option func(*SuperChatEvent)
 
 func NewSuperChatEvent(opts ...Option) ISuperChatEvent[youtube.SuperChatEvent] {
-	s := &SuperChatEvent{Fields: &common.Fields{}}
+	s := &SuperChatEvent{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
@@ -45,7 +45,7 @@ func (s *SuperChatEvent) Get() ([]*youtube.SuperChatEvent, error) {
 	}
 
 	return common.Paginate(
-		s.Fields, call,
+		&s.Fields, call,
 		func(r *youtube.SuperChatEventListResponse) ([]*youtube.SuperChatEvent, string) {
 			return r.Items, r.NextPageToken
 		}, errGetSuperChatEvent,

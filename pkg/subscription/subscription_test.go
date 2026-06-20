@@ -57,7 +57,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"snippet", "contentDetails"},
 					Output:                 "json",
@@ -82,7 +82,7 @@ func TestNewSubscription(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Subscription{Fields: &common.Fields{}},
+			want: &Subscription{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -93,7 +93,7 @@ func TestNewSubscription(t *testing.T) {
 					WithMySubscribers(nil),
 				},
 			},
-			want: &Subscription{Fields: &common.Fields{}},
+			want: &Subscription{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -105,7 +105,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields:              &common.Fields{},
+				Fields:              common.Fields{},
 				Mine:                &mineFalse,
 				MyRecentSubscribers: &myRecentSubscribersFalse,
 				MySubscribers:       &mySubscribersFalse,
@@ -119,7 +119,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -130,7 +130,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -148,7 +148,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					ChannelId:              "",
 					OnBehalfOfContentOwner: "",
 				},
@@ -172,7 +172,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					ChannelId:  "myChannel",
 					MaxResults: 25,
 				},

@@ -23,7 +23,7 @@ var (
 )
 
 type PlaylistImage struct {
-	*common.Fields
+	common.Fields
 	Height     int64  `yaml:"height" json:"height,omitempty"`
 	PlaylistId string `yaml:"playlist_id" json:"playlist_id,omitempty"`
 	Type       string `yaml:"type" json:"type,omitempty"`
@@ -45,7 +45,7 @@ type IPlaylistImage[T any] interface {
 type Option func(*PlaylistImage)
 
 func NewPlaylistImage(opts ...Option) IPlaylistImage[youtube.PlaylistImage] {
-	pi := &PlaylistImage{Fields: &common.Fields{}}
+	pi := &PlaylistImage{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(pi)
 	}
@@ -69,7 +69,7 @@ func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
 	}
 
 	return common.Paginate(
-		pi.Fields, call,
+		&pi.Fields, call,
 		func(r *youtube.PlaylistImageListResponse) ([]*youtube.PlaylistImage, string) {
 			return r.Items, r.NextPageToken
 		}, errGetPlaylistImage,

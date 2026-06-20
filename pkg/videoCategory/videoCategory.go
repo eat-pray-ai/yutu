@@ -17,7 +17,7 @@ var (
 )
 
 type VideoCategory struct {
-	*common.Fields
+	common.Fields
 	RegionCode string `yaml:"region_code" json:"region_code,omitempty"`
 }
 
@@ -29,7 +29,7 @@ type IVideoCategory[T any] interface {
 type Option func(*VideoCategory)
 
 func NewVideoCategory(opt ...Option) IVideoCategory[youtube.VideoCategory] {
-	vc := &VideoCategory{Fields: &common.Fields{}}
+	vc := &VideoCategory{Fields: common.Fields{}}
 	for _, o := range opt {
 		o(vc)
 	}

@@ -35,7 +35,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 				},
 			},
 			want: &MembershipsLevel{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service: svc,
 					Parts:   []string{"snippet"},
 					Output:  "json",
@@ -47,7 +47,7 @@ func TestNewMembershipsLevel(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &MembershipsLevel{Fields: &common.Fields{}},
+			want: &MembershipsLevel{Fields: common.Fields{}},
 		},
 	}
 

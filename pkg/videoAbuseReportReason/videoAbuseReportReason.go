@@ -17,7 +17,7 @@ var (
 )
 
 type VideoAbuseReportReason struct {
-	*common.Fields
+	common.Fields
 }
 
 type IVideoAbuseReportReason[T any] interface {
@@ -28,7 +28,7 @@ type IVideoAbuseReportReason[T any] interface {
 type Option func(*VideoAbuseReportReason)
 
 func NewVideoAbuseReportReason(opt ...Option) IVideoAbuseReportReason[youtube.VideoAbuseReportReason] {
-	va := &VideoAbuseReportReason{Fields: &common.Fields{}}
+	va := &VideoAbuseReportReason{Fields: common.Fields{}}
 	for _, o := range opt {
 		o(va)
 	}

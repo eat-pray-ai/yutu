@@ -53,7 +53,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"id", "snippet"},
 					Output:                 "json",
@@ -77,7 +77,7 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Playlist{Fields: &common.Fields{}},
+			want: &Playlist{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -86,7 +86,7 @@ func TestNewPlaylist(t *testing.T) {
 					WithMine(nil),
 				},
 			},
-			want: &Playlist{Fields: &common.Fields{}},
+			want: &Playlist{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -96,7 +96,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: &common.Fields{},
+				Fields: common.Fields{},
 				Mine:   &mineFalse,
 			},
 		},
@@ -108,7 +108,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -119,7 +119,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -137,7 +137,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields:                        &common.Fields{},
+				Fields:                        common.Fields{},
 				Title:                         "",
 				Description:                   "",
 				Language:                      "",
@@ -156,7 +156,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields:      &common.Fields{MaxResults: 25},
+				Fields:      common.Fields{MaxResults: 25},
 				Title:       "My Playlist",
 				Description: "A great playlist",
 				Privacy:     "private",

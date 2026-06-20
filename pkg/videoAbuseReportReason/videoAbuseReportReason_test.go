@@ -36,7 +36,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service: svc,
 					Parts:   []string{"id", "snippet"},
 					Output:  "json",
@@ -49,7 +49,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &VideoAbuseReportReason{Fields: &common.Fields{}},
+			want: &VideoAbuseReportReason{Fields: common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -60,7 +60,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output: "",
 					Hl:     "",
 				},
@@ -75,7 +75,7 @@ func TestNewVideoAbuseReportReason(t *testing.T) {
 				},
 			},
 			want: &VideoAbuseReportReason{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Parts: []string{"snippet"},
 					Hl:    "ja",
 				},

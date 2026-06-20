@@ -17,7 +17,7 @@ var (
 )
 
 type I18nLanguage struct {
-	*common.Fields
+	common.Fields
 }
 
 type II18nLanguage[T youtube.I18nLanguage] interface {
@@ -28,7 +28,7 @@ type II18nLanguage[T youtube.I18nLanguage] interface {
 type Option func(*I18nLanguage)
 
 func NewI18nLanguage(opts ...Option) II18nLanguage[youtube.I18nLanguage] {
-	i := &I18nLanguage{Fields: &common.Fields{}}
+	i := &I18nLanguage{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(i)
 	}

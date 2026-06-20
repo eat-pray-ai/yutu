@@ -17,7 +17,7 @@ var (
 )
 
 type Search struct {
-	*common.Fields
+	common.Fields
 	ChannelType               string   `yaml:"channel_type" json:"channel_type,omitempty"`
 	EventType                 string   `yaml:"event_type" json:"event_type,omitempty"`
 	ForContentOwner           *bool    `yaml:"for_content_owner" json:"for_content_owner,omitempty"`
@@ -54,7 +54,7 @@ type ISearch[T any] interface {
 type Option func(*Search)
 
 func NewSearch(opts ...Option) ISearch[youtube.SearchResult] {
-	s := &Search{Fields: &common.Fields{}}
+	s := &Search{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
@@ -152,7 +152,7 @@ func (s *Search) Get() ([]*youtube.SearchResult, error) {
 	}
 
 	return common.Paginate(
-		s.Fields, call,
+		&s.Fields, call,
 		func(r *youtube.SearchListResponse) ([]*youtube.SearchResult, string) {
 			return r.Items, r.NextPageToken
 		}, errGetSearch,

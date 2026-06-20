@@ -20,7 +20,7 @@ var (
 )
 
 type Subscription struct {
-	*common.Fields
+	common.Fields
 	SubscriberChannelId string `yaml:"subscriber_channel_id" json:"subscriber_channel_id,omitempty"`
 	Description         string `yaml:"description" json:"description,omitempty"`
 	ForChannelId        string `yaml:"for_channel_id" json:"for_channel_id,omitempty"`
@@ -43,7 +43,7 @@ type ISubscription[T any] interface {
 type Option func(*Subscription)
 
 func NewSubscription(opts ...Option) ISubscription[youtube.Subscription] {
-	s := &Subscription{Fields: &common.Fields{}}
+	s := &Subscription{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(s)
 	}
@@ -84,7 +84,7 @@ func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 	}
 
 	return common.Paginate(
-		s.Fields, call,
+		&s.Fields, call,
 		func(r *youtube.SubscriptionListResponse) ([]*youtube.Subscription, string) {
 			return r.Items, r.NextPageToken
 		}, errGetSubscription,

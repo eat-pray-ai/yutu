@@ -16,7 +16,7 @@ var (
 )
 
 type Thumbnail struct {
-	*common.Fields
+	common.Fields
 	File    string `yaml:"file" json:"file,omitempty"`
 	VideoId string `yaml:"video_id" json:"video_id,omitempty"`
 }
@@ -28,7 +28,7 @@ type IThumbnail interface {
 type Option func(*Thumbnail)
 
 func NewThumbnail(opts ...Option) IThumbnail {
-	t := &Thumbnail{Fields: &common.Fields{}}
+	t := &Thumbnail{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(t)
 	}

@@ -19,7 +19,7 @@ var (
 )
 
 type ChannelSection struct {
-	*common.Fields
+	common.Fields
 	Mine *bool `yaml:"mine" json:"mine,omitempty"`
 }
 
@@ -34,16 +34,13 @@ type IChannelSection[T any] interface {
 type Option func(*ChannelSection)
 
 func NewChannelSection(opts ...Option) IChannelSection[youtube.ChannelSection] {
-	cs := &ChannelSection{Fields: &common.Fields{}}
+	cs := &ChannelSection{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(cs)
 	}
 	return cs
 }
 
-func (cs *ChannelSection) GetFields() *common.Fields {
-	return cs.Fields
-}
 
 func (cs *ChannelSection) Get() (
 	[]*youtube.ChannelSection, error,

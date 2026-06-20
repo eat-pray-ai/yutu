@@ -58,7 +58,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"snippet", "contentDetails"},
 					Output:                 "json",
@@ -88,7 +88,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: &common.Fields{Service: svc},
+				Fields: common.Fields{Service: svc},
 			},
 		},
 		{
@@ -102,7 +102,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: &common.Fields{Service: svc},
+				Fields: common.Fields{Service: svc},
 			},
 		},
 		{
@@ -116,7 +116,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields:        &common.Fields{Service: svc},
+				Fields:        common.Fields{Service: svc},
 				ManagedByMe:   &managedByMeFalse,
 				Mine:          &mineFalse,
 				MySubscribers: &mySubscribersFalse,
@@ -131,7 +131,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: &common.Fields{Service: svc, MaxResults: math.MaxInt64},
+				Fields: common.Fields{Service: svc, MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -143,7 +143,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: &common.Fields{Service: svc, MaxResults: 1},
+				Fields: common.Fields{Service: svc, MaxResults: 1},
 			},
 		},
 		{
@@ -164,7 +164,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields:          &common.Fields{Service: svc},
+				Fields:          common.Fields{Service: svc},
 				CategoryId:      "",
 				ForHandle:       "",
 				ForUsername:     "",
@@ -187,7 +187,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields:  &common.Fields{Service: svc, Ids: []string{"channel1"}, MaxResults: 50},
+				Fields:  common.Fields{Service: svc, Ids: []string{"channel1"}, MaxResults: 50},
 				Title:   "My Channel",
 				Country: "UK",
 			},

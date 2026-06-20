@@ -18,7 +18,7 @@ var (
 )
 
 type CommentThread struct {
-	*common.Fields
+	common.Fields
 	AuthorChannelId  string `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
 	ModerationStatus string `yaml:"moderation_status" json:"moderation_status,omitempty"`
 	Order            string `yaml:"order" json:"order,omitempty"`
@@ -39,7 +39,7 @@ type ICommentThread[T any] interface {
 type Option func(*CommentThread)
 
 func NewCommentThread(opts ...Option) ICommentThread[youtube.CommentThread] {
-	c := &CommentThread{Fields: &common.Fields{}}
+	c := &CommentThread{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
@@ -77,7 +77,7 @@ func (c *CommentThread) Get() ([]*youtube.CommentThread, error) {
 	}
 
 	return common.Paginate(
-		c.Fields, call,
+		&c.Fields, call,
 		func(r *youtube.CommentThreadListResponse) ([]*youtube.CommentThread, string) {
 			return r.Items, r.NextPageToken
 		}, errGetCommentThread,

@@ -73,7 +73,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"snippet"},
 					Output:                 "json",
@@ -114,7 +114,7 @@ func TestNewSearch(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Search{Fields: &common.Fields{}},
+			want: &Search{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -125,7 +125,7 @@ func TestNewSearch(t *testing.T) {
 					WithForMine(nil),
 				},
 			},
-			want: &Search{Fields: &common.Fields{}},
+			want: &Search{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -137,7 +137,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:          &common.Fields{},
+				Fields:          common.Fields{},
 				ForContentOwner: &forContentOwnerFalse,
 				ForDeveloper:    &forDeveloperFalse,
 				ForMine:         &forMineFalse,
@@ -151,7 +151,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -162,7 +162,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -196,7 +196,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					ChannelId:              "",
 					OnBehalfOfContentOwner: "",
 				},
@@ -236,7 +236,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:     &common.Fields{MaxResults: 25},
+				Fields:     common.Fields{MaxResults: 25},
 				Q:          "golang tutorial",
 				Order:      "date",
 				RegionCode: "UK",

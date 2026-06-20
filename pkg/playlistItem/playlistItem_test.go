@@ -51,7 +51,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"snippet", "status"},
 					Output:                 "json",
@@ -76,7 +76,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistItem{Fields: &common.Fields{}},
+			want: &PlaylistItem{Fields: common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -86,7 +86,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -97,7 +97,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -119,7 +119,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output:                 "",
 					ChannelId:              "",
 					OnBehalfOfContentOwner: "",
@@ -148,7 +148,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				},
 			},
 			want: &PlaylistItem{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Parts:      []string{"id"},
 					MaxResults: 25,
 				},

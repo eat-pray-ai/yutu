@@ -21,7 +21,7 @@ var (
 )
 
 type PlaylistItem struct {
-	*common.Fields
+	common.Fields
 	Title       string `yaml:"title" json:"title,omitempty"`
 	Description string `yaml:"description" json:"description,omitempty"`
 	Kind        string `yaml:"kind" json:"kind,omitempty"`
@@ -44,7 +44,7 @@ type IPlaylistItem[T any] interface {
 type Option func(*PlaylistItem)
 
 func NewPlaylistItem(opts ...Option) IPlaylistItem[youtube.PlaylistItem] {
-	p := &PlaylistItem{Fields: &common.Fields{}}
+	p := &PlaylistItem{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(p)
 	}
@@ -70,7 +70,7 @@ func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
 	}
 
 	return common.Paginate(
-		pi.Fields, call,
+		&pi.Fields, call,
 		func(r *youtube.PlaylistItemListResponse) ([]*youtube.PlaylistItem, string) {
 			return r.Items, r.NextPageToken
 		}, errGetPlaylistItem,

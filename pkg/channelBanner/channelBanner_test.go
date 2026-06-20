@@ -156,7 +156,7 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output:                 "json",
 					Service:                svc,
 					ChannelId:              "channel123",
@@ -171,7 +171,7 @@ func TestNewChannelBanner(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &ChannelBanner{Fields: &common.Fields{}},
+			want: &ChannelBanner{Fields: common.Fields{}},
 		},
 		{
 			name: "with empty string values",
@@ -185,7 +185,7 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output:                 "",
 					ChannelId:              "",
 					OnBehalfOfContentOwner: "",
@@ -204,7 +204,7 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output:    "yaml",
 					ChannelId: "partialChannel",
 				},

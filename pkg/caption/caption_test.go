@@ -73,7 +73,7 @@ func TestNewCaption(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Ids:                    []string{"caption1", "caption2"},
 					OnBehalfOfContentOwner: "owner123",
@@ -99,7 +99,7 @@ func TestNewCaption(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Caption{Fields: &common.Fields{}},
+			want: &Caption{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -112,7 +112,7 @@ func TestNewCaption(t *testing.T) {
 					WithIsLarge(nil),
 				},
 			},
-			want: &Caption{Fields: &common.Fields{}},
+			want: &Caption{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -126,7 +126,7 @@ func TestNewCaption(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Fields:       &common.Fields{},
+				Fields:       common.Fields{},
 				IsAutoSynced: &isAutoSyncedFalse,
 				IsCC:         &isCCFalse,
 				IsDraft:      &isDraftFalse,
@@ -151,7 +151,7 @@ func TestNewCaption(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					OnBehalfOfContentOwner: "",
 				},
 				File:           "",
@@ -176,7 +176,7 @@ func TestNewCaption(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Fields:   &common.Fields{Ids: []string{"caption1"}},
+				Fields:   common.Fields{Ids: []string{"caption1"}},
 				Language: "fr",
 				VideoId:  "video456",
 				IsCC:     &isCCTrue,

@@ -41,7 +41,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					ChannelId:              "channel123",
 					OnBehalfOfContentOwner: "owner123",
@@ -58,7 +58,7 @@ func TestNewWatermark(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Watermark{Fields: &common.Fields{}},
+			want: &Watermark{Fields: common.Fields{}},
 		},
 		{
 			name: "with zero values",
@@ -69,7 +69,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields:     &common.Fields{},
+				Fields:     common.Fields{},
 				DurationMs: 0,
 				OffsetMs:   0,
 			},
@@ -86,7 +86,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					ChannelId:              "",
 					OnBehalfOfContentOwner: "",
 				},
@@ -106,7 +106,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields:          &common.Fields{ChannelId: "myChannel"},
+				Fields:          common.Fields{ChannelId: "myChannel"},
 				File:            "/watermarks/logo.png",
 				InVideoPosition: "bottomLeft",
 				DurationMs:      10000,

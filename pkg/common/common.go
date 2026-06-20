@@ -49,12 +49,10 @@ func (d *Fields) GetFields() *Fields {
 // SetContext implements the cobra-mcp ContextAware interface, enabling
 // automatic context injection from MCP tool handlers.
 func (d *Fields) SetContext(ctx context.Context) {
-	if d != nil {
-		d.Ctx = ctx
-		if d.RedirectURL == "" {
-			if url, ok := ctx.Value(redirectURLKey{}).(string); ok {
-				d.RedirectURL = url
-			}
+	d.Ctx = ctx
+	if d.RedirectURL == "" {
+		if url, ok := ctx.Value(redirectURLKey{}).(string); ok {
+			d.RedirectURL = url
 		}
 	}
 }

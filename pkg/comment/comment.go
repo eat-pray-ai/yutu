@@ -23,7 +23,7 @@ var (
 )
 
 type Comment struct {
-	*common.Fields
+	common.Fields
 	AuthorChannelId  string `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
 	CanRate          *bool  `yaml:"can_rate" json:"can_rate,omitempty"`
 	ParentId         string `yaml:"parent_id" json:"parent_id,omitempty"`
@@ -48,7 +48,7 @@ type IComment[T any] interface {
 type Option func(*Comment)
 
 func NewComment(opts ...Option) IComment[youtube.Comment] {
-	c := &Comment{Fields: &common.Fields{}}
+	c := &Comment{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
@@ -71,7 +71,7 @@ func (c *Comment) Get() ([]*youtube.Comment, error) {
 	}
 
 	return common.Paginate(
-		c.Fields, call,
+		&c.Fields, call,
 		func(r *youtube.CommentListResponse) ([]*youtube.Comment, string) {
 			return r.Items, r.NextPageToken
 		}, errGetComment,

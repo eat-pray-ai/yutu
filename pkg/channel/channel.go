@@ -19,7 +19,7 @@ var (
 )
 
 type Channel struct {
-	*common.Fields
+	common.Fields
 	CategoryId      string `yaml:"category_id" json:"category_id,omitempty"`
 	ForHandle       string `yaml:"for_handle" json:"for_handle,omitempty"`
 	ForUsername     string `yaml:"for_username" json:"for_username,omitempty"`
@@ -42,7 +42,7 @@ type IChannel[T youtube.Channel] interface {
 type Option func(*Channel)
 
 func NewChannel(opts ...Option) IChannel[youtube.Channel] {
-	c := &Channel{Fields: &common.Fields{}}
+	c := &Channel{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(c)
 	}
@@ -83,7 +83,7 @@ func (c *Channel) Get() ([]*youtube.Channel, error) {
 	}
 
 	return common.Paginate(
-		c.Fields, call,
+		&c.Fields, call,
 		func(r *youtube.ChannelListResponse) ([]*youtube.Channel, string) {
 			return r.Items, r.NextPageToken
 		}, errGetChannel,

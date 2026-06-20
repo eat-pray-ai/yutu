@@ -269,10 +269,6 @@ func TestSetContext(t *testing.T) {
 	}
 }
 
-func TestSetContext_Nil(t *testing.T) {
-	var f *Fields
-	f.SetContext(context.Background()) // should not panic
-}
 
 // ---------- TestEnsureService ----------
 

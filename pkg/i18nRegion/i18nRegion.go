@@ -17,7 +17,7 @@ var (
 )
 
 type I18nRegion struct {
-	*common.Fields
+	common.Fields
 }
 
 type II18nRegion[T any] interface {
@@ -28,7 +28,7 @@ type II18nRegion[T any] interface {
 type Option func(*I18nRegion)
 
 func NewI18nRegion(opts ...Option) II18nRegion[youtube.I18nRegion] {
-	i := &I18nRegion{Fields: &common.Fields{}}
+	i := &I18nRegion{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(i)
 	}

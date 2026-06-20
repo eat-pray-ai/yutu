@@ -48,7 +48,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"id", "snippet"},
 					Output:                 "json",
@@ -70,7 +70,7 @@ func TestNewPlaylistImage(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &PlaylistImage{Fields: &common.Fields{}},
+			want: &PlaylistImage{Fields: common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -80,7 +80,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -91,7 +91,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -107,7 +107,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					OnBehalfOfContentOwner: "",
 				},
 				PlaylistId:                    "",
@@ -128,7 +128,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					MaxResults: 25,
 				},
 				PlaylistId: "myPlaylist",

@@ -17,7 +17,7 @@ var (
 )
 
 type MembershipsLevel struct {
-	*common.Fields
+	common.Fields
 }
 
 type IMembershipsLevel[T any] interface {
@@ -28,16 +28,13 @@ type IMembershipsLevel[T any] interface {
 type Option func(*MembershipsLevel)
 
 func NewMembershipsLevel(opts ...Option) IMembershipsLevel[youtube.MembershipsLevel] {
-	m := &MembershipsLevel{Fields: &common.Fields{}}
+	m := &MembershipsLevel{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(m)
 	}
 	return m
 }
 
-func (m *MembershipsLevel) GetFields() *common.Fields {
-	return m.Fields
-}
 
 func (m *MembershipsLevel) Get() ([]*youtube.MembershipsLevel, error) {
 	if err := m.EnsureService(); err != nil {

@@ -47,7 +47,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:    svc,
 					Parts:      []string{"id", "snippet"},
 					Output:     "json",
@@ -70,7 +70,7 @@ func TestNewCommentThread(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &CommentThread{Fields: &common.Fields{}},
+			want: &CommentThread{Fields: common.Fields{}},
 		},
 		{
 			name: "with zero max results",
@@ -80,7 +80,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -91,7 +91,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -112,7 +112,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Parts:     nil,
 					Output:    "",
 					ChannelId: "",
@@ -139,7 +139,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Output:     "yaml",
 					Ids:        []string{"thread1"},
 					MaxResults: 50,

@@ -18,7 +18,7 @@ var (
 )
 
 type ChannelBanner struct {
-	*common.Fields
+	common.Fields
 	File string `yaml:"file" json:"file,omitempty"`
 
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
@@ -31,7 +31,7 @@ type IChannelBanner interface {
 type Option func(banner *ChannelBanner)
 
 func NewChannelBanner(opts ...Option) IChannelBanner {
-	cb := &ChannelBanner{Fields: &common.Fields{}}
+	cb := &ChannelBanner{Fields: common.Fields{}}
 	for _, opt := range opts {
 		opt(cb)
 	}

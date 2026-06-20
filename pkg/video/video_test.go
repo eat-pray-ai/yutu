@@ -91,7 +91,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:                svc,
 					Parts:                  []string{"snippet", "contentDetails"},
 					Output:                 "json",
@@ -137,7 +137,7 @@ func TestNewVideo(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Video{Fields: &common.Fields{}},
+			want: &Video{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -152,7 +152,7 @@ func TestNewVideo(t *testing.T) {
 					WithPublicStatsViewable(nil),
 				},
 			},
-			want: &Video{Fields: &common.Fields{}},
+			want: &Video{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -168,7 +168,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields:                 &common.Fields{},
+				Fields:                 common.Fields{},
 				AutoLevels:             &autoLevelsFalse,
 				ForKids:                &forKidsFalse,
 				Embeddable:             &embeddableFalse,
@@ -186,7 +186,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -197,7 +197,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -229,7 +229,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields:                        &common.Fields{},
+				Fields:                        common.Fields{},
 				File:                          "",
 				Title:                         "",
 				Description:                   "",
@@ -264,7 +264,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields:      &common.Fields{MaxResults: 25},
+				Fields:      common.Fields{MaxResults: 25},
 				Title:       "My Video",
 				Description: "A great video",
 				Tags:        []string{"tutorial", "golang"},

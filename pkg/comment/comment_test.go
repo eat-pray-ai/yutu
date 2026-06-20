@@ -53,7 +53,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields: &common.Fields{
+				Fields: common.Fields{
 					Service:    svc,
 					Parts:      []string{"id", "snippet"},
 					Output:     "json",
@@ -77,7 +77,7 @@ func TestNewComment(t *testing.T) {
 			args: args{
 				opts: []Option{},
 			},
-			want: &Comment{Fields: &common.Fields{}},
+			want: &Comment{Fields: common.Fields{}},
 		},
 		{
 			name: "with nil boolean options",
@@ -87,7 +87,7 @@ func TestNewComment(t *testing.T) {
 					WithBanAuthor(nil),
 				},
 			},
-			want: &Comment{Fields: &common.Fields{}},
+			want: &Comment{Fields: common.Fields{}},
 		},
 		{
 			name: "with false boolean options",
@@ -98,7 +98,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields:    &common.Fields{},
+				Fields:    common.Fields{},
 				CanRate:   &canRateFalse,
 				BanAuthor: &banAuthorFalse,
 			},
@@ -111,7 +111,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields: &common.Fields{MaxResults: math.MaxInt64},
+				Fields: common.Fields{MaxResults: math.MaxInt64},
 			},
 		},
 		{
@@ -122,7 +122,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields: &common.Fields{MaxResults: 1},
+				Fields: common.Fields{MaxResults: 1},
 			},
 		},
 		{
@@ -140,7 +140,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields:           &common.Fields{},
+				Fields:           common.Fields{},
 				AuthorChannelId:  "",
 				ParentId:         "",
 				TextFormat:       "",
@@ -162,7 +162,7 @@ func TestNewComment(t *testing.T) {
 				},
 			},
 			want: &Comment{
-				Fields:       &common.Fields{Service: svc, Ids: []string{"comment1"}, MaxResults: 25},
+				Fields:       common.Fields{Service: svc, Ids: []string{"comment1"}, MaxResults: 25},
 				TextOriginal: "Partial comment",
 				VideoId:      "video456",
 			},
