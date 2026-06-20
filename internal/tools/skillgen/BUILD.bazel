@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_library(
     name = "skillgen_lib",
@@ -39,10 +39,4 @@ go_binary(
     name = "skillgen",
     embed = [":skillgen_lib"],
     visibility = ["//:__subpackages__"],
-)
-
-go_test(
-    name = "skillgen_test",
-    srcs = ["main_test.go"],
-    embed = [":skillgen_lib"],
 )

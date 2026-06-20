@@ -1,8 +1,6 @@
 // Copyright 2026 eat-pray-ai & OpenWaygate
 // SPDX-License-Identifier: Apache-2.0
 
-//go:generate go run ../importgen -cmd ../../../cmd -out imports_gen.go
-
 package main
 
 import (
