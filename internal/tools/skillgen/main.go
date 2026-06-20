@@ -121,9 +121,11 @@ func collectResource(c *cobra.Command) resourceEntry {
 		}
 		verbs = append(verbs, verbEntry{name: sub.Name(), short: sub.Short})
 	}
-	sort.Slice(verbs, func(i, j int) bool {
-		return verbs[i].name < verbs[j].name
-	})
+	sort.Slice(
+		verbs, func(i, j int) bool {
+			return verbs[i].name < verbs[j].name
+		},
+	)
 	return resourceEntry{
 		name:  name,
 		kebab: camelToKebab(name),
@@ -146,18 +148,22 @@ func groupByCategory(resources []resourceEntry) []categoryGroup {
 	var groups []categoryGroup
 	for _, cat := range categoryOrder {
 		if rs, ok := byCategory[cat]; ok {
-			sort.Slice(rs, func(i, j int) bool {
-				return rs[i].name < rs[j].name
-			})
+			sort.Slice(
+				rs, func(i, j int) bool {
+					return rs[i].name < rs[j].name
+				},
+			)
 			groups = append(groups, categoryGroup{name: cat, resources: rs})
 			delete(byCategory, cat)
 		}
 	}
 	// Append "Other" for any remaining unmapped categories.
 	if rs, ok := byCategory["Other"]; ok {
-		sort.Slice(rs, func(i, j int) bool {
-			return rs[i].name < rs[j].name
-		})
+		sort.Slice(
+			rs, func(i, j int) bool {
+				return rs[i].name < rs[j].name
+			},
+		)
 		groups = append(groups, categoryGroup{name: "Other", resources: rs})
 	}
 	return groups
@@ -170,27 +176,29 @@ func groupByCategory(resources []resourceEntry) []categoryGroup {
 // buildUnifiedDescription constructs the skill description with high-frequency
 // triggers and a broad fallback. Intentionally concise — no exhaustive verb list.
 func buildUnifiedDescription(_ []categoryGroup) string {
-	return "Use when working with YouTube — upload videos, search content, manage playlists and channels, post and moderate comments, handle subscriptions and memberships, add captions, set thumbnails, check analytics, or any YouTube Data API operation via the yutu CLI."
+	return "Use whenever the user mentions YouTube, video uploads, channel management, playlists, video SEO, or any YouTube Data API operation. Manages videos, playlists, comments, captions, subscriptions, thumbnails, analytics, and more via the yutu CLI."
 }
 
 // ---------------------------------------------------------------------------
 // Static content for SKILL.md sections
 // ---------------------------------------------------------------------------
 
-const workflowSummary = `- **Upload a video**: ` + "`yutu video insert --file video.mp4 --title \"...\" --privacy public`" + `, then optionally set thumbnail
-- **Update video metadata**: Fetch current with ` + "`yutu video list --id VIDEO_ID`" + `, then update changed fields
-- **Create playlist + add videos**: Create with ` + "`yutu playlist insert`" + `, find videos with ` + "`yutu search list --forMine`" + `, add with ` + "`yutu playlistItem insert`" + `
-- **Post a comment**: Get channel ID with ` + "`yutu channel list --mine`" + `, find video, then ` + "`yutu commentThread insert`" + `
-- **Channel analytics**: ` + "`yutu channel list --mine`" + ` + ` + "`yutu search list --forMine`" + ` + ` + "`yutu video list --id ...`" + `
-- **Competitor analysis**: ` + "`yutu channel list --forHandle @handle`" + ` + compare stats and top videos
-- **Delete content**: Always verify with a list command first, then delete — deletions are irreversible
-- **Subscribe/unsubscribe**: Check with ` + "`yutu subscription list --mine --forChannelId ...`" + ` before acting`
+const workflowSummary = `| Task | Quick Command |
+|------|---------------|
+| Upload a video | ` + "`yutu video insert --file video.mp4 --title \"...\" --privacy public`" + ` |
+| Update video metadata | ` + "`yutu video list --ids ID`" + ` then ` + "`yutu video update --id ID --title \"...\"`" + ` |
+| Create playlist + add videos | ` + "`yutu playlist insert`" + ` → ` + "`yutu playlistItem insert`" + ` |
+| Post a comment | ` + "`yutu commentThread insert --channelId ... --videoId ... --textOriginal \"...\"`" + ` |
+| Channel analytics | ` + "`yutu channel list --mine --output json`" + ` |
+| Competitor analysis | ` + "`yutu channel list --forHandle @handle --output json`" + ` |
+| Delete content | Always ` + "`list`" + ` first, then ` + "`delete`" + ` — irreversible |
+| Subscribe/unsubscribe | Check ` + "`yutu subscription list --mine --forChannelId ...`" + ` before acting |`
 
-const growthTips = `- **Titles**: Use curiosity gaps and power words. Front-load keywords. Keep under 60 characters.
-- **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, and 3-5 hashtags.
+const growthTips = `- **Titles**: Curiosity gaps + power words. Front-load keywords. Under 60 characters.
+- **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, 3-5 hashtags.
 - **Tags**: Mix broad and long-tail keywords. First 2-3 tags carry the most weight.
 - **Thumbnails**: High contrast, 3-4 word text, expressive faces, consistent branding.
-- **Publishing**: Post when audience is active. Maintain consistent schedule.
+- **Publishing**: Post when audience is active. Consistent schedule matters.
 - **Engagement**: Pin a comment with a question. Reply within the first hour.`
 
 // ---------------------------------------------------------------------------
@@ -203,40 +211,36 @@ func writeUnifiedSkill(path string, groups []categoryGroup) error {
 
 	desc := buildUnifiedDescription(groups)
 
-	_, _ = fmt.Fprintf(&b, `---
+	_, _ = fmt.Fprintf(
+		&b, `---
 name: youtube
 description: "%s"
+license: MIT
+compatibility: Requires the yutu CLI binary (installable via npm, brew, or winget) and Google Cloud OAuth credentials for YouTube Data API v3.
 metadata:
-  openclaw:
-    requires:
-      env:
-        - YUTU_CREDENTIAL
-        - YUTU_CACHE_TOKEN
-      bins:
-        - yutu
-      config:
-        - client_secret.json
-        - youtube.token.json
-    primaryEnv: YUTU_CREDENTIAL
-    emoji: "\U0001F3AC\U0001F430"
-    homepage: https://github.com/eat-pray-ai/yutu
-    install:
-      - kind: node
-        package: "@eat-pray-ai/yutu"
-        bins: [yutu]
+  author: eat-pray-ai
+  homepage: "https://github.com/eat-pray-ai/yutu"
 ---
 
-`, strings.ReplaceAll(desc, `"`, `\"`))
+`, strings.ReplaceAll(desc, `"`, `\"`),
+	)
 
 	b.WriteString("# YouTube\n\n")
-	b.WriteString("Manage YouTube resources using the yutu CLI — videos, playlists, comments, channels, captions, subscriptions, and more.\n\n")
+	b.WriteString("Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, channels, captions, subscriptions, and more.\n\n")
 
-	b.WriteString("## Before You Begin\n\n")
-	b.WriteString("yutu requires Google Cloud Platform OAuth credentials and a cached token to access the YouTube API. ")
-	b.WriteString("If you haven't set up yutu yet, read the [setup guide](references/setup.md) first.\n\n")
+	b.WriteString("## Quick Start\n\n")
+	b.WriteString("1. Ensure `yutu` is installed and authenticated. If not, follow [references/setup.md](references/setup.md).\n")
+	b.WriteString("2. Identify the resource and operation from the tables below.\n")
+	b.WriteString("3. Run `yutu <resource> <operation> -h` for full flag details on any command.\n")
+	b.WriteString("4. For multistep tasks (upload + thumbnail + playlist), see [references/workflows.md](references/workflows.md).\n\n")
+
+	b.WriteString("## Key Principles\n\n")
+	b.WriteString("- Always verify before destructive operations — deletions are irreversible.\n")
+	b.WriteString("- Use `--output json` when you need to parse or chain results.\n")
+	b.WriteString("- Get your channel ID with `yutu channel list --mine` — many operations need it.\n")
+	b.WriteString("- When updating metadata, only specify the fields you want to change.\n\n")
 
 	b.WriteString("## Operations\n\n")
-	b.WriteString("Run `yutu <resource> <verb> -h` for full flag details and examples.\n\n")
 
 	for _, g := range groups {
 		_, _ = fmt.Fprintf(&b, "### %s\n\n", g.name)
@@ -244,18 +248,20 @@ metadata:
 		b.WriteString("|----------|-----------|-------------|\n")
 		for _, r := range g.resources {
 			for _, v := range r.verbs {
-				_, _ = fmt.Fprintf(&b, "| %s | %s | %s |\n", r.human, v.name, escPipe(v.short))
+				_, _ = fmt.Fprintf(
+					&b, "| %s | %s | %s |\n", r.human, v.name, escPipe(v.short),
+				)
 			}
 		}
 		b.WriteString("\n")
 	}
 
 	b.WriteString("## Common Workflows\n\n")
-	b.WriteString("See [references/workflows.md](references/workflows.md) for detailed walkthroughs.\n\n")
+	b.WriteString("See [references/workflows.md](references/workflows.md) for step-by-step walkthroughs of each task below.\n\n")
 	b.WriteString(workflowSummary + "\n\n")
 
 	b.WriteString("## YouTube Growth Tips\n\n")
-	b.WriteString("See [references/seo-guide.md](references/seo-guide.md) for the full guide.\n\n")
+	b.WriteString("See [references/seo-guide.md](references/seo-guide.md) for the full guide. When uploading or updating video metadata, apply these principles:\n\n")
 	b.WriteString(growthTips + "\n")
 
 	return os.WriteFile(path, []byte(b.String()), 0o644)
@@ -313,8 +319,10 @@ func main() {
 			totalVerbs += len(r.verbs)
 		}
 	}
-	fmt.Printf("Generated unified youtube skill: %d resources, %d verbs, %d categories\n",
-		len(resources), totalVerbs, len(groups))
+	fmt.Printf(
+		"Generated unified youtube skill: %d resources, %d verbs, %d categories\n",
+		len(resources), totalVerbs, len(groups),
+	)
 }
 
 // ---------------------------------------------------------------------------
