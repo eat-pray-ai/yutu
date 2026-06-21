@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         sparse-checkout: |
           Dockerfile
@@ -27,19 +27,19 @@ runs:
         else
           echo "is_latest=false" >> $GITHUB_OUTPUT
         fi
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         name: binary
         path: ${{ github.workspace }}/dist
-    - uses: docker/setup-qemu-action@v3
-    - uses: docker/setup-buildx-action@v3
-    - uses: docker/login-action@v3
+    - uses: docker/setup-qemu-action@v4
+    - uses: docker/setup-buildx-action@v4
+    - uses: docker/login-action@v4
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ github.token }}
     - id: meta
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ghcr.io/${{ github.repository }}
         flavor: |
@@ -47,7 +47,7 @@ runs:
         labels: |
           io.modelcontextprotocol.server.name=io.github.eat-pray-ai/yutu
     - id: push
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: .
         target: yutu
@@ -61,7 +61,7 @@ runs:
         build-args: |
           arm64_binary=${{ inputs.amd64_binary }}
           amd64_binary=${{ inputs.amd64_binary }}
-    - uses: actions/attest-build-provenance@v3
+    - uses: actions/attest@v4
       with:
         subject-name: ghcr.io/${{ github.repository }}
         subject-digest: ${{ steps.push.outputs.digest }}
