@@ -5,7 +5,6 @@ package subscription
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +14,7 @@ const (
 	scidUsage  = "Subscriber's channel id"
 	descUsage  = "Description of the subscription"
 	fcidUsage  = "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to"
-	mineUsage  = "Return the subscriptions of the authenticated user"
-	mrsUsage   = "true|false|null"
-	msUsage    = "Return the subscribers of the given channel owner"
+	forUsage = "mine|myRecentSubscribers|mySubscribers"
 	orderUsage = "subscriptionOrderUnspecified|relevance|unread|alphabetical"
 	titleUsage = "Title of the subscription"
 )
@@ -29,9 +26,7 @@ var (
 	channelId                     string
 	forChannelId                  string
 	maxResults                    int64
-	mine                          = new(false)
-	myRecentSubscribers           = new(false)
-	mySubscribers                 = new(false)
+	subscriptionFor               string
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	order                         string
@@ -43,14 +38,6 @@ var subscriptionCmd = &cobra.Command{
 	Use:   "subscription",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]**bool{
-			"mine":                &mine,
-			"myRecentSubscribers": &myRecentSubscribers,
-			"mySubscribers":       &mySubscribers,
-		}
-		utils.ResetBool(boolMap, cmd.Flags())
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

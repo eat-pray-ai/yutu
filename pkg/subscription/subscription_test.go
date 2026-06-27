@@ -21,12 +21,6 @@ func TestNewSubscription(t *testing.T) {
 		opts []Option
 	}
 
-	mineTrue := true
-	mineFalse := false
-	myRecentSubscribersTrue := true
-	myRecentSubscribersFalse := false
-	mySubscribersTrue := true
-	mySubscribersFalse := false
 	svc := &youtube.Service{}
 
 	tests := []struct {
@@ -44,9 +38,7 @@ func TestNewSubscription(t *testing.T) {
 					WithChannelId("channel123"),
 					WithForChannelId("forChannel123"),
 					WithMaxResults(50),
-					WithMine(&mineTrue),
-					WithMyRecentSubscribers(&myRecentSubscribersTrue),
-					WithMySubscribers(&mySubscribersTrue),
+					WithFor("mine"),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
 					WithOrder("relevance"),
@@ -69,9 +61,7 @@ func TestNewSubscription(t *testing.T) {
 				SubscriberChannelId:           "subscriber123",
 				Description:                   "Test subscription description",
 				ForChannelId:                  "forChannel123",
-				Mine:                          &mineTrue,
-				MyRecentSubscribers:           &myRecentSubscribersTrue,
-				MySubscribers:                 &mySubscribersTrue,
+				For:                           "mine",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
 				Order:                         "relevance",
 				Title:                         "Test Subscription",
@@ -85,30 +75,24 @@ func TestNewSubscription(t *testing.T) {
 			want: &Subscription{Fields: common.Fields{}},
 		},
 		{
-			name: "with nil boolean options",
+			name: "with empty for option",
 			args: args{
 				opts: []Option{
-					WithMine(nil),
-					WithMyRecentSubscribers(nil),
-					WithMySubscribers(nil),
+					WithFor(""),
 				},
 			},
 			want: &Subscription{Fields: common.Fields{}},
 		},
 		{
-			name: "with false boolean options",
+			name: "with for mySubscribers",
 			args: args{
 				opts: []Option{
-					WithMine(&mineFalse),
-					WithMyRecentSubscribers(&myRecentSubscribersFalse),
-					WithMySubscribers(&mySubscribersFalse),
+					WithFor("mySubscribers"),
 				},
 			},
 			want: &Subscription{
-				Fields:              common.Fields{},
-				Mine:                &mineFalse,
-				MyRecentSubscribers: &myRecentSubscribersFalse,
-				MySubscribers:       &mySubscribersFalse,
+				Fields: common.Fields{},
+				For:    "mySubscribers",
 			},
 		},
 		{
@@ -168,7 +152,7 @@ func TestNewSubscription(t *testing.T) {
 					WithTitle("My Subscription"),
 					WithMaxResults(25),
 					WithOrder("alphabetical"),
-					WithMine(&mineTrue),
+					WithFor("mine"),
 				},
 			},
 			want: &Subscription{
@@ -178,7 +162,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 				Title: "My Subscription",
 				Order: "alphabetical",
-				Mine:  &mineTrue,
+				For:   "mine",
 			},
 		},
 	}
@@ -238,10 +222,7 @@ func TestSubscription_Get(t *testing.T) {
 		{
 			name: "get subscription mine",
 			opts: []Option{
-				func(s *Subscription) {
-					b := true
-					s.Mine = &b
-				},
+				WithFor("mine"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -255,10 +236,7 @@ func TestSubscription_Get(t *testing.T) {
 		{
 			name: "get subscription myRecentSubscribers",
 			opts: []Option{
-				func(s *Subscription) {
-					b := true
-					s.MyRecentSubscribers = &b
-				},
+				WithFor("myRecentSubscribers"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -275,10 +253,7 @@ func TestSubscription_Get(t *testing.T) {
 		{
 			name: "get subscription mySubscribers",
 			opts: []Option{
-				func(s *Subscription) {
-					b := true
-					s.MySubscribers = &b
-				},
+				WithFor("mySubscribers"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {

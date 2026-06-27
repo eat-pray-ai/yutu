@@ -48,14 +48,9 @@ var listInSchema = &jsonschema.Schema{
 			Default: json.RawMessage("5"),
 			Minimum: new(float64(0)),
 		},
-		"mine": {
-			Type: "boolean", Description: mineUsage,
-		},
-		"my_recent_subscribers": {
-			Type: "boolean", Description: mrsUsage,
-		},
-		"my_subscribers": {
-			Type: "boolean", Description: msUsage,
+		"for": {
+			Type: "string", Description: forUsage,
+			Enum: []any{"mine", "myRecentSubscribers", "mySubscribers"},
 		},
 		"on_behalf_of_content_owner": {
 			Type:        "string",
@@ -106,11 +101,7 @@ func init() {
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&forChannelId, "forChannelId", "C", "", fcidUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
-	listCmd.Flags().BoolVarP(
-		myRecentSubscribers, "myRecentSubscribers", "R", false, mrsUsage,
-	)
-	listCmd.Flags().BoolVarP(mySubscribers, "mySubscribers", "S", false, msUsage)
+	listCmd.Flags().StringVarP(&subscriptionFor, "for", "F", "", forUsage)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
@@ -137,9 +128,7 @@ var listCmd = &cobra.Command{
 			subscription.WithChannelId(channelId),
 			subscription.WithForChannelId(forChannelId),
 			subscription.WithMaxResults(maxResults),
-			subscription.WithMine(mine),
-			subscription.WithMyRecentSubscribers(myRecentSubscribers),
-			subscription.WithMySubscribers(mySubscribers),
+			subscription.WithFor(subscriptionFor),
 			subscription.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			subscription.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			subscription.WithOrder(order),

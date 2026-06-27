@@ -24,9 +24,7 @@ type Subscription struct {
 	SubscriberChannelId string `yaml:"subscriber_channel_id" json:"subscriber_channel_id,omitempty"`
 	Description         string `yaml:"description" json:"description,omitempty"`
 	ForChannelId        string `yaml:"for_channel_id" json:"for_channel_id,omitempty"`
-	Mine                *bool  `yaml:"mine" json:"mine,omitempty"`
-	MyRecentSubscribers *bool  `yaml:"my_recent_subscribers" json:"my_recent_subscribers,omitempty"`
-	MySubscribers       *bool  `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	For                 string `yaml:"for" json:"for,omitempty"`
 	Order               string `yaml:"order" json:"order,omitempty"`
 	Title               string `yaml:"title" json:"title,omitempty"`
 
@@ -64,14 +62,13 @@ func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 	if s.ForChannelId != "" {
 		call = call.ForChannelId(s.ForChannelId)
 	}
-	if s.Mine != nil {
-		call = call.Mine(*s.Mine)
-	}
-	if s.MyRecentSubscribers != nil {
-		call = call.MyRecentSubscribers(*s.MyRecentSubscribers)
-	}
-	if s.MySubscribers != nil {
-		call = call.MySubscribers(*s.MySubscribers)
+	switch s.For {
+	case "mine":
+		call = call.Mine(true)
+	case "myRecentSubscribers":
+		call = call.MyRecentSubscribers(true)
+	case "mySubscribers":
+		call = call.MySubscribers(true)
 	}
 	if s.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
@@ -177,27 +174,9 @@ func WithForChannelId(forChannelId string) Option {
 	}
 }
 
-func WithMine(mine *bool) Option {
+func WithFor(f string) Option {
 	return func(s *Subscription) {
-		if mine != nil {
-			s.Mine = mine
-		}
-	}
-}
-
-func WithMyRecentSubscribers(myRecentSubscribers *bool) Option {
-	return func(s *Subscription) {
-		if myRecentSubscribers != nil {
-			s.MyRecentSubscribers = myRecentSubscribers
-		}
-	}
-}
-
-func WithMySubscribers(mySubscribers *bool) Option {
-	return func(s *Subscription) {
-		if mySubscribers != nil {
-			s.MySubscribers = mySubscribers
-		}
+		s.For = f
 	}
 }
 
