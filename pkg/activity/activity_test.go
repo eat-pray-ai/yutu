@@ -20,10 +20,6 @@ func TestNewActivity(t *testing.T) {
 	}
 
 	svc := &youtube.Service{}
-	homeTrue := true
-	homeFalse := false
-	mineTrue := true
-	mineFalse := false
 
 	tests := []struct {
 		name string
@@ -35,9 +31,8 @@ func TestNewActivity(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithChannelId("test-channel-123"),
-					WithHome(&homeTrue),
+					WithFor("mine"),
 					WithMaxResults(50),
-					WithMine(&mineTrue),
 					WithPublishedAfter("2024-01-01T00:00:00Z"),
 					WithPublishedBefore("2024-12-31T23:59:59Z"),
 					WithRegionCode("US"),
@@ -50,11 +45,10 @@ func TestNewActivity(t *testing.T) {
 					ChannelId:  "test-channel-123",
 					MaxResults: 50,
 				},
-				Home:            &homeTrue,
-				Mine:            &mineTrue,
-				PublishedAfter:  "2024-01-01T00:00:00Z",
+				For:            "mine",
+				PublishedAfter: "2024-01-01T00:00:00Z",
 				PublishedBefore: "2024-12-31T23:59:59Z",
-				RegionCode:      "US",
+				RegionCode:     "US",
 			},
 		},
 		{
@@ -65,27 +59,24 @@ func TestNewActivity(t *testing.T) {
 			want: &Activity{Fields: common.Fields{}},
 		},
 		{
-			name: "with nil boolean options",
+			name: "with empty for option",
 			args: args{
 				opts: []Option{
-					WithHome(nil),
-					WithMine(nil),
+					WithFor(""),
 				},
 			},
 			want: &Activity{Fields: common.Fields{}},
 		},
 		{
-			name: "with false boolean options",
+			name: "with for home",
 			args: args{
 				opts: []Option{
-					WithHome(&homeFalse),
-					WithMine(&mineFalse),
+					WithFor("home"),
 				},
 			},
 			want: &Activity{
 				Fields: common.Fields{},
-				Home:   &homeFalse,
-				Mine:   &mineFalse,
+				For:    "home",
 			},
 		},
 		{
@@ -160,9 +151,6 @@ func TestNewActivity(t *testing.T) {
 }
 
 func TestActivity_Get(t *testing.T) {
-	homeTrue := true
-	mineTrue := true
-
 	tests := []struct {
 		name    string
 		opts    []Option
@@ -190,7 +178,7 @@ func TestActivity_Get(t *testing.T) {
 		{
 			name: "get activities with home",
 			opts: []Option{
-				WithHome(&homeTrue),
+				WithFor("home"),
 				WithMaxResults(2),
 			},
 			verify: func(r *http.Request) {
@@ -204,7 +192,7 @@ func TestActivity_Get(t *testing.T) {
 		{
 			name: "get activities with mine",
 			opts: []Option{
-				WithMine(&mineTrue),
+				WithFor("mine"),
 				WithMaxResults(2),
 			},
 			verify: func(r *http.Request) {

@@ -18,11 +18,10 @@ var (
 
 type Activity struct {
 	common.Fields
-	Home            *bool  `yaml:"home" json:"home,omitempty"`
-	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
-	PublishedAfter  string `yaml:"published_after" json:"published_after,omitempty"`
+	For            string `yaml:"for" json:"for,omitempty"`
+	PublishedAfter string `yaml:"published_after" json:"published_after,omitempty"`
 	PublishedBefore string `yaml:"published_before" json:"published_before,omitempty"`
-	RegionCode      string `yaml:"region_code" json:"region_code,omitempty"`
+	RegionCode     string `yaml:"region_code" json:"region_code,omitempty"`
 }
 
 type IActivity[T any] interface {
@@ -49,12 +48,11 @@ func (a *Activity) Get() ([]*youtube.Activity, error) {
 		call = call.ChannelId(a.ChannelId)
 	}
 
-	if a.Home != nil {
-		call = call.Home(*a.Home)
-	}
-
-	if a.Mine != nil {
-		call = call.Mine(*a.Mine)
+	switch a.For {
+	case "home":
+		call = call.Home(true)
+	case "mine":
+		call = call.Mine(true)
 	}
 
 	if a.PublishedAfter != "" {
@@ -92,19 +90,9 @@ func (a *Activity) List(writer io.Writer) error {
 	return err
 }
 
-func WithHome(home *bool) Option {
+func WithFor(f string) Option {
 	return func(a *Activity) {
-		if home != nil {
-			a.Home = home
-		}
-	}
-}
-
-func WithMine(mine *bool) Option {
-	return func(a *Activity) {
-		if mine != nil {
-			a.Mine = mine
-		}
+		a.For = f
 	}
 }
 

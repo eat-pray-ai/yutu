@@ -5,7 +5,6 @@ package activity
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -13,8 +12,7 @@ const (
 	short     = "Manage activities on YouTube"
 	long      = "Manage activities on YouTube. Use this tool to list channel activities."
 	ciUsage   = "ID of the channel"
-	homeUsage = "true|false|null"
-	mineUsage = "true|false|null"
+	forUsage = "home|mine"
 	paUsage   = "Filter on activities published after this date"
 	pbUsage   = "Filter on activities published before this date"
 	rcUsage   = "Display the content as seen by viewers in this country"
@@ -22,9 +20,8 @@ const (
 
 var (
 	channelId       string
-	home            = new(false)
+	activityFor     string
 	maxResults      int64
-	mine            = new(false)
 	publishedAfter  string
 	publishedBefore string
 	regionCode      string
@@ -35,13 +32,6 @@ var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]**bool{
-			"home": &home,
-			"mine": &mine,
-		}
-		utils.ResetBool(boolMap, cmd.Flags())
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

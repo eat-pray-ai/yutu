@@ -34,12 +34,14 @@ var listInSchema = &jsonschema.Schema{
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
 		"channel_id": {Type: "string", Description: ciUsage},
-		"home":       {Type: "boolean", Description: homeUsage},
+		"for": {
+			Type: "string", Description: forUsage,
+			Enum: []any{"home", "mine"},
+		},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"), Minimum: new(float64(0)),
 		},
-		"mine":             {Type: "boolean", Description: mineUsage},
 		"published_after":  {Type: "string", Description: paUsage},
 		"published_before": {Type: "string", Description: pbUsage},
 		"region_code":      {Type: "string", Description: rcUsage},
@@ -73,9 +75,8 @@ func init() {
 	)
 	activityCmd.AddCommand(listCmd)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
-	listCmd.Flags().BoolVarP(home, "home", "H", true, homeUsage)
+	listCmd.Flags().StringVarP(&activityFor, "for", "F", "", forUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
 	listCmd.Flags().StringVarP(
 		&publishedAfter, "publishedAfter", "a", "", paUsage,
 	)
@@ -99,9 +100,8 @@ var listCmd = &cobra.Command{
 		output, _ := cmd.Flags().GetString("output")
 		input := activity.NewActivity(
 			activity.WithChannelId(channelId),
-			activity.WithHome(home),
+			activity.WithFor(activityFor),
 			activity.WithMaxResults(maxResults),
-			activity.WithMine(mine),
 			activity.WithPublishedAfter(publishedAfter),
 			activity.WithPublishedBefore(publishedBefore),
 			activity.WithRegionCode(regionCode),
