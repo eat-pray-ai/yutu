@@ -23,9 +23,7 @@ type Channel struct {
 	CategoryId      string `yaml:"category_id" json:"category_id,omitempty"`
 	ForHandle       string `yaml:"for_handle" json:"for_handle,omitempty"`
 	ForUsername     string `yaml:"for_username" json:"for_username,omitempty"`
-	ManagedByMe     *bool  `yaml:"managed_by_me" json:"managed_by_me,omitempty"`
-	Mine            *bool  `yaml:"mine" json:"mine,omitempty"`
-	MySubscribers   *bool  `yaml:"my_subscribers" json:"my_subscribers,omitempty"`
+	For             string `yaml:"for" json:"for,omitempty"`
 	Country         string `yaml:"country" json:"country,omitempty"`
 	CustomUrl       string `yaml:"custom_url" json:"custom_url,omitempty"`
 	DefaultLanguage string `yaml:"default_language" json:"default_language,omitempty"`
@@ -69,14 +67,13 @@ func (c *Channel) Get() ([]*youtube.Channel, error) {
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
 	}
-	if c.ManagedByMe != nil {
-		call = call.ManagedByMe(*c.ManagedByMe)
-	}
-	if c.Mine != nil {
-		call = call.Mine(*c.Mine)
-	}
-	if c.MySubscribers != nil {
-		call = call.MySubscribers(*c.MySubscribers)
+	switch c.For {
+	case "managedByMe":
+		call = call.ManagedByMe(true)
+	case "mine":
+		call = call.Mine(true)
+	case "mySubscribers":
+		call = call.MySubscribers(true)
 	}
 	if c.OnBehalfOfContentOwner != "" {
 		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
@@ -166,27 +163,9 @@ func WithForUsername(username string) Option {
 	}
 }
 
-func WithChannelManagedByMe(managedByMe *bool) Option {
+func WithFor(f string) Option {
 	return func(c *Channel) {
-		if managedByMe != nil {
-			c.ManagedByMe = managedByMe
-		}
-	}
-}
-
-func WithMine(mine *bool) Option {
-	return func(c *Channel) {
-		if mine != nil {
-			c.Mine = mine
-		}
-	}
-}
-
-func WithMySubscribers(mySubscribers *bool) Option {
-	return func(c *Channel) {
-		if mySubscribers != nil {
-			c.MySubscribers = mySubscribers
-		}
+		c.For = f
 	}
 }
 

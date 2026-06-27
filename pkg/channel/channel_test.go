@@ -21,12 +21,6 @@ func TestNewChannel(t *testing.T) {
 	}
 
 	svc := &youtube.Service{}
-	managedByMeTrue := true
-	managedByMeFalse := false
-	mineTrue := true
-	mineFalse := false
-	mySubscribersTrue := true
-	mySubscribersFalse := false
 
 	tests := []struct {
 		name string
@@ -42,10 +36,8 @@ func TestNewChannel(t *testing.T) {
 					WithForUsername("testuser"),
 					WithHl("en"),
 					WithIds([]string{"channel1", "channel2"}),
-					WithChannelManagedByMe(&managedByMeTrue),
+					WithFor("managedByMe"),
 					WithMaxResults(100),
-					WithMine(&mineTrue),
-					WithMySubscribers(&mySubscribersTrue),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithCountry("US"),
 					WithCustomUrl("testchannel"),
@@ -70,9 +62,7 @@ func TestNewChannel(t *testing.T) {
 				CategoryId:      "category123",
 				ForHandle:       "@testhandle",
 				ForUsername:     "testuser",
-				ManagedByMe:     &managedByMeTrue,
-				Mine:            &mineTrue,
-				MySubscribers:   &mySubscribersTrue,
+				For:             "managedByMe",
 				Country:         "US",
 				CustomUrl:       "testchannel",
 				DefaultLanguage: "en",
@@ -92,12 +82,10 @@ func TestNewChannel(t *testing.T) {
 			},
 		},
 		{
-			name: "with nil boolean options",
+			name: "with empty for option",
 			args: args{
 				opts: []Option{
-					WithChannelManagedByMe(nil),
-					WithMine(nil),
-					WithMySubscribers(nil),
+					WithFor(""),
 					WithService(svc),
 				},
 			},
@@ -106,20 +94,16 @@ func TestNewChannel(t *testing.T) {
 			},
 		},
 		{
-			name: "with false boolean options",
+			name: "with for mine",
 			args: args{
 				opts: []Option{
-					WithChannelManagedByMe(&managedByMeFalse),
-					WithMine(&mineFalse),
-					WithMySubscribers(&mySubscribersFalse),
+					WithFor("mine"),
 					WithService(svc),
 				},
 			},
 			want: &Channel{
-				Fields:        common.Fields{Service: svc},
-				ManagedByMe:   &managedByMeFalse,
-				Mine:          &mineFalse,
-				MySubscribers: &mySubscribersFalse,
+				Fields: common.Fields{Service: svc},
+				For:    "mine",
 			},
 		},
 		{
@@ -285,10 +269,7 @@ func TestChannel_Get(t *testing.T) {
 		{
 			name: "get channels managedByMe",
 			opts: []Option{
-				func(c *Channel) {
-					b := true
-					c.ManagedByMe = &b
-				},
+				WithFor("managedByMe"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -319,10 +300,7 @@ func TestChannel_Get(t *testing.T) {
 		{
 			name: "get channels mine",
 			opts: []Option{
-				func(c *Channel) {
-					b := true
-					c.Mine = &b
-				},
+				WithFor("mine"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -336,10 +314,7 @@ func TestChannel_Get(t *testing.T) {
 		{
 			name: "get channels mySubscribers",
 			opts: []Option{
-				func(c *Channel) {
-					b := true
-					c.MySubscribers = &b
-				},
+				WithFor("mySubscribers"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {

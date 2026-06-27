@@ -45,14 +45,15 @@ var listInSchema = &jsonschema.Schema{
 			Description: listIdsUsage,
 			Default:     json.RawMessage(`[]`),
 		},
-		"managed_by_me": {Type: "boolean", Description: mbmUsage},
+		"for": {
+			Type: "string", Description: forUsage,
+			Enum: []any{"managedByMe", "mine", "mySubscribers"},
+		},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
 			Minimum: new(float64(0)),
 		},
-		"mine":                       {Type: "boolean", Description: mineUsage},
-		"my_subscribers":             {Type: "boolean", Description: msUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -95,15 +96,9 @@ func init() {
 	)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
-	listCmd.Flags().BoolVarP(
-		managedByMe, "managedByMe", "E", false, mbmUsage,
-	)
+	listCmd.Flags().StringVarP(&channelFor, "for", "F", "", forUsage)
 	listCmd.Flags().Int64VarP(
 		&maxResults, "maxResults", "n", 5, pkg.MRUsage,
-	)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", true, mineUsage)
-	listCmd.Flags().BoolVarP(
-		mySubscribers, "mySubscribers", "S", false, msUsage,
 	)
 	listCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
@@ -127,10 +122,8 @@ var listCmd = &cobra.Command{
 			channel.WithForUsername(forUsername),
 			channel.WithHl(hl),
 			channel.WithIds(ids),
-			channel.WithChannelManagedByMe(managedByMe),
+			channel.WithFor(channelFor),
 			channel.WithMaxResults(maxResults),
-			channel.WithMine(mine),
-			channel.WithMySubscribers(mySubscribers),
 			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			channel.WithParts(parts),
 			channel.WithOutput(output),
