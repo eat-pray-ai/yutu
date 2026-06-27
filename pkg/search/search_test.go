@@ -21,12 +21,6 @@ func TestNewSearch(t *testing.T) {
 		opts []Option
 	}
 
-	forContentOwnerTrue := true
-	forContentOwnerFalse := false
-	forDeveloperTrue := true
-	forDeveloperFalse := false
-	forMineTrue := true
-	forMineFalse := false
 	svc := &youtube.Service{}
 
 	tests := []struct {
@@ -41,9 +35,7 @@ func TestNewSearch(t *testing.T) {
 					WithChannelId("channel123"),
 					WithChannelType("any"),
 					WithEventType("live"),
-					WithForContentOwner(&forContentOwnerTrue),
-					WithForDeveloper(&forDeveloperTrue),
-					WithForMine(&forMineTrue),
+					WithFor("mine"),
 					WithLocation("37.42307,-122.08427"),
 					WithLocationRadius("50km"),
 					WithMaxResults(50),
@@ -83,9 +75,7 @@ func TestNewSearch(t *testing.T) {
 				},
 				ChannelType:               "any",
 				EventType:                 "live",
-				ForContentOwner:           &forContentOwnerTrue,
-				ForDeveloper:              &forDeveloperTrue,
-				ForMine:                   &forMineTrue,
+				For:                       "mine",
 				Location:                  "37.42307,-122.08427",
 				LocationRadius:            "50km",
 				Order:                     "relevance",
@@ -117,30 +107,24 @@ func TestNewSearch(t *testing.T) {
 			want: &Search{Fields: common.Fields{}},
 		},
 		{
-			name: "with nil boolean options",
+			name: "with empty for option",
 			args: args{
 				opts: []Option{
-					WithForContentOwner(nil),
-					WithForDeveloper(nil),
-					WithForMine(nil),
+					WithFor(""),
 				},
 			},
 			want: &Search{Fields: common.Fields{}},
 		},
 		{
-			name: "with false boolean options",
+			name: "with for developer",
 			args: args{
 				opts: []Option{
-					WithForContentOwner(&forContentOwnerFalse),
-					WithForDeveloper(&forDeveloperFalse),
-					WithForMine(&forMineFalse),
+					WithFor("developer"),
 				},
 			},
 			want: &Search{
-				Fields:          common.Fields{},
-				ForContentOwner: &forContentOwnerFalse,
-				ForDeveloper:    &forDeveloperFalse,
-				ForMine:         &forMineFalse,
+				Fields: common.Fields{},
+				For:    "developer",
 			},
 		},
 		{
@@ -257,10 +241,6 @@ func TestNewSearch(t *testing.T) {
 }
 
 func TestSearch_Get(t *testing.T) {
-	forMineTrue := true
-	forDeveloperTrue := true
-	forContentOwnerTrue := true
-
 	tests := []struct {
 		name    string
 		opts    []Option
@@ -383,11 +363,9 @@ func TestSearch_Get(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "get search with boolean flags",
+			name: "get search with for mine",
 			opts: []Option{
-				WithForMine(&forMineTrue),
-				WithForDeveloper(&forDeveloperTrue),
-				WithForContentOwner(&forContentOwnerTrue),
+				WithFor("mine"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -395,13 +373,35 @@ func TestSearch_Get(t *testing.T) {
 				if q.Get("forMine") != "true" {
 					t.Errorf("expected forMine=true, got %s", q.Get("forMine"))
 				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with for developer",
+			opts: []Option{
+				WithFor("developer"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				q := r.URL.Query()
 				if q.Get("forDeveloper") != "true" {
 					t.Errorf("expected forDeveloper=true, got %s", q.Get("forDeveloper"))
 				}
+			},
+			wantLen: 1,
+			wantErr: false,
+		},
+		{
+			name: "get search with for contentOwner",
+			opts: []Option{
+				WithFor("contentOwner"),
+				WithMaxResults(1),
+			},
+			verify: func(r *http.Request) {
+				q := r.URL.Query()
 				if q.Get("forContentOwner") != "true" {
-					t.Errorf(
-						"expected forContentOwner=true, got %s", q.Get("forContentOwner"),
-					)
+					t.Errorf("expected forContentOwner=true, got %s", q.Get("forContentOwner"))
 				}
 			},
 			wantLen: 1,

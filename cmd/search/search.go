@@ -5,7 +5,6 @@ package search
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +14,7 @@ const (
 	cidUsage      = "Filter on resources belonging to this channelId"
 	ctUsage       = "channelTypeUnspecified|any|show"
 	etUsage       = "none|upcoming|live|completed"
-	fcoUsage      = "Search owned by content owner"
-	fdUsage       = "Only retrieve videos uploaded using the project id of the authenticated user"
-	fmUsage       = "Search for the private videos of the authenticated user"
+	forUsage      = "mine|developer|contentOwner"
 	locationUsage = "Filter on location of the video"
 	lrUsage       = "Filter on distance from the location"
 	orderUsage    = "searchSortUnspecified, date, rating, viewCount, relevance, title, videoCount"
@@ -45,9 +42,7 @@ var (
 	channelId                 string
 	channelType               string
 	eventType                 string
-	forContentOwner           = new(false)
-	forDeveloper              = new(false)
-	forMine                   = new(false)
+	searchFor                 string
 	location                  string
 	locationRadius            string
 	maxResults                int64
@@ -78,14 +73,6 @@ var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		boolMap := map[string]**bool{
-			"forContentOwner": &forContentOwner,
-			"forDeveloper":    &forDeveloper,
-			"forMine":         &forMine,
-		}
-		utils.ResetBool(boolMap, cmd.Flags())
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

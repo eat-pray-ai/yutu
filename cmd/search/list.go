@@ -44,11 +44,12 @@ var listInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"none", "upcoming", "live", "completed"},
 			Description: etUsage, Default: json.RawMessage(`"none"`),
 		},
-		"for_content_owner": {Type: "boolean", Description: fcoUsage},
-		"for_developer":     {Type: "boolean", Description: fdUsage},
-		"for_mine":          {Type: "boolean", Description: fmUsage},
-		"location":          {Type: "string", Description: locationUsage},
-		"location_radius":   {Type: "string", Description: lrUsage},
+		"for": {
+			Type: "string", Description: forUsage,
+			Enum: []any{"mine", "developer", "contentOwner"},
+		},
+		"location":        {Type: "string", Description: locationUsage},
+		"location_radius": {Type: "string", Description: lrUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
 			Default: json.RawMessage("5"),
@@ -153,11 +154,7 @@ func init() {
 		&channelType, "channelType", "channelTypeUnspecified", ctUsage,
 	)
 	listCmd.Flags().StringVar(&eventType, "eventType", "none", etUsage)
-	listCmd.Flags().BoolVar(
-		forContentOwner, "forContentOwner", false, fcoUsage,
-	)
-	listCmd.Flags().BoolVar(forDeveloper, "forDeveloper", false, fdUsage)
-	listCmd.Flags().BoolVar(forMine, "forMine", false, fmUsage)
+	listCmd.Flags().StringVar(&searchFor, "for", "", forUsage)
 	listCmd.Flags().StringVar(&location, "location", "", locationUsage)
 	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", lrUsage)
 	listCmd.Flags().Int64Var(&maxResults, "maxResults", 5, pkg.MRUsage)
@@ -202,9 +199,7 @@ var listCmd = &cobra.Command{
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),
 			search.WithEventType(eventType),
-			search.WithForContentOwner(forContentOwner),
-			search.WithForDeveloper(forDeveloper),
-			search.WithForMine(forMine),
+			search.WithFor(searchFor),
 			search.WithLocation(location),
 			search.WithLocationRadius(locationRadius),
 			search.WithMaxResults(maxResults),

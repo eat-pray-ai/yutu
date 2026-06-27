@@ -20,9 +20,7 @@ type Search struct {
 	common.Fields
 	ChannelType               string   `yaml:"channel_type" json:"channel_type,omitempty"`
 	EventType                 string   `yaml:"event_type" json:"event_type,omitempty"`
-	ForContentOwner           *bool    `yaml:"for_content_owner" json:"for_content_owner,omitempty"`
-	ForDeveloper              *bool    `yaml:"for_developer" json:"for_developer,omitempty"`
-	ForMine                   *bool    `yaml:"for_mine" json:"for_mine,omitempty"`
+	For                       string   `yaml:"for" json:"for,omitempty"`
 	Location                  string   `yaml:"location" json:"location,omitempty"`
 	LocationRadius            string   `yaml:"location_radius" json:"location_radius,omitempty"`
 	Order                     string   `yaml:"order" json:"order,omitempty"`
@@ -75,14 +73,13 @@ func (s *Search) Get() ([]*youtube.SearchResult, error) {
 	if s.EventType != "" {
 		call = call.EventType(s.EventType)
 	}
-	if s.ForContentOwner != nil {
-		call = call.ForContentOwner(*s.ForContentOwner)
-	}
-	if s.ForDeveloper != nil {
-		call = call.ForDeveloper(*s.ForDeveloper)
-	}
-	if s.ForMine != nil {
-		call = call.ForMine(*s.ForMine)
+	switch s.For {
+	case "mine":
+		call = call.ForMine(true)
+	case "developer":
+		call = call.ForDeveloper(true)
+	case "contentOwner":
+		call = call.ForContentOwner(true)
 	}
 	if s.Location != "" {
 		call = call.Location(s.Location)
@@ -195,27 +192,9 @@ func WithEventType(eventType string) Option {
 	}
 }
 
-func WithForContentOwner(forContentOwner *bool) Option {
+func WithFor(f string) Option {
 	return func(s *Search) {
-		if forContentOwner != nil {
-			s.ForContentOwner = forContentOwner
-		}
-	}
-}
-
-func WithForDeveloper(forDeveloper *bool) Option {
-	return func(s *Search) {
-		if forDeveloper != nil {
-			s.ForDeveloper = forDeveloper
-		}
-	}
-}
-
-func WithForMine(forMine *bool) Option {
-	return func(s *Search) {
-		if forMine != nil {
-			s.ForMine = forMine
-		}
+		s.For = f
 	}
 }
 
