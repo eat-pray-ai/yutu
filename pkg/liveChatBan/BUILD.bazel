@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "liveChatBan",
+    srcs = ["liveChatBan.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/liveChatBan",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/common",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "liveChatBan_test",
+    srcs = ["liveChatBan_test.go"],
+    embed = [":liveChatBan"],
+    deps = [
+        "//pkg/common",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
