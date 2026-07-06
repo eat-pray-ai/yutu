@@ -124,6 +124,13 @@ echo "======= i18nRegion ======="
 echo "------- list -------"
 "$YUTU_PATH" i18nRegion list --help
 
+echo "======= liveChatBan ======="
+"$YUTU_PATH" liveChatBan --help
+echo "------- delete -------"
+"$YUTU_PATH" liveChatBan delete --help
+echo "------- insert -------"
+"$YUTU_PATH" liveChatBan insert --help
+
 echo "======= member ======="
 "$YUTU_PATH" member --help
 echo "------- list -------"

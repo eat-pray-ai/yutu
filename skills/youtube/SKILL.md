@@ -77,6 +77,8 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | comment | update | Update a comment on a video |
 | comment thread | insert | Insert a new comment thread |
 | comment thread | list | List comment threads |
+| live chat ban | delete | Delete live chat bans |
+| live chat ban | insert | Insert a live chat ban |
 | member | list | List channel members |
 | memberships level | list | List memberships levels |
 | subscription | delete | Delete subscriptions |

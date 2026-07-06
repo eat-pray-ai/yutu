@@ -27,6 +27,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/commentThread"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nLanguage"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nRegion"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveChatBan"
 	_ "github.com/eat-pray-ai/yutu/cmd/member"
 	_ "github.com/eat-pray-ai/yutu/cmd/membershipsLevel"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlist"
@@ -90,6 +91,7 @@ var categoryMap = map[string]string{
 	"subscription":           "Community",
 	"member":                 "Community",
 	"membershipsLevel":       "Community",
+	"liveChatBan":            "Community",
 	"superChatEvent":         "Community",
 	"channel":                "Channel",
 	"channelBanner":          "Channel",
