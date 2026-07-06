@@ -181,14 +181,14 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
     <tr>
       <td rowspan="2">liveChatBans</td>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td rowspan="4">liveChatMessages</td>
