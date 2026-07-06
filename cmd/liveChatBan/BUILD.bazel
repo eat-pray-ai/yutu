@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "liveChatBan",
+    srcs = [
+        "delete.go",
+        "insert.go",
+        "liveChatBan.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/liveChatBan",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg",
+        "//pkg/liveChatBan",
+        "//pkg/utils",
+        "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
+        "@com_github_google_jsonschema_go//jsonschema",
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)
