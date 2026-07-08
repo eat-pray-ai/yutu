@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "abuseReport",
+    srcs = ["abuseReport.go"],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/abuseReport",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/common",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
+
+go_test(
+    name = "abuseReport_test",
+    srcs = ["abuseReport_test.go"],
+    embed = [":abuseReport"],
+    deps = [
+        "//pkg/common",
+        "@org_golang_google_api//youtube/v3:youtube",
+    ],
+)
