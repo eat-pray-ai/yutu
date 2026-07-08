@@ -55,6 +55,11 @@ echo "======= mcp ======="
 "$YUTU_PATH" mcp --help
 
 # youtube api
+echo "======= abuseReport ======="
+"$YUTU_PATH" abuseReport --help
+echo "------- insert -------"
+"$YUTU_PATH" abuseReport insert --help
+
 echo "======= activity ======="
 "$YUTU_PATH" activity --help
 echo "------- list -------"
@@ -130,6 +135,26 @@ echo "------- delete -------"
 "$YUTU_PATH" liveChatBan delete --help
 echo "------- insert -------"
 "$YUTU_PATH" liveChatBan insert --help
+
+echo "======= liveChatModerator ======="
+"$YUTU_PATH" liveChatModerator --help
+echo "------- delete -------"
+"$YUTU_PATH" liveChatModerator delete --help
+echo "------- insert -------"
+"$YUTU_PATH" liveChatModerator insert --help
+echo "------- list -------"
+"$YUTU_PATH" liveChatModerator list --help
+
+echo "======= liveStream ======="
+"$YUTU_PATH" liveStream --help
+echo "------- delete -------"
+"$YUTU_PATH" liveStream delete --help
+echo "------- insert -------"
+"$YUTU_PATH" liveStream insert --help
+echo "------- list -------"
+"$YUTU_PATH" liveStream list --help
+echo "------- update -------"
+"$YUTU_PATH" liveStream update --help
 
 echo "======= member ======="
 "$YUTU_PATH" member --help
