@@ -18,6 +18,7 @@ import (
 
 	// Blank-import every resource package so that its init() registers the
 	// subcommand (and sub-subcommands) on cmd.RootCmd.
+	_ "github.com/eat-pray-ai/yutu/cmd/abuseReport"
 	_ "github.com/eat-pray-ai/yutu/cmd/activity"
 	_ "github.com/eat-pray-ai/yutu/cmd/caption"
 	_ "github.com/eat-pray-ai/yutu/cmd/channel"
@@ -28,6 +29,8 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nLanguage"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nRegion"
 	_ "github.com/eat-pray-ai/yutu/cmd/liveChatBan"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveChatModerator"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveStream"
 	_ "github.com/eat-pray-ai/yutu/cmd/member"
 	_ "github.com/eat-pray-ai/yutu/cmd/membershipsLevel"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlist"
@@ -92,6 +95,8 @@ var categoryMap = map[string]string{
 	"member":                 "Community",
 	"membershipsLevel":       "Community",
 	"liveChatBan":            "Community",
+	"liveChatModerator":      "Community",
+	"liveStream":             "Content",
 	"superChatEvent":         "Community",
 	"channel":                "Channel",
 	"channelBanner":          "Channel",
@@ -100,6 +105,7 @@ var categoryMap = map[string]string{
 	"search":                 "Discovery",
 	"activity":               "Discovery",
 	"videoCategory":          "Metadata",
+	"abuseReport":            "Community",
 	"videoAbuseReportReason": "Metadata",
 	"i18nLanguage":           "Metadata",
 	"i18nRegion":             "Metadata",

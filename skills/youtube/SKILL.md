@@ -37,6 +37,10 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | caption | insert | Insert a caption |
 | caption | list | List captions |
 | caption | update | Update a video caption |
+| live stream | delete | Delete live streams |
+| live stream | insert | Insert a live stream |
+| live stream | list | List live streams |
+| live stream | update | Update a live stream |
 | thumbnail | set | Set a thumbnail for a video |
 | video | delete | Delete videos |
 | video | getRating | Get video ratings |
@@ -69,6 +73,7 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 
 | Resource | Operation | Description |
 |----------|-----------|-------------|
+| abuse report | insert | Insert an abuse report |
 | comment | delete | Delete comments |
 | comment | insert | Create a comment |
 | comment | list | List comments |
@@ -79,6 +84,9 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | comment thread | list | List comment threads |
 | live chat ban | delete | Delete live chat bans |
 | live chat ban | insert | Insert a live chat ban |
+| live chat moderator | delete | Delete live chat moderators |
+| live chat moderator | insert | Insert a live chat moderator |
+| live chat moderator | list | List live chat moderators |
 | member | list | List channel members |
 | memberships level | list | List memberships levels |
 | subscription | delete | Delete subscriptions |
