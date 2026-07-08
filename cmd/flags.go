@@ -57,7 +57,7 @@ func confirmWithTTYOverride(cmd *cobra.Command, isTTY bool, format string, args 
 
 	// 1. --dry-run takes precedence over everything.
 	if DryRun(cmd) {
-		fmt.Fprintln(cmd.OutOrStdout(), msg)
+		_, _ = fmt.Fprintln(cmd.OutOrStdout(), msg)
 		return ErrDryRun
 	}
 

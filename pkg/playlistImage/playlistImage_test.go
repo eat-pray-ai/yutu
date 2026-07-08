@@ -262,7 +262,8 @@ func TestPlaylistImage_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylistImage_List(t *testing.T) {
-	common.RunListTest(t, `{
+	common.RunListTest(
+		t, `{
 			"items": [
 				{
 					"id": "image-1",
@@ -468,10 +469,7 @@ func TestPlaylistImage_Update(t *testing.T) {
 				WithMaxResults(1),
 				WithFile("test_image.jpg"),
 			},
-			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
-				}
-			},
+			verify:  func(_ *http.Request) {},
 			wantErr: false,
 		},
 	}

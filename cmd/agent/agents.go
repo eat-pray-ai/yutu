@@ -145,24 +145,6 @@ var agentDefs = map[string]agentDef{
 	},
 }
 
-var confirmationToolNames = computeConfirmationToolNames()
-
-func computeConfirmationToolNames() map[string]struct{} {
-	readOnly := make(map[string]struct{}, len(agentDefs["Aagje"].toolNames))
-	for _, name := range agentDefs["Aagje"].toolNames {
-		readOnly[name] = struct{}{}
-	}
-
-	result := make(map[string]struct{})
-	for _, key := range []string{"Knorretje", "Daan"} {
-		for _, name := range agentDefs[key].toolNames {
-			if _, ok := readOnly[name]; !ok {
-				result[name] = struct{}{}
-			}
-		}
-	}
-	return result
-}
 
 func init() {
 	for _, def := range agentDefs {
@@ -172,10 +154,6 @@ func init() {
 	}
 }
 
-func requireConfirmation(name string, _ any) bool {
-	_, ok := confirmationToolNames[name]
-	return ok
-}
 
 func buildOrchestrator(
 	advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset,

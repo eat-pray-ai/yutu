@@ -499,11 +499,7 @@ func TestPlaylistItem_Update(t *testing.T) {
 				WithPrivacy("private"),
 				WithMaxResults(1),
 			},
-			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
-					if r.URL.Query().Get("id") != "" {
-					}
-				}
+			verify: func(_ *http.Request) {
 			},
 			wantErr: false,
 		},

@@ -401,12 +401,13 @@ func TestComment_Update(t *testing.T) {
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
+				switch r.Method {
+				case "PUT":
 					if r.URL.Query().Get("part") != "snippet" {
 						t.Errorf("expected part=snippet, got %s", r.URL.Query().Get("part"))
 					}
-				} else if r.Method == "GET" {
-				} else {
+				case "GET":
+				default:
 					t.Errorf("unexpected method %s", r.Method)
 				}
 			},
@@ -423,10 +424,7 @@ func TestComment_Update(t *testing.T) {
 				WithViewerRating("like"),
 				WithMaxResults(1),
 			},
-			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
-				}
-			},
+			verify:  func(_ *http.Request) {},
 			wantErr: false,
 		},
 	}

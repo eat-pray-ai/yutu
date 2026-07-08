@@ -431,15 +431,16 @@ func TestChannel_Update(t *testing.T) {
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
+				switch r.Method {
+				case "PUT":
 					if r.URL.Query().Get("part") != "snippet" {
 						t.Errorf("expected part=snippet, got %s", r.URL.Query().Get("part"))
 					}
-				} else if r.Method == "GET" {
+				case "GET":
 					if r.URL.Query().Get("id") != "channel-id" {
 						t.Errorf("expected id=channel-id, got %s", r.URL.Query().Get("id"))
 					}
-				} else {
+				default:
 					t.Errorf("unexpected method %s", r.Method)
 				}
 			},

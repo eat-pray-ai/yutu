@@ -49,26 +49,22 @@ func PaginationHandler(idPrefix string, itemFmt ...func(string, int) string) htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		pageToken := r.URL.Query().Get("pageToken")
 		w.Header().Set("Content-Type", "application/json")
-		if pageToken == "" {
+		switch pageToken {
+		case "":
 			items := make([]string, 20)
 			for i := range 20 {
 				items[i] = fmtItem(idPrefix, i)
 			}
-			_, _ = w.Write(
-				fmt.Appendf(
-					nil,
-					`{"items": [%s], "nextPageToken": "page-2"}`,
-					strings.Join(items, ","),
-				),
+			_, _ = fmt.Fprintf(
+				w,
+				`{"items": [%s], "nextPageToken": "page-2"}`,
+				strings.Join(items, ","),
 			)
-		} else if pageToken == "page-2" {
-			_, _ = w.Write(
-				[]byte(
-					fmt.Sprintf(
-						`{"items": [%s, %s], "nextPageToken": ""}`,
-						fmtItem(idPrefix, 20), fmtItem(idPrefix, 21),
-					),
-				),
+		case "page-2":
+			_, _ = fmt.Fprintf(
+				w,
+				`{"items": [%s, %s], "nextPageToken": ""}`,
+				fmtItem(idPrefix, 20), fmtItem(idPrefix, 21),
 			)
 		}
 	}

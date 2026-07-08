@@ -432,17 +432,18 @@ func TestCaption_Update(t *testing.T) {
 				WithLanguage("es"),
 			},
 			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
+				switch r.Method {
+				case "PUT":
 					if r.URL.Query().Get("part") != "snippet" {
 						t.Errorf("expected part=snippet, got %s", r.URL.Query().Get("part"))
 					}
-				} else if r.Method == "GET" {
+				case "GET":
 					if r.URL.Query().Get("videoId") != "video-id" {
 						t.Errorf(
 							"expected videoId=video-id, got %s", r.URL.Query().Get("videoId"),
 						)
 					}
-				} else {
+				default:
 					t.Errorf("unexpected method %s", r.Method)
 				}
 			},

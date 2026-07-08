@@ -67,7 +67,8 @@ func TestPaginate(t *testing.T) {
 				return func(w http.ResponseWriter, r *http.Request) {
 					pageToken := r.URL.Query().Get("pageToken")
 					w.Header().Set("Content-Type", "application/json")
-					if pageToken == "" {
+					switch pageToken {
+					case "":
 						items := make([]string, 20)
 						for i := range 20 {
 							items[i] = fmt.Sprintf(`{"id": "v%d"}`, i+1)
@@ -77,7 +78,7 @@ func TestPaginate(t *testing.T) {
 							"items": %s,
 							"nextPageToken": "page-2"
 						}`, jsonItems)
-					} else if pageToken == "page-2" {
+					case "page-2":
 						_, _ = w.Write([]byte(`{
 							"items": [{"id": "v21"}, {"id": "v22"}],
 							"nextPageToken": ""
@@ -333,8 +334,8 @@ func TestWithMaxResults(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &testResource{}
 			WithMaxResults[*testResource](tt.input)(r)
-			if r.Fields.MaxResults != tt.want {
-				t.Errorf("WithMaxResults(%d) = %d, want %d", tt.input, r.Fields.MaxResults, tt.want)
+			if r.MaxResults != tt.want {
+				t.Errorf("WithMaxResults(%d) = %d, want %d", tt.input, r.MaxResults, tt.want)
 			}
 		})
 	}
@@ -344,10 +345,10 @@ func TestWithIds(t *testing.T) {
 	r := &testResource{}
 	ids := []string{"id1", "id2", "id3"}
 	WithIds[*testResource](ids)(r)
-	if len(r.Fields.Ids) != len(ids) {
-		t.Fatalf("WithIds() got %d ids, want %d", len(r.Fields.Ids), len(ids))
+	if len(r.Ids) != len(ids) {
+		t.Fatalf("WithIds() got %d ids, want %d", len(r.Ids), len(ids))
 	}
-	for i, id := range r.Fields.Ids {
+	for i, id := range r.Ids {
 		if id != ids[i] {
 			t.Errorf("WithIds()[%d] = %q, want %q", i, id, ids[i])
 		}
@@ -358,10 +359,10 @@ func TestWithParts(t *testing.T) {
 	r := &testResource{}
 	parts := []string{"snippet", "contentDetails"}
 	WithParts[*testResource](parts)(r)
-	if len(r.Fields.Parts) != len(parts) {
-		t.Fatalf("WithParts() got %d parts, want %d", len(r.Fields.Parts), len(parts))
+	if len(r.Parts) != len(parts) {
+		t.Fatalf("WithParts() got %d parts, want %d", len(r.Parts), len(parts))
 	}
-	for i, p := range r.Fields.Parts {
+	for i, p := range r.Parts {
 		if p != parts[i] {
 			t.Errorf("WithParts()[%d] = %q, want %q", i, p, parts[i])
 		}
@@ -371,8 +372,8 @@ func TestWithParts(t *testing.T) {
 func TestWithOutput(t *testing.T) {
 	r := &testResource{}
 	WithOutput[*testResource]("json")(r)
-	if r.Fields.Output != "json" {
-		t.Errorf("WithOutput() = %q, want %q", r.Fields.Output, "json")
+	if r.Output != "json" {
+		t.Errorf("WithOutput() = %q, want %q", r.Output, "json")
 	}
 }
 
@@ -380,7 +381,7 @@ func TestWithService(t *testing.T) {
 	r := &testResource{}
 	svc := &youtube.Service{}
 	WithService[*testResource](svc)(r)
-	if r.Fields.Service != svc {
+	if r.Service != svc {
 		t.Errorf("WithService() did not set service")
 	}
 }
@@ -388,23 +389,23 @@ func TestWithService(t *testing.T) {
 func TestWithHl(t *testing.T) {
 	r := &testResource{}
 	WithHl[*testResource]("en")(r)
-	if r.Fields.Hl != "en" {
-		t.Errorf("WithHl() = %q, want %q", r.Fields.Hl, "en")
+	if r.Hl != "en" {
+		t.Errorf("WithHl() = %q, want %q", r.Hl, "en")
 	}
 }
 
 func TestWithChannelId(t *testing.T) {
 	r := &testResource{}
 	WithChannelId[*testResource]("chan-123")(r)
-	if r.Fields.ChannelId != "chan-123" {
-		t.Errorf("WithChannelId() = %q, want %q", r.Fields.ChannelId, "chan-123")
+	if r.ChannelId != "chan-123" {
+		t.Errorf("WithChannelId() = %q, want %q", r.ChannelId, "chan-123")
 	}
 }
 
 func TestWithOnBehalfOfContentOwner(t *testing.T) {
 	r := &testResource{}
 	WithOnBehalfOfContentOwner[*testResource]("owner-456")(r)
-	if r.Fields.OnBehalfOfContentOwner != "owner-456" {
-		t.Errorf("WithOnBehalfOfContentOwner() = %q, want %q", r.Fields.OnBehalfOfContentOwner, "owner-456")
+	if r.OnBehalfOfContentOwner != "owner-456" {
+		t.Errorf("WithOnBehalfOfContentOwner() = %q, want %q", r.OnBehalfOfContentOwner, "owner-456")
 	}
 }
