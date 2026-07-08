@@ -27,4 +27,4 @@ Core domain logic and shared infrastructure.
 
 Each maps 1:1 to a YouTube API resource:
 
-`activity/`, `caption/`, `channel/`, `channelBanner/`, `channelSection/`, `comment/`, `commentThread/`, `i18nLanguage/`, `i18nRegion/`, `liveChatBan/`, `member/`, `membershipsLevel/`, `playlist/`, `playlistImage/`, `playlistItem/`, `search/`, `subscription/`, `superChatEvent/`, `thirdPartyLink/`, `thumbnail/`, `video/`, `videoAbuseReportReason/`, `videoCategory/`, `watermark/`
+`abuseReport/`, `activity/`, `caption/`, `channel/`, `channelBanner/`, `channelSection/`, `comment/`, `commentThread/`, `i18nLanguage/`, `i18nRegion/`, `liveChatBan/`, `liveChatModerator/`, `liveStream/`, `member/`, `membershipsLevel/`, `playlist/`, `playlistImage/`, `playlistItem/`, `search/`, `subscription/`, `superChatEvent/`, `thirdPartyLink/`, `thumbnail/`, `video/`, `videoAbuseReportReason/`, `videoCategory/`, `watermark/`

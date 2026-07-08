@@ -14,9 +14,9 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
   <tbody>
     <tr>
       <td>abuseReports</td>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td>activities</td>
@@ -213,40 +213,40 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
     <tr>
       <td rowspan="3">liveChatModerators</td>
-      <td>🟡 list</td>
+      <td>🟢 list</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td rowspan="4">liveStreams</td>
-      <td>🟡 list</td>
+      <td>🟢 list</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 update</td>
+      <td>🟢 update</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td>members</td>
