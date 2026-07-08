@@ -39,6 +39,10 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
+      - name: Lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12
       - name: Go test
         run: |
           go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./pkg/..."
