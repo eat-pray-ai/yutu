@@ -5,6 +5,7 @@ package main
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	_ "github.com/eat-pray-ai/yutu/cmd/abuseReport"
 	_ "github.com/eat-pray-ai/yutu/cmd/activity"
 	_ "github.com/eat-pray-ai/yutu/cmd/agent"
 	_ "github.com/eat-pray-ai/yutu/cmd/caption"
@@ -16,6 +17,8 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nLanguage"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nRegion"
 	_ "github.com/eat-pray-ai/yutu/cmd/liveChatBan"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveChatModerator"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveStream"
 	_ "github.com/eat-pray-ai/yutu/cmd/member"
 	_ "github.com/eat-pray-ai/yutu/cmd/membershipsLevel"
 	_ "github.com/eat-pray-ai/yutu/cmd/playlist"

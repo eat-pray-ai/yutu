@@ -17,6 +17,7 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//cmd",
+        "//cmd/abuseReport",
         "//cmd/activity",
         "//cmd/agent",
         "//cmd/caption",
@@ -28,6 +29,8 @@ go_library(
         "//cmd/i18nLanguage",
         "//cmd/i18nRegion",
         "//cmd/liveChatBan",
+        "//cmd/liveChatModerator",
+        "//cmd/liveStream",
         "//cmd/member",
         "//cmd/membershipsLevel",
         "//cmd/playlist",
