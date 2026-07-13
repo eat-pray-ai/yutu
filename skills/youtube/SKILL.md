@@ -84,6 +84,10 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | comment thread | list | List comment threads |
 | live chat ban | delete | Delete live chat bans |
 | live chat ban | insert | Insert a live chat ban |
+| live chat message | delete | Delete live chat messages |
+| live chat message | insert | Send a live chat message |
+| live chat message | list | List live chat messages |
+| live chat message | transition | Transition a live chat message |
 | live chat moderator | delete | Delete live chat moderators |
 | live chat moderator | insert | Insert a live chat moderator |
 | live chat moderator | list | List live chat moderators |

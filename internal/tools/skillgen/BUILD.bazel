@@ -19,6 +19,7 @@ go_library(
         "//cmd/i18nLanguage",
         "//cmd/i18nRegion",
         "//cmd/liveChatBan",
+        "//cmd/liveChatMessage",
         "//cmd/liveChatModerator",
         "//cmd/liveStream",
         "//cmd/member",
