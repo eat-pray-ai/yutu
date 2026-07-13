@@ -136,6 +136,17 @@ echo "------- delete -------"
 echo "------- insert -------"
 "$YUTU_PATH" liveChatBan insert --help
 
+echo "======= liveChatMessage ======="
+"$YUTU_PATH" liveChatMessage --help
+echo "------- delete -------"
+"$YUTU_PATH" liveChatMessage delete --help
+echo "------- insert -------"
+"$YUTU_PATH" liveChatMessage insert --help
+echo "------- list -------"
+"$YUTU_PATH" liveChatMessage list --help
+echo "------- transition -------"
+"$YUTU_PATH" liveChatMessage transition --help
+
 echo "======= liveChatModerator ======="
 "$YUTU_PATH" liveChatModerator --help
 echo "------- delete -------"

@@ -26,6 +26,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nLanguage"
 	_ "github.com/eat-pray-ai/yutu/cmd/i18nRegion"
 	_ "github.com/eat-pray-ai/yutu/cmd/liveChatBan"
+	_ "github.com/eat-pray-ai/yutu/cmd/liveChatMessage"
 	_ "github.com/eat-pray-ai/yutu/cmd/liveChatModerator"
 	_ "github.com/eat-pray-ai/yutu/cmd/liveStream"
 	_ "github.com/eat-pray-ai/yutu/cmd/member"
