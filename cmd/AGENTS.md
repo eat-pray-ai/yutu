@@ -19,6 +19,6 @@ CLI command definitions and MCP tool bindings.
 
 Each subdirectory is a 1:1 mapping to a YouTube API resource:
 
-`abuseReport/`, `activity/`, `agent/`, `caption/`, `channel/`, `channelBanner/`, `channelSection/`, `comment/`, `commentThread/`, `i18nLanguage/`, `i18nRegion/`, `liveChatBan/`, `liveChatModerator/`, `liveStream/`, `member/`, `membershipsLevel/`, `playlist/`, `playlistImage/`, `playlistItem/`, `search/`, `subscription/`, `superChatEvent/`, `thirdPartyLink/`, `thumbnail/`, `video/`, `videoAbuseReportReason/`, `videoCategory/`, `watermark/`
+`abuseReport/`, `activity/`, `agent/`, `caption/`, `channel/`, `channelBanner/`, `channelSection/`, `comment/`, `commentThread/`, `i18nLanguage/`, `i18nRegion/`, `liveBroadcast/`, `liveChatBan/`, `liveChatMessage/`, `liveChatModerator/`, `liveStream/`, `member/`, `membershipsLevel/`, `playlist/`, `playlistImage/`, `playlistItem/`, `search/`, `subscription/`, `superChatEvent/`, `thirdPartyLink/`, `thumbnail/`, `video/`, `videoAbuseReportReason/`, `videoCategory/`, `watermark/`
 
 All follow the same pattern — see [Wiring](#wiring) above.

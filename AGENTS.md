@@ -33,3 +33,12 @@ Go CLI + MCP server + Agent for YouTube.
 - **BUILD.bazel files are auto-generated** — do NOT create or edit them manually. Run `bazel run //:gazelle` to regenerate.
 - After changing dependencies: `bazel run @rules_go//go -- mod tidy -v && bazel mod tidy`.
 - See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for the full list of useful build/test/release commands.
+
+## Adding a New YouTube Resource
+
+Every new resource package under `pkg/` and `cmd/` must also be registered in:
+
+1. **`main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
+2. **`internal/tools/skillgen/main.go`** — add a blank import and a `categoryMap` entry.
+3. **`internal/tools/cmdtestgen/main.go`** — add a blank import.
+4. **`cmd/agent/agents.go`** — add the resource's MCP tool names to the appropriate agent definition (`Aagje` for read-only, `Knorretje` for create/update, `Daan` for delete).
