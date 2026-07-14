@@ -37,6 +37,13 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 | caption | insert | Insert a caption |
 | caption | list | List captions |
 | caption | update | Update a video caption |
+| live broadcast | bind | Bind a live broadcast to a stream |
+| live broadcast | delete | Delete live broadcasts |
+| live broadcast | insert | Insert a live broadcast |
+| live broadcast | insertCuepoint | Insert a cuepoint into a live broadcast |
+| live broadcast | list | List live broadcasts |
+| live broadcast | transition | Transition a live broadcast |
+| live broadcast | update | Update a live broadcast |
 | live stream | delete | Delete live streams |
 | live stream | insert | Insert a live stream |
 | live stream | list | List live streams |

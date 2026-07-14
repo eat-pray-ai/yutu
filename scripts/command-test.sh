@@ -129,6 +129,23 @@ echo "======= i18nRegion ======="
 echo "------- list -------"
 "$YUTU_PATH" i18nRegion list --help
 
+echo "======= liveBroadcast ======="
+"$YUTU_PATH" liveBroadcast --help
+echo "------- bind -------"
+"$YUTU_PATH" liveBroadcast bind --help
+echo "------- delete -------"
+"$YUTU_PATH" liveBroadcast delete --help
+echo "------- insert -------"
+"$YUTU_PATH" liveBroadcast insert --help
+echo "------- insertCuepoint -------"
+"$YUTU_PATH" liveBroadcast insertCuepoint --help
+echo "------- list -------"
+"$YUTU_PATH" liveBroadcast list --help
+echo "------- transition -------"
+"$YUTU_PATH" liveBroadcast transition --help
+echo "------- update -------"
+"$YUTU_PATH" liveBroadcast update --help
+
 echo "======= liveChatBan ======="
 "$YUTU_PATH" liveChatBan --help
 echo "------- delete -------"

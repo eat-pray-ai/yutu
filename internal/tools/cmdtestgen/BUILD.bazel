@@ -18,6 +18,7 @@ go_library(
         "//cmd/commentThread",
         "//cmd/i18nLanguage",
         "//cmd/i18nRegion",
+        "//cmd/liveBroadcast",
         "//cmd/liveChatBan",
         "//cmd/liveChatMessage",
         "//cmd/liveChatModerator",
