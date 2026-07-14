@@ -1,0 +1,28 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "liveBroadcast",
+    srcs = [
+        "bind.go",
+        "delete.go",
+        "insert.go",
+        "insertCuepoint.go",
+        "list.go",
+        "liveBroadcast.go",
+        "transition.go",
+        "update.go",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/cmd/liveBroadcast",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//cmd",
+        "//pkg",
+        "//pkg/liveBroadcast",
+        "//pkg/utils",
+        "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
+        "@com_github_google_jsonschema_go//jsonschema",
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_pflag//:pflag",
+    ],
+)
