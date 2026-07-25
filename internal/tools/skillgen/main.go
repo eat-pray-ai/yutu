@@ -197,14 +197,7 @@ func buildUnifiedDescription(_ []categoryGroup) string {
 
 const workflowSummary = `| Task | Quick Command |
 |------|---------------|
-| Upload a video | ` + "`yutu video insert --file video.mp4 --title \"...\" --privacy public`" + ` |
-| Update video metadata | ` + "`yutu video list --ids ID`" + ` then ` + "`yutu video update --id ID --title \"...\"`" + ` |
-| Create playlist + add videos | ` + "`yutu playlist insert`" + ` → ` + "`yutu playlistItem insert`" + ` |
-| Post a comment | ` + "`yutu commentThread insert --channelId ... --videoId ... --textOriginal \"...\"`" + ` |
-| Channel analytics | ` + "`yutu channel list --for mine --output json`" + ` |
-| Competitor analysis | ` + "`yutu channel list --forHandle @handle --output json`" + ` |
-| Delete content | Always ` + "`list`" + ` first, then ` + "`delete`" + ` — irreversible |
-| Subscribe/unsubscribe | Check ` + "`yutu subscription list --for mine --forChannelId ...`" + ` before acting |`
+| Find unlisted/private videos | ` + "`yutu channel list --for mine --parts id,contentDetails`" + ` → ` + "`yutu playlistItem list`" + ` → ` + "`yutu video list --parts id,snippet,status`" + ` |`
 
 const growthTips = `- **Titles**: Curiosity gaps + power words. Front-load keywords. Under 60 characters.
 - **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, 3-5 hashtags.
@@ -256,14 +249,14 @@ metadata:
 
 	for _, g := range groups {
 		_, _ = fmt.Fprintf(&b, "### %s\n\n", g.name)
-		b.WriteString("| Resource | Operation | Description |\n")
-		b.WriteString("|----------|-----------|-------------|\n")
+		b.WriteString("| Resource | Operations |\n")
+		b.WriteString("|----------|------------|\n")
 		for _, r := range g.resources {
+			var names []string
 			for _, v := range r.verbs {
-				_, _ = fmt.Fprintf(
-					&b, "| %s | %s | %s |\n", r.human, v.name, escPipe(v.short),
-				)
+				names = append(names, v.name)
 			}
+			_, _ = fmt.Fprintf(&b, "| %s | %s |\n", r.name, strings.Join(names, ", "))
 		}
 		b.WriteString("\n")
 	}
@@ -340,11 +333,6 @@ func main() {
 // ---------------------------------------------------------------------------
 // String utilities
 // ---------------------------------------------------------------------------
-
-// escPipe escapes pipe characters for markdown table cells.
-func escPipe(s string) string {
-	return strings.ReplaceAll(s, "|", "\\|")
-}
 
 // camelToWords splits a camelCase string into lowercase space-separated words.
 func camelToWords(s string) string {
