@@ -53,7 +53,7 @@ yutu caption insert --file subtitle.srt --videoId VIDEO_ID --language en --name 
 
 ```bash
 # Get your channel info
-yutu channel list --mine
+yutu channel list --for mine
 
 # Update channel metadata
 yutu channel update --id CHANNEL_ID --description 'New description'
@@ -70,13 +70,13 @@ yutu channelBanner insert --channelId CHANNEL_ID --file banner.jpg
 
 ```bash
 # Get your channel ID
-yutu channel list --mine
+yutu channel list --for mine
 
 # Create the playlist
 yutu playlist insert --title 'My Playlist' --channelId CHANNEL_ID --privacy public
 
 # Find videos to add (e.g., your 5 most recent)
-yutu search list --forMine --order date --types video --maxResults 5
+yutu search list --for mine --order date --types video --maxResults 5
 
 # Add each video to the playlist
 yutu playlistItem insert --kind video --playlistId PLAYLIST_ID --channelId CHANNEL_ID --kVideoId VIDEO_ID
@@ -98,10 +98,10 @@ yutu playlistItem insert --kind video --playlistId PLAYLIST_ID --channelId CHANN
 
 ```bash
 # Get your channel ID
-yutu channel list --mine
+yutu channel list --for mine
 
 # Find the video (e.g., your latest)
-yutu search list --forMine --order date --types video --maxResults 1
+yutu search list --for mine --order date --types video --maxResults 1
 
 # Post the comment
 yutu commentThread insert --channelId CHANNEL_ID --videoId VIDEO_ID \
@@ -126,7 +126,7 @@ yutu comment insert --channelId CHANNEL_ID --videoId VIDEO_ID \
 yutu channel list --forHandle @TargetChannel
 
 # Check if already subscribed
-yutu subscription list --mine --forChannelId TARGET_CHANNEL_ID
+yutu subscription list --for mine --forChannelId TARGET_CHANNEL_ID
 
 # Subscribe if not already subscribed
 yutu subscription insert --subscriberChannelId MY_CHANNEL_ID --channelId TARGET_CHANNEL_ID
@@ -150,7 +150,7 @@ yutu video delete --ids VIDEO_ID
 
 ```bash
 # Search for the target video
-yutu search list --forMine --order date --types video --maxResults 1
+yutu search list --for mine --order date --types video --maxResults 1
 
 # Verify and delete
 yutu video list --ids VIDEO_ID
@@ -191,7 +191,7 @@ yutu playlistItem delete --ids PLAYLIST_ITEM_ID
 
 ```bash
 # Find the subscription ID
-yutu subscription list --mine --forChannelId TARGET_CHANNEL_ID
+yutu subscription list --for mine --forChannelId TARGET_CHANNEL_ID
 
 # Delete the subscription
 yutu subscription delete --ids SUBSCRIPTION_ID
@@ -211,7 +211,7 @@ yutu caption delete --ids CAPTION_ID
 
 ```bash
 # Get the channel ID
-yutu channel list --mine
+yutu channel list --for mine
 
 # Unset the watermark
 yutu watermark unset --channelId CHANNEL_ID
@@ -223,10 +223,10 @@ yutu watermark unset --channelId CHANNEL_ID
 
 ```bash
 # Get channel stats
-yutu channel list --mine --output json
+yutu channel list --for mine --output json
 
 # List recent videos
-yutu search list --forMine --order date --types video --maxResults 10
+yutu search list --for mine --order date --types video --maxResults 10
 
 # Get detailed stats for those videos
 yutu video list --ids VIDEO_ID_1,VIDEO_ID_2,VIDEO_ID_3 --output json
@@ -254,7 +254,7 @@ yutu commentThread list --videoId VIDEO_ID --maxResults 20
 yutu channel list --forHandle @Competitor --output json
 
 # Get your own channel for comparison
-yutu channel list --mine --output json
+yutu channel list --for mine --output json
 
 # Find the competitor's top videos
 yutu search list --channelId COMPETITOR_CHANNEL_ID --order viewCount --types video --maxResults 10
@@ -266,7 +266,7 @@ yutu search list --channelId COMPETITOR_CHANNEL_ID --order viewCount --types vid
 
 ```bash
 # Get your channel info
-yutu channel list --mine
+yutu channel list --for mine
 
 # List recent activity (uploads, likes, favorites, comments)
 yutu activity list --channelId CHANNEL_ID --maxResults 20

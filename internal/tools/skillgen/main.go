@@ -201,10 +201,10 @@ const workflowSummary = `| Task | Quick Command |
 | Update video metadata | ` + "`yutu video list --ids ID`" + ` then ` + "`yutu video update --id ID --title \"...\"`" + ` |
 | Create playlist + add videos | ` + "`yutu playlist insert`" + ` → ` + "`yutu playlistItem insert`" + ` |
 | Post a comment | ` + "`yutu commentThread insert --channelId ... --videoId ... --textOriginal \"...\"`" + ` |
-| Channel analytics | ` + "`yutu channel list --mine --output json`" + ` |
+| Channel analytics | ` + "`yutu channel list --for mine --output json`" + ` |
 | Competitor analysis | ` + "`yutu channel list --forHandle @handle --output json`" + ` |
 | Delete content | Always ` + "`list`" + ` first, then ` + "`delete`" + ` — irreversible |
-| Subscribe/unsubscribe | Check ` + "`yutu subscription list --mine --forChannelId ...`" + ` before acting |`
+| Subscribe/unsubscribe | Check ` + "`yutu subscription list --for mine --forChannelId ...`" + ` before acting |`
 
 const growthTips = `- **Titles**: Curiosity gaps + power words. Front-load keywords. Under 60 characters.
 - **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, 3-5 hashtags.
@@ -249,7 +249,7 @@ metadata:
 	b.WriteString("## Key Principles\n\n")
 	b.WriteString("- Always verify before destructive operations — deletions are irreversible.\n")
 	b.WriteString("- Use `--output json` when you need to parse or chain results.\n")
-	b.WriteString("- Get your channel ID with `yutu channel list --mine` — many operations need it.\n")
+	b.WriteString("- Get your channel ID with `yutu channel list --for mine` — many operations need it.\n")
 	b.WriteString("- When updating metadata, only specify the fields you want to change.\n\n")
 
 	b.WriteString("## Operations\n\n")

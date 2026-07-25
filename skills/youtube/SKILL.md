@@ -23,7 +23,7 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 
 - Always verify before destructive operations — deletions are irreversible.
 - Use `--output json` when you need to parse or chain results.
-- Get your channel ID with `yutu channel list --mine` — many operations need it.
+- Get your channel ID with `yutu channel list --for mine` — many operations need it.
 - When updating metadata, only specify the fields you want to change.
 
 ## Operations
@@ -145,10 +145,10 @@ See [references/workflows.md](references/workflows.md) for step-by-step walkthro
 | Update video metadata | `yutu video list --ids ID` then `yutu video update --id ID --title "..."` |
 | Create playlist + add videos | `yutu playlist insert` → `yutu playlistItem insert` |
 | Post a comment | `yutu commentThread insert --channelId ... --videoId ... --textOriginal "..."` |
-| Channel analytics | `yutu channel list --mine --output json` |
+| Channel analytics | `yutu channel list --for mine --output json` |
 | Competitor analysis | `yutu channel list --forHandle @handle --output json` |
 | Delete content | Always `list` first, then `delete` — irreversible |
-| Subscribe/unsubscribe | Check `yutu subscription list --mine --forChannelId ...` before acting |
+| Subscribe/unsubscribe | Check `yutu subscription list --for mine --forChannelId ...` before acting |
 
 ## YouTube Growth Tips
 
