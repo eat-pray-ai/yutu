@@ -3,7 +3,6 @@
 # `yutu`
 
 [![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%98%BF%F0%9F%90%B0%F0%9F%90%A7%E2%9D%A4%EF%B8%8F%E2%80%8D%F0%9F%A9%B9-love?style=flat-square&labelColor=%23EDD1CC&color=%23FF919F)](https://gitmoji.dev)
-[![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://goreportcard.com/report/github.com/eat-pray-ai/yutu)
 [![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)](https://github.com/eat-pray-ai/yutu?tab=Apache-2.0-1-ov-file)
 [![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu)
 [![Go Coverage](https://github.com/eat-pray-ai/yutu/wiki/coverage.svg)](https://raw.githack.com/wiki/eat-pray-ai/yutu/coverage.html)
@@ -21,8 +20,8 @@
 )](https://winstall.app/apps/eat-pray-ai.yutu)
 [![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
-[![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
-Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent)
+<!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
+Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent) -->
 
 `yutu` is a CLI, MCP server, and AI agent for YouTube that automates your entire YouTube workflow — from uploading and optimizing videos to managing comments, playlists, and channel branding — so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
 
@@ -51,6 +50,7 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
    - Go to `APIs & Services -> OAuth consent screen`, create a consent screen with yourself as a test user
    - Go to `Credentials -> Create Credentials -> OAuth Client ID`, select `Desktop app`
    - Download the credential file and save it as `client_secret.json`, it should look like
+
    ```json
    {
      "installed": {
@@ -66,12 +66,15 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
      }
    }
    ```
+
 3. **Authenticate**:
+
    ```bash
    yutu auth --credential client_secret.json
    ```
 
    A browser window will open for you to grant YouTube access. After granting permission, a token is saved to `youtube.token.json`.
+
    ```json
    {
      "access_token": "ya29.XXXXXXXXX",
@@ -94,6 +97,12 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 | `YUTU_LOG_LEVEL`   | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO`                    |
 
 ## Installation
+
+If you're using an AI agent, copy and paste the following prompt to finish the installation:
+
+```plaintext
+Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/refs/heads/main/internal/tools/skillgen/setup.md
+```
 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
 
@@ -224,7 +233,7 @@ the `provider:modelName` format (only `google` is supported). If only one is set
 
 Then run the following command for detail usage:
 
-```
+```shell
 ❯ yutu agent --help
 ❯ yutu agent --args "help"
 # console mode
@@ -313,7 +322,7 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 ## Usage
 
 ```shell
-❯ yutu        
+❯ yutu
 yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
 
 Environment variables:
@@ -327,6 +336,7 @@ Usage:
   yutu [command]
 
 Available Commands:
+  abuseReport            Manage YouTube abuse reports
   activity               Manage activities on YouTube
   agent                  Start an agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
@@ -340,6 +350,11 @@ Available Commands:
   help                   Help about any command
   i18nLanguage           Manage YouTube i18n languages
   i18nRegion             Manage YouTube i18n regions
+  liveBroadcast          Manage YouTube live broadcasts
+  liveChatBan            Manage YouTube live chat bans
+  liveChatMessage        Manage YouTube live chat messages
+  liveChatModerator      Manage YouTube live chat moderators
+  liveStream             Manage YouTube live streams
   mcp                    Start MCP server
   member                 Manage YouTube channel members
   membershipsLevel       Manage YouTube memberships levels
@@ -370,7 +385,3 @@ Please refer to [FEATURES.md](docs/FEATURES.md) for more information.
 ## Contributing
 
 Please refer to [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more information.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=eat-pray-ai/yutu&type=Date)](https://star-history.com/#eat-pray-ai/yutu&Date)

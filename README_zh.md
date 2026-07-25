@@ -3,7 +3,6 @@
 # `yutu`
 
 [![Static Badge](https://img.shields.io/badge/gitmoji-%F0%9F%98%BF%F0%9F%90%B0%F0%9F%90%A7%E2%9D%A4%EF%B8%8F%E2%80%8D%F0%9F%A9%B9-love?style=flat-square&labelColor=%23EDD1CC&color=%23FF919F)](https://gitmoji.dev)
-[![Go Report Card](https://goreportcard.com/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://goreportcard.com/report/github.com/eat-pray-ai/yutu)
 [![GitHub License](https://img.shields.io/github/license/eat-pray-ai/yutu?style=flat-square)](https://github.com/eat-pray-ai/yutu?tab=Apache-2.0-1-ov-file)
 [![Go Reference](https://pkg.go.dev/badge/github.com/eat-pray-ai/yutu?style=flat-square)](https://pkg.go.dev/github.com/eat-pray-ai/yutu)
 [![Go Coverage](https://github.com/eat-pray-ai/yutu/wiki/coverage.svg)](https://raw.githack.com/wiki/eat-pray-ai/yutu/coverage.html)
@@ -21,8 +20,8 @@
 )](https://winstall.app/apps/eat-pray-ai.yutu)
 [![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
-[![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
-Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent)
+<!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
+Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent) -->
 
 `yutu` 是一个 YouTube CLI、MCP 服务器和 AI Agent，可以自动化您的整个 YouTube 工作流程——从上传和优化视频到管理评论、播放列表和频道品牌——帮助您获得更多播放量、更高的点击率和更强的观众互动，同时大幅减少手动操作。
 
@@ -104,6 +103,12 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 | `YUTU_LOG_LEVEL`   | 日志级别：`DEBUG`、`INFO`、`WARN`、`ERROR` | `INFO`               |
 
 ## 安装
+
+如果您正在使用 AI Agent，可以复制以下提示词来完成安装：
+
+```plaintext
+Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/refs/heads/main/internal/tools/skillgen/setup.md
+```
 
 您可以直接从[发布页面](https://github.com/eat-pray-ai/yutu/releases/latest)下载 `yutu`，或使用以下您喜欢的方法。
 
@@ -233,7 +238,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 然后运行以下命令查看详细用法：
 
-```
+```shell
 ❯ yutu agent --help
 ❯ yutu agent --args "help"
 # console mode
@@ -322,7 +327,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 ## 使用方法
 
 ```shell
-❯ yutu        
+❯ yutu
 yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
 
 Environment variables:
@@ -336,6 +341,7 @@ Usage:
   yutu [command]
 
 Available Commands:
+  abuseReport            Manage YouTube abuse reports
   activity               Manage activities on YouTube
   agent                  Start an agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
@@ -349,6 +355,11 @@ Available Commands:
   help                   Help about any command
   i18nLanguage           Manage YouTube i18n languages
   i18nRegion             Manage YouTube i18n regions
+  liveBroadcast          Manage YouTube live broadcasts
+  liveChatBan            Manage YouTube live chat bans
+  liveChatMessage        Manage YouTube live chat messages
+  liveChatModerator      Manage YouTube live chat moderators
+  liveStream             Manage YouTube live streams
   mcp                    Start MCP server
   member                 Manage YouTube channel members
   membershipsLevel       Manage YouTube memberships levels
@@ -379,7 +390,3 @@ Use "yutu [command] --help" for more information about a command.
 ## 贡献
 
 请参考 [CONTRIBUTING.md](docs/CONTRIBUTING.md) 获取更多信息。
-
-## Star 历史
-
-[![Star History Chart](https://api.star-history.com/svg?repos=eat-pray-ai/yutu&type=Date)](https://star-history.com/#eat-pray-ai/yutu&Date)

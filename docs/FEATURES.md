@@ -89,7 +89,7 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>tool</td>
     </tr>
     <tr>
-      <td rowspan="5">comments</td>
+      <td rowspan="6">comments</td>
       <td>🟢 list</td>
       <td>1</td>
       <td>tool</td>
@@ -101,6 +101,11 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
     <tr>
       <td>🟢 update</td>
+      <td>50</td>
+      <td>tool</td>
+    </tr>
+    <tr>
+      <td>🟢 markAsSpam</td>
       <td>50</td>
       <td>tool</td>
     </tr>
@@ -145,39 +150,39 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
     <tr>
       <td rowspan="7">liveBroadcasts</td>
-      <td>🟡 list</td>
+      <td>🟢 list</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insertCuepoint</td>
+      <td>🟢 insertCuepoint</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 update</td>
+      <td>🟢 update</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 bind</td>
+      <td>🟢 bind</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 transition</td>
+      <td>🟢 transition</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td rowspan="2">liveChatBans</td>
@@ -192,24 +197,24 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
     <tr>
       <td rowspan="4">liveChatMessages</td>
-      <td>🟡 list</td>
+      <td>🟢 list</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 insert</td>
+      <td>🟢 insert</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 delete</td>
+      <td>🟢 delete</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
-      <td>🟡 transition</td>
+      <td>🟢 transition</td>
       <td>?</td>
-      <td></td>
+      <td>tool</td>
     </tr>
     <tr>
       <td rowspan="3">liveChatModerators</td>
@@ -314,7 +319,7 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>tool</td>
     </tr>
     <tr>
-      <td>🟢 upload</td>
+      <td>🟢 update</td>
       <td>?</td>
       <td>tool</td>
     </tr>
