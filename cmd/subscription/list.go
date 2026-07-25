@@ -24,7 +24,7 @@ const (
 	listShort    = "List subscription information"
 	listLong     = "List subscription information. Use this tool to list subscription information."
 	listExample  = `# List my subscriptions
-yutu subscription list --mine
+yutu subscription list --for mine
 # List subscriptions by channel ID with limit
 yutu subscription list --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --maxResults 10
 # List specific subscriptions in JSON format

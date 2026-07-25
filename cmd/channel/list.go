@@ -23,7 +23,7 @@ const (
 	listShort    = "List channel information"
 	listLong     = "List channel information. Use this tool to list channel information."
 	listExample  = `# List my channel info
-yutu channel list --mine
+yutu channel list --for mine
 # List channel by handle
 yutu channel list --forHandle @GoogleDevelopers
 # List channel by ID in JSON format
