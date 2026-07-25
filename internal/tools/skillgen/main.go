@@ -197,7 +197,8 @@ func buildUnifiedDescription(_ []categoryGroup) string {
 
 const workflowSummary = `| Task | Quick Command |
 |------|---------------|
-| Find unlisted/private videos | ` + "`yutu channel list --for mine --parts id,contentDetails`" + ` → ` + "`yutu playlistItem list`" + ` → ` + "`yutu video list --parts id,snippet,status`" + ` |`
+| Publishing video pipeline | ` + "`yutu video insert --privacy unlisted`" + ` → review → ` + "`yutu video update --privacy public`" + ` |
+| Find unlisted/private videos | ` + "`yutu playlistItem list`" + ` (uploads playlist) → ` + "`yutu video list --parts id,snippet,status`" + ` |`
 
 const growthTips = `- **Titles**: Curiosity gaps + power words. Front-load keywords. Under 60 characters.
 - **Descriptions**: First 2 lines appear in search. Include keywords, timestamps, CTAs, 3-5 hashtags.

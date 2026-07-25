@@ -93,7 +93,8 @@ See [references/workflows.md](references/workflows.md) for step-by-step walkthro
 
 | Task | Quick Command |
 |------|---------------|
-| Find unlisted/private videos | `yutu channel list --for mine --parts id,contentDetails` → `yutu playlistItem list` → `yutu video list --parts id,snippet,status` |
+| Publishing video pipeline | `yutu video insert --privacy unlisted` → review → `yutu video update --privacy public` |
+| Find unlisted/private videos | `yutu playlistItem list` (uploads playlist) → `yutu video list --parts id,snippet,status` |
 
 ## YouTube Growth Tips
 
