@@ -241,6 +241,7 @@ metadata:
 	b.WriteString("4. For multistep tasks (upload + thumbnail + playlist), see [references/workflows.md](references/workflows.md).\n\n")
 
 	b.WriteString("## Key Principles\n\n")
+	b.WriteString("- **Run `yutu <resource> <operation> -h` before executing a command** — flags vary between subcommands (e.g., `playlist list` uses `--mine` boolean flag, while `channel list` uses `--for mine` string flag). Never guess flag syntax.\n")
 	b.WriteString("- Always verify before destructive operations — deletions are irreversible.\n")
 	b.WriteString("- Use `--output json` when you need to parse or chain results.\n")
 	b.WriteString("- Get your channel ID with `yutu channel list --for mine` — many operations need it.\n")

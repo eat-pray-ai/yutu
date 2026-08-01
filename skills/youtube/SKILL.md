@@ -21,6 +21,7 @@ Manage YouTube resources using the `yutu` CLI — videos, playlists, comments, c
 
 ## Key Principles
 
+- **Run `yutu <resource> <operation> -h` before executing a command** — flags vary between subcommands (e.g., `playlist list` uses `--mine` boolean flag, while `channel list` uses `--for mine` string flag). Never guess flag syntax.
 - Always verify before destructive operations — deletions are irreversible.
 - Use `--output json` when you need to parse or chain results.
 - Get your channel ID with `yutu channel list --for mine` — many operations need it.
