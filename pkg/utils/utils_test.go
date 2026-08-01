@@ -6,6 +6,8 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"reflect"
 	"testing"
 
@@ -137,26 +139,84 @@ func TestIsJson(t *testing.T) {
 	}
 }
 
-func TestPrintJSON(t *testing.T) {
+func TestIsInteractive(t *testing.T) {
+	devNull, _ := os.Open(os.DevNull)
+	defer devNull.Close()
+
 	tests := []struct {
-		name       string
-		data       any
-		wantWriter string
+		name   string
+		writer io.Writer
+		ci     string
+		want   bool
 	}{
 		{
-			name:       "simple json",
-			data:       map[string]string{"key": "value"},
-			wantWriter: "{\n  \"key\": \"value\"\n}\n",
+			name:   "bytes.Buffer is non-interactive",
+			writer: &bytes.Buffer{},
+			want:   false,
 		},
 		{
-			name:       "nil data",
-			data:       nil,
-			wantWriter: "null\n",
+			name:   "os.File without TTY is non-interactive",
+			writer: devNull,
+			want:   false,
+		},
+		{
+			name:   "CI env forces non-interactive",
+			writer: os.Stdout,
+			ci:     "true",
+			want:   false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.ci != "" {
+				t.Setenv("CI", tt.ci)
+			}
+			if got := isInteractive(tt.writer); got != tt.want {
+				t.Errorf("isInteractive() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrintJSON(t *testing.T) {
+	tests := []struct {
+		name        string
+		data        any
+		interactive bool
+		wantWriter  string
+	}{
+		{
+			name:        "interactive indented json",
+			data:        map[string]string{"key": "value"},
+			interactive: true,
+			wantWriter:  "{\n  \"key\": \"value\"\n}\n",
+		},
+		{
+			name:        "non-interactive compact json",
+			data:        map[string]string{"key": "value"},
+			interactive: false,
+			wantWriter:  "{\"key\":\"value\"}\n",
+		},
+		{
+			name:        "nil data interactive",
+			data:        nil,
+			interactive: true,
+			wantWriter:  "null\n",
+		},
+		{
+			name:        "nil data non-interactive",
+			data:        nil,
+			interactive: false,
+			wantWriter:  "null\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
+				orig := isInteractive
+				isInteractive = func(io.Writer) bool { return tt.interactive }
+				defer func() { isInteractive = orig }()
+
 				writer := &bytes.Buffer{}
 				PrintJSON(tt.data, writer)
 				if gotWriter := writer.String(); gotWriter != tt.wantWriter {

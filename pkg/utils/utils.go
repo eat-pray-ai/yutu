@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
@@ -19,12 +20,28 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"golang.org/x/term"
 
 	"gopkg.in/yaml.v3"
 )
 
+var isInteractive = func(writer io.Writer) bool {
+	if os.Getenv("CI") != "" {
+		return false
+	}
+	if f, ok := writer.(*os.File); ok {
+		return term.IsTerminal(int(f.Fd()))
+	}
+	return false
+}
+
 func PrintJSON(data any, writer io.Writer) {
-	marshalled, _ := json.MarshalIndent(data, "", "  ")
+	var marshalled []byte
+	if isInteractive(writer) {
+		marshalled, _ = json.MarshalIndent(data, "", "  ")
+	} else {
+		marshalled, _ = json.Marshal(data)
+	}
 	_, _ = fmt.Fprintln(writer, string(marshalled))
 }
 
