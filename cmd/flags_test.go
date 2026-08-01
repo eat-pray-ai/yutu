@@ -28,16 +28,14 @@ func TestAddMutationFlags(t *testing.T) {
 	dr := cmd.Flags().Lookup("dry-run")
 	if dr == nil {
 		t.Fatal("expected --dry-run flag to be registered")
-	}
-	if dr.DefValue != "false" {
+	} else if dr.DefValue != "false" {
 		t.Fatalf("expected --dry-run default to be false, got %s", dr.DefValue)
 	}
 
 	yes := cmd.Flags().Lookup("yes")
 	if yes == nil {
 		t.Fatal("expected --yes flag to be registered")
-	}
-	if yes.DefValue != "false" {
+	} else if yes.DefValue != "false" {
 		t.Fatalf("expected --yes default to be false, got %s", yes.DefValue)
 	}
 }

@@ -141,7 +141,7 @@ func TestIsJson(t *testing.T) {
 
 func TestIsInteractive(t *testing.T) {
 	devNull, _ := os.Open(os.DevNull)
-	defer devNull.Close()
+	defer func() { _ = devNull.Close() }()
 
 	tests := []struct {
 		name   string
