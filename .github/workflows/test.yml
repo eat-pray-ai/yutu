@@ -69,24 +69,22 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: ./go.mod
+          external-cache: |
+            manifest:
+              go_sdk: go.mod
+          cache-save: ${{ github.event_name != 'pull_request' }}
       - name: Install dependencies
         shell: bash
         run: |
           bazel run @rules_go//go -- mod tidy -v
           bazel mod tidy
+          export PATH="$HOME/go/bin:$PATH"
           bazel run @rules_go//go -- install github.com/tc-hib/go-winres@latest
           bazel run @rules_go//go -- generate ./...
       - name: Bazel test
         shell: bash
         run: |
           bazel test //... --test_output=errors
-      - name: Build binaries
-        shell: bash
-        run: |
-          bazel build //...
       - name: Command tests
         shell: bash
         run: |
