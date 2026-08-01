@@ -101,3 +101,16 @@ release:
   discussion_category_name: General
   prerelease: auto
   make_latest: "{{ if .Prerelease }}false{{ else }}true{{ end }}"
+  header: |
+    ## Install
+
+    ```shell
+    npm i -g @eat-pray-ai/yutu@{{ .Version }}
+    ```
+
+#git:
+#  ignore_tags:
+#    - ".*-rc.*"
+#    - ".*-beta.*"
+#    - ".*-alpha.*"
+#    - ".*-dev.*"
