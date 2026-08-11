@@ -37,7 +37,7 @@ import (
 	_ "github.com/eat-pray-ai/yutu/cmd/watermark"
 )
 
-//go:generate go-winres make --arch amd64,arm64 --product-version git-tag --file-version git-tag
+//go:generate go tool go-winres make --arch amd64,arm64 --product-version git-tag --file-version git-tag
 func main() {
 	cmd.Execute()
 }
