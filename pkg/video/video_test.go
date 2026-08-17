@@ -902,6 +902,30 @@ func TestVideo_Update(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "update video with publishAt schedules privately",
+			opts: []Option{
+				WithIds([]string{"video-id"}),
+				WithPublishAt("2026-08-18T15:00:00Z"),
+				WithMaxResults(1),
+			},
+			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}]}`,
+			verify: func(r *http.Request) {
+				if r.Method == "PUT" {
+					var body youtube.Video
+					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+						t.Fatalf("failed to decode update body: %v", err)
+					}
+					if body.Status.PublishAt != "2026-08-18T15:00:00Z" {
+						t.Errorf("expected publishAt=2026-08-18T15:00:00Z, got %s", body.Status.PublishAt)
+					}
+					if body.Status.PrivacyStatus != "private" {
+						t.Errorf("expected privacyStatus=private when scheduling, got %s", body.Status.PrivacyStatus)
+					}
+				}
+			},
+			wantErr: false,
+		},
+		{
 			name: "update video with embeddable, containsSyntheticMedia, recordingDate",
 			opts: []Option{
 				WithIds([]string{"video-id"}),

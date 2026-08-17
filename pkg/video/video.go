@@ -331,6 +331,13 @@ func (v *Video) Update(writer io.Writer) error {
 	if v.Privacy != "" {
 		video.Status.PrivacyStatus = v.Privacy
 	}
+	if v.PublishAt != "" {
+		video.Status.PublishAt = v.PublishAt
+		// YouTube only accepts a schedule on private videos.
+		if video.Status.PrivacyStatus != "private" {
+			video.Status.PrivacyStatus = "private"
+		}
+	}
 	if v.Embeddable != nil {
 		video.Status.Embeddable = *v.Embeddable
 	}
