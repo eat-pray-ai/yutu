@@ -80,7 +80,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
-	google.golang.org/adk v1.5.1
+	google.golang.org/adk v1.6.0
 	google.golang.org/api v0.291.0
 	google.golang.org/genai v1.66.0
 	google.golang.org/protobuf v1.36.11 // indirect
