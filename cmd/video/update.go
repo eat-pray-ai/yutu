@@ -28,6 +28,8 @@ const (
 yutu video update --id dQw4w9WgXcQ --title 'New Title'
 # Update video description and privacy
 yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+# Schedule a private video to publish later
+yutu video update --id dQw4w9WgXcQ --privacy private --publishAt 2026-08-18T15:00:00Z
 # Update video tags and category
 yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
 )
@@ -58,6 +60,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Description: privacyUsage,
 			Enum: []any{"public", "private", "unlisted"},
 		},
+		"publish_at":               {Type: "string", Description: paUsage},
 		"embeddable":               {Type: "boolean", Description: embeddableUsage},
 		"contains_synthetic_media": {Type: "boolean", Description: csmUsage},
 		"recording_date":           {Type: "string", Description: rdUsage},
@@ -97,6 +100,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
 	updateCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
+	updateCmd.Flags().StringVarP(&publishAt, "publishAt", "U", "", paUsage)
 	updateCmd.Flags().BoolVarP(
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
@@ -133,6 +137,7 @@ var updateCmd = &cobra.Command{
 			video.WithThumbnail(thumbnail),
 			video.WithCategory(categoryId),
 			video.WithPrivacy(privacy),
+			video.WithPublishAt(publishAt),
 			video.WithEmbeddable(embeddable),
 			video.WithContainsSyntheticMedia(containsSyntheticMedia),
 			video.WithRecordingDate(recordingDate),

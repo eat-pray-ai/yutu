@@ -21,13 +21,16 @@ import (
 )
 
 var (
-	errGetVideo    = errors.New("failed to get video")
-	errInsertVideo = errors.New("failed to insert video")
-	errUpdateVideo = errors.New("failed to update video")
-	errRating      = errors.New("failed to rate video")
-	errGetRating   = errors.New("failed to get rating")
-	errDeleteVideo = errors.New("failed to delete video")
-	errReportAbuse = errors.New("failed to report abuse")
+	errGetVideo           = errors.New("failed to get video")
+	errInsertVideo        = errors.New("failed to insert video")
+	errUpdateVideo        = errors.New("failed to update video")
+	errRating             = errors.New("failed to rate video")
+	errGetRating          = errors.New("failed to get rating")
+	errDeleteVideo        = errors.New("failed to delete video")
+	errReportAbuse        = errors.New("failed to report abuse")
+	errScheduleNonPrivate = errors.New(
+		"publishAt requires privacy private; a public or unlisted video would go offline until the scheduled time",
+	)
 )
 
 type Video struct {
@@ -330,6 +333,14 @@ func (v *Video) Update(writer io.Writer) error {
 	}
 	if v.Privacy != "" {
 		video.Status.PrivacyStatus = v.Privacy
+	}
+	if v.PublishAt != "" {
+		// YouTube only accepts a schedule on private videos. Do not coerce
+		// public/unlisted to private here: that would take a live video offline.
+		if video.Status.PrivacyStatus != "private" {
+			return errors.Join(errUpdateVideo, errScheduleNonPrivate)
+		}
+		video.Status.PublishAt = v.PublishAt
 	}
 	if v.Embeddable != nil {
 		video.Status.Embeddable = *v.Embeddable
