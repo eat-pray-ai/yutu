@@ -72,13 +72,16 @@ jobs:
           external-cache: |
             manifest:
               go_sdk: go.mod
+              modules: MODULE.bazel.lock
           cache-save: ${{ github.event_name != 'pull_request' }}
-      - name: Install dependencies
+      - name: Verify dependencies
         shell: bash
         run: |
           bazel run @rules_go//go -- mod tidy -v
+          # bazel run @rules_go//go -- generate ./...
+          bazel run //:gazelle
           bazel mod tidy
-          bazel run @rules_go//go -- generate ./...
+          git diff --exit-code
       - name: Bazel test
         shell: bash
         run: |
