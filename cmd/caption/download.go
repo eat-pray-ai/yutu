@@ -78,7 +78,6 @@ func init() {
 	downloadCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
-
 	_ = downloadCmd.MarkFlagRequired("id")
 	_ = downloadCmd.MarkFlagRequired("file")
 }

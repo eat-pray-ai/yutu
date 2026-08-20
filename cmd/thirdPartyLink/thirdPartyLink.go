@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	short          = "Manage YouTube third-party links"
-	long           = "Manage YouTube third-party links. Use this tool to list, insert, update, or delete links between a YouTube channel and a third-party service."
-	ltUsage        = "Linking token that identifies the YouTube account and channel"
-	typeUsage      = "Type of the link: linkUnspecified|channelToStoreLink"
-	statusUsage    = "Status of the link: unknown|failed|pending|linked"
-	extCidUsage    = "Channel ID to which changes should be applied, for delegation"
+	short       = "Manage YouTube third-party links"
+	long        = "Manage YouTube third-party links. Use this tool to list, insert, update, or delete links between a YouTube channel and a third-party service."
+	ltUsage     = "Linking token that identifies the YouTube account and channel"
+	typeUsage   = "Type of the link: linkUnspecified|channelToStoreLink"
+	statusUsage = "Status of the link: unknown|failed|pending|linked"
+	extCidUsage = "Channel ID to which changes should be applied, for delegation"
 )
 
 var (

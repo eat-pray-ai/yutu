@@ -5,6 +5,7 @@ package thumbnail
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -37,6 +38,7 @@ var setInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -52,6 +54,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			setTool, func(input thumbnail.Thumbnail, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Set(writer)
 			},
 		),
@@ -61,10 +66,9 @@ func init() {
 	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	setCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	setCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = setCmd.MarkFlagRequired("file")
 	_ = setCmd.MarkFlagRequired("videoId")
-	cmd.AddMutationFlags(setCmd)
 }
 
 var setCmd = &cobra.Command{
@@ -72,13 +76,12 @@ var setCmd = &cobra.Command{
 	Short:   setShort,
 	Long:    setLong,
 	Example: setExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would set thumbnail for video: %s", videoId)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would set thumbnail for video: %s", videoId)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := thumbnail.NewThumbnail(
 			thumbnail.WithFile(file),
 			thumbnail.WithVideoId(videoId),

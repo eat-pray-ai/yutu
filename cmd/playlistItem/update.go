@@ -5,6 +5,7 @@ package playlistItem
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -50,6 +51,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -65,6 +67,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			updateTool, func(input playlistItem.PlaylistItem, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Update(writer)
 			},
 		),
@@ -79,9 +84,8 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = updateCmd.MarkFlagRequired("id")
-	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -89,15 +93,12 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would update playlist item: %s", strings.Join(ids, ", "))
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would update playlist item: %s", strings.Join(ids, ", "),
-		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := playlistItem.NewPlaylistItem(
 			playlistItem.WithIds(ids),
 			playlistItem.WithTitle(title),

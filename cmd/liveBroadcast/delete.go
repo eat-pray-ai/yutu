@@ -4,6 +4,7 @@
 package liveBroadcast
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -40,6 +41,7 @@ var deleteInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner_channel": {
 			Type: "string", Description: obococUsage,
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -56,6 +58,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			deleteTool,
 			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Delete(writer)
 			},
 		),
@@ -70,8 +75,8 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
 		obococUsage,
 	)
+	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -79,14 +84,13 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(
-			c, "Would delete live broadcast(s): %s", strings.Join(ids, ", "),
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would delete live broadcast(s): %s", strings.Join(ids, ", "),
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := liveBroadcast.NewLiveBroadcast(
 			liveBroadcast.WithIds(ids),
 			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),

@@ -14,7 +14,7 @@ const (
 	scidUsage  = "Subscriber's channel id"
 	descUsage  = "Description of the subscription"
 	fcidUsage  = "Return the subscriptions to the subset of these channels that the authenticated user is subscribed to"
-	forUsage = "mine|myRecentSubscribers|mySubscribers"
+	forUsage   = "mine|myRecentSubscribers|mySubscribers"
 	orderUsage = "subscriptionOrderUnspecified|relevance|unread|alphabetical"
 	titleUsage = "Title of the subscription"
 )

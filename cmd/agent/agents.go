@@ -162,7 +162,6 @@ var agentDefs = map[string]agentDef{
 	},
 }
 
-
 func init() {
 	for _, def := range agentDefs {
 		if v, ok := os.LookupEnv(def.envKey); ok && v != "" {
@@ -170,7 +169,6 @@ func init() {
 		}
 	}
 }
-
 
 func buildOrchestrator(
 	advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset,

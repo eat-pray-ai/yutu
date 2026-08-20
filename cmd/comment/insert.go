@@ -5,6 +5,7 @@ package comment
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -44,6 +45,7 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -59,6 +61,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			insertTool, func(input comment.Comment, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Insert(writer)
 			},
 		),
@@ -80,10 +85,9 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCmd.MarkFlagRequired("parentId")
 	_ = insertCmd.MarkFlagRequired("textOriginal")
-	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -91,13 +95,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would insert comment on parent: %s", parentId)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would insert comment")
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := comment.NewComment(
 			comment.WithAuthorChannelId(authorChannelId),
 			comment.WithChannelId(channelId),

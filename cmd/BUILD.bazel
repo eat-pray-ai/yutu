@@ -27,7 +27,6 @@ go_library(
         "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
         "@com_github_savioxavier_termlink//:termlink",
         "@com_github_spf13_cobra//:cobra",
-        "@org_golang_x_term//:term",
     ],
 )
 
@@ -35,5 +34,8 @@ go_test(
     name = "cmd_test",
     srcs = ["flags_test.go"],
     embed = [":cmd"],
-    deps = ["@com_github_spf13_cobra//:cobra"],
+    deps = [
+        "//pkg/utils",
+        "@com_github_spf13_cobra//:cobra",
+    ],
 )

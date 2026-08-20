@@ -5,6 +5,7 @@ package liveBroadcast
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -51,6 +52,7 @@ var insertCuepointInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -67,6 +69,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			insertCuepointTool,
 			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.InsertCuepoint(writer)
 			},
 		),
@@ -96,9 +101,8 @@ func init() {
 		obococUsage,
 	)
 	insertCuepointCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCuepointCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCuepointCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(insertCuepointCmd)
 }
 
 var insertCuepointCmd = &cobra.Command{
@@ -106,16 +110,15 @@ var insertCuepointCmd = &cobra.Command{
 	Short:   insertCuepointShort,
 	Long:    insertCuepointLong,
 	Example: insertCuepointExample,
-	Run: func(c *cobra.Command, args []string) {
-		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would insert cuepoint into live broadcast(s): %s",
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would insert cuepoint into live broadcast(s): %s",
 			strings.Join(ids, ", "),
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
+		output, _ := c.Flags().GetString("output")
 		input := liveBroadcast.NewLiveBroadcast(
 			liveBroadcast.WithIds(ids),
 			liveBroadcast.WithCueType(cueType),

@@ -4,11 +4,13 @@
 package liveChatModerator
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/liveChatModerator"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -35,6 +37,7 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -51,6 +54,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			deleteTool,
 			func(input liveChatModerator.LiveChatModerator, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Delete(writer)
 			},
 		),
@@ -58,8 +64,8 @@ func init() {
 	liveChatModeratorCmd.AddCommand(deleteCmd)
 
 	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -67,14 +73,13 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(
-			c, "Would delete live chat moderator(s): %s", strings.Join(ids, ", "),
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would delete live chat moderator(s): %s", strings.Join(ids, ", "),
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := liveChatModerator.NewLiveChatModerator(
 			liveChatModerator.WithIds(ids),
 		)

@@ -5,6 +5,7 @@ package thirdPartyLink
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -44,6 +45,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -58,7 +60,11 @@ func init() {
 				ReadOnlyHint:    false,
 			},
 		}, cobramcp.GenToolHandler(
-			updateTool, func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
+			updateTool,
+			func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Update(writer)
 			},
 		),
@@ -68,14 +74,15 @@ func init() {
 	updateCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
 	updateCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
 	updateCmd.Flags().StringVarP(&linkStatus, "linkStatus", "s", "", statusUsage)
-	updateCmd.Flags().StringVarP(&externalChannelId, "externalChannelId", "e", "", extCidUsage)
+	updateCmd.Flags().StringVarP(
+		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
 	updateCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
 	)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = updateCmd.MarkFlagRequired("linkingToken")
-	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -83,13 +90,12 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would update third-party link: %s", linkingToken)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would update third-party link: %s", linkingToken)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := thirdPartyLink.NewThirdPartyLink(
 			thirdPartyLink.WithLinkingToken(linkingToken),
 			thirdPartyLink.WithType(linkType),

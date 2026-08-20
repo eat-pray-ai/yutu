@@ -5,6 +5,7 @@ package comment
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -40,6 +41,7 @@ var markAsSpamInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,6 +57,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			masTool, func(input comment.Comment, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.MarkAsSpam(writer)
 			},
 		),
@@ -63,9 +68,8 @@ func init() {
 
 	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
 	markAsSpamCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	markAsSpamCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = markAsSpamCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(markAsSpamCmd)
 }
 
 var markAsSpamCmd = &cobra.Command{
@@ -73,13 +77,14 @@ var markAsSpamCmd = &cobra.Command{
 	Short:   masShort,
 	Long:    masLong,
 	Example: masExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would mark comment(s) as spam: %s", strings.Join(ids, ", "),
+		)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would mark comment(s) as spam: %s", strings.Join(ids, ", "))
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := comment.NewComment(
 			comment.WithIds(ids),
 			comment.WithOutput(output),

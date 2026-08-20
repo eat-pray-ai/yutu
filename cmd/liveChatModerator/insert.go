@@ -5,6 +5,7 @@ package liveChatModerator
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -39,6 +40,7 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,6 +57,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			insertTool,
 			func(input liveChatModerator.LiveChatModerator, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Insert(writer)
 			},
 		),
@@ -69,10 +74,9 @@ func init() {
 		&parts, "parts", "p", []string{"snippet"}, "Parts to include",
 	)
 	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCmd.MarkFlagRequired("liveChatId")
 	_ = insertCmd.MarkFlagRequired("moderatorChannelId")
-	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -80,16 +84,14 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(c *cobra.Command, args []string) {
-		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would add moderator %s to live chat %s", moderatorChannelId,
-			liveChatId,
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would add moderator %s to live chat %s", moderatorChannelId, liveChatId,
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
+		output, _ := c.Flags().GetString("output")
 		input := liveChatModerator.NewLiveChatModerator(
 			liveChatModerator.WithLiveChatId(liveChatId),
 			liveChatModerator.WithModeratorChannelId(moderatorChannelId),

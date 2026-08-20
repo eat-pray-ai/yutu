@@ -4,6 +4,7 @@
 package video
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -44,6 +45,7 @@ var reportAbuseInSchema = &jsonschema.Schema{
 		"comments":                   {Type: "string", Description: commentsUsage},
 		"language":                   {Type: "string", Description: raLangUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
+		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -60,6 +62,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			reportAbuseTool, func(input video.Video, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.ReportAbuse(writer)
 			},
 		),
@@ -80,10 +85,9 @@ func init() {
 	reportAbuseCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-
+	reportAbuseCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = reportAbuseCmd.MarkFlagRequired("ids")
 	_ = reportAbuseCmd.MarkFlagRequired("reasonId")
-	cmd.AddMutationFlags(reportAbuseCmd)
 }
 
 var reportAbuseCmd = &cobra.Command{
@@ -91,12 +95,13 @@ var reportAbuseCmd = &cobra.Command{
 	Short:   reportAbuseShort,
 	Long:    reportAbuseLong,
 	Example: reportAbuseExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would report abuse on video(s): %s", strings.Join(ids, ", "))
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would report abuse on video(s): %s", strings.Join(ids, ", "),
+		)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithReasonId(reasonId),

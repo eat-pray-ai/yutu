@@ -5,6 +5,7 @@ package playlistImage
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -51,6 +52,7 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -67,6 +69,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			updateTool,
 			func(input playlistImage.PlaylistImage, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Update(writer)
 			},
 		),
@@ -85,9 +90,8 @@ func init() {
 		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
 		pkg.OBOCOCUsage,
 	)
-
+	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = updateCmd.MarkFlagRequired("playlistId")
-	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -95,15 +99,14 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(c *cobra.Command, args []string) {
-		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would update playlist image for playlist: %s", playlistId,
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would update playlist image for playlist: %s", playlistId,
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
+		output, _ := c.Flags().GetString("output")
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithPlaylistId(playlistId),
 			playlistImage.WithType(type_),

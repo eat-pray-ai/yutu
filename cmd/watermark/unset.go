@@ -4,10 +4,12 @@
 package watermark
 
 import (
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/watermark"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -28,6 +30,7 @@ var unsetInSchema = &jsonschema.Schema{
 	Required: []string{"channel_id"},
 	Properties: map[string]*jsonschema.Schema{
 		"channel_id": {Type: "string", Description: cidUsage},
+		"confirmed":  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -43,6 +46,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			unsetTool, func(input watermark.Watermark, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Unset(writer)
 			},
 		),
@@ -50,8 +56,8 @@ func init() {
 	watermarkCmd.AddCommand(unsetCmd)
 
 	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
+	unsetCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = unsetCmd.MarkFlagRequired("channelId")
-	cmd.AddMutationFlags(unsetCmd)
 }
 
 var unsetCmd = &cobra.Command{
@@ -59,12 +65,11 @@ var unsetCmd = &cobra.Command{
 	Short:   unsetShort,
 	Long:    unsetLong,
 	Example: unsetExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would unset watermark for channel: %s", channelId)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would unset watermark for channel: %s", channelId)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := watermark.NewWatermark(watermark.WithChannelId(channelId))
 		utils.HandleCmdError(input.Unset(c.OutOrStdout()), c)
 	},

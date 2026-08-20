@@ -33,8 +33,8 @@ var listInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{},
 	Properties: map[string]*jsonschema.Schema{
-		"linking_token":      {Type: "string", Description: ltUsage},
-		"type":               {Type: "string", Description: typeUsage, Enum: []any{"linkUnspecified", "channelToStoreLink"}},
+		"linking_token":       {Type: "string", Description: ltUsage},
+		"type":                {Type: "string", Description: typeUsage, Enum: []any{"linkUnspecified", "channelToStoreLink"}},
 		"external_channel_id": {Type: "string", Description: extCidUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -59,7 +59,8 @@ func init() {
 				ReadOnlyHint:    true,
 			},
 		}, cobramcp.GenToolHandler(
-			listTool, func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
+			listTool,
+			func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
 				return input.List(writer)
 			},
 		),
@@ -68,7 +69,9 @@ func init() {
 
 	listCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
 	listCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	listCmd.Flags().StringVarP(&externalChannelId, "externalChannelId", "e", "", extCidUsage)
+	listCmd.Flags().StringVarP(
+		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
 	listCmd.Flags().StringSliceVarP(
 		&parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
 	)

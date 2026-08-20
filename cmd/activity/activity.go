@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	short     = "Manage activities on YouTube"
-	long      = "Manage activities on YouTube. Use this tool to list channel activities."
-	ciUsage   = "ID of the channel"
+	short    = "Manage activities on YouTube"
+	long     = "Manage activities on YouTube. Use this tool to list channel activities."
+	ciUsage  = "ID of the channel"
 	forUsage = "home|mine"
-	paUsage   = "Filter on activities published after this date"
-	pbUsage   = "Filter on activities published before this date"
-	rcUsage   = "Display the content as seen by viewers in this country"
+	paUsage  = "Filter on activities published after this date"
+	pbUsage  = "Filter on activities published before this date"
+	rcUsage  = "Display the content as seen by viewers in this country"
 )
 
 var (

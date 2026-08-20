@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -171,8 +172,8 @@ func TestIsInteractive(t *testing.T) {
 			if tt.ci != "" {
 				t.Setenv("CI", tt.ci)
 			}
-			if got := isInteractive(tt.writer); got != tt.want {
-				t.Errorf("isInteractive() = %v, want %v", got, tt.want)
+			if got := IsInteractive(tt.writer); got != tt.want {
+				t.Errorf("IsInteractive() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -213,9 +214,9 @@ func TestPrintJSON(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(
 			tt.name, func(t *testing.T) {
-				orig := isInteractive
-				isInteractive = func(io.Writer) bool { return tt.interactive }
-				defer func() { isInteractive = orig }()
+				orig := IsInteractive
+				IsInteractive = func(any) bool { return tt.interactive }
+				defer func() { IsInteractive = orig }()
 
 				writer := &bytes.Buffer{}
 				PrintJSON(tt.data, writer)
@@ -391,13 +392,84 @@ func TestRandomStage(t *testing.T) {
 	}
 }
 
-func TestHandleCmdError_DryRun(t *testing.T) {
-	c := &cobra.Command{Use: "test"}
-	var stderr bytes.Buffer
-	c.SetErr(&stderr)
-	HandleCmdError(ErrDryRun, c)
-	if stderr.Len() != 0 {
-		t.Errorf("expected no error output for ErrDryRun, got %q", stderr.String())
+
+func TestConfirmPreRun(t *testing.T) {
+	tests := []struct {
+		name    string
+		yes     bool
+		input   string
+		interactive bool
+		wantErr error
+	}{
+		{
+			name:    "yes flag bypasses prompt",
+			yes:     true,
+			wantErr: nil,
+		},
+		{
+			name:        "non-interactive without yes flag",
+			yes:         false,
+			interactive: false,
+			wantErr:     ErrNotConfirmed,
+		},
+		{
+			name:        "interactive confirm with y",
+			yes:         false,
+			interactive: true,
+			input:       "y\n",
+			wantErr:     nil,
+		},
+		{
+			name:        "interactive confirm with Y",
+			yes:         false,
+			interactive: true,
+			input:       "Y\n",
+			wantErr:     nil,
+		},
+		{
+			name:        "interactive deny with n",
+			yes:         false,
+			interactive: true,
+			input:       "n\n",
+			wantErr:     ErrNotConfirmed,
+		},
+		{
+			name:        "interactive deny with empty",
+			yes:         false,
+			interactive: true,
+			input:       "\n",
+			wantErr:     ErrNotConfirmed,
+		},
+		{
+			name:        "interactive deny with EOF",
+			yes:         false,
+			interactive: true,
+			input:       "",
+			wantErr:     ErrNotConfirmed,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			orig := IsInteractive
+			IsInteractive = func(any) bool { return tt.interactive }
+			defer func() { IsInteractive = orig }()
+
+			cmd := &cobra.Command{Use: "test"}
+			cmd.Flags().Bool("yes", false, "")
+			if tt.yes {
+				_ = cmd.Flags().Set("yes", "true")
+			}
+
+			var errBuf bytes.Buffer
+			cmd.SetErr(&errBuf)
+			cmd.SetIn(strings.NewReader(tt.input))
+
+			err := ConfirmPreRun(cmd, "Would do something")
+			if err != tt.wantErr {
+				t.Errorf("ConfirmPreRun() error = %v, want %v", err, tt.wantErr)
+			}
+		})
 	}
 }
 

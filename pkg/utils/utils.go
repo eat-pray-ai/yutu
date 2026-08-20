@@ -4,6 +4,7 @@
 package utils
 
 import (
+	"bufio"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
@@ -25,11 +26,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var isInteractive = func(writer io.Writer) bool {
+var IsInteractive = func(v any) bool {
 	if os.Getenv("CI") != "" {
 		return false
 	}
-	if f, ok := writer.(*os.File); ok {
+	if f, ok := v.(*os.File); ok {
 		return term.IsTerminal(int(f.Fd()))
 	}
 	return false
@@ -37,7 +38,7 @@ var isInteractive = func(writer io.Writer) bool {
 
 func PrintJSON(data any, writer io.Writer) {
 	var marshalled []byte
-	if isInteractive(writer) {
+	if IsInteractive(writer) {
 		marshalled, _ = json.MarshalIndent(data, "", "  ")
 	} else {
 		marshalled, _ = json.Marshal(data)
@@ -117,11 +118,33 @@ func ExtractHl(uri string) string {
 	return ""
 }
 
-// ErrDryRun is returned when --dry-run is set; HandleCmdError silently ignores it.
-var ErrDryRun = errors.New("dry run")
+var ErrNotConfirmed = errors.New("operation not confirmed (pass confirm: true or rerun with --yes)")
+
+func ConfirmPreRun(cmd *cobra.Command, msg string) error {
+	if yes, _ := cmd.Flags().GetBool("yes"); yes {
+		return nil
+	}
+
+	if !IsInteractive(cmd.InOrStdin()) {
+		_, _ = fmt.Fprintln(cmd.ErrOrStderr(), msg)
+		return ErrNotConfirmed
+	}
+
+	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "%s [y/N] ", msg)
+
+	scanner := bufio.NewScanner(cmd.InOrStdin())
+	if !scanner.Scan() {
+		return ErrNotConfirmed
+	}
+	answer := strings.TrimSpace(scanner.Text())
+	if answer != "y" && answer != "Y" {
+		return ErrNotConfirmed
+	}
+	return nil
+}
 
 func HandleCmdError(err error, cmd *cobra.Command) {
-	if err == nil || errors.Is(err, ErrDryRun) {
+	if err == nil {
 		return
 	}
 	_ = cmd.Help()

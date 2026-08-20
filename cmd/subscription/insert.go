@@ -5,6 +5,7 @@ package subscription
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -40,6 +41,7 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,6 +57,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			insertTool, func(input subscription.Subscription, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Insert(writer)
 			},
 		),
@@ -68,10 +73,9 @@ func init() {
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
 	_ = insertCmd.MarkFlagRequired("channelId")
-	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -79,13 +83,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would insert subscription to channel: %s", channelId)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would insert subscription")
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := subscription.NewSubscription(
 			subscription.WithSubscriberChannelId(subscriberChannelId),
 			subscription.WithDescription(description),

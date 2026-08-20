@@ -4,11 +4,13 @@
 package video
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/eat-pray-ai/yutu/pkg/video"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -42,6 +44,7 @@ var rateInSchema = &jsonschema.Schema{
 			Type: "string", Description: rateRUsage,
 			Enum: []any{"like", "dislike", "none"},
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -57,6 +60,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			rateTool, func(input video.Video, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Rate(writer)
 			},
 		),
@@ -65,10 +71,9 @@ func init() {
 
 	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
 	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
-
+	rateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = rateCmd.MarkFlagRequired("ids")
 	_ = rateCmd.MarkFlagRequired("rating")
-	cmd.AddMutationFlags(rateCmd)
 }
 
 var rateCmd = &cobra.Command{
@@ -76,12 +81,13 @@ var rateCmd = &cobra.Command{
 	Short:   rateShort,
 	Long:    rateLong,
 	Example: rateExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would rate video(s): %s as %s", strings.Join(ids, ", "), rating)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would rate video(s): %s as %s", strings.Join(ids, ", "), rating,
+		)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithRating(rating),

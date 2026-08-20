@@ -5,6 +5,7 @@ package channelBanner
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -46,6 +47,7 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -62,6 +64,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			insertTool,
 			func(input channelBanner.ChannelBanner, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Insert(writer)
 			},
 		),
@@ -78,10 +83,9 @@ func init() {
 		pkg.OBOCOCUsage,
 	)
 	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCmd.MarkFlagRequired("channelId")
 	_ = insertCmd.MarkFlagRequired("file")
-	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -89,13 +93,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would insert channel banner: %s", file)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would insert channel banner")
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := channelBanner.NewChannelBanner(
 			channelBanner.WithChannelId(channelId),
 			channelBanner.WithFile(file),

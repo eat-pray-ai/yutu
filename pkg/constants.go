@@ -8,16 +8,16 @@ import (
 )
 
 const (
-	PartsUsage  = "Comma separated parts"
-	MRUsage     = "The maximum number of items that should be returned, 0 for no limit"
-	TableUsage  = "json|yaml|table"
-	SilentUsage = "json|yaml|silent"
-	JsonMIME    = "application/json"
-	PerPage     = 20
-	OBOUsage    = "ID of the YouTube account that the content owner is acting on behalf of"
-	OBOCOUsage  = "ID of the content owner, for YouTube content partners"
-	OBOCOCUsage = "YouTube channel ID linked to the content owner"
-
+	PartsUsage     = "Comma separated parts"
+	MRUsage        = "The maximum number of items that should be returned, 0 for no limit"
+	TableUsage     = "json|yaml|table"
+	SilentUsage    = "json|yaml|silent"
+	JsonMIME       = "application/json"
+	PerPage        = 20
+	OBOUsage       = "ID of the YouTube account that the content owner is acting on behalf of"
+	OBOCOUsage     = "ID of the content owner, for YouTube content partners"
+	OBOCOCUsage    = "YouTube channel ID linked to the content owner"
+	ConfirmedUsage = "Confirm the operation"
 	getWdFailed    = "failed to get working directory"
 	openRootFailed = "failed to open root directory"
 )

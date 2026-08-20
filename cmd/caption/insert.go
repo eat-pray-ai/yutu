@@ -5,6 +5,7 @@ package caption
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -59,6 +60,7 @@ var insertInSchema = &jsonschema.Schema{
 			Enum:    []any{"json", "yaml", "silent"},
 			Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -74,6 +76,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			insertTool, func(input caption.Caption, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Insert(writer)
 			},
 		),
@@ -104,10 +109,9 @@ func init() {
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
 	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = insertCmd.MarkFlagRequired("file")
 	_ = insertCmd.MarkFlagRequired("videoId")
-	cmd.AddMutationFlags(insertCmd)
 }
 
 var insertCmd = &cobra.Command{
@@ -115,13 +119,12 @@ var insertCmd = &cobra.Command{
 	Short:   insertShort,
 	Long:    insertLong,
 	Example: insertExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would insert caption: %s", file)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would insert caption")
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := caption.NewCaption(
 			caption.WithFile(file),
 			caption.WithAudioTrackType(audioTrackType),

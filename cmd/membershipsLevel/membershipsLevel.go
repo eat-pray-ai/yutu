@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	parts  []string
+	parts []string
 )
 
 var membershipsLevelCmd = &cobra.Command{

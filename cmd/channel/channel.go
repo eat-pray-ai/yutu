@@ -53,4 +53,3 @@ var channelCmd = &cobra.Command{
 func init() {
 	cmd.RootCmd.AddCommand(channelCmd)
 }
-

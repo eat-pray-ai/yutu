@@ -4,6 +4,7 @@
 package playlistImage
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -36,6 +37,7 @@ var deleteInSchema = &jsonschema.Schema{
 			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
+		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -52,6 +54,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			deleteTool,
 			func(input playlistImage.PlaylistImage, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Delete(writer)
 			},
 		),
@@ -62,9 +67,8 @@ func init() {
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-
+	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -72,14 +76,13 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(
-			c, "Would delete playlist image(s): %s", strings.Join(ids, ", "),
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would delete playlist image(s): %s", strings.Join(ids, ", "),
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithIds(ids),
 			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),

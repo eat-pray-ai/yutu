@@ -4,10 +4,12 @@
 package thirdPartyLink
 
 import (
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/thirdPartyLink"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
@@ -27,9 +29,13 @@ var deleteInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"linking_token", "type"},
 	Properties: map[string]*jsonschema.Schema{
-		"linking_token":       {Type: "string", Description: ltUsage},
-		"type":                {Type: "string", Description: typeUsage, Enum: []any{"linkUnspecified", "channelToStoreLink"}},
+		"linking_token": {Type: "string", Description: ltUsage},
+		"type": {
+			Type: "string", Description: typeUsage,
+			Enum: []any{"linkUnspecified", "channelToStoreLink"},
+		},
 		"external_channel_id": {Type: "string", Description: extCidUsage},
+		"confirmed":           {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -44,7 +50,11 @@ func init() {
 				ReadOnlyHint:    false,
 			},
 		}, cobramcp.GenToolHandler(
-			deleteTool, func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
+			deleteTool,
+			func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Delete(writer)
 			},
 		),
@@ -53,11 +63,12 @@ func init() {
 
 	deleteCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
 	deleteCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	deleteCmd.Flags().StringVarP(&externalChannelId, "externalChannelId", "e", "", extCidUsage)
-
+	deleteCmd.Flags().StringVarP(
+		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
+	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("linkingToken")
 	_ = deleteCmd.MarkFlagRequired("type")
-	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -65,12 +76,11 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would delete third-party link: %s", linkingToken)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would delete third-party link: %s", linkingToken)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := thirdPartyLink.NewThirdPartyLink(
 			thirdPartyLink.WithLinkingToken(linkingToken),
 			thirdPartyLink.WithType(linkType),

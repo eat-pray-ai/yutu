@@ -4,6 +4,7 @@
 package watermark
 
 import (
+	"fmt"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -40,6 +41,7 @@ var setInSchema = &jsonschema.Schema{
 		},
 		"duration_ms": {Type: "number", Description: dmUsage},
 		"offset_ms":   {Type: "number", Description: omUsage},
+		"confirmed":   {Type: "boolean", Description: pkg.ConfirmedUsage},
 		"offset_type": {
 			Type: "string", Description: otUsage,
 			Enum: []any{"offsetFromStart", "offsetFromEnd"},
@@ -60,6 +62,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			setTool, func(input watermark.Watermark, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Set(writer)
 			},
 		),
@@ -77,10 +82,9 @@ func init() {
 	setCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
-
+	setCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = setCmd.MarkFlagRequired("channelId")
 	_ = setCmd.MarkFlagRequired("file")
-	cmd.AddMutationFlags(setCmd)
 }
 
 var setCmd = &cobra.Command{
@@ -88,12 +92,11 @@ var setCmd = &cobra.Command{
 	Short:   setShort,
 	Long:    setLong,
 	Example: setExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would set watermark for channel: %s", channelId)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would set watermark for channel: %s", channelId)
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := watermark.NewWatermark(
 			watermark.WithChannelId(channelId),
 			watermark.WithFile(file),

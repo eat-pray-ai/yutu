@@ -15,8 +15,8 @@ const (
 )
 
 var (
-	hl     string
-	parts  []string
+	hl    string
+	parts []string
 )
 
 var videoAbuseReportReasonCmd = &cobra.Command{

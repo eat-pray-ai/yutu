@@ -5,6 +5,7 @@ package liveBroadcast
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -54,6 +55,7 @@ var transitionInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -70,6 +72,9 @@ func init() {
 		}, cobramcp.GenToolHandler(
 			transitionTool,
 			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Transition(writer)
 			},
 		),
@@ -93,10 +98,9 @@ func init() {
 		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
 	)
 	transitionCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	transitionCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = transitionCmd.MarkFlagRequired("ids")
 	_ = transitionCmd.MarkFlagRequired("broadcastStatus")
-	cmd.AddMutationFlags(transitionCmd)
 }
 
 var transitionCmd = &cobra.Command{
@@ -104,16 +108,15 @@ var transitionCmd = &cobra.Command{
 	Short:   transitionShort,
 	Long:    transitionLong,
 	Example: transitionExample,
-	Run: func(c *cobra.Command, args []string) {
-		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would transition live broadcast(s) %s to %s",
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would transition live broadcast(s) %s to %s",
 			strings.Join(ids, ", "), broadcastStatus,
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
+		output, _ := c.Flags().GetString("output")
 		input := liveBroadcast.NewLiveBroadcast(
 			liveBroadcast.WithIds(ids),
 			liveBroadcast.WithBroadcastStatus(broadcastStatus),

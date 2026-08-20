@@ -74,7 +74,6 @@ func init() {
 		&parts, "parts", "p", []string{"snippet"}, pkg.PartsUsage,
 	)
 	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
-
 	_ = listCmd.MarkFlagRequired("liveChatId")
 }
 

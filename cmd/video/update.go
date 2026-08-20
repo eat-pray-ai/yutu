@@ -5,6 +5,7 @@ package video
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -64,6 +65,7 @@ var updateInSchema = &jsonschema.Schema{
 		"embeddable":               {Type: "boolean", Description: embeddableUsage},
 		"contains_synthetic_media": {Type: "boolean", Description: csmUsage},
 		"recording_date":           {Type: "string", Description: rdUsage},
+		"confirmed":                {Type: "boolean", Description: pkg.ConfirmedUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
@@ -83,6 +85,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			updateTool, func(input video.Video, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				input.MaxResults = 1
 				return input.Update(writer)
 			},
@@ -109,9 +114,8 @@ func init() {
 	)
 	updateCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = updateCmd.MarkFlagRequired("id")
-	cmd.AddMutationFlags(updateCmd)
 }
 
 var updateCmd = &cobra.Command{
@@ -119,13 +123,12 @@ var updateCmd = &cobra.Command{
 	Short:   updateShort,
 	Long:    updateLong,
 	Example: updateExample,
-	Run: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would update video: %s", strings.Join(ids, ", "))
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(c, "Would update video: %s", strings.Join(ids, ", "))
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithTitle(title),

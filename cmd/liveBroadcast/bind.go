@@ -5,6 +5,7 @@ package liveBroadcast
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"strings"
 
@@ -50,6 +51,7 @@ var bindInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
 		},
+		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -65,6 +67,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			bindTool, func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Bind(writer)
 			},
 		),
@@ -87,9 +92,8 @@ func init() {
 		pkg.PartsUsage,
 	)
 	bindCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-
+	bindCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = bindCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(bindCmd)
 }
 
 var bindCmd = &cobra.Command{
@@ -97,16 +101,15 @@ var bindCmd = &cobra.Command{
 	Short:   bindShort,
 	Long:    bindLong,
 	Example: bindExample,
-	Run: func(c *cobra.Command, args []string) {
-		output, _ := c.Flags().GetString("output")
-		err := cmd.Confirm(
-			c, "Would bind live broadcast(s) %s to stream %s",
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf(
+			"Would bind live broadcast(s) %s to stream %s",
 			strings.Join(ids, ", "), streamId,
 		)
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
+		output, _ := c.Flags().GetString("output")
 		input := liveBroadcast.NewLiveBroadcast(
 			liveBroadcast.WithIds(ids),
 			liveBroadcast.WithStreamId(streamId),

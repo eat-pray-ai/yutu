@@ -4,6 +4,7 @@
 package caption
 
 import (
+	"fmt"
 	"io"
 	"strings"
 
@@ -38,6 +39,7 @@ var deleteInSchema = &jsonschema.Schema{
 		},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
+		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -53,6 +55,9 @@ func init() {
 			},
 		}, cobramcp.GenToolHandler(
 			deleteTool, func(input caption.Caption, writer io.Writer) error {
+				if !input.Confirmed {
+					return utils.ErrNotConfirmed
+				}
 				return input.Delete(writer)
 			},
 		),
@@ -64,9 +69,8 @@ func init() {
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
 	)
-
+	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
-	cmd.AddMutationFlags(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
@@ -74,12 +78,11 @@ var deleteCmd = &cobra.Command{
 	Short:   deleteShort,
 	Long:    deleteLong,
 	Example: deleteExample,
-	Run: func(c *cobra.Command, args []string) {
-		err := cmd.Confirm(c, "Would delete caption(s): %s", strings.Join(ids, ", "))
-		if err != nil {
-			utils.HandleCmdError(err, c)
-			return
-		}
+	PreRunE: func(c *cobra.Command, _ []string) error {
+		msg := fmt.Sprintf("Would delete caption(s): %s", strings.Join(ids, ", "))
+		return utils.ConfirmPreRun(c, msg)
+	},
+	Run: func(c *cobra.Command, _ []string) {
 		input := caption.NewCaption(
 			caption.WithIds(ids),
 			caption.WithOnBehalfOf(onBehalfOf),
