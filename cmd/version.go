@@ -30,7 +30,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: verShort,
 	Long:  verLong,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		info, ok := debug.ReadBuildInfo()
 		if ok && Version == "" {
 			Version = info.Main.Version

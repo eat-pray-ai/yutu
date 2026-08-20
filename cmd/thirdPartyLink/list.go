@@ -83,7 +83,7 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		output, _ := cmd.Flags().GetString("output")
 		input := thirdPartyLink.NewThirdPartyLink(
 			thirdPartyLink.WithLinkingToken(linkingToken),

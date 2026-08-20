@@ -54,7 +54,7 @@ var agentCmd = &cobra.Command{
 	Short:   short,
 	Long:    long,
 	Example: example,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		if launcherArgs == "" {
 			_ = cmd.Help()
 			return

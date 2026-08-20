@@ -168,14 +168,16 @@ func TestIsInteractive(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.ci != "" {
-				t.Setenv("CI", tt.ci)
-			}
-			if got := IsInteractive(tt.writer); got != tt.want {
-				t.Errorf("IsInteractive() = %v, want %v", got, tt.want)
-			}
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				if tt.ci != "" {
+					t.Setenv("CI", tt.ci)
+				}
+				if got := IsInteractive(tt.writer); got != tt.want {
+					t.Errorf("IsInteractive() = %v, want %v", got, tt.want)
+				}
+			},
+		)
 	}
 }
 
@@ -392,14 +394,13 @@ func TestRandomStage(t *testing.T) {
 	}
 }
 
-
 func TestConfirmPreRun(t *testing.T) {
 	tests := []struct {
-		name    string
-		yes     bool
-		input   string
+		name        string
+		yes         bool
+		input       string
 		interactive bool
-		wantErr error
+		wantErr     error
 	}{
 		{
 			name:    "yes flag bypasses prompt",
@@ -450,26 +451,28 @@ func TestConfirmPreRun(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			orig := IsInteractive
-			IsInteractive = func(any) bool { return tt.interactive }
-			defer func() { IsInteractive = orig }()
+		t.Run(
+			tt.name, func(t *testing.T) {
+				orig := IsInteractive
+				IsInteractive = func(any) bool { return tt.interactive }
+				defer func() { IsInteractive = orig }()
 
-			cmd := &cobra.Command{Use: "test"}
-			cmd.Flags().Bool("yes", false, "")
-			if tt.yes {
-				_ = cmd.Flags().Set("yes", "true")
-			}
+				cmd := &cobra.Command{Use: "test"}
+				cmd.Flags().Bool("yes", false, "")
+				if tt.yes {
+					_ = cmd.Flags().Set("yes", "true")
+				}
 
-			var errBuf bytes.Buffer
-			cmd.SetErr(&errBuf)
-			cmd.SetIn(strings.NewReader(tt.input))
+				var errBuf bytes.Buffer
+				cmd.SetErr(&errBuf)
+				cmd.SetIn(strings.NewReader(tt.input))
 
-			err := ConfirmPreRun(cmd, "Would do something")
-			if err != tt.wantErr {
-				t.Errorf("ConfirmPreRun() error = %v, want %v", err, tt.wantErr)
-			}
-		})
+				err := ConfirmPreRun(cmd, "Would do something")
+				if err != tt.wantErr {
+					t.Errorf("ConfirmPreRun() error = %v, want %v", err, tt.wantErr)
+				}
+			},
+		)
 	}
 }
 
@@ -502,7 +505,7 @@ func TestHandleCmdError(t *testing.T) {
 				cmd.SetOut(&outBuf)
 				cmd.SetErr(&errBuf)
 				cmd.SetHelpFunc(
-					func(c *cobra.Command, args []string) {
+					func(c *cobra.Command, _ []string) {
 						_, _ = fmt.Fprint(c.OutOrStdout(), "help called")
 					},
 				)

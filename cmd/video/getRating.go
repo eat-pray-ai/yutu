@@ -75,7 +75,7 @@ var getRatingCmd = &cobra.Command{
 	Short:   getRatingShort,
 	Long:    getRatingLong,
 	Example: getRatingExample,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		output, _ := cmd.Flags().GetString("output")
 		input := video.NewVideo(
 			video.WithIds(ids),

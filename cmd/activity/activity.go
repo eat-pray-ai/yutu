@@ -32,7 +32,7 @@ var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: short,
 	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
 }

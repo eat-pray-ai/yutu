@@ -39,7 +39,7 @@ func init() {
 		"Enable MCP OAuth authorization (HTTP mode only)",
 	)
 
-	mcpCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+	mcpCmd.PreRunE = func(cmd *cobra.Command, _ []string) error {
 		if mcpAuth {
 			mcpConfig.Auth = &cobramcp.AuthConfig{
 				TokenVerifier:        auth.GoogleTokenVerifier,

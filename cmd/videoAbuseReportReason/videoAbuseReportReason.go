@@ -23,7 +23,7 @@ var videoAbuseReportReasonCmd = &cobra.Command{
 	Use:   "videoAbuseReportReason",
 	Short: short,
 	Long:  long,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
 }

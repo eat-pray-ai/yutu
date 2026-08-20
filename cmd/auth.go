@@ -30,7 +30,7 @@ var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: authShort,
 	Long:  authLong,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		redirectURL := fmt.Sprintf("http://localhost:%d", authPort)
 		if _, err := auth.NewY2BService(
 			auth.WithCredential(credential, pkg.Root.FS()),
