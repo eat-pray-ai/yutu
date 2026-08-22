@@ -26,7 +26,7 @@ use_repo(
     "com_github_spf13_pflag",
     "com_github_tc_hib_go_winres",
     "in_gopkg_yaml_v3",
-    "org_golang_google_adk",
+    "org_golang_google_adk_v2",
     "org_golang_google_api",
     "org_golang_google_genai",
     "org_golang_x_oauth2",
