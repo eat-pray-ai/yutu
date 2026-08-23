@@ -3,7 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.26.5
 
 require (
-	github.com/eat-pray-ai/cobra-mcp v0.3.1
+	github.com/eat-pray-ai/cobra-mcp v0.4.1
 	github.com/google/jsonschema-go v0.4.3
 	github.com/savioxavier/termlink v1.4.3
 	github.com/spf13/cobra v1.10.2
