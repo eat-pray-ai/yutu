@@ -21,13 +21,6 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-type redirectURLKey struct{}
-
-// CtxWithRedirectURL returns a child context carrying the OAuth redirect URL.
-func CtxWithRedirectURL(ctx context.Context, url string) context.Context {
-	return context.WithValue(ctx, redirectURLKey{}, url)
-}
-
 type Fields struct {
 	Ctx         context.Context  `yaml:"-" json:"-"`
 	Service     *youtube.Service `yaml:"-" json:"-"`
@@ -51,11 +44,6 @@ func (d *Fields) GetFields() *Fields {
 // automatic context injection from MCP tool handlers.
 func (d *Fields) SetContext(ctx context.Context) {
 	d.Ctx = ctx
-	if d.RedirectURL == "" {
-		if url, ok := ctx.Value(redirectURLKey{}).(string); ok {
-			d.RedirectURL = url
-		}
-	}
 }
 
 func (d *Fields) EnsureService() error {

@@ -4,11 +4,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
 	"github.com/eat-pray-ai/yutu/pkg/auth"
-	"github.com/eat-pray-ai/yutu/pkg/common"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +25,16 @@ yutu mcp --mode http --baseUrl https://mcp.example.com`
 var mcpConfig = &cobramcp.Config{
 	Name:         "yutu",
 	Version:      Version,
-	Instructions: "Automate YouTube operations",
+	ListCacheTTL: 7_200_000,
+	ServerOptions: &mcp.ServerOptions{
+		Instructions: "Automate YouTube operations",
+	},
+	HTTPOptions: &mcp.StreamableHTTPOptions{
+		Stateless:                    true,
+		JSONResponse:                 true,
+		MaxRequestBodyBytes:          2 << 20,
+		PropagateRequestCancellation: true,
+	},
 }
 
 var Server, mcpCmd = cobramcp.ServerAndCommand(mcpConfig)
@@ -44,10 +51,6 @@ func init() {
 				Scopes:               auth.Scopes,
 				AuthorizationServers: []string{"https://accounts.google.com"},
 			}
-		} else {
-			port, _ := cmd.Flags().GetInt("port")
-			redirectURL := fmt.Sprintf("http://localhost:%d", port)
-			cmd.SetContext(common.CtxWithRedirectURL(cmd.Context(), redirectURL))
 		}
 
 		return nil
