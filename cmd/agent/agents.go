@@ -4,7 +4,8 @@
 package agent
 
 import (
-	_ "embed"
+	"context"
+	"embed"
 	"fmt"
 	"os"
 
@@ -13,9 +14,14 @@ import (
 	"google.golang.org/adk/v2/model"
 	"google.golang.org/adk/v2/tool"
 	"google.golang.org/adk/v2/tool/geminitool"
+	"google.golang.org/adk/v2/tool/skilltoolset"
+	"google.golang.org/adk/v2/tool/skilltoolset/skill"
 )
 
 var (
+	//go:embed INSTRUCTION.md
+	instruction string
+
 	//go:embed INSTRUCTION_ORCHESTRATOR.md
 	orchestratorInstruction string
 
@@ -27,6 +33,9 @@ var (
 
 	//go:embed INSTRUCTION_DESTROYER.md
 	destroyerInstruction string
+
+	//go:embed skills
+	skillsFS embed.FS
 )
 
 type agentDef struct {
@@ -40,7 +49,7 @@ type agentDef struct {
 var agentDefs = map[string]agentDef{
 	"Nina": {
 		name:        "YouTube Copilot",
-		description: "Orchestrates YouTube workflows by planning multi-step tasks and delegating to specialized agents.",
+		description: "Orchestrates YouTube workflows by planning multistep tasks and delegating to specialized agents.",
 		instruction: &orchestratorInstruction,
 		envKey:      "YUTU_AGENT_INSTRUCTION",
 	},
@@ -170,8 +179,17 @@ func init() {
 	}
 }
 
+func newSkillToolset(ctx context.Context) (tool.Toolset, error) {
+	source := skill.NewFileSystemSource(skillsFS)
+	source, _, err := skill.WithCompletePreloadSource(ctx, source)
+	if err != nil {
+		return nil, fmt.Errorf("preload skills: %w", err)
+	}
+	return skilltoolset.New(ctx, skilltoolset.Config{Source: source})
+}
+
 func buildOrchestrator(
-	advancedModel, liteModel model.LLM, mcpToolSet tool.Toolset,
+	advancedModel, liteModel model.LLM, mcpToolSet, skillToolset tool.Toolset,
 ) (
 	agent.Agent, error,
 ) {
@@ -210,6 +228,7 @@ func buildOrchestrator(
 			Description: oDef.description,
 			Instruction: *oDef.instruction,
 			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
+			Toolsets:    []tool.Toolset{skillToolset},
 			SubAgents:   subAgents,
 		},
 	)

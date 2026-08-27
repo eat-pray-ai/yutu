@@ -156,7 +156,13 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		os.Exit(1)
 	}
 
-	orchestrator, err := buildOrchestrator(advancedModel, liteModel, mcpToolSet)
+	skillToolset, err := newSkillToolset(ctx)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to create skill toolset", "error", err)
+		os.Exit(1)
+	}
+
+	orchestrator, err := buildOrchestrator(advancedModel, liteModel, mcpToolSet, skillToolset)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to build orchestrator agent", "error", err)
 		os.Exit(1)
