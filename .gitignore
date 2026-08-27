@@ -51,6 +51,7 @@ dist/
 
 /docs/superpowers
 .worktrees/
+.claude
 # except for the following files
 !winres/*
 !server.json
