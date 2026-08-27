@@ -95,11 +95,11 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 
 ### 全局环境变量
 
-| 变量                 | 描述                                 | 默认值                  |
-|--------------------|------------------------------------|----------------------|
-| `YUTU_CREDENTIAL`  | OAuth 客户端密钥的路径、Base64 或 JSON       | `client_secret.json` |
-| `YUTU_CACHE_TOKEN` | 缓存的 OAuth 令牌的路径、Base64 或 JSON      | `youtube.token.json` |
-| `YUTU_ROOT`        | 文件解析的根目录                           | 当前工作目录               |
+| 变量               | 描述                                       | 默认值               |
+|--------------------|--------------------------------------------|----------------------|
+| `YUTU_CREDENTIAL`  | OAuth 客户端密钥的路径、Base64 或 JSON     | `client_secret.json` |
+| `YUTU_CACHE_TOKEN` | 缓存的 OAuth 令牌的路径、Base64 或 JSON    | `youtube.token.json` |
+| `YUTU_ROOT`        | 文件解析的根目录                           | 当前工作目录         |
 | `YUTU_LOG_LEVEL`   | 日志级别：`DEBUG`、`INFO`、`WARN`、`ERROR` | `INFO`               |
 
 ## 安装
@@ -201,51 +201,31 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ## Agent
 
-`yutu` 提供了一种 Agent 模式来自动化 YouTube 工作流程。该系统采用多 Agent 架构，由中央编排器将任务委派给专门的 Agent：
+`yutu` 提供了 Agent 模式（Miffy）来自动化 YouTube 工作流程。该 Agent 可以检索、创建、更新和删除 YouTube 内容，内置 YouTube 增长策略和 SEO 专业知识。
 
-| Agent            | 角色                           | 能力                                     |
-|------------------|------------------------------|----------------------------------------|
-| **Orchestrator** | 协调整个工作流程，规划策略，并将任务委派给子 Agent | YouTube 增长策略、SEO 优化、任务路由               |
-| **Retrieval**    | 从 YouTube 和网络收集数据（只读）        | 列出/搜索视频、频道、播放列表、评论、字幕、订阅、成员等；Google 搜索 |
-| **Modifier**     | 创建和更新 YouTube 内容             | 上传视频、创建播放列表、更新元数据、发布评论、设置缩略图、管理字幕和水印   |
-| **Destroyer**    | 处理需要格外谨慎的破坏性操作               | 删除视频、播放列表、评论、字幕、订阅、频道版块和水印             |
-
-目前，Agent 模式仍在积极开发中，仅支持 Google 的 Gemini 模型，需设置以下环境变量：
+目前，Agent 模式仍在积极开发中，仅支持 Google 的 Gemini 模型。
 
 ```shell
-❯ export YUTU_ADVANCED_MODEL=google:gemini-3.1-pro-preview
-❯ export YUTU_LITE_MODEL=google:gemini-3-flash-preview
-❯ export YUTU_LLM_API_KEY=your_gemini_api_key
-// 可选设置
-❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
-❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
+# 控制台模式（默认）
+❯ yutu agent --api-key "YOUR_GEMINI_API_KEY"
+# 指定不同的模型
+❯ yutu agent --model "google:gemini-3.7-flash" --api-key "YOUR_GEMINI_API_KEY"
+# Web 模式
+❯ yutu agent --args "web api a2a webui" --api-key "YOUR_GEMINI_API_KEY"
+# 查看可用的启动参数
+❯ yutu agent --args ""
 ```
 
-`YUTU_ADVANCED_MODEL` 用于编排 Agent，`YUTU_LITE_MODEL` 用于其他所有 Agent。两者均使用 `provider:modelName` 格式（目前仅支持 `google`）。如果只设置了其中一个，另一个将使用相同的值。
+### Agent 参数
 
-### Agent 环境变量
+| 参数                | 描述                              | 默认值                                     |
+|---------------------|-----------------------------------|--------------------------------------------|
+| `-a, --args`        | 启动参数（单个字符串）            | `console`                                  |
+| `-m, --model`       | 模型（`provider:modelName` 格式） | `google:gemini-3.7-flash`                  |
+| `--api-key`         | 模型提供商的 API 密钥             |                                            |
+| `-i, --instruction` | 覆盖内置的 Agent 指令             | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
 
-| 变量                           | 描述                                      | 必填                                               |
-|------------------------------|-----------------------------------------|--------------------------------------------------|
-| `YUTU_ADVANCED_MODEL`        | 编排 Agent 使用的模型（格式：`provider:modelName`） | `YUTU_ADVANCED_MODEL` 和 `YUTU_LITE_MODEL` 至少设置一个 |
-| `YUTU_LITE_MODEL`            | 子 Agent 使用的模型（格式：`provider:modelName`）  | `YUTU_ADVANCED_MODEL` 和 `YUTU_LITE_MODEL` 至少设置一个 |
-| `YUTU_LLM_API_KEY`           | 模型提供商的 API 密钥                           | 是                                                |
-| `GOOGLE_GEMINI_BASE_URL`     | Gemini API 的 BASE_URL                   | 否                                                |
-| `YUTU_AGENT_INSTRUCTION`     | 编排 Agent 的自定义指令                         | 否                                                |
-| `YUTU_RETRIEVAL_INSTRUCTION` | 检索 Agent 的自定义指令                         | 否                                                |
-| `YUTU_MODIFIER_INSTRUCTION`  | 修改 Agent 的自定义指令                         | 否                                                |
-| `YUTU_DESTROYER_INSTRUCTION` | 删除 Agent 的自定义指令                         | 否                                                |
-
-然后运行以下命令查看详细用法：
-
-```shell
-❯ yutu agent --help
-❯ yutu agent --args "help"
-# console mode
-❯ yutu agent --args "console"
-# web mode with three sub-launchers: api, a2a and webui
-❯ yutu agent --args "web api a2a webui"
-```
+可选设置环境变量 `GOOGLE_GEMINI_BASE_URL` 来使用自定义的 Gemini API 地址。
 
 ## MCP 服务器
 

@@ -195,52 +195,31 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ## Agent
 
-`yutu` provides an agent mode to automate YouTube workflows. The system uses a multi-agent architecture where a central orchestrator delegates tasks to specialized agents:
+`yutu` provides an agent mode (Miffy) to automate YouTube workflows. The agent can retrieve, create, update, and delete YouTube content, with built-in YouTube growth strategy and SEO expertise.
 
-| Agent            | Role                                                                         | Capabilities                                                                                                    |
-|------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
-| **Orchestrator** | Coordinates the entire workflow, plans strategy, and delegates to sub-agents | YouTube growth strategy, SEO optimization, task routing                                                         |
-| **Retrieval**    | Gathers data from YouTube and the web (read-only)                            | List/search videos, channels, playlists, comments, captions, subscriptions, members, and more; Google Search    |
-| **Modifier**     | Creates and updates YouTube content                                          | Upload videos, create playlists, update metadata, post comments, set thumbnails, manage captions and watermarks |
-| **Destroyer**    | Handles destructive operations with extra caution                            | Delete videos, playlists, comments, captions, subscriptions, channel sections, and watermarks                   |
-
-Currently, the agent mode is under active development, only supports Google's Gemini models with the following environment variables set:
+Currently, the agent mode is under active development, only supports Google's Gemini models.
 
 ```shell
-❯ export YUTU_ADVANCED_MODEL=google:gemini-3.1-pro-preview
-❯ export YUTU_LITE_MODEL=google:gemini-3-flash-preview
-❯ export YUTU_LLM_API_KEY=your_gemini_api_key
-// Optional settings
-❯ export GOOGLE_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/
-❯ export YUTU_AGENT_INSTRUCTION=Your custom instruction here
+# console mode (default)
+❯ yutu agent --api-key "YOUR_GEMINI_API_KEY"
+# specify a different model
+❯ yutu agent --model "google:gemini-3.7-flash" --api-key "YOUR_GEMINI_API_KEY"
+# web mode with sub-launchers
+❯ yutu agent --args "web api a2a webui" --api-key "YOUR_GEMINI_API_KEY"
+# show available launcher args
+❯ yutu agent --args ""
 ```
 
-`YUTU_ADVANCED_MODEL` is used by the orchestrator agent, while `YUTU_LITE_MODEL` is used by all other agents. Both use
-the `provider:modelName` format (only `google` is supported). If only one is set, the other defaults to the same value.
+### Agent Flags
 
-### Agent Environment Variables
+| Flag                | Description                             | Default                                    |
+|---------------------|-----------------------------------------|--------------------------------------------|
+| `-a, --args`        | Launcher arguments as a single string   | `console`                                  |
+| `-m, --model`       | Model in `provider:modelName` format    | `google:gemini-3.7-flash`                  |
+| `--api-key`         | API key for the model provider          |                                            |
+| `-i, --instruction` | Override the built-in agent instruction | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
 
-| Variable                     | Description                                                 | Required                                                   |
-|------------------------------|-------------------------------------------------------------|------------------------------------------------------------|
-| `YUTU_ADVANCED_MODEL`        | Model for orchestrator agent (format: `provider:modelName`) | At least one of `YUTU_ADVANCED_MODEL` or `YUTU_LITE_MODEL` |
-| `YUTU_LITE_MODEL`            | Model for sub-agents (format: `provider:modelName`)         | At least one of `YUTU_ADVANCED_MODEL` or `YUTU_LITE_MODEL` |
-| `YUTU_LLM_API_KEY`           | API key for the model provider                              | Yes                                                        |
-| `GOOGLE_GEMINI_BASE_URL`     | Base URL for Gemini API                                     | No                                                         |
-| `YUTU_AGENT_INSTRUCTION`     | Custom instruction for orchestrator agent                   | No                                                         |
-| `YUTU_RETRIEVAL_INSTRUCTION` | Custom instruction for retrieval agent                      | No                                                         |
-| `YUTU_MODIFIER_INSTRUCTION`  | Custom instruction for modifier agent                       | No                                                         |
-| `YUTU_DESTROYER_INSTRUCTION` | Custom instruction for destroyer agent                      | No                                                         |
-
-Then run the following command for detail usage:
-
-```shell
-❯ yutu agent --help
-❯ yutu agent --args "help"
-# console mode
-❯ yutu agent --args "console"
-# web mode with three sub-launchers: api, a2a and webui
-❯ yutu agent --args "web api a2a webui"
-```
+The `GOOGLE_GEMINI_BASE_URL` environment variable can optionally be set to use a custom Gemini API base URL.
 
 ## MCP Server
 
