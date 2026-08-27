@@ -2,15 +2,8 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "agent",
-    srcs = [
-        "agent.go",
-        "agents.go",
-    ],
+    srcs = ["agent.go"],
     embedsrcs = [
-        "INSTRUCTION_DESTROYER.md",
-        "INSTRUCTION_MODIFIER.md",
-        "INSTRUCTION_ORCHESTRATOR.md",
-        "INSTRUCTION_RETRIEVAL.md",
         "INSTRUCTION.md",
         "skills/youtube/SKILL.md",
         "skills/youtube/references/seo-guide.md",
