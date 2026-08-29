@@ -42,7 +42,7 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12
+          version: latest
       - name: Go test
         run: |
           go test ./... -coverprofile=${{ env.COVERAGE_FILE }} -coverpkg="./pkg/..."

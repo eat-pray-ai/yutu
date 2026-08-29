@@ -5,6 +5,7 @@ package utils
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -468,7 +469,7 @@ func TestConfirmPreRun(t *testing.T) {
 				cmd.SetIn(strings.NewReader(tt.input))
 
 				err := ConfirmPreRun(cmd, "Would do something")
-				if err != tt.wantErr {
+				if !errors.Is(err, tt.wantErr) {
 					t.Errorf("ConfirmPreRun() error = %v, want %v", err, tt.wantErr)
 				}
 			},
