@@ -118,25 +118,29 @@ func generate() string {
 		}
 	}
 
-	slices.SortFunc(coreCommands, func(a, b *cobra.Command) int {
-		return cmp.Compare(a.Name(), b.Name())
-	})
-	slices.SortFunc(resourceCommands, func(a, b *cobra.Command) int {
-		return cmp.Compare(a.Name(), b.Name())
-	})
+	slices.SortFunc(
+		coreCommands, func(a, b *cobra.Command) int {
+			return cmp.Compare(a.Name(), b.Name())
+		},
+	)
+	slices.SortFunc(
+		resourceCommands, func(a, b *cobra.Command) int {
+			return cmp.Compare(a.Name(), b.Name())
+		},
+	)
 
 	b.WriteString("\n# yutu\n")
 	for _, c := range coreCommands {
 		name := c.Name()
-		fmt.Fprintf(&b, "echo \"======= %s =======\"\n", name)
-		fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n\n", name)
+		_, _ = fmt.Fprintf(&b, "echo \"======= %s =======\"\n", name)
+		_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n\n", name)
 	}
 
 	b.WriteString("# youtube api\n")
 	for _, c := range resourceCommands {
 		name := c.Name()
-		fmt.Fprintf(&b, "echo \"======= %s =======\"\n", name)
-		fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n", name)
+		_, _ = fmt.Fprintf(&b, "echo \"======= %s =======\"\n", name)
+		_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n", name)
 
 		var subs []*cobra.Command
 		for _, sub := range c.Commands() {
@@ -145,13 +149,15 @@ func generate() string {
 			}
 			subs = append(subs, sub)
 		}
-		slices.SortFunc(subs, func(a, b *cobra.Command) int {
-			return cmp.Compare(a.Name(), b.Name())
-		})
+		slices.SortFunc(
+			subs, func(a, b *cobra.Command) int {
+				return cmp.Compare(a.Name(), b.Name())
+			},
+		)
 
 		for _, sub := range subs {
-			fmt.Fprintf(&b, "echo \"------- %s -------\"\n", sub.Name())
-			fmt.Fprintf(&b, "\"$YUTU_PATH\" %s %s --help\n", name, sub.Name())
+			_, _ = fmt.Fprintf(&b, "echo \"------- %s -------\"\n", sub.Name())
+			_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s %s --help\n", name, sub.Name())
 		}
 		b.WriteString("\n")
 	}

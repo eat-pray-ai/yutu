@@ -17,7 +17,7 @@ Go CLI + MCP server + Agent for YouTube.
 | [pkg/](pkg/AGENTS.md) | Core domain logic and shared infrastructure |
 | [internal/](internal/AGENTS.md) | Internal tools (docgen, skillgen) |
 | [scripts/](scripts/AGENTS.md) | Utility scripts and smoke tests |
-| [docs/](docs/) | Project documentation |
+| [docs/](docs) | Project documentation |
 
 ## Documentation
 
