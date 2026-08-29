@@ -5,7 +5,7 @@ package thirdPartyLink
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"net/http"
 	"reflect"
@@ -79,7 +79,9 @@ func TestNewThirdPartyLink(t *testing.T) {
 				if got := NewThirdPartyLink(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("%s\nNewThirdPartyLink() = %v\nwant %v", tt.name, got, tt.want)
+					t.Errorf(
+						"%s\nNewThirdPartyLink() = %v\nwant %v", tt.name, got, tt.want,
+					)
 				}
 			},
 		)
@@ -102,7 +104,10 @@ func TestThirdPartyLink_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("linkingToken") != "token123" {
-					t.Errorf("expected linkingToken=token123, got %s", r.URL.Query().Get("linkingToken"))
+					t.Errorf(
+						"expected linkingToken=token123, got %s",
+						r.URL.Query().Get("linkingToken"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -116,7 +121,9 @@ func TestThirdPartyLink_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("type") != "channelToStoreLink" {
-					t.Errorf("expected type=channelToStoreLink, got %s", r.URL.Query().Get("type"))
+					t.Errorf(
+						"expected type=channelToStoreLink, got %s", r.URL.Query().Get("type"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -130,7 +137,10 @@ func TestThirdPartyLink_Get(t *testing.T) {
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("externalChannelId") != "ext-channel-123" {
-					t.Errorf("expected externalChannelId=ext-channel-123, got %s", r.URL.Query().Get("externalChannelId"))
+					t.Errorf(
+						"expected externalChannelId=ext-channel-123, got %s",
+						r.URL.Query().Get("externalChannelId"),
+					)
 				}
 			},
 			wantLen: 1,
@@ -163,11 +173,15 @@ func TestThirdPartyLink_Get(t *testing.T) {
 				tpl := NewThirdPartyLink(opts...)
 				got, err := tpl.Get()
 				if (err != nil) != tt.wantErr {
-					t.Errorf("ThirdPartyLink.Get() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf(
+						"ThirdPartyLink.Get() error = %v, wantErr %v", err, tt.wantErr,
+					)
 					return
 				}
 				if len(got) != tt.wantLen {
-					t.Errorf("ThirdPartyLink.Get() got length = %v, want %v", len(got), tt.wantLen)
+					t.Errorf(
+						"ThirdPartyLink.Get() got length = %v, want %v", len(got), tt.wantLen,
+					)
 				}
 			},
 		)
@@ -175,7 +189,8 @@ func TestThirdPartyLink_Get(t *testing.T) {
 }
 
 func TestThirdPartyLink_List(t *testing.T) {
-	common.RunListTest(t, `{
+	common.RunListTest(
+		t, `{
 			"items": [
 				{
 					"linkingToken": "token123",
@@ -225,7 +240,7 @@ func TestThirdPartyLink_Insert(t *testing.T) {
 						LinkStatus string `json:"linkStatus"`
 					} `json:"status"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 
@@ -233,10 +248,14 @@ func TestThirdPartyLink_Insert(t *testing.T) {
 					t.Errorf("expected linkingToken=token123, got %s", body.LinkingToken)
 				}
 				if body.Snippet.Type != "channelToStoreLink" {
-					t.Errorf("expected snippet.type=channelToStoreLink, got %s", body.Snippet.Type)
+					t.Errorf(
+						"expected snippet.type=channelToStoreLink, got %s", body.Snippet.Type,
+					)
 				}
 				if body.Status.LinkStatus != "pending" {
-					t.Errorf("expected status.linkStatus=pending, got %s", body.Status.LinkStatus)
+					t.Errorf(
+						"expected status.linkStatus=pending, got %s", body.Status.LinkStatus,
+					)
 				}
 			},
 			wantErr: false,
@@ -262,7 +281,9 @@ func TestThirdPartyLink_Insert(t *testing.T) {
 				tpl := NewThirdPartyLink(opts...)
 				var buf bytes.Buffer
 				if err := tpl.Insert(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("ThirdPartyLink.Insert() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf(
+						"ThirdPartyLink.Insert() error = %v, wantErr %v", err, tt.wantErr,
+					)
 				}
 			},
 		)
@@ -296,7 +317,7 @@ func TestThirdPartyLink_Update(t *testing.T) {
 						LinkStatus string `json:"linkStatus"`
 					} `json:"status"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 
@@ -304,7 +325,9 @@ func TestThirdPartyLink_Update(t *testing.T) {
 					t.Errorf("expected linkingToken=token123, got %s", body.LinkingToken)
 				}
 				if body.Status.LinkStatus != "linked" {
-					t.Errorf("expected status.linkStatus=linked, got %s", body.Status.LinkStatus)
+					t.Errorf(
+						"expected status.linkStatus=linked, got %s", body.Status.LinkStatus,
+					)
 				}
 			},
 			wantErr: false,
@@ -319,11 +342,13 @@ func TestThirdPartyLink_Update(t *testing.T) {
 						func(w http.ResponseWriter, r *http.Request) {
 							w.Header().Set("Content-Type", "application/json")
 							if r.Method == "GET" {
-								_, _ = w.Write([]byte(`{
+								_, _ = w.Write(
+									[]byte(`{
 									"items": [
 										{"linkingToken": "token123", "snippet": {"type": "channelToStoreLink"}, "status": {"linkStatus": "pending"}}
 									]
-								}`))
+								}`),
+								)
 								return
 							}
 							if tt.verify != nil {
@@ -338,7 +363,9 @@ func TestThirdPartyLink_Update(t *testing.T) {
 				tpl := NewThirdPartyLink(opts...)
 				var buf bytes.Buffer
 				if err := tpl.Update(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("ThirdPartyLink.Update() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf(
+						"ThirdPartyLink.Update() error = %v, wantErr %v", err, tt.wantErr,
+					)
 				}
 			},
 		)
@@ -363,10 +390,15 @@ func TestThirdPartyLink_Delete(t *testing.T) {
 					t.Errorf("expected DELETE, got %s", r.Method)
 				}
 				if r.URL.Query().Get("linkingToken") != "token123" {
-					t.Errorf("expected linkingToken=token123, got %s", r.URL.Query().Get("linkingToken"))
+					t.Errorf(
+						"expected linkingToken=token123, got %s",
+						r.URL.Query().Get("linkingToken"),
+					)
 				}
 				if r.URL.Query().Get("type") != "channelToStoreLink" {
-					t.Errorf("expected type=channelToStoreLink, got %s", r.URL.Query().Get("type"))
+					t.Errorf(
+						"expected type=channelToStoreLink, got %s", r.URL.Query().Get("type"),
+					)
 				}
 			},
 			wantErr: false,
@@ -391,7 +423,9 @@ func TestThirdPartyLink_Delete(t *testing.T) {
 				tpl := NewThirdPartyLink(opts...)
 				var buf bytes.Buffer
 				if err := tpl.Delete(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("ThirdPartyLink.Delete() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf(
+						"ThirdPartyLink.Delete() error = %v, wantErr %v", err, tt.wantErr,
+					)
 				}
 			},
 		)

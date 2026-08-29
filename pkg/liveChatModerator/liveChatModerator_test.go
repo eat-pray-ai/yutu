@@ -5,7 +5,7 @@ package liveChatModerator
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"net/http"
@@ -117,7 +117,9 @@ func TestNewLiveChatModerator(t *testing.T) {
 				if got := NewLiveChatModerator(tt.args.opts...); !reflect.DeepEqual(
 					got, tt.want,
 				) {
-					t.Errorf("%s\nNewLiveChatModerator() = %v\nwant %v", tt.name, got, tt.want)
+					t.Errorf(
+						"%s\nNewLiveChatModerator() = %v\nwant %v", tt.name, got, tt.want,
+					)
 				}
 			},
 		)
@@ -186,11 +188,16 @@ func TestLiveChatModerator_Get(t *testing.T) {
 				m := NewLiveChatModerator(opts...)
 				got, err := m.Get()
 				if (err != nil) != tt.wantErr {
-					t.Errorf("LiveChatModerator.Get() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf(
+						"LiveChatModerator.Get() error = %v, wantErr %v", err, tt.wantErr,
+					)
 					return
 				}
 				if len(got) != tt.wantLen {
-					t.Errorf("LiveChatModerator.Get() got length = %v, want %v", len(got), tt.wantLen)
+					t.Errorf(
+						"LiveChatModerator.Get() got length = %v, want %v", len(got),
+						tt.wantLen,
+					)
 				}
 			},
 		)
@@ -272,7 +279,7 @@ func TestLiveChatModerator_Insert(t *testing.T) {
 						} `json:"moderatorDetails"`
 					} `json:"snippet"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 

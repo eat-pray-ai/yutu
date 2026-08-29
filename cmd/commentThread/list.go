@@ -4,7 +4,7 @@
 package commentThread
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -45,32 +45,32 @@ var listInSchema = &jsonschema.Schema{
 		"channel_id": {Type: "string", Description: cidUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"moderation_status": {
 			Type:        "string",
 			Enum:        []any{"published", "heldForReview", "likelySpam", "rejected"},
-			Description: msUsage, Default: json.RawMessage(`"published"`),
+			Description: msUsage, Default: jsontext.Value(`"published"`),
 		},
 		"order": {
 			Type: "string", Enum: []any{"orderUnspecified", "time", "relevance"},
-			Description: orderUsage, Default: json.RawMessage(`"time"`),
+			Description: orderUsage, Default: jsontext.Value(`"time"`),
 		},
 		"search_terms": {Type: "string", Description: stUsage},
 		"text_format": {
 			Type: "string", Enum: []any{"textFormatUnspecified", "html"},
-			Description: tfUsage, Default: json.RawMessage(`"html"`),
+			Description: tfUsage, Default: jsontext.Value(`"html"`),
 		},
 		"video_id": {Type: "string", Description: listVidUsage},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet"]`),
+			Default: jsontext.Value(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

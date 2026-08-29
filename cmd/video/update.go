@@ -4,7 +4,7 @@
 package video
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 	"strings"
@@ -52,7 +52,7 @@ var updateInSchema = &jsonschema.Schema{
 		"language": {Type: "string", Description: updateLangUsage},
 		"license": {
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
-			Description: licenseUsage, Default: json.RawMessage(`"youtube"`),
+			Description: licenseUsage, Default: jsontext.Value(`"youtube"`),
 		},
 		"thumbnail":   {Type: "string", Description: thumbnailUsage},
 		"playlist_id": {Type: "string", Description: pidUsage},
@@ -68,7 +68,7 @@ var updateInSchema = &jsonschema.Schema{
 		"confirmed":                {Type: "boolean", Description: pkg.ConfirmedUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

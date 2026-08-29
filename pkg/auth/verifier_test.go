@@ -4,7 +4,7 @@
 package auth
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -14,19 +14,25 @@ import (
 )
 
 func TestGoogleTokenVerifier_ValidToken(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.URL.Query().Get("access_token")
-		if token != "valid-google-token" {
-			w.WriteHeader(http.StatusBadRequest)
-			_ = json.NewEncoder(w).Encode(map[string]string{"error": "invalid_token"})
-			return
-		}
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"expires_in": "3600",
-			"scope":      "https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.channel-memberships.creator",
-			"sub":        "user-123",
-		})
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				token := r.URL.Query().Get("access_token")
+				if token != "valid-google-token" {
+					w.WriteHeader(http.StatusBadRequest)
+					_ = json.MarshalWrite(w, map[string]string{"error": "invalid_token"})
+					return
+				}
+				_ = json.MarshalWrite(
+					w, map[string]any{
+						"expires_in": "3600",
+						"scope":      "https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.channel-memberships.creator",
+						"sub":        "user-123",
+					},
+				)
+			},
+		),
+	)
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)
@@ -50,10 +56,14 @@ func TestGoogleTokenVerifier_ValidToken(t *testing.T) {
 }
 
 func TestGoogleTokenVerifier_InvalidToken(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": "invalid_token"})
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.MarshalWrite(w, map[string]string{"error": "invalid_token"})
+			},
+		),
+	)
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)
@@ -67,9 +77,13 @@ func TestGoogleTokenVerifier_InvalidToken(t *testing.T) {
 }
 
 func TestGoogleTokenVerifier_ServerError(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
+	ts := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			},
+		),
+	)
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)

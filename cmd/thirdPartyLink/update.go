@@ -4,7 +4,7 @@
 package thirdPartyLink
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 
@@ -39,11 +39,11 @@ var updateInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["snippet","status"]`),
+			Default: jsontext.Value(`["snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
 		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},

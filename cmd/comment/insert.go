@@ -4,7 +4,7 @@
 package comment
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 
@@ -43,7 +43,7 @@ var insertInSchema = &jsonschema.Schema{
 		"video_id":          {Type: "string", Description: vidUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
 		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},

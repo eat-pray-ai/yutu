@@ -5,7 +5,7 @@ package video
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"mime"
@@ -546,7 +546,7 @@ func TestVideo_Insert(t *testing.T) {
 		defer func() { _ = part.Close() }()
 
 		var body youtube.Video
-		if err := json.NewDecoder(part).Decode(&body); err != nil {
+		if err := json.UnmarshalRead(part, &body); err != nil {
 			t.Fatalf("failed to decode video from request body: %v", err)
 		}
 		return &body
@@ -650,11 +650,17 @@ func TestVideo_Insert(t *testing.T) {
 					t.Errorf("expected POST, got %s", r.Method)
 				}
 				if !strings.Contains(r.URL.Query().Get("part"), "recordingDetails") {
-					t.Errorf("expected part to contain recordingDetails, got %s", r.URL.Query().Get("part"))
+					t.Errorf(
+						"expected part to contain recordingDetails, got %s",
+						r.URL.Query().Get("part"),
+					)
 				}
 				body := decodeMultipartVideo(t, r)
 				if body.RecordingDetails == nil || body.RecordingDetails.RecordingDate != "2024-06-15T10:00:00Z" {
-					t.Errorf("expected recordingDetails.recordingDate=2024-06-15T10:00:00Z, got %+v", body.RecordingDetails)
+					t.Errorf(
+						"expected recordingDetails.recordingDate=2024-06-15T10:00:00Z, got %+v",
+						body.RecordingDetails,
+					)
 				}
 				if body.Status == nil || !body.Status.SelfDeclaredMadeForKids {
 					t.Errorf("expected status.selfDeclaredMadeForKids=true")
@@ -683,7 +689,10 @@ func TestVideo_Insert(t *testing.T) {
 				}
 				body := decodeMultipartVideo(t, r)
 				if body.Snippet == nil || body.Snippet.Title != "test_video" {
-					t.Errorf("expected snippet.title=test_video (from filename), got %+v", body.Snippet)
+					t.Errorf(
+						"expected snippet.title=test_video (from filename), got %+v",
+						body.Snippet,
+					)
 				}
 			},
 			wantErr: false,
@@ -708,7 +717,10 @@ func TestVideo_Insert(t *testing.T) {
 					}
 				}
 				if count != 1 {
-					t.Errorf("expected exactly 1 yutu🐰 tag, got %d in %v", count, body.Snippet.Tags)
+					t.Errorf(
+						"expected exactly 1 yutu🐰 tag, got %d in %v", count,
+						body.Snippet.Tags,
+					)
 				}
 			},
 			wantErr: false,
@@ -725,7 +737,9 @@ func TestVideo_Insert(t *testing.T) {
 	defer func() { pkg.Root = oldRoot }()
 	defer func() { _ = root.Close() }()
 
-	err = os.WriteFile(tmpDir+"/test_video.mp4", []byte("dummy video content"), 0644)
+	err = os.WriteFile(
+		tmpDir+"/test_video.mp4", []byte("dummy video content"), 0644,
+	)
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
@@ -814,7 +828,7 @@ func TestVideo_Update(t *testing.T) {
 					}
 
 					var body youtube.Video
-					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					if err := json.UnmarshalRead(r.Body, &body); err != nil {
 						t.Fatalf("failed to decode update body: %v", err)
 					}
 					if body.Id != "video-id" {
@@ -871,20 +885,27 @@ func TestVideo_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					var body youtube.Video
-					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					if err := json.UnmarshalRead(r.Body, &body); err != nil {
 						t.Fatalf("failed to decode update body: %v", err)
 					}
 					if body.Snippet.DefaultLanguage != "ja" {
-						t.Errorf("expected defaultLanguage=ja, got %s", body.Snippet.DefaultLanguage)
+						t.Errorf(
+							"expected defaultLanguage=ja, got %s", body.Snippet.DefaultLanguage,
+						)
 					}
 					if body.Status.License != "creativeCommon" {
-						t.Errorf("expected license=creativeCommon, got %s", body.Status.License)
+						t.Errorf(
+							"expected license=creativeCommon, got %s", body.Status.License,
+						)
 					}
 					if body.Snippet.CategoryId != "22" {
 						t.Errorf("expected categoryId=22, got %s", body.Snippet.CategoryId)
 					}
 					if body.Status.PrivacyStatus != "unlisted" {
-						t.Errorf("expected privacyStatus=unlisted, got %s", body.Status.PrivacyStatus)
+						t.Errorf(
+							"expected privacyStatus=unlisted, got %s",
+							body.Status.PrivacyStatus,
+						)
 					}
 					found := false
 					for _, tag := range body.Snippet.Tags {
@@ -910,14 +931,20 @@ func TestVideo_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					var body youtube.Video
-					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					if err := json.UnmarshalRead(r.Body, &body); err != nil {
 						t.Fatalf("failed to decode update body: %v", err)
 					}
 					if body.Status.PublishAt != "2026-08-18T15:00:00Z" {
-						t.Errorf("expected publishAt=2026-08-18T15:00:00Z, got %s", body.Status.PublishAt)
+						t.Errorf(
+							"expected publishAt=2026-08-18T15:00:00Z, got %s",
+							body.Status.PublishAt,
+						)
 					}
 					if body.Status.PrivacyStatus != "private" {
-						t.Errorf("expected privacyStatus=private when scheduling, got %s", body.Status.PrivacyStatus)
+						t.Errorf(
+							"expected privacyStatus=private when scheduling, got %s",
+							body.Status.PrivacyStatus,
+						)
 					}
 				}
 			},
@@ -935,14 +962,20 @@ func TestVideo_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					var body youtube.Video
-					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					if err := json.UnmarshalRead(r.Body, &body); err != nil {
 						t.Fatalf("failed to decode update body: %v", err)
 					}
 					if body.Status.PublishAt != "2026-08-18T15:00:00Z" {
-						t.Errorf("expected publishAt=2026-08-18T15:00:00Z, got %s", body.Status.PublishAt)
+						t.Errorf(
+							"expected publishAt=2026-08-18T15:00:00Z, got %s",
+							body.Status.PublishAt,
+						)
 					}
 					if body.Status.PrivacyStatus != "private" {
-						t.Errorf("expected privacyStatus=private when scheduling, got %s", body.Status.PrivacyStatus)
+						t.Errorf(
+							"expected privacyStatus=private when scheduling, got %s",
+							body.Status.PrivacyStatus,
+						)
 					}
 				}
 			},
@@ -991,10 +1024,13 @@ func TestVideo_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
 					if !strings.Contains(r.URL.Query().Get("part"), "recordingDetails") {
-						t.Errorf("expected part to contain recordingDetails, got %s", r.URL.Query().Get("part"))
+						t.Errorf(
+							"expected part to contain recordingDetails, got %s",
+							r.URL.Query().Get("part"),
+						)
 					}
 					var body youtube.Video
-					if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					if err := json.UnmarshalRead(r.Body, &body); err != nil {
 						t.Fatalf("failed to decode update body: %v", err)
 					}
 					if !body.Status.Embeddable {
@@ -1004,7 +1040,10 @@ func TestVideo_Update(t *testing.T) {
 						t.Errorf("expected containsSyntheticMedia=true")
 					}
 					if body.RecordingDetails == nil || body.RecordingDetails.RecordingDate != "2024-01-01T00:00:00Z" {
-						t.Errorf("expected recordingDate=2024-01-01T00:00:00Z, got %+v", body.RecordingDetails)
+						t.Errorf(
+							"expected recordingDate=2024-01-01T00:00:00Z, got %+v",
+							body.RecordingDetails,
+						)
 					}
 				}
 			},

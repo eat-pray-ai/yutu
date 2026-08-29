@@ -4,7 +4,7 @@
 package caption
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 
@@ -37,7 +37,7 @@ var updateInSchema = &jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
 		"audio_track_type": {
 			Type: "string", Description: attUsage,
-			Default: json.RawMessage(`"unknown"`),
+			Default: jsontext.Value(`"unknown"`),
 		},
 		"is_auto_synced": {Type: "boolean", Description: iasUsage},
 		"is_cc":          {Type: "boolean", Description: iscUsage},
@@ -49,7 +49,7 @@ var updateInSchema = &jsonschema.Schema{
 		"track_kind": {
 			Type: "string", Description: tkUsage,
 			Enum:    []any{"standard", "ASR", "forced"},
-			Default: json.RawMessage(`"standard"`),
+			Default: jsontext.Value(`"standard"`),
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
@@ -57,7 +57,7 @@ var updateInSchema = &jsonschema.Schema{
 		"output": {
 			Type: "string", Description: pkg.SilentUsage,
 			Enum:    []any{"json", "yaml", "silent"},
-			Default: json.RawMessage(`"yaml"`),
+			Default: jsontext.Value(`"yaml"`),
 		},
 		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},

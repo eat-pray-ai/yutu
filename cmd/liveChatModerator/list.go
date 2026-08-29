@@ -4,7 +4,7 @@
 package liveChatModerator
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -34,17 +34,17 @@ var listInSchema = &jsonschema.Schema{
 		"live_chat_id": {Type: "string", Description: lcidUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["snippet"]`),
+			Default: jsontext.Value(`["snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

@@ -4,7 +4,7 @@
 package video
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -39,7 +39,7 @@ var getRatingInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

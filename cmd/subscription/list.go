@@ -4,7 +4,7 @@
 package subscription
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -45,7 +45,7 @@ var listInSchema = &jsonschema.Schema{
 		"for_channel_id": {Type: "string", Description: fcidUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"for": {
@@ -65,16 +65,16 @@ var listInSchema = &jsonschema.Schema{
 			Enum: []any{
 				"subscriptionOrderUnspecified", "relevance", "unread", "alphabetical",
 			},
-			Default: json.RawMessage(`"relevance"`),
+			Default: jsontext.Value(`"relevance"`),
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet"]`),
+			Default: jsontext.Value(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

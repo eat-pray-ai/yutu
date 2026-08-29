@@ -4,7 +4,7 @@
 package playlistItem
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 	"strings"
@@ -49,7 +49,7 @@ var updateInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
 		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},

@@ -4,7 +4,7 @@
 package liveBroadcast
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -43,7 +43,7 @@ var listInSchema = &jsonschema.Schema{
 		"broadcast_type":   {Type: "string", Enum: []any{"all", "event", "persistent"}, Description: btUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"), Minimum: new(float64(0)),
+			Default: jsontext.Value("5"), Minimum: new(float64(0)),
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"on_behalf_of_content_owner_channel": {
@@ -52,11 +52,11 @@ var listInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet","status"]`),
+			Default: jsontext.Value(`["id","snippet","status"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

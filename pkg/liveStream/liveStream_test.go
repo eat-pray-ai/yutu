@@ -5,7 +5,7 @@ package liveStream
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"net/http"
@@ -324,7 +324,7 @@ func TestLiveStream_Insert(t *testing.T) {
 						Resolution    string `json:"resolution"`
 					} `json:"cdn"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 

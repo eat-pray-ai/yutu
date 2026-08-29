@@ -4,7 +4,7 @@
 package liveChatModerator
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"io"
 
@@ -34,11 +34,11 @@ var insertInSchema = &jsonschema.Schema{
 		"moderator_channel_id": {Type: "string", Description: mcidUsage},
 		"parts": {
 			Type: "array", Description: "Parts to include in the response",
-			Items: &jsonschema.Schema{Type: "string"}, Default: json.RawMessage(`["snippet"]`),
+			Items: &jsonschema.Schema{Type: "string"}, Default: jsontext.Value(`["snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
 		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},

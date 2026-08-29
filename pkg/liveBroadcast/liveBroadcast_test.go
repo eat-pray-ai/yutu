@@ -5,7 +5,7 @@ package liveBroadcast
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"net/http"
@@ -364,7 +364,7 @@ func TestLiveBroadcast_Insert(t *testing.T) {
 						PrivacyStatus string `json:"privacyStatus"`
 					} `json:"status"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 
@@ -676,7 +676,7 @@ func TestLiveBroadcast_InsertCuepoint(t *testing.T) {
 					CueType      string `json:"cueType"`
 					DurationSecs int64  `json:"durationSecs"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 				if body.CueType != "cueTypeAd" {

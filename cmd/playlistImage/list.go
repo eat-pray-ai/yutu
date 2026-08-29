@@ -4,7 +4,7 @@
 package playlistImage
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -34,7 +34,7 @@ var listInSchema = &jsonschema.Schema{
 		"parent": {Type: "string", Description: parentUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"on_behalf_of_content_owner": {
@@ -48,11 +48,11 @@ var listInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","kind","snippet"]`),
+			Default: jsontext.Value(`["id","kind","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

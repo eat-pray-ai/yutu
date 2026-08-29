@@ -5,7 +5,7 @@ package auth
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net"
 	"net/http"
@@ -357,11 +357,16 @@ func TestGetCodeFromPrompt_ReadError(t *testing.T) {
 
 	s := NewY2BService(WithIO(errReader, &out)).(*svc)
 
-	_, err := s.getCodeFromPrompt("http://example.com/auth", "http://localhost:8216")
+	_, err := s.getCodeFromPrompt(
+		"http://example.com/auth", "http://localhost:8216",
+	)
 	if err == nil {
 		t.Fatalf("expected error from getCodeFromPrompt, got nil")
 	}
 	if !strings.Contains(err.Error(), "failed to read prompt") {
-		t.Errorf("expected error to contain %q, got %q", "failed to read prompt", err.Error())
+		t.Errorf(
+			"expected error to contain %q, got %q", "failed to read prompt",
+			err.Error(),
+		)
 	}
 }

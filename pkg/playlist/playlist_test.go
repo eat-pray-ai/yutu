@@ -5,7 +5,7 @@ package playlist
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"net/http"
@@ -332,7 +332,8 @@ func TestPlaylist_Get_Pagination(t *testing.T) {
 }
 
 func TestPlaylist_List(t *testing.T) {
-	common.RunListTest(t, `{
+	common.RunListTest(
+		t, `{
 			"items": [
 				{
 					"id": "playlist-1",
@@ -344,7 +345,9 @@ func TestPlaylist_List(t *testing.T) {
 			]
 		}`,
 		func(svc *youtube.Service, output string) func(io.Writer) error {
-			p := NewPlaylist(WithService(svc), WithOutput(output), WithIds([]string{"playlist-1"}))
+			p := NewPlaylist(
+				WithService(svc), WithOutput(output), WithIds([]string{"playlist-1"}),
+			)
 			return p.List
 		},
 	)
@@ -459,7 +462,7 @@ func TestPlaylist_Update(t *testing.T) {
 					}
 
 					var playlist youtube.Playlist
-					if err := json.NewDecoder(r.Body).Decode(&playlist); err != nil {
+					if err := json.UnmarshalRead(r.Body, &playlist); err != nil {
 						t.Errorf("failed to decode body: %v", err)
 					}
 					if playlist.Snippet.Title != "Updated Title" {

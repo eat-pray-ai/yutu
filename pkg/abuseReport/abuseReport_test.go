@@ -5,7 +5,7 @@ package abuseReport
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"net/http"
 	"reflect"
 	"testing"
@@ -139,7 +139,7 @@ func TestAbuseReport_Insert(t *testing.T) {
 						TypeId string `json:"typeId"`
 					} `json:"subject"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 
@@ -176,7 +176,7 @@ func TestAbuseReport_Insert(t *testing.T) {
 						} `json:"entity"`
 					} `json:"relatedEntities"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 

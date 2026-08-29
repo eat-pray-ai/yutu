@@ -4,7 +4,7 @@
 package videoAbuseReportReason
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -33,12 +33,12 @@ var listInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet"]`),
+			Default: jsontext.Value(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Description: pkg.TableUsage,
 			Enum:    []any{"json", "yaml", "table"},
-			Default: json.RawMessage(`"yaml"`),
+			Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

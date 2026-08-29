@@ -5,7 +5,7 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"log/slog"
 	"net"
@@ -264,7 +264,7 @@ func (s *svc) saveToken(token *oauth2.Token) error {
 	defer func() {
 		_ = f.Close()
 	}()
-	err = json.NewEncoder(f).Encode(token)
+	err = json.MarshalWrite(f, token)
 	if err != nil {
 		return fmt.Errorf("%s: %w", cacheTokenFailed, err)
 	}

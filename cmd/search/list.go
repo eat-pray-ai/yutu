@@ -4,7 +4,7 @@
 package search
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -38,11 +38,11 @@ var listInSchema = &jsonschema.Schema{
 		"channel_id": {Type: "string", Description: cidUsage},
 		"channel_type": {
 			Type: "string", Enum: []any{"channelTypeUnspecified", "any", "show"},
-			Description: ctUsage, Default: json.RawMessage(`"channelTypeUnspecified"`),
+			Description: ctUsage, Default: jsontext.Value(`"channelTypeUnspecified"`),
 		},
 		"event_type": {
 			Type: "string", Enum: []any{"none", "upcoming", "live", "completed"},
-			Description: etUsage, Default: json.RawMessage(`"none"`),
+			Description: etUsage, Default: jsontext.Value(`"none"`),
 		},
 		"for": {
 			Type: "string", Description: forUsage,
@@ -52,13 +52,13 @@ var listInSchema = &jsonschema.Schema{
 		"location_radius": {Type: "string", Description: lrUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"order": {
 			Type: "string", Description: orderUsage,
-			Default: json.RawMessage(`"relevance"`),
+			Default: jsontext.Value(`"relevance"`),
 		},
 		"published_after":    {Type: "string", Description: paUsage},
 		"published_before":   {Type: "string", Description: pbUsage},
@@ -70,7 +70,7 @@ var listInSchema = &jsonschema.Schema{
 			Enum: []any{
 				"safeSearchSettingUnspecified", "none", "moderate", "strict",
 			},
-			Default: json.RawMessage(`"moderate"`),
+			Default: jsontext.Value(`"moderate"`),
 		},
 		"topic_id": {Type: "string", Description: tidUsage},
 		"types": {
@@ -82,20 +82,20 @@ var listInSchema = &jsonschema.Schema{
 			Enum: []any{
 				"videoCaptionUnspecified", "any", "closedCaption", "none",
 			},
-			Default: json.RawMessage(`"any"`),
+			Default: jsontext.Value(`"any"`),
 		},
 		"video_category_id": {Type: "string", Description: vcidUsage},
 		"video_definition":  {Type: "string", Description: vdeUsage},
 		"video_dimension": {
 			Type: "string", Enum: []any{"any", "2d", "3d"},
-			Description: vdiUsage, Default: json.RawMessage(`"any"`),
+			Description: vdiUsage, Default: jsontext.Value(`"any"`),
 		},
 		"video_duration": {
 			Type: "string", Description: vduUsage,
 			Enum: []any{
 				"videoDurationUnspecified", "any", "short", "medium", "long",
 			},
-			Default: json.RawMessage(`"any"`),
+			Default: jsontext.Value(`"any"`),
 		},
 		"video_embeddable": {
 			Type: "string", Description: veUsage,
@@ -122,11 +122,11 @@ var listInSchema = &jsonschema.Schema{
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["id","snippet"]`),
+			Default: jsontext.Value(`["id","snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

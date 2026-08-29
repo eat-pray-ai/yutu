@@ -5,7 +5,7 @@ package liveChatBan
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"net/http"
 	"reflect"
 	"testing"
@@ -151,7 +151,7 @@ func TestLiveChatBan_Insert(t *testing.T) {
 						Type string `json:"type"`
 					} `json:"snippet"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 
@@ -190,7 +190,7 @@ func TestLiveChatBan_Insert(t *testing.T) {
 						Type               string `json:"type"`
 					} `json:"snippet"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 

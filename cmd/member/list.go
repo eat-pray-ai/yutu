@@ -4,7 +4,7 @@
 package member
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"io"
 
 	cobramcp "github.com/eat-pray-ai/cobra-mcp"
@@ -35,22 +35,22 @@ var listInSchema = &jsonschema.Schema{
 		"has_access_to_level": {Type: "string", Description: hatlUsage},
 		"max_results": {
 			Type: "number", Description: pkg.MRUsage,
-			Default: json.RawMessage("5"),
+			Default: jsontext.Value("5"),
 			Minimum: new(float64(0)),
 		},
 		"mode": {
 			Type: "string", Description: mmUsage,
 			Enum:    []any{"listMembersModeUnknown", "updates", "all_current"},
-			Default: json.RawMessage(`"all_current"`),
+			Default: jsontext.Value(`"all_current"`),
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
 			Items:   &jsonschema.Schema{Type: "string"},
-			Default: json.RawMessage(`["snippet"]`),
+			Default: jsontext.Value(`["snippet"]`),
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: json.RawMessage(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
 		},
 	},
 }

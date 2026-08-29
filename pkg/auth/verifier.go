@@ -5,7 +5,7 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"net/http"
@@ -48,7 +48,7 @@ func NewGoogleTokenVerifier(tokenInfoURL string) sdkauth.TokenVerifier {
 			Sub       string `json:"sub"`
 			Error     string `json:"error"`
 		}
-		if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		if err := json.UnmarshalRead(resp.Body, &result); err != nil {
 			return nil, fmt.Errorf("%w: %w", sdkauth.ErrInvalidToken, err)
 		}
 		if result.Error != "" {

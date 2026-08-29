@@ -5,7 +5,7 @@ package subscription
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"io"
 	"math"
 	"net/http"
@@ -331,7 +331,8 @@ func TestSubscription_Get_Pagination(t *testing.T) {
 }
 
 func TestSubscription_List(t *testing.T) {
-	common.RunListTest(t, `{
+	common.RunListTest(
+		t, `{
 			"items": [
 				{
 					"id": "sub-1",
@@ -346,7 +347,9 @@ func TestSubscription_List(t *testing.T) {
 			]
 		}`,
 		func(svc *youtube.Service, output string) func(io.Writer) error {
-			s := NewSubscription(WithService(svc), WithOutput(output), WithIds([]string{"sub-1"}))
+			s := NewSubscription(
+				WithService(svc), WithOutput(output), WithIds([]string{"sub-1"}),
+			)
 			return s.List
 		},
 	)
@@ -385,7 +388,7 @@ func TestSubscription_Insert(t *testing.T) {
 						ChannelId   string `json:"channelId"`
 					} `json:"snippet"`
 				}
-				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
 					t.Fatalf("failed to decode request body: %v", err)
 				}
 

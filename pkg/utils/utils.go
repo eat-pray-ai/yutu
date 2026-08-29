@@ -7,7 +7,8 @@ import (
 	"bufio"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -39,7 +40,7 @@ var IsInteractive = func(v any) bool {
 func PrintJSON(data any, writer io.Writer) {
 	var marshalled []byte
 	if IsInteractive(writer) {
-		marshalled, _ = json.MarshalIndent(data, "", "  ")
+		marshalled, _ = json.Marshal(data, jsontext.WithIndent("  "))
 	} else {
 		marshalled, _ = json.Marshal(data)
 	}
@@ -81,7 +82,7 @@ func GetFileName(file string) string {
 }
 
 func IsJson(s string) bool {
-	var js json.RawMessage
+	var js jsontext.Value
 	return json.Unmarshal([]byte(s), &js) == nil
 }
 
