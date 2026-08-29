@@ -4,11 +4,12 @@
 package main
 
 import (
+	"cmp"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/cmd"
@@ -117,16 +118,12 @@ func generate() string {
 		}
 	}
 
-	sort.Slice(
-		coreCommands, func(i, j int) bool {
-			return coreCommands[i].Name() < coreCommands[j].Name()
-		},
-	)
-	sort.Slice(
-		resourceCommands, func(i, j int) bool {
-			return resourceCommands[i].Name() < resourceCommands[j].Name()
-		},
-	)
+	slices.SortFunc(coreCommands, func(a, b *cobra.Command) int {
+		return cmp.Compare(a.Name(), b.Name())
+	})
+	slices.SortFunc(resourceCommands, func(a, b *cobra.Command) int {
+		return cmp.Compare(a.Name(), b.Name())
+	})
 
 	b.WriteString("\n# yutu\n")
 	for _, c := range coreCommands {
@@ -148,11 +145,9 @@ func generate() string {
 			}
 			subs = append(subs, sub)
 		}
-		sort.Slice(
-			subs, func(i, j int) bool {
-				return subs[i].Name() < subs[j].Name()
-			},
-		)
+		slices.SortFunc(subs, func(a, b *cobra.Command) int {
+			return cmp.Compare(a.Name(), b.Name())
+		})
 
 		for _, sub := range subs {
 			fmt.Fprintf(&b, "echo \"------- %s -------\"\n", sub.Name())

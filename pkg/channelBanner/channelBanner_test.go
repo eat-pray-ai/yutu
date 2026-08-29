@@ -5,7 +5,6 @@ package channelBanner
 
 import (
 	"bytes"
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -32,7 +31,7 @@ func TestChannelBanner_Insert_Error(t *testing.T) {
 		_ = f.Close()
 	}(f)
 
-	svc, _ := youtube.NewService(context.Background(), option.WithAPIKey("test"))
+	svc, _ := youtube.NewService(t.Context(), option.WithAPIKey("test"))
 
 	// Test: File open error
 	cb := NewChannelBanner(WithFile("non_existent.jpg"), WithService(svc))
@@ -55,7 +54,7 @@ func TestChannelBanner_Insert_Error(t *testing.T) {
 	)
 	defer ts.Close()
 	svc, _ = youtube.NewService(
-		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+		t.Context(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
 	)
 	cb = NewChannelBanner(
 		WithFile("test.jpg"), WithService(svc), WithChannelId("cid"),
@@ -94,7 +93,7 @@ func TestChannelBanner_Insert_Output(t *testing.T) {
 	)
 	defer ts.Close()
 	svc, _ := youtube.NewService(
-		context.Background(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
+		t.Context(), option.WithEndpoint(ts.URL), option.WithAPIKey("test"),
 	)
 
 	tests := []struct {

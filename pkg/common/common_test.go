@@ -5,7 +5,6 @@ package common
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"math"
 	"net/http"
@@ -263,7 +262,7 @@ func TestPrintResult(t *testing.T) {
 
 func TestSetContext(t *testing.T) {
 	f := &Fields{}
-	ctx := context.Background()
+	ctx := t.Context()
 	f.SetContext(ctx)
 	if f.Ctx != ctx {
 		t.Error("SetContext did not set context")
@@ -300,7 +299,7 @@ func TestEnsureService_FallsBackWithoutContext(t *testing.T) {
 
 func TestEnsureService_FallsBackWithContextNoToken(t *testing.T) {
 	f := &Fields{}
-	f.SetContext(context.Background())
+	f.SetContext(t.Context())
 	// No TokenInfo in context → should fall back to file auth
 	err := f.EnsureService()
 	if err == nil {
@@ -311,7 +310,7 @@ func TestEnsureService_FallsBackWithContextNoToken(t *testing.T) {
 }
 
 func TestTokenInfoFromContext_Nil(t *testing.T) {
-	info := sdkauth.TokenInfoFromContext(context.Background())
+	info := sdkauth.TokenInfoFromContext(t.Context())
 	if info != nil {
 		t.Error("expected nil TokenInfo from plain context")
 	}

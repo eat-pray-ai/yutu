@@ -4,7 +4,8 @@
 package main
 
 import (
-	"sort"
+	"cmp"
+	"slices"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -63,8 +64,8 @@ func collectResources(root *cobra.Command) []resourceEntry {
 			}
 			verbs = append(verbs, verbEntry{name: sub.Name(), short: sub.Short})
 		}
-		sort.Slice(verbs, func(i, j int) bool {
-			return verbs[i].name < verbs[j].name
+		slices.SortFunc(verbs, func(a, b verbEntry) int {
+			return cmp.Compare(a.name, b.name)
 		})
 		resources = append(resources, resourceEntry{
 			name:  name,
@@ -75,8 +76,8 @@ func collectResources(root *cobra.Command) []resourceEntry {
 			verbs: verbs,
 		})
 	}
-	sort.Slice(resources, func(i, j int) bool {
-		return resources[i].name < resources[j].name
+	slices.SortFunc(resources, func(a, b resourceEntry) int {
+		return cmp.Compare(a.name, b.name)
 	})
 	return resources
 }

@@ -4,7 +4,6 @@
 package auth
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -31,7 +30,7 @@ func TestGoogleTokenVerifier_ValidToken(t *testing.T) {
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)
-	info, err := verifier(context.Background(), "valid-google-token", nil)
+	info, err := verifier(t.Context(), "valid-google-token", nil)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -58,7 +57,7 @@ func TestGoogleTokenVerifier_InvalidToken(t *testing.T) {
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)
-	_, err := verifier(context.Background(), "bad-token", nil)
+	_, err := verifier(t.Context(), "bad-token", nil)
 	if err == nil {
 		t.Fatal("expected error for invalid token")
 	}
@@ -74,7 +73,7 @@ func TestGoogleTokenVerifier_ServerError(t *testing.T) {
 	defer ts.Close()
 
 	verifier := NewGoogleTokenVerifier(ts.URL)
-	_, err := verifier(context.Background(), "any-token", nil)
+	_, err := verifier(t.Context(), "any-token", nil)
 	if err == nil {
 		t.Fatal("expected error for server failure")
 	}

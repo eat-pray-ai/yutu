@@ -96,7 +96,7 @@ Initialize the `youtube.Service` with the mock server's URL.
 
 ```go
 svc, _ := youtube.NewService(
-    context.Background(),
+    t.Context(),
     option.WithEndpoint(ts.URL), // Point to local test server
     option.WithAPIKey("test-key"),
 )
