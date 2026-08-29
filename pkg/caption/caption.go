@@ -27,11 +27,11 @@ type Caption struct {
 	common.Fields
 	File           string `yaml:"file" json:"file,omitempty"`
 	AudioTrackType string `yaml:"audio_track_type" json:"audio_track_type,omitempty"`
-	IsAutoSynced   *bool  `yaml:"is_auto_synced" json:"is_auto_synced,omitempty"`
-	IsCC           *bool  `yaml:"is_cc" json:"is_cc,omitempty"`
-	IsDraft        *bool  `yaml:"is_draft" json:"is_draft,omitempty"`
-	IsEasyReader   *bool  `yaml:"is_easy_reader" json:"is_easy_reader,omitempty"`
-	IsLarge        *bool  `yaml:"is_large" json:"is_large,omitempty"`
+	IsAutoSynced   *bool  `yaml:"is_auto_synced" json:"is_auto_synced,omitzero"`
+	IsCC           *bool  `yaml:"is_cc" json:"is_cc,omitzero"`
+	IsDraft        *bool  `yaml:"is_draft" json:"is_draft,omitzero"`
+	IsEasyReader   *bool  `yaml:"is_easy_reader" json:"is_easy_reader,omitzero"`
+	IsLarge        *bool  `yaml:"is_large" json:"is_large,omitzero"`
 	Language       string `yaml:"language" json:"language,omitempty"`
 	Name           string `yaml:"name" json:"name,omitempty"`
 	TrackKind      string `yaml:"track_kind" json:"track_kind,omitempty"`

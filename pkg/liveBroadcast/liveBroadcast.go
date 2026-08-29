@@ -27,7 +27,7 @@ type LiveBroadcast struct {
 	common.Fields
 	Title              string `yaml:"title" json:"title,omitempty"`
 	Description        string `yaml:"description" json:"description,omitempty"`
-	Mine               *bool  `yaml:"mine" json:"mine,omitempty"`
+	Mine               *bool  `yaml:"mine" json:"mine,omitzero"`
 	BroadcastStatus    string `yaml:"broadcast_status" json:"broadcast_status,omitempty"`
 	BroadcastType      string `yaml:"broadcast_type" json:"broadcast_type,omitempty"`
 	PrivacyStatus      string `yaml:"privacy_status" json:"privacy_status,omitempty"`
@@ -36,9 +36,9 @@ type LiveBroadcast struct {
 	StreamId           string `yaml:"stream_id" json:"stream_id,omitempty"`
 
 	CueType              string `yaml:"cue_type" json:"cue_type,omitempty"`
-	CueDurationSecs      int64  `yaml:"cue_duration_secs" json:"cue_duration_secs,omitempty"`
-	CueInsertionOffsetMs int64  `yaml:"cue_insertion_offset_ms" json:"cue_insertion_offset_ms,omitempty"`
-	CueWalltimeMs        uint64 `yaml:"cue_walltime_ms" json:"cue_walltime_ms,omitempty"`
+	CueDurationSecs      int64  `yaml:"cue_duration_secs" json:"cue_duration_secs,omitzero"`
+	CueInsertionOffsetMs int64  `yaml:"cue_insertion_offset_ms" json:"cue_insertion_offset_ms,omitzero"`
+	CueWalltimeMs        uint64 `yaml:"cue_walltime_ms" json:"cue_walltime_ms,omitzero"`
 
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }

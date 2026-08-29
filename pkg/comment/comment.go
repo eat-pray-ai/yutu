@@ -25,12 +25,12 @@ var (
 type Comment struct {
 	common.Fields
 	AuthorChannelId  string `yaml:"author_channel_id" json:"author_channel_id,omitempty"`
-	CanRate          *bool  `yaml:"can_rate" json:"can_rate,omitempty"`
+	CanRate          *bool  `yaml:"can_rate" json:"can_rate,omitzero"`
 	ParentId         string `yaml:"parent_id" json:"parent_id,omitempty"`
 	TextFormat       string `yaml:"text_format" json:"text_format,omitempty"`
 	TextOriginal     string `yaml:"text_original" json:"text_original,omitempty"`
 	ModerationStatus string `yaml:"moderation_status" json:"moderation_status,omitempty"`
-	BanAuthor        *bool  `yaml:"ban_author" json:"ban_author,omitempty"`
+	BanAuthor        *bool  `yaml:"ban_author" json:"ban_author,omitzero"`
 	VideoId          string `yaml:"video_id" json:"video_id,omitempty"`
 	ViewerRating     string `yaml:"viewer_rating" json:"viewer_rating,omitempty"`
 }

@@ -23,8 +23,8 @@ type Watermark struct {
 	common.Fields
 	File            string `yaml:"file" json:"file,omitempty"`
 	InVideoPosition string `yaml:"in_video_position" json:"in_video_position,omitempty"`
-	DurationMs      uint64 `yaml:"duration_ms" json:"duration_ms,omitempty"`
-	OffsetMs        uint64 `yaml:"offset_ms" json:"offset_ms,omitempty"`
+	DurationMs      uint64 `yaml:"duration_ms" json:"duration_ms,omitzero"`
+	OffsetMs        uint64 `yaml:"offset_ms" json:"offset_ms,omitzero"`
 	OffsetType      string `yaml:"offset_type" json:"offset_type,omitempty"`
 }
 

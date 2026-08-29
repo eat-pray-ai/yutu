@@ -24,7 +24,7 @@ type Playlist struct {
 	common.Fields
 	Title       string   `yaml:"title" json:"title,omitempty"`
 	Description string   `yaml:"description" json:"description,omitempty"`
-	Mine        *bool    `yaml:"mine" json:"mine,omitempty"`
+	Mine        *bool    `yaml:"mine" json:"mine,omitzero"`
 	Tags        []string `yaml:"tags" json:"tags,omitempty"`
 	Language    string   `yaml:"language" json:"language,omitempty"`
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`

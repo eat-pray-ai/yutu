@@ -20,7 +20,7 @@ var (
 
 type ChannelSection struct {
 	common.Fields
-	Mine *bool `yaml:"mine" json:"mine,omitempty"`
+	Mine *bool `yaml:"mine" json:"mine,omitzero"`
 }
 
 type IChannelSection[T any] interface {

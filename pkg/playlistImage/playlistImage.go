@@ -24,10 +24,10 @@ var (
 
 type PlaylistImage struct {
 	common.Fields
-	Height     int64  `yaml:"height" json:"height,omitempty"`
+	Height     int64  `yaml:"height" json:"height,omitzero"`
 	PlaylistId string `yaml:"playlist_id" json:"playlist_id,omitempty"`
 	Type       string `yaml:"type" json:"type,omitempty"`
-	Width      int64  `yaml:"width" json:"width,omitempty"`
+	Width      int64  `yaml:"width" json:"width,omitzero"`
 	File       string `yaml:"file" json:"file,omitempty"`
 	Parent     string `yaml:"parent" json:"parent,omitempty"`
 

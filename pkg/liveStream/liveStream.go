@@ -24,7 +24,7 @@ type LiveStream struct {
 	common.Fields
 	Title         string `yaml:"title" json:"title,omitempty"`
 	Description   string `yaml:"description" json:"description,omitempty"`
-	Mine          *bool  `yaml:"mine" json:"mine,omitempty"`
+	Mine          *bool  `yaml:"mine" json:"mine,omitzero"`
 	FrameRate     string `yaml:"frame_rate" json:"frame_rate,omitempty"`
 	IngestionType string `yaml:"ingestion_type" json:"ingestion_type,omitempty"`
 	Resolution    string `yaml:"resolution" json:"resolution,omitempty"`

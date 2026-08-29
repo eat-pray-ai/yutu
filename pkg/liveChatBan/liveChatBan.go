@@ -21,7 +21,7 @@ type LiveChatBan struct {
 	common.Fields
 	LiveChatId          string `yaml:"live_chat_id" json:"live_chat_id,omitempty"`
 	BannedUserChannelId string `yaml:"banned_user_channel_id" json:"banned_user_channel_id,omitempty"`
-	BanDurationSeconds  uint64 `yaml:"ban_duration_seconds" json:"ban_duration_seconds,omitempty"`
+	BanDurationSeconds  uint64 `yaml:"ban_duration_seconds" json:"ban_duration_seconds,omitzero"`
 	BanType             string `yaml:"ban_type" json:"ban_type,omitempty"`
 }
 

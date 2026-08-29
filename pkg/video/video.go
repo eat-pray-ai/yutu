@@ -35,7 +35,7 @@ var (
 
 type Video struct {
 	common.Fields
-	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitempty"`
+	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitzero"`
 	File        string   `yaml:"file" json:"file,omitempty"`
 	Title       string   `yaml:"title" json:"title,omitempty"`
 	Description string   `yaml:"description" json:"description,omitempty"`
@@ -50,20 +50,20 @@ type Video struct {
 	PlaylistId  string   `yaml:"playlist_id" json:"playlist_id,omitempty"`
 	CategoryId  string   `yaml:"category_id" json:"category_id,omitempty"`
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
-	ForKids     *bool    `yaml:"for_kids" json:"for_kids,omitempty"`
-	Embeddable  *bool    `yaml:"embeddable" json:"embeddable,omitempty"`
+	ForKids     *bool    `yaml:"for_kids" json:"for_kids,omitzero"`
+	Embeddable  *bool    `yaml:"embeddable" json:"embeddable,omitzero"`
 	PublishAt   string   `yaml:"publish_at" json:"publish_at,omitempty"`
 	RegionCode  string   `yaml:"region_code" json:"region_code,omitempty"`
 	ReasonId    string   `yaml:"reason_id" json:"reason_id,omitempty"`
-	Stabilize   *bool    `yaml:"stabilize" json:"stabilize,omitempty"`
-	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitempty"`
-	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitempty"`
+	Stabilize   *bool    `yaml:"stabilize" json:"stabilize,omitzero"`
+	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitzero"`
+	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitzero"`
 
 	RecordingDate                 string `yaml:"recording_date" json:"recording_date,omitempty"`
-	ContainsSyntheticMedia        *bool  `yaml:"contains_synthetic_media" json:"contains_synthetic_media,omitempty"`
+	ContainsSyntheticMedia        *bool  `yaml:"contains_synthetic_media" json:"contains_synthetic_media,omitzero"`
 	SecondaryReasonId             string `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
-	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitempty"`
-	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitempty"`
+	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitzero"`
+	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitzero"`
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 

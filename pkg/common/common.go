@@ -27,7 +27,7 @@ type Fields struct {
 	RedirectURL string           `yaml:"-" json:"-"`
 	Ids         []string         `yaml:"ids" json:"ids,omitempty"`
 	Confirmed   bool             `yaml:"-" json:"confirmed,omitempty"`
-	MaxResults  int64            `yaml:"max_results" json:"max_results,omitempty"`
+	MaxResults  int64            `yaml:"max_results" json:"max_results,omitzero"`
 	Hl          string           `yaml:"hl" json:"hl,omitempty"`
 	ChannelId   string           `yaml:"channel_id" json:"channel_id,omitempty"`
 	Parts       []string         `yaml:"parts" json:"parts,omitempty"`
