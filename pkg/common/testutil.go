@@ -5,7 +5,6 @@ package common
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -25,7 +24,7 @@ func NewTestService(t *testing.T, handler http.Handler) *youtube.Service {
 	t.Cleanup(ts.Close)
 
 	svc, err := youtube.NewService(
-		context.Background(),
+		t.Context(),
 		option.WithEndpoint(ts.URL),
 		option.WithAPIKey("test-key"),
 	)

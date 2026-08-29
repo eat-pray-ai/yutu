@@ -60,6 +60,12 @@ func NewY2BService(opts ...Option) Svc {
 	return s
 }
 
+func WithContext(ctx context.Context) Option {
+	return func(s *svc) {
+		s.ctx = ctx
+	}
+}
+
 func WithRedirectURL(url string) Option {
 	return func(s *svc) {
 		s.redirectURL = url

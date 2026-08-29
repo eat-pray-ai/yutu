@@ -5,7 +5,6 @@ package auth
 
 import (
 	"bytes"
-	"context"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -49,6 +48,7 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - json",
 			args: args{
 				opts: []Option{
+					WithContext(t.Context()),
 					WithCredential(credential, mockFS),
 					WithCacheToken(cacheToken, mockFS),
 					WithIO(reader, writer),
@@ -58,7 +58,7 @@ func TestNewY2BService(t *testing.T) {
 				Credential: credential,
 				CacheToken: cacheToken,
 				credFile:   credFile,
-				ctx:        context.Background(),
+				ctx:        t.Context(),
 				in:         reader,
 				out:        writer,
 			},
@@ -67,6 +67,7 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - Base64",
 			args: args{
 				opts: []Option{
+					WithContext(t.Context()),
 					WithCredential(credB64, mockFS),
 					WithCacheToken(tokenB64, mockFS),
 					WithIO(reader, writer),
@@ -76,7 +77,7 @@ func TestNewY2BService(t *testing.T) {
 				Credential: credential,
 				CacheToken: cacheToken,
 				credFile:   credFile,
-				ctx:        context.Background(),
+				ctx:        t.Context(),
 				in:         reader,
 				out:        writer,
 			},
@@ -85,6 +86,7 @@ func TestNewY2BService(t *testing.T) {
 			name: "with all options - file",
 			args: args{
 				opts: []Option{
+					WithContext(t.Context()),
 					WithCredential(absCred, mockFS),
 					WithCacheToken(absToken, mockFS),
 					WithIO(reader, writer),
@@ -95,7 +97,7 @@ func TestNewY2BService(t *testing.T) {
 				CacheToken: cacheToken,
 				credFile:   absCred,
 				tokenFile:  tokenFile,
-				ctx:        context.Background(),
+				ctx:        t.Context(),
 				in:         reader,
 				out:        writer,
 			},
@@ -103,11 +105,11 @@ func TestNewY2BService(t *testing.T) {
 		{
 			name: "with no options",
 			args: args{
-				opts: []Option{},
+				opts: []Option{WithContext(t.Context())},
 			},
 			want: &svc{
 				credFile: credFile,
-				ctx:      context.Background(),
+				ctx:      t.Context(),
 				in:       os.Stdin,
 				out:      os.Stdout,
 			},
