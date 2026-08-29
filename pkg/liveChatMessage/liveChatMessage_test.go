@@ -44,14 +44,12 @@ func TestNewLiveChatMessage(t *testing.T) {
 				},
 			},
 			want: &LiveChatMessage{
-				Fields: common.Fields{
-					Service:    svc,
-					Parts:      []string{"snippet", "id", "authorDetails"},
-					Output:     "json",
-					MaxResults: 50,
-					Ids:        []string{"msg1", "msg2"},
-					Hl:         "en",
-				},
+				Service:     svc,
+				Parts:       []string{"snippet", "id", "authorDetails"},
+				Output:      "json",
+				MaxResults:  50,
+				Ids:         []string{"msg1", "msg2"},
+				Hl:          "en",
 				LiveChatId:  "liveChat123",
 				MessageText: "hello world",
 				Status:      "closed",
@@ -72,7 +70,7 @@ func TestNewLiveChatMessage(t *testing.T) {
 				},
 			},
 			want: &LiveChatMessage{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -83,7 +81,7 @@ func TestNewLiveChatMessage(t *testing.T) {
 				},
 			},
 			want: &LiveChatMessage{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -112,10 +110,8 @@ func TestNewLiveChatMessage(t *testing.T) {
 				},
 			},
 			want: &LiveChatMessage{
-				Fields: common.Fields{
-					Parts:      []string{"id"},
-					MaxResults: 25,
-				},
+				Parts:      []string{"id"},
+				MaxResults: 25,
 				LiveChatId: "chat789",
 			},
 		},

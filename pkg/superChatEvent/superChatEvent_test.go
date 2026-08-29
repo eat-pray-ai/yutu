@@ -38,13 +38,11 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Fields: common.Fields{
-					Service:    svc,
-					Parts:      []string{"id", "snippet"},
-					Output:     "json",
-					Hl:         "en",
-					MaxResults: 50,
-				},
+				Service:    svc,
+				Parts:      []string{"id", "snippet"},
+				Output:     "json",
+				Hl:         "en",
+				MaxResults: 50,
 			},
 		},
 		{
@@ -62,7 +60,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -73,7 +71,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -85,7 +83,7 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Fields: common.Fields{Output: "", Hl: ""},
+				Output: "", Hl: "",
 			},
 		},
 		{
@@ -98,11 +96,9 @@ func TestNewSuperChatEvent(t *testing.T) {
 				},
 			},
 			want: &SuperChatEvent{
-				Fields: common.Fields{
-					Output:     "yaml",
-					Hl:         "ja",
-					MaxResults: 25,
-				},
+				Output:     "yaml",
+				Hl:         "ja",
+				MaxResults: 25,
 			},
 		},
 	}

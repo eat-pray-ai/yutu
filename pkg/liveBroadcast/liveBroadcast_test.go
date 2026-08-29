@@ -56,14 +56,12 @@ func TestNewLiveBroadcast(t *testing.T) {
 				},
 			},
 			want: &LiveBroadcast{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet", "status", "contentDetails"},
-					Output:                 "json",
-					MaxResults:             50,
-					Ids:                    []string{"broadcast1", "broadcast2"},
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"snippet", "status", "contentDetails"},
+				Output:                        "json",
+				MaxResults:                    50,
+				Ids:                           []string{"broadcast1", "broadcast2"},
+				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Broadcast",
 				Description:                   "A test broadcast",
 				Mine:                          &mine,
@@ -95,7 +93,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 				},
 			},
 			want: &LiveBroadcast{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -106,7 +104,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 				},
 			},
 			want: &LiveBroadcast{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -146,10 +144,8 @@ func TestNewLiveBroadcast(t *testing.T) {
 				},
 			},
 			want: &LiveBroadcast{
-				Fields: common.Fields{
-					Parts:      []string{"snippet"},
-					MaxResults: 25,
-				},
+				Parts:         []string{"snippet"},
+				MaxResults:    25,
 				Title:         "My Broadcast",
 				PrivacyStatus: "private",
 			},

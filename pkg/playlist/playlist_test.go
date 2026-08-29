@@ -53,16 +53,14 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"id", "snippet"},
-					Output:                 "json",
-					Ids:                    []string{"playlist1", "playlist2"},
-					MaxResults:             50,
-					Hl:                     "en",
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"id", "snippet"},
+				Output:                        "json",
+				Ids:                           []string{"playlist1", "playlist2"},
+				MaxResults:                    50,
+				Hl:                            "en",
+				ChannelId:                     "channel123",
+				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Playlist",
 				Description:                   "Test playlist description",
 				Tags:                          []string{"tag1", "tag2", "tag3"},
@@ -108,7 +106,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -119,7 +117,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -156,7 +154,7 @@ func TestNewPlaylist(t *testing.T) {
 				},
 			},
 			want: &Playlist{
-				Fields:      common.Fields{MaxResults: 25},
+				MaxResults:  25,
 				Title:       "My Playlist",
 				Description: "A great playlist",
 				Privacy:     "private",

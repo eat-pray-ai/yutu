@@ -91,16 +91,14 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet", "contentDetails"},
-					Output:                 "json",
-					Ids:                    []string{"video1", "video2"},
-					MaxResults:             50,
-					Hl:                     "en",
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"snippet", "contentDetails"},
+				Output:                        "json",
+				Ids:                           []string{"video1", "video2"},
+				MaxResults:                    50,
+				Hl:                            "en",
+				ChannelId:                     "channel123",
+				OnBehalfOfContentOwner:        "owner123",
 				AutoLevels:                    &autoLevelsTrue,
 				File:                          "/path/to/video.mp4",
 				Title:                         "Test Video",
@@ -186,7 +184,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -197,7 +195,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -264,7 +262,7 @@ func TestNewVideo(t *testing.T) {
 				},
 			},
 			want: &Video{
-				Fields:      common.Fields{MaxResults: 25},
+				MaxResults:  25,
 				Title:       "My Video",
 				Description: "A great video",
 				Tags:        []string{"tutorial", "golang"},

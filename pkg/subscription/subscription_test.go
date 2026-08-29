@@ -49,15 +49,13 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet", "contentDetails"},
-					Output:                 "json",
-					Ids:                    []string{"sub1", "sub2"},
-					MaxResults:             50,
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"snippet", "contentDetails"},
+				Output:                        "json",
+				Ids:                           []string{"sub1", "sub2"},
+				MaxResults:                    50,
+				ChannelId:                     "channel123",
+				OnBehalfOfContentOwner:        "owner123",
 				SubscriberChannelId:           "subscriber123",
 				Description:                   "Test subscription description",
 				ForChannelId:                  "forChannel123",
@@ -103,7 +101,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -114,7 +112,7 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -132,10 +130,8 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: common.Fields{
-					ChannelId:              "",
-					OnBehalfOfContentOwner: "",
-				},
+				ChannelId:                     "",
+				OnBehalfOfContentOwner:        "",
 				SubscriberChannelId:           "",
 				Description:                   "",
 				ForChannelId:                  "",
@@ -156,13 +152,11 @@ func TestNewSubscription(t *testing.T) {
 				},
 			},
 			want: &Subscription{
-				Fields: common.Fields{
-					ChannelId:  "myChannel",
-					MaxResults: 25,
-				},
-				Title: "My Subscription",
-				Order: "alphabetical",
-				For:   "mine",
+				ChannelId:  "myChannel",
+				MaxResults: 25,
+				Title:      "My Subscription",
+				Order:      "alphabetical",
+				For:        "mine",
 			},
 		},
 	}

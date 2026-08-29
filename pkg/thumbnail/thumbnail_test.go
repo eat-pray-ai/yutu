@@ -36,10 +36,8 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				Fields: common.Fields{
-					Service: svc,
-					Output:  "json",
-				},
+				Service: svc,
+				Output:  "json",
 				VideoId: "video123",
 				File:    "/path/to/thumbnail.jpg",
 			},
@@ -61,9 +59,7 @@ func TestNewThumbnail(t *testing.T) {
 				},
 			},
 			want: &Thumbnail{
-				Fields: common.Fields{
-					Output: "",
-				},
+				Output:  "",
 				VideoId: "",
 				File:    "",
 			},

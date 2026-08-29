@@ -50,24 +50,22 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet", "contentDetails"},
-					Output:                 "json",
-					Ids:                    []string{"channel1", "channel2"},
-					MaxResults:             100,
-					Hl:                     "en",
-					OnBehalfOfContentOwner: "owner123",
-				},
-				CategoryId:      "category123",
-				ForHandle:       "@testhandle",
-				ForUsername:     "testuser",
-				For:             "managedByMe",
-				Country:         "US",
-				CustomUrl:       "testchannel",
-				DefaultLanguage: "en",
-				Description:     "Test channel description",
-				Title:           "Test Channel",
+				Service:                svc,
+				Parts:                  []string{"snippet", "contentDetails"},
+				Output:                 "json",
+				Ids:                    []string{"channel1", "channel2"},
+				MaxResults:             100,
+				Hl:                     "en",
+				OnBehalfOfContentOwner: "owner123",
+				CategoryId:             "category123",
+				ForHandle:              "@testhandle",
+				ForUsername:            "testuser",
+				For:                    "managedByMe",
+				Country:                "US",
+				CustomUrl:              "testchannel",
+				DefaultLanguage:        "en",
+				Description:            "Test channel description",
+				Title:                  "Test Channel",
 			},
 		},
 		{
@@ -78,7 +76,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{Service: svc},
+				Service: svc,
 			},
 		},
 		{
@@ -90,7 +88,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{Service: svc},
+				Service: svc,
 			},
 		},
 		{
@@ -102,8 +100,8 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{Service: svc},
-				For:    "mine",
+				Service: svc,
+				For:     "mine",
 			},
 		},
 		{
@@ -115,7 +113,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{Service: svc, MaxResults: math.MaxInt64},
+				Service: svc, MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -127,7 +125,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields: common.Fields{Service: svc, MaxResults: 1},
+				Service: svc, MaxResults: 1,
 			},
 		},
 		{
@@ -148,7 +146,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields:          common.Fields{Service: svc},
+				Service:         svc,
 				CategoryId:      "",
 				ForHandle:       "",
 				ForUsername:     "",
@@ -171,7 +169,7 @@ func TestNewChannel(t *testing.T) {
 				},
 			},
 			want: &Channel{
-				Fields:  common.Fields{Service: svc, Ids: []string{"channel1"}, MaxResults: 50},
+				Service: svc, Ids: []string{"channel1"}, MaxResults: 50,
 				Title:   "My Channel",
 				Country: "UK",
 			},

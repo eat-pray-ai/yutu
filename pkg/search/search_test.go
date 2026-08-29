@@ -65,14 +65,12 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet"},
-					Output:                 "json",
-					MaxResults:             50,
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                   svc,
+				Parts:                     []string{"snippet"},
+				Output:                    "json",
+				MaxResults:                50,
+				ChannelId:                 "channel123",
+				OnBehalfOfContentOwner:    "owner123",
 				ChannelType:               "any",
 				EventType:                 "live",
 				For:                       "mine",
@@ -135,7 +133,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -146,7 +144,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -180,10 +178,8 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields: common.Fields{
-					ChannelId:              "",
-					OnBehalfOfContentOwner: "",
-				},
+				ChannelId:                 "",
+				OnBehalfOfContentOwner:    "",
 				ChannelType:               "",
 				EventType:                 "",
 				Location:                  "",
@@ -220,7 +216,7 @@ func TestNewSearch(t *testing.T) {
 				},
 			},
 			want: &Search{
-				Fields:     common.Fields{MaxResults: 25},
+				MaxResults: 25,
 				Q:          "golang tutorial",
 				Order:      "date",
 				RegionCode: "UK",

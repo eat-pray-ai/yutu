@@ -41,11 +41,9 @@ func TestNewThirdPartyLink(t *testing.T) {
 				},
 			},
 			want: &ThirdPartyLink{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet", "status"},
-					Output:  "json",
-				},
+				Service:           svc,
+				Parts:             []string{"snippet", "status"},
+				Output:            "json",
 				LinkingToken:      "token123",
 				Type:              "channelToStoreLink",
 				LinkStatus:        "linked",

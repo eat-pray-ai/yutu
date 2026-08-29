@@ -41,14 +41,12 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				Fields: common.Fields{
-					Service:                svc,
-					Ids:                    []string{"section1", "section2"},
-					ChannelId:              "channel123",
-					Hl:                     "en",
-					OnBehalfOfContentOwner: "owner123",
-				},
-				Mine: &mineTrue,
+				Service:                svc,
+				Ids:                    []string{"section1", "section2"},
+				ChannelId:              "channel123",
+				Hl:                     "en",
+				OnBehalfOfContentOwner: "owner123",
+				Mine:                   &mineTrue,
 			},
 		},
 		{
@@ -89,11 +87,9 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				Fields: common.Fields{
-					ChannelId:              "",
-					Hl:                     "",
-					OnBehalfOfContentOwner: "",
-				},
+				ChannelId:              "",
+				Hl:                     "",
+				OnBehalfOfContentOwner: "",
 			},
 		},
 		{
@@ -106,11 +102,9 @@ func TestNewChannelSection(t *testing.T) {
 				},
 			},
 			want: &ChannelSection{
-				Fields: common.Fields{
-					Ids:       []string{"section1"},
-					ChannelId: "partialChannel",
-					Hl:        "fr",
-				},
+				Ids:       []string{"section1"},
+				ChannelId: "partialChannel",
+				Hl:        "fr",
 			},
 		},
 	}

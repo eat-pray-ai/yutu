@@ -35,11 +35,9 @@ func TestNewMembershipsLevel(t *testing.T) {
 				},
 			},
 			want: &MembershipsLevel{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
-				},
+				Service: svc,
+				Parts:   []string{"snippet"},
+				Output:  "json",
 			},
 		},
 		{

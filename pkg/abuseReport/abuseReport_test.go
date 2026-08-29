@@ -42,11 +42,9 @@ func TestNewAbuseReport(t *testing.T) {
 				},
 			},
 			want: &AbuseReport{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
-				},
+				Service:         svc,
+				Parts:           []string{"snippet"},
+				Output:          "json",
 				AbuseTypes:      []string{"spam", "harassment"},
 				Description:     "This video contains spam",
 				SubjectId:       "video123",

@@ -42,13 +42,11 @@ func TestNewLiveChatModerator(t *testing.T) {
 				},
 			},
 			want: &LiveChatModerator{
-				Fields: common.Fields{
-					Service:    svc,
-					Parts:      []string{"snippet", "id"},
-					Output:     "json",
-					MaxResults: 50,
-					Ids:        []string{"mod1", "mod2"},
-				},
+				Service:            svc,
+				Parts:              []string{"snippet", "id"},
+				Output:             "json",
+				MaxResults:         50,
+				Ids:                []string{"mod1", "mod2"},
 				LiveChatId:         "liveChat123",
 				ModeratorChannelId: "channel456",
 			},
@@ -68,7 +66,7 @@ func TestNewLiveChatModerator(t *testing.T) {
 				},
 			},
 			want: &LiveChatModerator{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -79,7 +77,7 @@ func TestNewLiveChatModerator(t *testing.T) {
 				},
 			},
 			want: &LiveChatModerator{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -106,10 +104,8 @@ func TestNewLiveChatModerator(t *testing.T) {
 				},
 			},
 			want: &LiveChatModerator{
-				Fields: common.Fields{
-					Parts:      []string{"id"},
-					MaxResults: 25,
-				},
+				Parts:      []string{"id"},
+				MaxResults: 25,
 				LiveChatId: "chat789",
 			},
 		},

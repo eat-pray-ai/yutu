@@ -49,14 +49,12 @@ func TestNewLiveStream(t *testing.T) {
 				},
 			},
 			want: &LiveStream{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"snippet", "cdn", "status"},
-					Output:                 "json",
-					MaxResults:             50,
-					Ids:                    []string{"stream1", "stream2"},
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"snippet", "cdn", "status"},
+				Output:                        "json",
+				MaxResults:                    50,
+				Ids:                           []string{"stream1", "stream2"},
+				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Stream",
 				Description:                   "A test stream",
 				Mine:                          &mine,
@@ -81,7 +79,7 @@ func TestNewLiveStream(t *testing.T) {
 				},
 			},
 			want: &LiveStream{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -92,7 +90,7 @@ func TestNewLiveStream(t *testing.T) {
 				},
 			},
 			want: &LiveStream{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -126,10 +124,8 @@ func TestNewLiveStream(t *testing.T) {
 				},
 			},
 			want: &LiveStream{
-				Fields: common.Fields{
-					Parts:      []string{"snippet"},
-					MaxResults: 25,
-				},
+				Parts:         []string{"snippet"},
+				MaxResults:    25,
 				Title:         "My Stream",
 				IngestionType: "rtmp",
 			},

@@ -156,12 +156,10 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: common.Fields{
-					Output:                 "json",
-					Service:                svc,
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Output:                        "json",
+				Service:                       svc,
+				ChannelId:                     "channel123",
+				OnBehalfOfContentOwner:        "owner123",
 				File:                          "/path/to/banner.jpg",
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
 			},
@@ -185,11 +183,9 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: common.Fields{
-					Output:                 "",
-					ChannelId:              "",
-					OnBehalfOfContentOwner: "",
-				},
+				Output:                        "",
+				ChannelId:                     "",
+				OnBehalfOfContentOwner:        "",
 				File:                          "",
 				OnBehalfOfContentOwnerChannel: "",
 			},
@@ -204,11 +200,9 @@ func TestNewChannelBanner(t *testing.T) {
 				},
 			},
 			want: &ChannelBanner{
-				Fields: common.Fields{
-					Output:    "yaml",
-					ChannelId: "partialChannel",
-				},
-				File: "/partial/banner.png",
+				Output:    "yaml",
+				ChannelId: "partialChannel",
+				File:      "/partial/banner.png",
 			},
 		},
 	}

@@ -41,16 +41,14 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields: common.Fields{
-					Service:                svc,
-					ChannelId:              "channel123",
-					OnBehalfOfContentOwner: "owner123",
-				},
-				File:            "/path/to/watermark.png",
-				InVideoPosition: "topRight",
-				DurationMs:      5000,
-				OffsetMs:        1000,
-				OffsetType:      "offsetFromStart",
+				Service:                svc,
+				ChannelId:              "channel123",
+				OnBehalfOfContentOwner: "owner123",
+				File:                   "/path/to/watermark.png",
+				InVideoPosition:        "topRight",
+				DurationMs:             5000,
+				OffsetMs:               1000,
+				OffsetType:             "offsetFromStart",
 			},
 		},
 		{
@@ -86,13 +84,11 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields: common.Fields{
-					ChannelId:              "",
-					OnBehalfOfContentOwner: "",
-				},
-				File:            "",
-				InVideoPosition: "",
-				OffsetType:      "",
+				ChannelId:              "",
+				OnBehalfOfContentOwner: "",
+				File:                   "",
+				InVideoPosition:        "",
+				OffsetType:             "",
 			},
 		},
 		{
@@ -106,7 +102,7 @@ func TestNewWatermark(t *testing.T) {
 				},
 			},
 			want: &Watermark{
-				Fields:          common.Fields{ChannelId: "myChannel"},
+				ChannelId:       "myChannel",
 				File:            "/watermarks/logo.png",
 				InVideoPosition: "bottomLeft",
 				DurationMs:      10000,

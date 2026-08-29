@@ -38,13 +38,11 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
-					Ids:     []string{"cat1", "cat2"},
-					Hl:      "en",
-				},
+				Service:    svc,
+				Parts:      []string{"snippet"},
+				Output:     "json",
+				Ids:        []string{"cat1", "cat2"},
+				Hl:         "en",
 				RegionCode: "US",
 			},
 		},
@@ -64,7 +62,7 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				Fields:     common.Fields{Hl: ""},
+				Hl:         "",
 				RegionCode: "",
 			},
 		},
@@ -77,7 +75,7 @@ func TestNewVideoCategory(t *testing.T) {
 				},
 			},
 			want: &VideoCategory{
-				Fields:     common.Fields{Hl: "ja"},
+				Hl:         "ja",
 				RegionCode: "JP",
 			},
 		},

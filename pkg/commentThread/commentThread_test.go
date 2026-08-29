@@ -47,14 +47,12 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: common.Fields{
-					Service:    svc,
-					Parts:      []string{"id", "snippet"},
-					Output:     "json",
-					Ids:        []string{"thread1", "thread2"},
-					MaxResults: 100,
-					ChannelId:  "channel123",
-				},
+				Service:                      svc,
+				Parts:                        []string{"id", "snippet"},
+				Output:                       "json",
+				Ids:                          []string{"thread1", "thread2"},
+				MaxResults:                   100,
+				ChannelId:                    "channel123",
 				AllThreadsRelatedToChannelId: "relatedChannel123",
 				AuthorChannelId:              "author123",
 				ModerationStatus:             "published",
@@ -80,7 +78,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -91,7 +89,7 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -112,11 +110,9 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: common.Fields{
-					Parts:     nil,
-					Output:    "",
-					ChannelId: "",
-				},
+				Parts:                        nil,
+				Output:                       "",
+				ChannelId:                    "",
 				AllThreadsRelatedToChannelId: "",
 				AuthorChannelId:              "",
 				ModerationStatus:             "",
@@ -139,11 +135,9 @@ func TestNewCommentThread(t *testing.T) {
 				},
 			},
 			want: &CommentThread{
-				Fields: common.Fields{
-					Output:     "yaml",
-					Ids:        []string{"thread1"},
-					MaxResults: 50,
-				},
+				Output:       "yaml",
+				Ids:          []string{"thread1"},
+				MaxResults:   50,
 				VideoId:      "video456",
 				TextOriginal: "Partial comment thread",
 			},

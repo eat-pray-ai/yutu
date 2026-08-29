@@ -48,14 +48,12 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: common.Fields{
-					Service:                svc,
-					Parts:                  []string{"id", "snippet"},
-					Output:                 "json",
-					Ids:                    []string{"image1", "image2"},
-					MaxResults:             50,
-					OnBehalfOfContentOwner: "owner123",
-				},
+				Service:                       svc,
+				Parts:                         []string{"id", "snippet"},
+				Output:                        "json",
+				Ids:                           []string{"image1", "image2"},
+				MaxResults:                    50,
+				OnBehalfOfContentOwner:        "owner123",
 				Height:                        1080,
 				PlaylistId:                    "playlist123",
 				Type:                          "hero",
@@ -80,7 +78,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: common.Fields{MaxResults: math.MaxInt64},
+				MaxResults: math.MaxInt64,
 			},
 		},
 		{
@@ -91,7 +89,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: common.Fields{MaxResults: 1},
+				MaxResults: 1,
 			},
 		},
 		{
@@ -107,9 +105,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: common.Fields{
-					OnBehalfOfContentOwner: "",
-				},
+				OnBehalfOfContentOwner:        "",
 				PlaylistId:                    "",
 				Type:                          "",
 				File:                          "",
@@ -128,9 +124,7 @@ func TestNewPlaylistImage(t *testing.T) {
 				},
 			},
 			want: &PlaylistImage{
-				Fields: common.Fields{
-					MaxResults: 25,
-				},
+				MaxResults: 25,
 				PlaylistId: "myPlaylist",
 				Type:       "hero",
 				File:       "/images/hero.png",

@@ -36,12 +36,10 @@ func TestNewI18nRegion(t *testing.T) {
 				},
 			},
 			want: &I18nRegion{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"id", "snippet"},
-					Output:  "json",
-					Hl:      "en",
-				},
+				Service: svc,
+				Parts:   []string{"id", "snippet"},
+				Output:  "json",
+				Hl:      "en",
 			},
 		},
 		{
@@ -59,7 +57,7 @@ func TestNewI18nRegion(t *testing.T) {
 				},
 			},
 			want: &I18nRegion{
-				Fields: common.Fields{Hl: ""},
+				Hl: "",
 			},
 		},
 	}

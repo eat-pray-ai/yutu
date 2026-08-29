@@ -41,12 +41,10 @@ func TestNewLiveChatBan(t *testing.T) {
 				},
 			},
 			want: &LiveChatBan{
-				Fields: common.Fields{
-					Service: svc,
-					Parts:   []string{"snippet"},
-					Output:  "json",
-					Ids:     []string{"ban1", "ban2"},
-				},
+				Service:             svc,
+				Parts:               []string{"snippet"},
+				Output:              "json",
+				Ids:                 []string{"ban1", "ban2"},
 				LiveChatId:          "liveChat123",
 				BannedUserChannelId: "channel456",
 				BanDurationSeconds:  300,
