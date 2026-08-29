@@ -22,6 +22,7 @@ import (
 	"google.golang.org/adk/v2/memory"
 	"google.golang.org/adk/v2/model"
 	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/model/openaimodel"
 	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/tool"
 	"google.golang.org/adk/v2/tool/geminitool"
@@ -34,25 +35,38 @@ import (
 const (
 	short   = "Start an agent to automate YouTube workflows"
 	long    = "Start an agent to automate YouTube workflows."
-	example = `# console mode
-yutu agent --args "console" --model "google:gemini-3.7-flash" --api-key "YOUR_KEY"
-# web mode
-yutu agent --args "web api a2a webui" --model "google:gemini-3.7-flash" --api-key "YOUR_KEY"`
+	example = `# Gemini (default)
+yutu agent --provider google --model gemini-3.7-flash --api-key "YOUR_KEY"
+# OpenAI
+yutu agent --provider openai --model gpt-5.6-terra
+# OpenAI-compatible endpoint (DeepSeek, Ollama, vLLM, etc.)
+yutu agent --provider openai-compatible --model deepseek-v4-flash --base-url "https://api.deepseek.com/"
+# Custom Gemini endpoint
+yutu agent --provider google --model gemini-3.7-flash --base-url "https://custom-endpoint.example.com/"`
 	argsUsage        = "Launcher arguments as a single string"
-	modelUsage       = "Model in provider:modelName format"
+	providerUsage    = "LLM provider (google, openai, openai-compatible)"
+	modelUsage       = "Model name"
 	apiKeyUsage      = "API key for the model provider"
+	baseURLUsage     = "Base URL for the model provider's API endpoint"
 	instructionUsage = "Override the built-in agent instruction"
+	agentDescription = "YouTube growth strategist and workflow assistant — retrieve, create, update, and delete YouTube content."
 
-	agentDescription       = "YouTube growth strategist and workflow assistant — retrieves, creates, updates, and deletes YouTube content."
-	errInvalidModelSpec    = "invalid model spec %q: expected provider:modelName, e.g. google:gemini-3.7-flash"
-	errUnsupportedProvider = "unsupported provider %q: only \"google\" is supported"
+	errUnsupportedProvider = "unsupported provider %q: supported providers are google, openai, openai-compatible"
+	errModelConfig         = "model configuration error"
+	errMCPConnect          = "failed to connect to MCP server"
+	errMCPToolSet          = "failed to create MCP tool set"
+	errSkillToolset        = "failed to create skill toolset"
+	errBuildAgent          = "failed to build agent"
+	errLaunchAgent         = "failed to launch agent"
 )
 
 var (
-	launcherArgs        string
-	modelSpec           string
-	apiKey              string
-	instructionOverride string
+	launcherArgs string
+	provider     string
+	modelName    string
+	apiKey       string
+	baseURL      string
+	inst         string
 
 	//go:embed INSTRUCTION.md
 	instruction string
@@ -81,27 +95,32 @@ func init() {
 	cmd.RootCmd.AddCommand(agentCmd)
 	agentCmd.Flags().StringVarP(&launcherArgs, "args", "a", "console", argsUsage)
 	agentCmd.Flags().StringVarP(
-		&modelSpec, "model", "m", "google:gemini-3.7-flash", modelUsage,
+		&provider, "provider", "p", "google", providerUsage,
+	)
+	agentCmd.Flags().StringVarP(
+		&modelName, "model", "m", "gemini-3.7-flash", modelUsage,
 	)
 	agentCmd.Flags().StringVar(&apiKey, "api-key", "", apiKeyUsage)
-	agentCmd.Flags().StringVarP(
-		&instructionOverride, "instruction", "i", "", instructionUsage,
-	)
+	agentCmd.Flags().StringVar(&baseURL, "base-url", "", baseURLUsage)
+	agentCmd.Flags().StringVarP(&inst, "instruction", "i", "", instructionUsage)
 }
 
-func newModel(ctx context.Context, spec string) (model.LLM, error) {
-	parts := strings.SplitN(spec, ":", 2)
-	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-		return nil, fmt.Errorf(errInvalidModelSpec, spec)
-	}
-
-	provider, modelName := parts[0], parts[1]
+func newModel(ctx context.Context) (model.LLM, error) {
 	switch provider {
 	case "google":
-		return gemini.NewModel(
-			ctx, modelName, &genai.ClientConfig{
+		cfg := &genai.ClientConfig{
+			APIKey:  apiKey,
+			Backend: genai.BackendGeminiAPI,
+		}
+		if baseURL != "" {
+			cfg.HTTPOptions.BaseURL = baseURL
+		}
+		return gemini.NewModel(ctx, modelName, cfg)
+	case "openai", "openai-compatible":
+		return openaimodel.NewModel(
+			ctx, modelName, &openaimodel.ClientConfig{
 				APIKey:  apiKey,
-				Backend: genai.BackendGeminiAPI,
+				BaseURL: baseURL,
 			},
 		)
 	default:
@@ -121,33 +140,37 @@ func newSkillToolset(ctx context.Context) (tool.Toolset, error) {
 func buildAgent(
 	m model.LLM, mcpToolSet, skillToolset tool.Toolset,
 ) (agent.Agent, error) {
+	var tools []tool.Tool
+	if provider == "google" {
+		tools = append(tools, geminitool.GoogleSearch{})
+	}
 	return llmagent.New(
 		llmagent.Config{
 			Name:        "Miffy",
 			Model:       m,
 			Description: agentDescription,
 			Instruction: instruction,
-			Tools:       []tool.Tool{geminitool.GoogleSearch{}},
+			Tools:       tools,
 			Toolsets:    []tool.Toolset{mcpToolSet, skillToolset},
 		},
 	)
 }
 
 func launch(ctx context.Context, writer io.Writer, args []string) {
-	if instructionOverride != "" {
-		instruction = instructionOverride
+	if inst != "" {
+		instruction = inst
 	}
 
-	m, err := newModel(ctx, modelSpec)
+	m, err := newModel(ctx)
 	if err != nil {
-		slog.ErrorContext(ctx, "model configuration error", "error", err)
+		slog.ErrorContext(ctx, errModelConfig, "error", err)
 		os.Exit(1)
 	}
 
 	clientTransport, serverTransport := mcp.NewInMemoryTransports()
 	_, err = cmd.Server.Connect(ctx, serverTransport, nil)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to connect to MCP server", "error", err)
+		slog.ErrorContext(ctx, errMCPConnect, "error", err)
 		os.Exit(1)
 	}
 
@@ -157,19 +180,19 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		},
 	)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create MCP tool set", "error", err)
+		slog.ErrorContext(ctx, errMCPToolSet, "error", err)
 		os.Exit(1)
 	}
 
 	skillToolset, err := newSkillToolset(ctx)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to create skill toolset", "error", err)
+		slog.ErrorContext(ctx, errSkillToolset, "error", err)
 		os.Exit(1)
 	}
 
 	miffy, err := buildAgent(m, mcpToolSet, skillToolset)
 	if err != nil {
-		slog.ErrorContext(ctx, "failed to build agent", "error", err)
+		slog.ErrorContext(ctx, errBuildAgent, "error", err)
 		os.Exit(1)
 	}
 
@@ -183,7 +206,7 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 	}
 	l := full.NewLauncher()
 	if err := l.Execute(ctx, config, args); err != nil {
-		slog.ErrorContext(ctx, "failed to launch agent", "error", err)
+		slog.ErrorContext(ctx, errLaunchAgent, "error", err)
 		_, _ = fmt.Fprintln(writer, l.CommandLineSyntax())
 		os.Exit(1)
 	}

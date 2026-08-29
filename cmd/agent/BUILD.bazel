@@ -22,6 +22,7 @@ go_library(
         "@org_golang_google_adk_v2//memory",
         "@org_golang_google_adk_v2//model",
         "@org_golang_google_adk_v2//model/gemini",
+        "@org_golang_google_adk_v2//model/openaimodel",
         "@org_golang_google_adk_v2//session",
         "@org_golang_google_adk_v2//tool",
         "@org_golang_google_adk_v2//tool/geminitool",
