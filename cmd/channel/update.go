@@ -23,8 +23,8 @@ const (
 	updateTool    = "channel-update"
 	updateIdUsage = "ID of the channel to update"
 	updateConfirm = "Update channel: %s"
-	updateShort   = "Update channel information"
-	updateLong    = "Update channel information. Use this tool to update channel information."
+	updateShort   = "Update a channel"
+	updateLong    = "Update a channel. Use this tool to update a channel."
 	updateExample = `# Update channel description
 yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
 # Update channel title and country

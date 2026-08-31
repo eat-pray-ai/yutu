@@ -21,8 +21,8 @@ import (
 const (
 	insertTool    = "liveChatBan-insert"
 	insertConfirm = "Ban user %s in live chat %s"
-	insertShort   = "Insert a live chat ban"
-	insertLong    = "Insert a live chat ban. Use this tool to ban a user from a live chat."
+	insertShort   = "Create a live chat ban"
+	insertLong    = "Create a live chat ban. Use this tool to ban a user from a live chat."
 	insertExample = `# Ban a user permanently
 yutu liveChatBan insert --liveChatId abc123 --bannedUserChannelId UC_xyz --banType permanent
 # Ban a user temporarily for 5 minutes

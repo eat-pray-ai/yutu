@@ -21,7 +21,7 @@ import (
 const (
 	insertTool     = "comment-insert"
 	insertPidUsage = "ID of the parent comment"
-	insertConfirm  = "Insert comment on parent: %s"
+	insertConfirm  = "Create comment on parent: %s"
 	insertShort    = "Create a comment"
 	insertLong     = "Create a comment. Use this tool to create a comment on a video."
 	insertExample  = `# Reply to a comment

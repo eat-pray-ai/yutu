@@ -20,8 +20,8 @@ import (
 const (
 	unsetTool    = "watermark-unset"
 	unsetConfirm = "Unset watermark for channel: %s"
-	unsetShort   = "Unset a watermark for channel's videos"
-	unsetLong    = "Unset a watermark for channel's videos. Use this tool to unset a watermark for a channel's videos."
+	unsetShort   = "Unset a channel watermark"
+	unsetLong    = "Unset a channel watermark. Use this tool to unset a channel watermark."
 	unsetExample = `# Unset watermark for a channel
 yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw`
 )

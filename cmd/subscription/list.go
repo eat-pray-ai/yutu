@@ -21,8 +21,8 @@ const (
 	listTool     = "subscription-list"
 	listIdsUsage = "Return the subscriptions with the given ids for Stubby or Apiary"
 	listCidUsage = "Return the subscriptions of the given channel owner"
-	listShort    = "List subscription information"
-	listLong     = "List subscription information. Use this tool to list subscription information."
+	listShort    = "List subscriptions"
+	listLong     = "List subscriptions. Use this tool to list subscriptions."
 	listExample  = `# List my subscriptions
 yutu subscription list --for mine
 # List subscriptions by channel ID with limit

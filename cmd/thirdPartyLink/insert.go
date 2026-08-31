@@ -20,9 +20,9 @@ import (
 
 const (
 	insertTool    = "thirdPartyLink-insert"
-	insertConfirm = "Insert third-party link: %s"
-	insertShort   = "Insert a new third-party link"
-	insertLong    = "Insert a new third-party link. Use this tool to create a link between a YouTube channel and a third-party service."
+	insertConfirm = "Create third-party link: %s"
+	insertShort   = "Create a third-party link"
+	insertLong    = "Create a third-party link. Use this tool to create a third-party link."
 	insertExample = `# Insert a new third-party link
 yutu thirdPartyLink insert --linkingToken abc123 --type channelToStoreLink --linkStatus pending --parts snippet,status`
 )

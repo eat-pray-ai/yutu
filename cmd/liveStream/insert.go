@@ -21,8 +21,8 @@ import (
 const (
 	insertTool    = "liveStream-insert"
 	insertConfirm = "Create live stream: %s"
-	insertShort   = "Insert a live stream"
-	insertLong    = "Insert a live stream. Use this tool to create a new live stream for the authenticated user."
+	insertShort   = "Create a live stream"
+	insertLong    = "Create a live stream. Use this tool to create a live stream."
 	insertExample = `# Create a live stream with RTMP at 1080p
 yutu liveStream insert --title "My Stream" --ingestionType rtmp --resolution 1080p --frameRate 60fps
 # Create a live stream with description

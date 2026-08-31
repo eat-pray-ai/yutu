@@ -20,8 +20,8 @@ import (
 const (
 	listTool     = "channel-list"
 	listIdsUsage = "Return the channels with the specified Ids"
-	listShort    = "List channel information"
-	listLong     = "List channel information. Use this tool to list channel information."
+	listShort    = "List channels"
+	listLong     = "List channels. Use this tool to list channels."
 	listExample  = `# List my channel info
 yutu channel list --for mine
 # List channel by handle

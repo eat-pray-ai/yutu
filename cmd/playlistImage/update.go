@@ -20,7 +20,7 @@ import (
 
 const (
 	updateTool    = "playlistImage-update"
-	updateConfirm = "Update playlist image for playlist: %s"
+	updateConfirm = "Update playlist image: %s"
 	updateShort   = "Update a playlist image"
 	updateLong    = "Update a playlist image. Use this tool to update a playlist image."
 	updateExample = `# Update a playlist image

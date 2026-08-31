@@ -20,9 +20,9 @@ import (
 
 const (
 	insertTool    = "playlistImage-insert"
-	insertConfirm = "Insert playlist image: %s"
-	insertShort   = "Insert a playlist image"
-	insertLong    = "Insert a playlist image. Use this tool to insert a YouTube playlist image for a given playlist ID."
+	insertConfirm = "Upload playlist image: %s"
+	insertShort   = "Upload a playlist image"
+	insertLong    = "Upload a playlist image. Use this tool to upload a playlist image."
 	insertExample = `# Insert a playlist cover image
 yutu playlistImage insert --file cover.jpg --playlistId PLxxx
 # Insert a hero image
