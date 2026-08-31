@@ -21,6 +21,7 @@ import (
 
 const (
 	bindTool    = "liveBroadcast-bind"
+	bindConfirm = "Bind live broadcast(s) %s to stream %s"
 	bindShort   = "Bind a live broadcast to a stream"
 	bindLong    = "Bind a live broadcast to a stream. Use this tool to bind or unbind a live stream to/from a live broadcast."
 	bindExample = `# Bind a broadcast to a stream
@@ -51,7 +52,6 @@ var bindInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -65,13 +65,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			bindTool, func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Bind(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			bindTool, cobramcp.ConfirmThen(
+				func(input liveBroadcast.LiveBroadcast) string {
+					return fmt.Sprintf(
+						bindConfirm, strings.Join(input.Ids, ", "), input.StreamId,
+					)
+				},
+				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
+					return input.Bind(w)
+				},
+			),
 		),
 	)
 	liveBroadcastCmd.AddCommand(bindCmd)
@@ -102,11 +106,9 @@ var bindCmd = &cobra.Command{
 	Long:    bindLong,
 	Example: bindExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would bind live broadcast(s) %s to stream %s",
-			strings.Join(ids, ", "), streamId,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(bindConfirm, strings.Join(ids, ", "), streamId),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

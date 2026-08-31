@@ -22,6 +22,7 @@ import (
 const (
 	updateTool    = "comment-update"
 	updateIdUsage = "ID of the comment"
+	updateConfirm = "Update comment: %s"
 	updateShort   = "Update a comment on a video"
 	updateLong    = "Update a comment on a video. Use this tool to update a comment on a video."
 	updateExample = `# Update comment text
@@ -50,7 +51,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -64,13 +64,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool, func(input comment.Comment, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input comment.Comment) string {
+					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input comment.Comment, w io.Writer) error {
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	commentCmd.AddCommand(updateCmd)
@@ -94,8 +96,9 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would update comment: %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

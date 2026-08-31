@@ -21,6 +21,7 @@ import (
 const (
 	insertTool     = "commentThread-insert"
 	insertVidUsage = "ID of the video"
+	insertConfirm  = "Insert comment thread on video: %s"
 	insertShort    = "Insert a new comment thread"
 	insertLong     = "Insert a new comment thread. Use this tool to insert a new comment thread."
 	insertExample  = `# Post a comment on a video
@@ -43,7 +44,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -57,14 +57,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool,
-			func(input commentThread.CommentThread, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input commentThread.CommentThread) string {
+					return fmt.Sprintf(insertConfirm, input.VideoId)
+				},
+				func(input commentThread.CommentThread, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	commentThreadCmd.AddCommand(insertCmd)
@@ -87,8 +88,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert comment thread on video: %s", videoId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

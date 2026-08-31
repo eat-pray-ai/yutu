@@ -21,6 +21,7 @@ import (
 const (
 	deleteTool     = "video-delete"
 	deleteIdsUsage = "IDs of the videos to delete"
+	deleteConfirm  = "Delete video(s): %s"
 	deleteShort    = "Delete videos"
 	deleteLong     = "Delete videos. Use this tool to delete videos by IDs."
 	deleteExample  = `# Delete a video by ID
@@ -37,7 +38,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -51,13 +51,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool, func(input video.Video, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input video.Video) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input video.Video, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	videoCmd.AddCommand(deleteCmd)
@@ -73,8 +75,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would delete video(s): %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := video.NewVideo(video.WithIds(ids))

@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "liveChatModerator-insert"
+	insertConfirm = "Add moderator %s to live chat %s"
 	insertShort   = "Insert a live chat moderator"
 	insertLong    = "Insert a live chat moderator. Use this tool to add a moderator to a live chat."
 	insertExample = `# Add a moderator to a live chat
@@ -40,7 +41,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -54,14 +54,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool,
-			func(input liveChatModerator.LiveChatModerator, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input liveChatModerator.LiveChatModerator) string {
+					return fmt.Sprintf(
+						insertConfirm, input.ModeratorChannelId, input.LiveChatId,
+					)
+				},
+				func(input liveChatModerator.LiveChatModerator, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	liveChatModeratorCmd.AddCommand(insertCmd)
@@ -85,10 +88,9 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would add moderator %s to live chat %s", moderatorChannelId, liveChatId,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(insertConfirm, moderatorChannelId, liveChatId),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

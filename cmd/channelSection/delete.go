@@ -21,6 +21,7 @@ import (
 const (
 	deleteTool     = "channelSection-delete"
 	deleteIdsUsage = "Delete the channel sections with the given ids"
+	deleteConfirm  = "Delete channel section(s): %s"
 	deleteShort    = "Delete channel sections"
 	deleteLong     = "Delete channel sections. Use this tool to delete channel sections by IDs."
 	deleteExample  = `# Delete a channel section by ID
@@ -38,7 +39,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
-		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -52,14 +52,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool,
-			func(input channelSection.ChannelSection, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input channelSection.ChannelSection) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input channelSection.ChannelSection, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	channelSectionCmd.AddCommand(deleteCmd)
@@ -78,10 +79,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would delete channel section(s): %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := channelSection.NewChannelSection(

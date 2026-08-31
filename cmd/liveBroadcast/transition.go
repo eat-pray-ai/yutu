@@ -21,6 +21,7 @@ import (
 
 const (
 	transitionTool    = "liveBroadcast-transition"
+	transitionConfirm = "Transition live broadcast(s) %s to %s"
 	transitionBsUsage = "Broadcast status to transition to (testing, live, complete)"
 	transitionShort   = "Transition a live broadcast"
 	transitionLong    = "Transition a live broadcast. Use this tool to change the status of a live broadcast (e.g., go live, end broadcast)."
@@ -55,7 +56,6 @@ var transitionInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -69,14 +69,18 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			transitionTool,
-			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Transition(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			transitionTool, cobramcp.ConfirmThen(
+				func(input liveBroadcast.LiveBroadcast) string {
+					return fmt.Sprintf(
+						transitionConfirm, strings.Join(input.Ids, ", "),
+						input.BroadcastStatus,
+					)
+				},
+				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
+					return input.Transition(w)
+				},
+			),
 		),
 	)
 	liveBroadcastCmd.AddCommand(transitionCmd)
@@ -109,11 +113,10 @@ var transitionCmd = &cobra.Command{
 	Long:    transitionLong,
 	Example: transitionExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would transition live broadcast(s) %s to %s",
-			strings.Join(ids, ", "), broadcastStatus,
+		return utils.ConfirmPreRun(
+			c,
+			fmt.Sprintf(transitionConfirm, strings.Join(ids, ", "), broadcastStatus),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -20,6 +20,7 @@ import (
 
 const (
 	updateTool    = "playlistImage-update"
+	updateConfirm = "Update playlist image for playlist: %s"
 	updateShort   = "Update a playlist image"
 	updateLong    = "Update a playlist image. Use this tool to update a playlist image."
 	updateExample = `# Update a playlist image
@@ -52,7 +53,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -66,14 +66,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool,
-			func(input playlistImage.PlaylistImage, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input playlistImage.PlaylistImage) string {
+					return fmt.Sprintf(updateConfirm, input.PlaylistId)
+				},
+				func(input playlistImage.PlaylistImage, w io.Writer) error {
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	playlistImageCmd.AddCommand(updateCmd)
@@ -100,10 +101,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would update playlist image for playlist: %s", playlistId,
-		)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, playlistId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

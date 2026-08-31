@@ -3,7 +3,7 @@ module github.com/eat-pray-ai/yutu
 go 1.27.0
 
 require (
-	github.com/eat-pray-ai/cobra-mcp v0.4.1
+	github.com/eat-pray-ai/cobra-mcp v0.4.5
 	github.com/google/jsonschema-go v0.4.3
 	github.com/jedib0t/go-pretty/v6 v6.8.3
 	github.com/modelcontextprotocol/go-sdk v1.7.0

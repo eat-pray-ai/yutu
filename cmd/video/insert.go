@@ -21,6 +21,7 @@ import (
 const (
 	insertTool      = "video-insert"
 	insertLangUsage = "Language of the video"
+	insertConfirm   = "Insert video: %s"
 	insertShort     = "Upload a video"
 	insertLong      = "Upload a video. Use this tool to upload a video."
 	insertExample   = `# Upload a public video
@@ -64,8 +65,6 @@ var insertInSchema = &jsonschema.Schema{
 		"stabilize":                {Type: "boolean", Description: stabilizeUsage},
 		"notify_subscribers":       {Type: "boolean", Description: nsUsage},
 		"public_stats_viewable":    {Type: "boolean", Description: psvUsage},
-		"confirmed":                {Type: "boolean", Description: pkg.ConfirmedUsage},
-
 		"on_behalf_of_content_owner": {
 			Type:        "string",
 			Description: pkg.OBOCOUsage,
@@ -91,13 +90,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input video.Video, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input video.Video) string {
+					return fmt.Sprintf(insertConfirm, input.File)
+				},
+				func(input video.Video, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	videoCmd.AddCommand(insertCmd)
@@ -152,8 +153,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert video: %s", file)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

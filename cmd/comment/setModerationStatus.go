@@ -21,6 +21,7 @@ import (
 
 const (
 	smsTool    = "comment-setModerationStatus"
+	smsConfirm = "Set moderation status of comment(s): %s to %s"
 	smsShort   = "Set comment moderation status"
 	smsLong    = "Set comment moderation status. Use this tool to set comment moderation status."
 	smsExample = `# Publish a held comment
@@ -48,7 +49,6 @@ var setModerationStatusInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -63,13 +63,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			smsTool, func(input comment.Comment, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.SetModerationStatus(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			smsTool, cobramcp.ConfirmThen(
+				func(input comment.Comment) string {
+					return fmt.Sprintf(
+						smsConfirm, strings.Join(input.Ids, ", "), input.ModerationStatus,
+					)
+				},
+				func(input comment.Comment, w io.Writer) error {
+					return input.SetModerationStatus(w)
+				},
+			),
 		),
 	)
 	commentCmd.AddCommand(setModerationStatusCmd)
@@ -95,11 +99,9 @@ var setModerationStatusCmd = &cobra.Command{
 	Long:    smsLong,
 	Example: smsExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would set moderation status of comment(s): %s to %s",
-			strings.Join(ids, ", "), moderationStatus,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(smsConfirm, strings.Join(ids, ", "), moderationStatus),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

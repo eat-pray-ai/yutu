@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "abuseReport-insert"
+	insertConfirm = "Report abuse for %s %s"
 	insertShort   = "Insert an abuse report"
 	insertLong    = "Insert an abuse report. Use this tool to report abusive content on YouTube such as spam, harassment, or violent content."
 	insertExample = `# Report a video as spam
@@ -49,7 +50,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -63,13 +63,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input abuseReport.AbuseReport, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input abuseReport.AbuseReport) string {
+					return fmt.Sprintf(insertConfirm, input.SubjectTypeId, input.SubjectId)
+				},
+				func(input abuseReport.AbuseReport, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	abuseReportCmd.AddCommand(insertCmd)
@@ -106,8 +108,9 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would report abuse for %s %s", subjectTypeId, subjectId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(insertConfirm, subjectTypeId, subjectId),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -20,6 +20,7 @@ import (
 
 const (
 	deleteTool     = "liveBroadcast-delete"
+	deleteConfirm  = "Delete live broadcast(s): %s"
 	deleteIdsUsage = "IDs of the live broadcasts to delete"
 	deleteShort    = "Delete live broadcasts"
 	deleteLong     = "Delete live broadcasts. Use this tool to delete live broadcasts by their IDs."
@@ -41,7 +42,6 @@ var deleteInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner_channel": {
 			Type: "string", Description: obococUsage,
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,14 +55,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool,
-			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input liveBroadcast.LiveBroadcast) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	liveBroadcastCmd.AddCommand(deleteCmd)
@@ -85,10 +86,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would delete live broadcast(s): %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := liveBroadcast.NewLiveBroadcast(

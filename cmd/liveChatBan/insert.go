@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "liveChatBan-insert"
+	insertConfirm = "Ban user %s in live chat %s"
 	insertShort   = "Insert a live chat ban"
 	insertLong    = "Insert a live chat ban. Use this tool to ban a user from a live chat."
 	insertExample = `# Ban a user permanently
@@ -44,7 +45,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -58,13 +58,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input liveChatBan.LiveChatBan, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input liveChatBan.LiveChatBan) string {
+					return fmt.Sprintf(
+						insertConfirm, input.BannedUserChannelId, input.LiveChatId,
+					)
+				},
+				func(input liveChatBan.LiveChatBan, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	liveChatBanCmd.AddCommand(insertCmd)
@@ -93,10 +97,9 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would ban user %s in live chat %s", bannedUserChannelId, liveChatId,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(insertConfirm, bannedUserChannelId, liveChatId),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -22,6 +22,7 @@ import (
 const (
 	updateTool    = "playlistItem-update"
 	updateIdUsage = "ID of the playlist item to update"
+	updateConfirm = "Update playlist item: %s"
 	updateShort   = "Update a playlist item"
 	updateLong    = "Update a playlist item. Use this tool to update a playlist item."
 	updateExample = `# Update playlist item title
@@ -51,7 +52,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -65,13 +65,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool, func(input playlistItem.PlaylistItem, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input playlistItem.PlaylistItem) string {
+					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input playlistItem.PlaylistItem, w io.Writer) error {
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	playlistItemCmd.AddCommand(updateCmd)
@@ -94,8 +96,9 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would update playlist item: %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

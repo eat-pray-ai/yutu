@@ -22,6 +22,7 @@ const (
 	rateTool     = "video-rate"
 	rateIdsUsage = "IDs of the videos to rate"
 	rateRUsage   = "like|dislike|none"
+	rateConfirm  = "Rate video(s) %s as %s"
 	rateShort    = "Rate a video"
 	rateLong     = "Rate a video. Use this tool to rate a video."
 	rateExample  = `# Like a video
@@ -44,7 +45,6 @@ var rateInSchema = &jsonschema.Schema{
 			Type: "string", Description: rateRUsage,
 			Enum: []any{"like", "dislike", "none"},
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -58,13 +58,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			rateTool, func(input video.Video, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Rate(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			rateTool, cobramcp.ConfirmThen(
+				func(input video.Video) string {
+					return fmt.Sprintf(
+						rateConfirm, strings.Join(input.Ids, ", "), input.Rating,
+					)
+				},
+				func(input video.Video, w io.Writer) error {
+					return input.Rate(w)
+				},
+			),
 		),
 	)
 	videoCmd.AddCommand(rateCmd)
@@ -82,10 +86,9 @@ var rateCmd = &cobra.Command{
 	Long:    rateLong,
 	Example: rateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would rate video(s): %s as %s", strings.Join(ids, ", "), rating,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(rateConfirm, strings.Join(ids, ", "), rating),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := video.NewVideo(

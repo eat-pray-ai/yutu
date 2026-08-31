@@ -21,6 +21,7 @@ import (
 
 const (
 	transitionTool    = "liveChatMessage-transition"
+	transitionConfirm = "Transition live chat message(s) %s to %s"
 	transitionShort   = "Transition a live chat message"
 	transitionLong    = "Transition a durable live chat event. Use this tool to change the status of a live chat message (e.g., close a poll)."
 	transitionExample = `# Transition a live chat message to closed
@@ -43,7 +44,6 @@ var transitionInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -57,14 +57,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			transitionTool,
-			func(input liveChatMessage.LiveChatMessage, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Transition(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			transitionTool, cobramcp.ConfirmThen(
+				func(input liveChatMessage.LiveChatMessage) string {
+					return fmt.Sprintf(
+						transitionConfirm, strings.Join(input.Ids, ", "), input.Status,
+					)
+				},
+				func(input liveChatMessage.LiveChatMessage, w io.Writer) error {
+					return input.Transition(w)
+				},
+			),
 		),
 	)
 	liveChatMessageCmd.AddCommand(transitionCmd)
@@ -85,11 +88,9 @@ var transitionCmd = &cobra.Command{
 	Long:    transitionLong,
 	Example: transitionExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would transition live chat message(s) %s to status %s",
-			strings.Join(ids, ", "), status,
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(transitionConfirm, strings.Join(ids, ", "), status),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

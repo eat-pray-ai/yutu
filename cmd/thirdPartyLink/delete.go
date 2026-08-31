@@ -19,6 +19,7 @@ import (
 
 const (
 	deleteTool    = "thirdPartyLink-delete"
+	deleteConfirm = "Delete third-party link: %s"
 	deleteShort   = "Delete a third-party link"
 	deleteLong    = "Delete a third-party link. Use this tool to delete a link between a YouTube channel and a third-party service."
 	deleteExample = `# Delete a third-party link
@@ -35,7 +36,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Enum: []any{"linkUnspecified", "channelToStoreLink"},
 		},
 		"external_channel_id": {Type: "string", Description: extCidUsage},
-		"confirmed":           {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -49,14 +49,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool,
-			func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input thirdPartyLink.ThirdPartyLink) string {
+					return fmt.Sprintf(deleteConfirm, input.LinkingToken)
+				},
+				func(input thirdPartyLink.ThirdPartyLink, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	thirdPartyLinkCmd.AddCommand(deleteCmd)
@@ -77,8 +78,7 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would delete third-party link: %s", linkingToken)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(deleteConfirm, linkingToken))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := thirdPartyLink.NewThirdPartyLink(

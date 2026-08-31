@@ -21,6 +21,7 @@ import (
 
 const (
 	masTool    = "comment-markAsSpam"
+	masConfirm = "Mark comment(s) as spam: %s"
 	masShort   = "Mark comments as spam"
 	masLong    = "Mark comments as spam. Use this tool to mark comments as spam."
 	masExample = `# Mark a comment as spam
@@ -41,7 +42,6 @@ var markAsSpamInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,13 +55,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			masTool, func(input comment.Comment, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.MarkAsSpam(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			masTool, cobramcp.ConfirmThen(
+				func(input comment.Comment) string {
+					return fmt.Sprintf(masConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input comment.Comment, w io.Writer) error {
+					return input.MarkAsSpam(w)
+				},
+			),
 		),
 	)
 	commentCmd.AddCommand(markAsSpamCmd)
@@ -78,10 +80,9 @@ var markAsSpamCmd = &cobra.Command{
 	Long:    masLong,
 	Example: masExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would mark comment(s) as spam: %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(masConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

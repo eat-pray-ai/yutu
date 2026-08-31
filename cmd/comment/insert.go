@@ -21,6 +21,7 @@ import (
 const (
 	insertTool     = "comment-insert"
 	insertPidUsage = "ID of the parent comment"
+	insertConfirm  = "Insert comment on parent: %s"
 	insertShort    = "Create a comment"
 	insertLong     = "Create a comment. Use this tool to create a comment on a video."
 	insertExample  = `# Reply to a comment
@@ -45,7 +46,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -59,13 +59,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input comment.Comment, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input comment.Comment) string {
+					return fmt.Sprintf(insertConfirm, input.ParentId)
+				},
+				func(input comment.Comment, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	commentCmd.AddCommand(insertCmd)
@@ -96,8 +98,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert comment on parent: %s", parentId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, parentId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

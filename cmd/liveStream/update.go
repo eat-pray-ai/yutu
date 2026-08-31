@@ -21,6 +21,7 @@ import (
 
 const (
 	updateTool    = "liveStream-update"
+	updateConfirm = "Update live stream: %s"
 	updateIdUsage = "ID of the live stream to update"
 	updateShort   = "Update a live stream"
 	updateLong    = "Update a live stream. Use this tool to update an existing live stream's settings."
@@ -60,7 +61,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -74,14 +74,16 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool, func(input liveStream.LiveStream, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				input.MaxResults = 1
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input liveStream.LiveStream) string {
+					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input liveStream.LiveStream, w io.Writer) error {
+					input.MaxResults = 1
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	liveStreamCmd.AddCommand(updateCmd)
@@ -110,8 +112,9 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would update live stream: %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -21,6 +21,7 @@ import (
 const (
 	deleteTool     = "subscription-delete"
 	deleteIdsUsage = "IDs of the subscriptions to delete"
+	deleteConfirm  = "Delete subscription(s): %s"
 	deleteShort    = "Delete subscriptions"
 	deleteLong     = "Delete subscriptions. Use this tool to delete subscriptions by IDs."
 	deleteExample  = `# Delete a subscription by ID
@@ -37,7 +38,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -51,13 +51,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool, func(input subscription.Subscription, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input subscription.Subscription) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input subscription.Subscription, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	subscriptionCmd.AddCommand(deleteCmd)
@@ -73,10 +75,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would delete subscription(s): %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := subscription.NewSubscription(

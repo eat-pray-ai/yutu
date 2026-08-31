@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "caption-insert"
+	insertConfirm = "Upload caption for video: %s"
 	insertShort   = "Insert a caption"
 	insertLong    = "Insert a caption. Use this tool to insert a caption to a video."
 	insertExample = `# Insert a caption to a video
@@ -60,7 +61,6 @@ var insertInSchema = &jsonschema.Schema{
 			Enum:    []any{"json", "yaml", "silent"},
 			Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -74,13 +74,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input caption.Caption, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input caption.Caption) string {
+					return fmt.Sprintf(insertConfirm, input.VideoId)
+				},
+				func(input caption.Caption, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	captionCmd.AddCommand(insertCmd)
@@ -120,8 +122,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert caption: %s", file)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

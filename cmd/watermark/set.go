@@ -19,6 +19,7 @@ import (
 
 const (
 	setTool    = "watermark-set"
+	setConfirm = "Set watermark for channel: %s"
 	setShort   = "Set a watermark for channel's videos"
 	setLong    = "Set a watermark for channel's videos. Use this tool to set a watermark for channel's videos."
 	setExample = `# Set a watermark for a channel
@@ -41,7 +42,6 @@ var setInSchema = &jsonschema.Schema{
 		},
 		"duration_ms": {Type: "number", Description: dmUsage},
 		"offset_ms":   {Type: "number", Description: omUsage},
-		"confirmed":   {Type: "boolean", Description: pkg.ConfirmedUsage},
 		"offset_type": {
 			Type: "string", Description: otUsage,
 			Enum: []any{"offsetFromStart", "offsetFromEnd"},
@@ -60,13 +60,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			setTool, func(input watermark.Watermark, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Set(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			setTool, cobramcp.ConfirmThen(
+				func(input watermark.Watermark) string {
+					return fmt.Sprintf(setConfirm, input.ChannelId)
+				},
+				func(input watermark.Watermark, w io.Writer) error {
+					return input.Set(w)
+				},
+			),
 		),
 	)
 	watermarkCmd.AddCommand(setCmd)
@@ -93,8 +95,7 @@ var setCmd = &cobra.Command{
 	Long:    setLong,
 	Example: setExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would set watermark for channel: %s", channelId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, channelId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := watermark.NewWatermark(

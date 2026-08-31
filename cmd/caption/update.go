@@ -20,6 +20,7 @@ import (
 
 const (
 	updateTool    = "caption-update"
+	updateConfirm = "Update caption for video: %s"
 	updateShort   = "Update a video caption"
 	updateLong    = "Update a video caption. Use this tool to update a video caption."
 	updateExample = `# Publish a draft caption
@@ -59,7 +60,6 @@ var updateInSchema = &jsonschema.Schema{
 			Enum:    []any{"json", "yaml", "silent"},
 			Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -73,13 +73,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool, func(input caption.Caption, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input caption.Caption) string {
+					return fmt.Sprintf(updateConfirm, input.VideoId)
+				},
+				func(input caption.Caption, w io.Writer) error {
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	captionCmd.AddCommand(updateCmd)
@@ -118,8 +120,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would update caption for video: %s", videoId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, videoId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

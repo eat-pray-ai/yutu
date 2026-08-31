@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "liveStream-insert"
+	insertConfirm = "Create live stream: %s"
 	insertShort   = "Insert a live stream"
 	insertLong    = "Insert a live stream. Use this tool to create a new live stream for the authenticated user."
 	insertExample = `# Create a live stream with RTMP at 1080p
@@ -59,7 +60,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -73,13 +73,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input liveStream.LiveStream, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input liveStream.LiveStream) string {
+					return fmt.Sprintf(insertConfirm, input.Title)
+				},
+				func(input liveStream.LiveStream, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	liveStreamCmd.AddCommand(insertCmd)
@@ -112,8 +114,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would create live stream: %s", title)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, title))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")
