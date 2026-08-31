@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short    = "Manage activities on YouTube"
-	long     = "Manage activities on YouTube. Use this tool to list channel activities."
+	short    = "Manage YouTube activities"
+	long     = "Manage YouTube activities. Use this tool to list channel activities."
 	ciUsage  = "ID of the channel"
 	forUsage = "home|mine"
 	paUsage  = "Filter on activities published after this date"

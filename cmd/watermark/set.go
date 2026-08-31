@@ -20,8 +20,8 @@ import (
 const (
 	setTool    = "watermark-set"
 	setConfirm = "Set watermark for channel: %s"
-	setShort   = "Set a watermark for channel's videos"
-	setLong    = "Set a watermark for channel's videos. Use this tool to set a watermark for channel's videos."
+	setShort   = "Set a channel watermark"
+	setLong    = "Set a channel watermark. Use this tool to set a channel watermark."
 	setExample = `# Set a watermark for a channel
 yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
 # Set a watermark with position and offset

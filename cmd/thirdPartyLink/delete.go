@@ -19,9 +19,9 @@ import (
 
 const (
 	deleteTool    = "thirdPartyLink-delete"
-	deleteConfirm = "Delete third-party link: %s"
-	deleteShort   = "Delete a third-party link"
-	deleteLong    = "Delete a third-party link. Use this tool to delete a link between a YouTube channel and a third-party service."
+	deleteConfirm = "Delete third-party link(s): %s"
+	deleteShort   = "Delete third-party links"
+	deleteLong    = "Delete third-party links. Use this tool to delete third-party links."
 	deleteExample = `# Delete a third-party link
 yutu thirdPartyLink delete --linkingToken abc123 --type channelToStoreLink`
 )

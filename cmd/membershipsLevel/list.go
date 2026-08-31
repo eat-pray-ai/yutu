@@ -19,8 +19,8 @@ import (
 
 const (
 	listTool    = "membershipsLevel-list"
-	listShort   = "List memberships levels"
-	listLong    = "List memberships levels. Use this tool to list information about channel membership levels."
+	listShort   = "List membership levels"
+	listLong    = "List membership levels. Use this tool to list membership levels."
 	listExample = `# List membership levels in JSON format
 yutu membershipsLevel list --output json`
 )

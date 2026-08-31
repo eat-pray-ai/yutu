@@ -21,7 +21,7 @@ import (
 const (
 	insertTool      = "video-insert"
 	insertLangUsage = "Language of the video"
-	insertConfirm   = "Insert video: %s"
+	insertConfirm   = "Upload video: %s"
 	insertShort     = "Upload a video"
 	insertLong      = "Upload a video. Use this tool to upload a video."
 	insertExample   = `# Upload a public video

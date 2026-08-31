@@ -21,8 +21,8 @@ const (
 	listTool     = "playlist-list"
 	listIdsUsage = "Return the playlists with the given Ids for Stubby or Apiary"
 	listCidUsage = "Return the playlists owned by the specified channel id"
-	listShort    = "List playlist information"
-	listLong     = "List playlist information. Use this tool to list playlist information."
+	listShort    = "List playlists"
+	listLong     = "List playlists. Use this tool to list playlists."
 	listExample  = `# List my playlists
 yutu playlist list --mine
 # List playlists by channel ID with limit

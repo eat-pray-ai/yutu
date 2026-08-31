@@ -21,9 +21,9 @@ import (
 const (
 	insertTool     = "playlist-insert"
 	insertCidUsage = "Channel id of the playlist"
-	insertConfirm  = "Insert playlist: %s"
-	insertShort    = "Create a new playlist"
-	insertLong     = "Create a new playlist. Use this tool to create a new playlist."
+	insertConfirm  = "Create playlist: %s"
+	insertShort    = "Create a playlist"
+	insertLong     = "Create a playlist. Use this tool to create a playlist."
 	insertExample  = `# Create a public playlist
 yutu playlist insert --title 'My Playlist' --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --privacy public
 # Create a private playlist with description

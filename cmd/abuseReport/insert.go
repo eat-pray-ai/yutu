@@ -20,9 +20,9 @@ import (
 
 const (
 	insertTool    = "abuseReport-insert"
-	insertConfirm = "Report abuse for %s %s"
-	insertShort   = "Insert an abuse report"
-	insertLong    = "Insert an abuse report. Use this tool to report abusive content on YouTube such as spam, harassment, or violent content."
+	insertConfirm = "Create abuse report for %s %s"
+	insertShort   = "Create an abuse report"
+	insertLong    = "Create an abuse report. Use this tool to report abusive content on YouTube such as spam, harassment, or violent content."
 	insertExample = `# Report a video as spam
 yutu abuseReport insert --abuseTypes spam --subjectId VIDEO_ID --subjectTypeId video --description "This video is spam"
 # Report a comment as harassment

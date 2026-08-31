@@ -20,9 +20,9 @@ import (
 
 const (
 	updateTool    = "caption-update"
-	updateConfirm = "Update caption for video: %s"
-	updateShort   = "Update a video caption"
-	updateLong    = "Update a video caption. Use this tool to update a video caption."
+	updateConfirm = "Update caption: %s"
+	updateShort   = "Update a caption"
+	updateLong    = "Update a caption. Use this tool to update a caption."
 	updateExample = `# Publish a draft caption
 yutu caption update --videoId dQw4w9WgXcQ --isDraft=false
 # Update caption language and name

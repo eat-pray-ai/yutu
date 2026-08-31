@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	short = "Manage YouTube memberships levels"
-	long  = "Manage YouTube memberships levels. Use this tool to list information about channel membership levels."
+	short = "Manage YouTube membership levels"
+	long  = "Manage YouTube membership levels. Use this tool to list membership levels."
 )
 
 var (

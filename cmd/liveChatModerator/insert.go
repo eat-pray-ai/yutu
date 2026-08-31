@@ -21,8 +21,8 @@ import (
 const (
 	insertTool    = "liveChatModerator-insert"
 	insertConfirm = "Add moderator %s to live chat %s"
-	insertShort   = "Insert a live chat moderator"
-	insertLong    = "Insert a live chat moderator. Use this tool to add a moderator to a live chat."
+	insertShort   = "Add a live chat moderator"
+	insertLong    = "Add a live chat moderator. Use this tool to add a moderator to a live chat."
 	insertExample = `# Add a moderator to a live chat
 yutu liveChatModerator insert --liveChatId abc123 --moderatorChannelId UC_xyz`
 )

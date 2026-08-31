@@ -21,8 +21,8 @@ import (
 const (
 	insertTool    = "liveBroadcast-insert"
 	insertConfirm = "Create live broadcast: %s"
-	insertShort   = "Insert a live broadcast"
-	insertLong    = "Insert a live broadcast. Use this tool to create a new live broadcast for the authenticated user."
+	insertShort   = "Create a live broadcast"
+	insertLong    = "Create a live broadcast. Use this tool to create a live broadcast for the authenticated user."
 	insertExample = `# Create a public live broadcast
 yutu liveBroadcast insert --title "My Broadcast" --privacyStatus public --scheduledStartTime 2026-01-01T00:00:00Z
 # Create a private broadcast with description
