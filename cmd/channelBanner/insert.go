@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "channelBanner-insert"
+	insertConfirm = "Insert channel banner: %s"
 	insertShort   = "Insert a channel banner"
 	insertLong    = "Insert a channel banner. Use this tool to upload a channel banner."
 	insertExample = `# Upload a channel banner
@@ -47,7 +48,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -61,14 +61,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool,
-			func(input channelBanner.ChannelBanner, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input channelBanner.ChannelBanner) string {
+					return fmt.Sprintf(insertConfirm, input.File)
+				},
+				func(input channelBanner.ChannelBanner, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	channelBannerCmd.AddCommand(insertCmd)
@@ -94,8 +95,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert channel banner: %s", file)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

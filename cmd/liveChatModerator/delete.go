@@ -20,6 +20,7 @@ import (
 
 const (
 	deleteTool     = "liveChatModerator-delete"
+	deleteConfirm  = "Delete live chat moderator(s): %s"
 	deleteIdsUsage = "IDs of the live chat moderators to delete"
 	deleteShort    = "Delete live chat moderators"
 	deleteLong     = "Delete live chat moderators. Use this tool to remove moderators from a live chat by their IDs."
@@ -37,7 +38,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: deleteIdsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -51,14 +51,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool,
-			func(input liveChatModerator.LiveChatModerator, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input liveChatModerator.LiveChatModerator) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input liveChatModerator.LiveChatModerator, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	liveChatModeratorCmd.AddCommand(deleteCmd)
@@ -74,10 +75,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would delete live chat moderator(s): %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := liveChatModerator.NewLiveChatModerator(

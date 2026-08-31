@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "playlistImage-insert"
+	insertConfirm = "Insert playlist image: %s"
 	insertShort   = "Insert a playlist image"
 	insertLong    = "Insert a playlist image. Use this tool to insert a YouTube playlist image for a given playlist ID."
 	insertExample = `# Insert a playlist cover image
@@ -57,7 +58,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -71,14 +71,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool,
-			func(input playlistImage.PlaylistImage, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input playlistImage.PlaylistImage) string {
+					return fmt.Sprintf(insertConfirm, input.File)
+				},
+				func(input playlistImage.PlaylistImage, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	playlistImageCmd.AddCommand(insertCmd)
@@ -107,8 +108,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert playlist image: %s", file)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

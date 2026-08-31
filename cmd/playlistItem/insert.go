@@ -21,6 +21,7 @@ import (
 const (
 	insertTool     = "playlistItem-insert"
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
+	insertConfirm  = "Insert playlist item to playlist: %s"
 	insertShort    = "Insert a playlist item into a playlist"
 	insertLong     = "Insert a playlist item into a playlist. Use this tool to insert a playlist item into a playlist."
 	insertExample  = `# Add a video to a playlist
@@ -53,7 +54,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -67,13 +67,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input playlistItem.PlaylistItem, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input playlistItem.PlaylistItem) string {
+					return fmt.Sprintf(insertConfirm, input.PlaylistId)
+				},
+				func(input playlistItem.PlaylistItem, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	playlistItemCmd.AddCommand(insertCmd)
@@ -105,8 +107,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert playlist item to playlist: %s", playlistId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, playlistId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

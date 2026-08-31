@@ -20,6 +20,7 @@ import (
 
 const (
 	setTool    = "thumbnail-set"
+	setConfirm = "Set thumbnail for video: %s"
 	setShort   = "Set a thumbnail for a video"
 	setLong    = "Set a thumbnail for a video. Use this tool to set a thumbnail for a video."
 	setExample = `# Set a thumbnail for a video
@@ -38,7 +39,6 @@ var setInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -52,13 +52,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			setTool, func(input thumbnail.Thumbnail, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Set(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			setTool, cobramcp.ConfirmThen(
+				func(input thumbnail.Thumbnail) string {
+					return fmt.Sprintf(setConfirm, input.VideoId)
+				},
+				func(input thumbnail.Thumbnail, w io.Writer) error {
+					return input.Set(w)
+				},
+			),
 		),
 	)
 	thumbnailCmd.AddCommand(setCmd)
@@ -77,8 +79,7 @@ var setCmd = &cobra.Command{
 	Long:    setLong,
 	Example: setExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would set thumbnail for video: %s", videoId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, videoId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

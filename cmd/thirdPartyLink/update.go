@@ -20,6 +20,7 @@ import (
 
 const (
 	updateTool    = "thirdPartyLink-update"
+	updateConfirm = "Update third-party link: %s"
 	updateShort   = "Update a third-party link"
 	updateLong    = "Update a third-party link. Use this tool to update the status or type of a link between a YouTube channel and a third-party service."
 	updateExample = `# Update a third-party link status
@@ -45,7 +46,6 @@ var updateInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -59,14 +59,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			updateTool,
-			func(input thirdPartyLink.ThirdPartyLink, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Update(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			updateTool, cobramcp.ConfirmThen(
+				func(input thirdPartyLink.ThirdPartyLink) string {
+					return fmt.Sprintf(updateConfirm, input.LinkingToken)
+				},
+				func(input thirdPartyLink.ThirdPartyLink, w io.Writer) error {
+					return input.Update(w)
+				},
+			),
 		),
 	)
 	thirdPartyLinkCmd.AddCommand(updateCmd)
@@ -91,8 +92,7 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would update third-party link: %s", linkingToken)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, linkingToken))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

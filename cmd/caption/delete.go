@@ -21,6 +21,7 @@ import (
 const (
 	deleteTool     = "caption-delete"
 	deleteIdsUsage = "IDs of the captions to delete"
+	deleteConfirm  = "Delete caption(s): %s"
 	deleteShort    = "Delete captions"
 	deleteLong     = "Delete captions. Use this tool to delete captions of a video by IDs."
 	deleteExample  = `# Delete a caption by ID
@@ -39,7 +40,6 @@ var deleteInSchema = &jsonschema.Schema{
 		},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
-		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -53,13 +53,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool, func(input caption.Caption, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input caption.Caption) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input caption.Caption, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	captionCmd.AddCommand(deleteCmd)
@@ -79,8 +81,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would delete caption(s): %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := caption.NewCaption(

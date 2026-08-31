@@ -20,6 +20,7 @@ import (
 
 const (
 	deleteTool    = "comment-delete"
+	deleteConfirm = "Delete comment(s): %s"
 	deleteShort   = "Delete comments"
 	deleteLong    = "Delete comments. Use this tool to delete comments by IDs."
 	deleteExample = `# Delete a comment by ID
@@ -36,7 +37,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Type: "array", Description: idsUsage,
 			Items: &jsonschema.Schema{Type: "string"},
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -50,13 +50,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool, func(input comment.Comment, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input comment.Comment) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input comment.Comment, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	commentCmd.AddCommand(deleteCmd)
@@ -72,8 +74,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would delete comment(s): %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := comment.NewComment(comment.WithIds(ids))

@@ -21,6 +21,7 @@ import (
 const (
 	insertTool     = "subscription-insert"
 	insertCidUsage = "ID of the channel to be subscribed"
+	insertConfirm  = "Insert subscription to channel: %s"
 	insertShort    = "Insert a new subscription"
 	insertLong     = "Insert a new subscription. Use this tool to insert a new subscription."
 	insertExample  = `# Subscribe to a channel
@@ -41,7 +42,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -55,13 +55,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool, func(input subscription.Subscription, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input subscription.Subscription) string {
+					return fmt.Sprintf(insertConfirm, input.ChannelId)
+				},
+				func(input subscription.Subscription, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	subscriptionCmd.AddCommand(insertCmd)
@@ -84,8 +86,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would insert subscription to channel: %s", channelId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, channelId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

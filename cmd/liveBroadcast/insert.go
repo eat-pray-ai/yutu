@@ -20,6 +20,7 @@ import (
 
 const (
 	insertTool    = "liveBroadcast-insert"
+	insertConfirm = "Create live broadcast: %s"
 	insertShort   = "Insert a live broadcast"
 	insertLong    = "Insert a live broadcast. Use this tool to create a new live broadcast for the authenticated user."
 	insertExample = `# Create a public live broadcast
@@ -53,7 +54,6 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -67,14 +67,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertTool,
-			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Insert(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertTool, cobramcp.ConfirmThen(
+				func(input liveBroadcast.LiveBroadcast) string {
+					return fmt.Sprintf(insertConfirm, input.Title)
+				},
+				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
+					return input.Insert(w)
+				},
+			),
 		),
 	)
 	liveBroadcastCmd.AddCommand(insertCmd)
@@ -111,8 +112,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would create live broadcast: %s", title)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, title))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

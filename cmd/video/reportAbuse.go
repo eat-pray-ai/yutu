@@ -22,6 +22,7 @@ const (
 	reportAbuseTool    = "video-reportAbuse"
 	raIdsUsage         = "IDs of the videos to report abuse on"
 	raLangUsage        = "Language that the content was viewed in"
+	reportAbuseConfirm = "Report abuse on video(s): %s"
 	reportAbuseShort   = "Report abuse on a video"
 	reportAbuseLong    = "Report abuse on a video. Use this tool to report abuse on a video."
 	reportAbuseExample = `# Report abuse on a video
@@ -45,7 +46,6 @@ var reportAbuseInSchema = &jsonschema.Schema{
 		"comments":                   {Type: "string", Description: commentsUsage},
 		"language":                   {Type: "string", Description: raLangUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
-		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -60,13 +60,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			reportAbuseTool, func(input video.Video, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.ReportAbuse(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			reportAbuseTool, cobramcp.ConfirmThen(
+				func(input video.Video) string {
+					return fmt.Sprintf(reportAbuseConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input video.Video, w io.Writer) error {
+					return input.ReportAbuse(w)
+				},
+			),
 		),
 	)
 	videoCmd.AddCommand(reportAbuseCmd)
@@ -96,10 +98,9 @@ var reportAbuseCmd = &cobra.Command{
 	Long:    reportAbuseLong,
 	Example: reportAbuseExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would report abuse on video(s): %s", strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(reportAbuseConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := video.NewVideo(

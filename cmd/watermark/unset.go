@@ -19,6 +19,7 @@ import (
 
 const (
 	unsetTool    = "watermark-unset"
+	unsetConfirm = "Unset watermark for channel: %s"
 	unsetShort   = "Unset a watermark for channel's videos"
 	unsetLong    = "Unset a watermark for channel's videos. Use this tool to unset a watermark for a channel's videos."
 	unsetExample = `# Unset watermark for a channel
@@ -30,7 +31,6 @@ var unsetInSchema = &jsonschema.Schema{
 	Required: []string{"channel_id"},
 	Properties: map[string]*jsonschema.Schema{
 		"channel_id": {Type: "string", Description: cidUsage},
-		"confirmed":  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -44,13 +44,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			unsetTool, func(input watermark.Watermark, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Unset(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			unsetTool, cobramcp.ConfirmThen(
+				func(input watermark.Watermark) string {
+					return fmt.Sprintf(unsetConfirm, input.ChannelId)
+				},
+				func(input watermark.Watermark, w io.Writer) error {
+					return input.Unset(w)
+				},
+			),
 		),
 	)
 	watermarkCmd.AddCommand(unsetCmd)
@@ -66,8 +68,7 @@ var unsetCmd = &cobra.Command{
 	Long:    unsetLong,
 	Example: unsetExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would unset watermark for channel: %s", channelId)
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(c, fmt.Sprintf(unsetConfirm, channelId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := watermark.NewWatermark(watermark.WithChannelId(channelId))

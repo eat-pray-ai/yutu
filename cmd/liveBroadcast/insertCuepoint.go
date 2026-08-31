@@ -21,6 +21,7 @@ import (
 
 const (
 	insertCuepointTool    = "liveBroadcast-insertCuepoint"
+	insertCuepointConfirm = "Insert cuepoint into live broadcast(s): %s"
 	insertCuepointShort   = "Insert a cuepoint into a live broadcast"
 	insertCuepointLong    = "Insert a cuepoint into a live broadcast. Use this tool to insert an ad break cuepoint into a currently live broadcast."
 	insertCuepointExample = `# Insert an ad cuepoint of 30 seconds
@@ -52,7 +53,6 @@ var insertCuepointInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
 		},
-		"confirmed": {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -66,14 +66,17 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			insertCuepointTool,
-			func(input liveBroadcast.LiveBroadcast, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.InsertCuepoint(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			insertCuepointTool, cobramcp.ConfirmThen(
+				func(input liveBroadcast.LiveBroadcast) string {
+					return fmt.Sprintf(
+						insertCuepointConfirm, strings.Join(input.Ids, ", "),
+					)
+				},
+				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
+					return input.InsertCuepoint(w)
+				},
+			),
 		),
 	)
 	liveBroadcastCmd.AddCommand(insertCuepointCmd)
@@ -111,11 +114,9 @@ var insertCuepointCmd = &cobra.Command{
 	Long:    insertCuepointLong,
 	Example: insertCuepointExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf(
-			"Would insert cuepoint into live broadcast(s): %s",
-			strings.Join(ids, ", "),
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(insertCuepointConfirm, strings.Join(ids, ", ")),
 		)
-		return utils.ConfirmPreRun(c, msg)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

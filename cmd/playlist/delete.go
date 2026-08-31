@@ -21,6 +21,7 @@ import (
 const (
 	deleteTool     = "playlist-delete"
 	deleteIdsUsage = "IDs of the playlists to delete"
+	deleteConfirm  = "Delete playlist(s): %s"
 	deleteShort    = "Delete playlists"
 	deleteLong     = "Delete playlists. Use this tool to delete playlists by IDs."
 	deleteExample  = `# Delete a playlist by ID
@@ -38,7 +39,6 @@ var deleteInSchema = &jsonschema.Schema{
 			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
-		"confirmed":                  {Type: "boolean", Description: pkg.ConfirmedUsage},
 	},
 }
 
@@ -52,13 +52,15 @@ func init() {
 				OpenWorldHint:   new(true),
 				ReadOnlyHint:    false,
 			},
-		}, cobramcp.GenToolHandler(
-			deleteTool, func(input playlist.Playlist, writer io.Writer) error {
-				if !input.Confirmed {
-					return utils.ErrNotConfirmed
-				}
-				return input.Delete(writer)
-			},
+		}, cobramcp.GenToolHandlerWithMRTR(
+			deleteTool, cobramcp.ConfirmThen(
+				func(input playlist.Playlist) string {
+					return fmt.Sprintf(deleteConfirm, strings.Join(input.Ids, ", "))
+				},
+				func(input playlist.Playlist, w io.Writer) error {
+					return input.Delete(w)
+				},
+			),
 		),
 	)
 	playlistCmd.AddCommand(deleteCmd)
@@ -77,8 +79,9 @@ var deleteCmd = &cobra.Command{
 	Long:    deleteLong,
 	Example: deleteExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		msg := fmt.Sprintf("Would delete playlist(s): %s", strings.Join(ids, ", "))
-		return utils.ConfirmPreRun(c, msg)
+		return utils.ConfirmPreRun(
+			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
+		)
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := playlist.NewPlaylist(
