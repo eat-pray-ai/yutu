@@ -13,14 +13,9 @@ import (
 const example = `# Start MCP server in stdio mode (default)
 yutu mcp
 
-# Start MCP server in HTTP mode (OAuth required, binds 127.0.0.1)
-yutu mcp --mode http --port 8216
-
-# Bind to all interfaces (e.g. container deployment)
-yutu mcp --mode http --host 0.0.0.0 --port 8216
-
-# Behind a reverse proxy with a public base URL
-yutu mcp --mode http --baseUrl https://mcp.example.com`
+# Start MCP server in HTTP mode at http://localhost:8216/mcp
+# Requires OAuth (Google account) for all MCP tool calls
+yutu mcp --mode http`
 
 var mcpConfig = &cobramcp.Config{
 	Name:         "yutu",
@@ -42,6 +37,13 @@ var Server, mcpCmd = cobramcp.ServerAndCommand(mcpConfig)
 func init() {
 	mcpCmd.Example = example
 	RootCmd.AddCommand(mcpCmd)
+
+	_ = mcpCmd.Flags().Set("host", "localhost")
+	_ = mcpCmd.Flags().Set("port", "8216")
+	_ = mcpCmd.Flags().MarkHidden("host")
+	_ = mcpCmd.Flags().MarkHidden("port")
+	_ = mcpCmd.Flags().MarkHidden("baseUrl")
+	_ = mcpCmd.Flags().MarkHidden("stateless")
 
 	mcpCmd.PreRunE = func(cmd *cobra.Command, _ []string) error {
 		mode, _ := cmd.Flags().GetString("mode")
