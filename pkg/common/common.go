@@ -21,17 +21,31 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+// ServiceProvider resolves an authenticated YouTube service for the given
+// context. Override DefaultServiceProvider at startup to inject a custom
+// credential resolution strategy.
+type ServiceProvider interface {
+	GetYouTubeService(ctx context.Context) (*youtube.Service, error)
+}
+
+const DefaultRedirectURL = "http://localhost:8216"
+
+type defaultProvider struct{}
+
+// DefaultServiceProvider is used by Fields.EnsureService to create a
+// YouTube service when one is not already set.
+var DefaultServiceProvider ServiceProvider = &defaultProvider{}
+
 type Fields struct {
-	Ctx         context.Context  `yaml:"-" json:"-"`
-	Service     *youtube.Service `yaml:"-" json:"-"`
-	RedirectURL string           `yaml:"-" json:"-"`
-	Ids         []string         `yaml:"ids" json:"ids,omitempty"`
-	Confirmed   bool             `yaml:"-" json:"confirmed,omitempty"`
-	MaxResults  int64            `yaml:"max_results" json:"max_results,omitzero"`
-	Hl          string           `yaml:"hl" json:"hl,omitempty"`
-	ChannelId   string           `yaml:"channel_id" json:"channel_id,omitempty"`
-	Parts       []string         `yaml:"parts" json:"parts,omitempty"`
-	Output      string           `yaml:"output" json:"output,omitempty"`
+	Ctx        context.Context  `yaml:"-" json:"-"`
+	Service    *youtube.Service `yaml:"-" json:"-"`
+	Ids        []string         `yaml:"ids" json:"ids,omitempty"`
+	Confirmed  bool             `yaml:"-" json:"confirmed,omitempty"`
+	MaxResults int64            `yaml:"max_results" json:"max_results,omitzero"`
+	Hl         string           `yaml:"hl" json:"hl,omitempty"`
+	ChannelId  string           `yaml:"channel_id" json:"channel_id,omitempty"`
+	Parts      []string         `yaml:"parts" json:"parts,omitempty"`
+	Output     string           `yaml:"output" json:"output,omitempty"`
 
 	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
@@ -51,36 +65,45 @@ func (d *Fields) EnsureService() error {
 		return nil
 	}
 
-	// MCP OAuth path: use access token from auth middleware context.
-	if d.Ctx != nil {
-		if tokenInfo := sdkauth.TokenInfoFromContext(d.Ctx); tokenInfo != nil {
-			if rawToken, ok := tokenInfo.Extra["access_token"].(string); ok {
-				ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawToken})
-				client := oauth2.NewClient(d.Ctx, ts)
-				svc, err := youtube.NewService(d.Ctx, option.WithHTTPClient(client))
-				if err != nil {
-					return fmt.Errorf("failed to create YouTube service: %w", err)
-				}
-				d.Service = svc
-				return nil
-			}
-		}
+	ctx := d.Ctx
+	if ctx == nil {
+		ctx = context.Background()
 	}
 
-	// File-based auth path (CLI / stdio mode).
-	if d.RedirectURL == "" {
-		d.RedirectURL = "http://localhost:8216"
-	}
-	svc, err := auth.NewY2BService(
-		auth.WithCredential("", pkg.Root.FS()),
-		auth.WithCacheToken("", pkg.Root.FS()),
-		auth.WithRedirectURL(d.RedirectURL),
-	).GetService()
+	svc, err := DefaultServiceProvider.GetYouTubeService(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to create YouTube service: %w", err)
+		return err
 	}
 	d.Service = svc
 	return nil
+}
+
+func (p *defaultProvider) GetYouTubeService(ctx context.Context) (*youtube.Service, error) {
+	// MCP OAuth path: use access token from auth middleware context.
+	if tokenInfo := sdkauth.TokenInfoFromContext(ctx); tokenInfo != nil {
+		rawToken, ok := tokenInfo.Extra["access_token"].(string)
+		if !ok || rawToken == "" {
+			return nil, fmt.Errorf("token info present but missing access_token")
+		}
+		ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: rawToken})
+		client := oauth2.NewClient(ctx, ts)
+		svc, err := youtube.NewService(ctx, option.WithHTTPClient(client))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create YouTube service: %w", err)
+		}
+		return svc, nil
+	}
+
+	// File-based auth path (CLI / stdio mode).
+	svc, err := auth.NewY2BService(
+		auth.WithCredential("", pkg.Root.FS()),
+		auth.WithCacheToken("", pkg.Root.FS()),
+		auth.WithRedirectURL(DefaultRedirectURL),
+	).GetService()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create YouTube service: %w", err)
+	}
+	return svc, nil
 }
 
 type HasFields interface {
