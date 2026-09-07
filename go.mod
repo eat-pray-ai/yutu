@@ -14,7 +14,7 @@ require (
 	golang.org/x/term v0.45.0
 	google.golang.org/adk/v2 v2.2.0
 	google.golang.org/api v0.293.0
-	google.golang.org/genai v1.69.0
+	google.golang.org/genai v1.71.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
