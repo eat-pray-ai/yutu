@@ -7,12 +7,10 @@ import (
 	"bytes"
 	"encoding/json/v2"
 	"io"
-	"math"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -21,265 +19,78 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func TestNewVideo(t *testing.T) {
-	type args struct {
-		opts []Option
-	}
-
-	autoLevelsTrue := true
-	autoLevelsFalse := false
-	forKidsTrue := true
-	forKidsFalse := false
-	embeddableTrue := true
-	embeddableFalse := false
-	containsSyntheticMediaTrue := true
-	containsSyntheticMediaFalse := false
-	stabilizeTrue := true
-	stabilizeFalse := false
-	notifySubscribersTrue := true
-	notifySubscribersFalse := false
-	publicStatsViewableTrue := true
-	publicStatsViewableFalse := false
-	svc := &youtube.Service{}
-
-	tests := []struct {
-		name string
-		args args
-		want IVideo[youtube.Video]
+func TestVideo_UpdateClearableMetadata(t *testing.T) {
+	for _, tt := range []struct {
+		name              string
+		input             string
+		privacy           string
+		wantDescription   string
+		wantLanguage      string
+		wantPublishAt     string
+		wantRecordingDate string
+		recordingPart     bool
 	}{
-		{
-			name: "with all options",
-			args: args{
-				opts: []Option{
-					WithIds([]string{"video1", "video2"}),
-					WithAutoLevels(&autoLevelsTrue),
-					WithFile("/path/to/video.mp4"),
-					WithTitle("Test Video"),
-					WithDescription("Test video description"),
-					WithHl("en"),
-					WithTags([]string{"tag1", "tag2", "tag3"}),
-					WithLanguage("en"),
-					WithLocale("en_US"),
-					WithLicense("youtube"),
-					WithThumbnail("/path/to/thumbnail.jpg"),
-					WithRating("like"),
-					WithChart("mostPopular"),
-					WithChannelId("channel123"),
-					WithComments("Test comments"),
-					WithPlaylistId("playlist123"),
-					WithCategory("22"),
-					WithPrivacy("public"),
-					WithForKids(&forKidsTrue),
-					WithEmbeddable(&embeddableTrue),
-					WithContainsSyntheticMedia(&containsSyntheticMediaTrue),
-					WithRecordingDate("2024-06-15T10:00:00Z"),
-					WithPublishAt("2024-12-31T23:59:59Z"),
-					WithRegionCode("US"),
-					WithReasonId("reason123"),
-					WithSecondaryReasonId("secondaryReason123"),
-					WithStabilize(&stabilizeTrue),
-					WithMaxHeight(1080),
-					WithMaxWidth(1920),
-					WithMaxResults(50),
-					WithNotifySubscribers(&notifySubscribersTrue),
-					WithPublicStatsViewable(&publicStatsViewableTrue),
-					WithOnBehalfOfContentOwner("owner123"),
-					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
-					WithParts([]string{"snippet", "contentDetails"}),
-					WithOutput("json"),
-					WithService(svc),
-				},
-			},
-			want: &Video{
-				Service:                       svc,
-				Parts:                         []string{"snippet", "contentDetails"},
-				Output:                        "json",
-				Ids:                           []string{"video1", "video2"},
-				MaxResults:                    50,
-				Hl:                            "en",
-				ChannelId:                     "channel123",
-				OnBehalfOfContentOwner:        "owner123",
-				AutoLevels:                    &autoLevelsTrue,
-				File:                          "/path/to/video.mp4",
-				Title:                         "Test Video",
-				Description:                   "Test video description",
-				Tags:                          []string{"tag1", "tag2", "tag3"},
-				Language:                      "en",
-				Locale:                        "en_US",
-				License:                       "youtube",
-				Thumbnail:                     "/path/to/thumbnail.jpg",
-				Rating:                        "like",
-				Chart:                         "mostPopular",
-				Comments:                      "Test comments",
-				PlaylistId:                    "playlist123",
-				CategoryId:                    "22",
-				Privacy:                       "public",
-				ForKids:                       &forKidsTrue,
-				Embeddable:                    &embeddableTrue,
-				ContainsSyntheticMedia:        &containsSyntheticMediaTrue,
-				RecordingDate:                 "2024-06-15T10:00:00Z",
-				PublishAt:                     "2024-12-31T23:59:59Z",
-				RegionCode:                    "US",
-				ReasonId:                      "reason123",
-				SecondaryReasonId:             "secondaryReason123",
-				Stabilize:                     &stabilizeTrue,
-				MaxHeight:                     1080,
-				MaxWidth:                      1920,
-				NotifySubscribers:             &notifySubscribersTrue,
-				PublicStatsViewable:           &publicStatsViewableTrue,
-				OnBehalfOfContentOwnerChannel: "ownerChannel123",
-			},
-		},
-		{
-			name: "with no options",
-			args: args{
-				opts: []Option{},
-			},
-			want: &Video{Fields: common.Fields{}},
-		},
-		{
-			name: "with nil boolean options",
-			args: args{
-				opts: []Option{
-					WithAutoLevels(nil),
-					WithForKids(nil),
-					WithEmbeddable(nil),
-					WithContainsSyntheticMedia(nil),
-					WithStabilize(nil),
-					WithNotifySubscribers(nil),
-					WithPublicStatsViewable(nil),
-				},
-			},
-			want: &Video{Fields: common.Fields{}},
-		},
-		{
-			name: "with false boolean options",
-			args: args{
-				opts: []Option{
-					WithAutoLevels(&autoLevelsFalse),
-					WithForKids(&forKidsFalse),
-					WithEmbeddable(&embeddableFalse),
-					WithContainsSyntheticMedia(&containsSyntheticMediaFalse),
-					WithStabilize(&stabilizeFalse),
-					WithNotifySubscribers(&notifySubscribersFalse),
-					WithPublicStatsViewable(&publicStatsViewableFalse),
-				},
-			},
-			want: &Video{
-				Fields:                 common.Fields{},
-				AutoLevels:             &autoLevelsFalse,
-				ForKids:                &forKidsFalse,
-				Embeddable:             &embeddableFalse,
-				ContainsSyntheticMedia: &containsSyntheticMediaFalse,
-				Stabilize:              &stabilizeFalse,
-				NotifySubscribers:      &notifySubscribersFalse,
-				PublicStatsViewable:    &publicStatsViewableFalse,
-			},
-		},
-		{
-			name: "with zero max results",
-			args: args{
-				opts: []Option{
-					WithMaxResults(0),
-				},
-			},
-			want: &Video{
-				MaxResults: math.MaxInt64,
-			},
-		},
-		{
-			name: "with negative max results",
-			args: args{
-				opts: []Option{
-					WithMaxResults(-10),
-				},
-			},
-			want: &Video{
-				MaxResults: 1,
-			},
-		},
-		{
-			name: "with empty string values",
-			args: args{
-				opts: []Option{
-					WithFile(""),
-					WithTitle(""),
-					WithDescription(""),
-					WithHl(""),
-					WithLanguage(""),
-					WithLocale(""),
-					WithLicense(""),
-					WithThumbnail(""),
-					WithRating(""),
-					WithChart(""),
-					WithChannelId(""),
-					WithComments(""),
-					WithPlaylistId(""),
-					WithCategory(""),
-					WithPrivacy(""),
-					WithRecordingDate(""),
-					WithPublishAt(""),
-					WithRegionCode(""),
-					WithReasonId(""),
-					WithSecondaryReasonId(""),
-					WithOnBehalfOfContentOwner(""),
-					WithOnBehalfOfContentOwnerChannel(""),
-				},
-			},
-			want: &Video{
-				Fields:                        common.Fields{},
-				File:                          "",
-				Title:                         "",
-				Description:                   "",
-				Language:                      "",
-				Locale:                        "",
-				License:                       "",
-				Thumbnail:                     "",
-				Rating:                        "",
-				Chart:                         "",
-				Comments:                      "",
-				PlaylistId:                    "",
-				CategoryId:                    "",
-				Privacy:                       "",
-				RecordingDate:                 "",
-				PublishAt:                     "",
-				RegionCode:                    "",
-				ReasonId:                      "",
-				SecondaryReasonId:             "",
-				OnBehalfOfContentOwnerChannel: "",
-			},
-		},
-		{
-			name: "with partial options",
-			args: args{
-				opts: []Option{
-					WithTitle("My Video"),
-					WithDescription("A great video"),
-					WithTags([]string{"tutorial", "golang"}),
-					WithPrivacy("private"),
-					WithMaxResults(25),
-					WithForKids(&forKidsFalse),
-				},
-			},
-			want: &Video{
-				MaxResults:  25,
-				Title:       "My Video",
-				Description: "A great video",
-				Tags:        []string{"tutorial", "golang"},
-				Privacy:     "private",
-				ForKids:     &forKidsFalse,
-			},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				if got := NewVideo(tt.args.opts...); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("%s\nNewVideo() = %v\nwant %v", tt.name, got, tt.want)
+		{name: "omitted preserves", input: `{}`, privacy: "private", wantDescription: "Original", wantLanguage: "en", wantPublishAt: "2027-01-01T00:00:00Z"},
+		{name: "empty clears", input: `{"description":"","language":"","publish_at":"","recording_date":""}`, privacy: "private", recordingPart: true},
+		{name: "clear does not require private", input: `{"publish_at":""}`, privacy: "public", wantDescription: "Original", wantLanguage: "en"},
+		{name: "nonempty replaces", input: `{"description":"New","language":"ja","publish_at":"2028-01-01T00:00:00Z","recording_date":"2020-01-01T00:00:00Z"}`, privacy: "private", wantDescription: "New", wantLanguage: "ja", wantPublishAt: "2028-01-01T00:00:00Z", wantRecordingDate: "2020-01-01T00:00:00Z", recordingPart: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var body map[string]map[string]any
+			var parts string
+			svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if r.Method == http.MethodGet {
+					_, _ = io.WriteString(w, `{"items":[{"id":"video-id","snippet":{"title":"Title","categoryId":"22","description":"Original","defaultLanguage":"en"},"status":{"privacyStatus":"`+tt.privacy+`","publishAt":"2027-01-01T00:00:00Z"}}]}`)
+					return
 				}
-			},
-		)
+				parts = r.URL.Query().Get("part")
+				var raw struct {
+					Snippet          map[string]any `json:"snippet"`
+					Status           map[string]any `json:"status"`
+					RecordingDetails map[string]any `json:"recordingDetails"`
+				}
+				if err := json.UnmarshalRead(r.Body, &raw); err != nil {
+					t.Error(err)
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+				body = map[string]map[string]any{"snippet": raw.Snippet, "status": raw.Status, "recordingDetails": raw.RecordingDetails}
+				_, _ = io.WriteString(w, `{"id":"video-id"}`)
+			}))
+			var input Video
+			if err := json.Unmarshal([]byte(tt.input), &input); err != nil {
+				t.Fatal(err)
+			}
+			input.Service, input.Ids, input.MaxResults, input.Output = svc, []string{"video-id"}, 1, "silent"
+			if err := input.Update(io.Discard); err != nil {
+				t.Fatal(err)
+			}
+			if body == nil {
+				t.Fatal("missing update request")
+			}
+			for _, field := range []struct{ part, key, want string }{
+				{"snippet", "description", tt.wantDescription},
+				{"snippet", "defaultLanguage", tt.wantLanguage},
+				{"status", "publishAt", tt.wantPublishAt},
+				{"recordingDetails", "recordingDate", tt.wantRecordingDate},
+			} {
+				got, present := body[field.part][field.key]
+				if field.want == "" {
+					if present {
+						t.Errorf("%s.%s should be omitted for clearing, got %v", field.part, field.key, got)
+					}
+				} else if got != field.want {
+					t.Errorf("%s.%s = %v, want %q", field.part, field.key, got, field.want)
+				}
+			}
+			if strings.Contains(parts, "recordingDetails") != tt.recordingPart {
+				t.Errorf("unexpected update parts: %s", parts)
+			}
+			if tt.recordingPart && body["recordingDetails"] == nil {
+				t.Error("recordingDetails object missing")
+			}
+		})
 	}
 }
 
@@ -559,6 +370,39 @@ func TestVideo_Insert(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name: "insert explicit false status fields",
+			opts: []Option{
+				WithFile("test_video.mp4"),
+				WithEmbeddable(new(false)),
+				WithPublicStatsViewable(new(false)),
+			},
+			verify: func(r *http.Request) {
+				_, params, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				part, err := multipart.NewReader(r.Body, params["boundary"]).NextPart()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				defer func() { _ = part.Close() }()
+				var body struct {
+					Status map[string]any `json:"status"`
+				}
+				if err := json.UnmarshalRead(part, &body); err != nil {
+					t.Error(err)
+					return
+				}
+				for _, field := range []string{"embeddable", "publicStatsViewable"} {
+					if value, present := body.Status[field]; !present || value != false {
+						t.Errorf("status.%s must be present and false, got %v (present=%v)", field, value, present)
+					}
+				}
+			},
+		},
+		{
 			name: "insert video",
 			opts: []Option{
 				WithFile("test_video.mp4"),
@@ -639,7 +483,7 @@ func TestVideo_Insert(t *testing.T) {
 				WithFile("test_video.mp4"),
 				WithTitle("Dated Video"),
 				WithPrivacy("private"),
-				WithRecordingDate("2024-06-15T10:00:00Z"),
+				WithRecordingDate(new("2024-06-15T10:00:00Z")),
 				WithForKids(&forKidsTrue),
 				WithEmbeddable(&embeddableTrue),
 				WithContainsSyntheticMedia(&containsSyntheticMediaTrue),
@@ -815,7 +659,7 @@ func TestVideo_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"video-id"}),
 				WithTitle("Updated Title"),
-				WithDescription("Updated Description"),
+				WithDescription(new("Updated Description")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}}]}`,
@@ -875,7 +719,7 @@ func TestVideo_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"video-id"}),
 				WithTags([]string{"new-tag"}),
-				WithLanguage("ja"),
+				WithLanguage(new("ja")),
 				WithLicense("creativeCommon"),
 				WithCategory("22"),
 				WithPrivacy("unlisted"),
@@ -924,7 +768,7 @@ func TestVideo_Update(t *testing.T) {
 			name: "update video with publishAt on private video",
 			opts: []Option{
 				WithIds([]string{"video-id"}),
-				WithPublishAt("2026-08-18T15:00:00Z"),
+				WithPublishAt(new("2026-08-18T15:00:00Z")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "private"}}]}`,
@@ -955,7 +799,7 @@ func TestVideo_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"video-id"}),
 				WithPrivacy("private"),
-				WithPublishAt("2026-08-18T15:00:00Z"),
+				WithPublishAt(new("2026-08-18T15:00:00Z")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}]}`,
@@ -985,7 +829,7 @@ func TestVideo_Update(t *testing.T) {
 			name: "update video with publishAt rejects public without explicit private",
 			opts: []Option{
 				WithIds([]string{"video-id"}),
-				WithPublishAt("2026-08-18T15:00:00Z"),
+				WithPublishAt(new("2026-08-18T15:00:00Z")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}]}`,
@@ -1000,7 +844,7 @@ func TestVideo_Update(t *testing.T) {
 			name: "update video with publishAt rejects unlisted without explicit private",
 			opts: []Option{
 				WithIds([]string{"video-id"}),
-				WithPublishAt("2026-08-18T15:00:00Z"),
+				WithPublishAt(new("2026-08-18T15:00:00Z")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "unlisted"}}]}`,
@@ -1017,7 +861,7 @@ func TestVideo_Update(t *testing.T) {
 				WithIds([]string{"video-id"}),
 				WithEmbeddable(&embeddableTrue),
 				WithContainsSyntheticMedia(&containsSyntheticMediaTrue),
-				WithRecordingDate("2024-01-01T00:00:00Z"),
+				WithRecordingDate(new("2024-01-01T00:00:00Z")),
 				WithMaxResults(1),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}, "status": {"privacyStatus": "public"}}]}`,
@@ -1088,6 +932,52 @@ func TestVideo_Update(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+func TestVideo_UpdateFalseStatusFields(t *testing.T) {
+	for _, tt := range []struct {
+		name   string
+		status string
+		opts   []Option
+	}{
+		{
+			name:   "preserve existing false values",
+			status: `{"embeddable":false,"publicStatsViewable":false,"selfDeclaredMadeForKids":false,"containsSyntheticMedia":false}`,
+		},
+		{
+			name:   "explicit false overrides true",
+			status: `{"embeddable":true,"publicStatsViewable":false,"selfDeclaredMadeForKids":false,"containsSyntheticMedia":true}`,
+			opts:   []Option{WithEmbeddable(new(false)), WithContainsSyntheticMedia(new(false))},
+		},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var body struct {
+				Status map[string]any `json:"status"`
+			}
+			svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if r.Method == http.MethodGet {
+					_, _ = io.WriteString(w, `{"items":[{"id":"video-id","snippet":{"title":"Old title","categoryId":"22"},"status":`+tt.status+`}]}`)
+					return
+				}
+				if err := json.UnmarshalRead(r.Body, &body); err != nil {
+					t.Error(err)
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+				_, _ = io.WriteString(w, `{"id":"video-id"}`)
+			}))
+			opts := append([]Option{WithService(svc), WithIds([]string{"video-id"}), WithMaxResults(1), WithTitle("New title"), WithOutput("silent")}, tt.opts...)
+			if err := NewVideo(opts...).Update(io.Discard); err != nil {
+				t.Fatal(err)
+			}
+			for _, field := range []string{"embeddable", "publicStatsViewable", "selfDeclaredMadeForKids", "containsSyntheticMedia"} {
+				if value, present := body.Status[field]; !present || value != false {
+					t.Errorf("status.%s must be present and false, got %v (present=%v)", field, value, present)
+				}
+			}
+		})
 	}
 }
 
@@ -1323,7 +1213,7 @@ func TestVideo_ReportAbuse(t *testing.T) {
 				WithIds([]string{"video-id"}),
 				WithReasonId("reason-id"),
 				WithComments("spam"),
-				WithLanguage("en"),
+				WithLanguage(new("en")),
 				WithSecondaryReasonId("secondary-reason"),
 			},
 			verify: func(r *http.Request) {

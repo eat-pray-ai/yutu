@@ -47,7 +47,7 @@ var insertInSchema = &jsonschema.Schema{
 		"language": {Type: "string", Description: insertLangUsage},
 		"license": {
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
-			Description: licenseUsage, Default: jsontext.Value(`"youtube"`),
+			Description: licenseUsage,
 		},
 		"thumbnail":   {Type: "string", Description: thumbnailUsage},
 		"channel_id":  {Type: "string", Description: chidUsage},
@@ -57,14 +57,18 @@ var insertInSchema = &jsonschema.Schema{
 			Type: "string", Description: privacyUsage,
 			Enum: []any{"public", "private", "unlisted"},
 		},
-		"for_kids":                 {Type: "boolean", Description: fkUsage},
-		"embeddable":               {Type: "boolean", Description: embeddableUsage},
-		"contains_synthetic_media": {Type: "boolean", Description: csmUsage},
-		"recording_date":           {Type: "string", Description: rdUsage},
-		"publish_at":               {Type: "string", Description: paUsage},
-		"stabilize":                {Type: "boolean", Description: stabilizeUsage},
-		"notify_subscribers":       {Type: "boolean", Description: nsUsage},
-		"public_stats_viewable":    {Type: "boolean", Description: psvUsage},
+		"for_kids": {
+			Type: "boolean", Description: fkUsage, Default: jsontext.Value("false"),
+		},
+		"contains_synthetic_media": {
+			Type: "boolean", Description: csmUsage, Default: jsontext.Value("false"),
+		},
+		"embeddable":            {Type: "boolean", Description: embeddableUsage},
+		"recording_date":        {Type: "string", Description: rdUsage},
+		"publish_at":            {Type: "string", Description: paUsage},
+		"stabilize":             {Type: "boolean", Description: stabilizeUsage},
+		"notify_subscribers":    {Type: "boolean", Description: nsUsage},
+		"public_stats_viewable": {Type: "boolean", Description: psvUsage},
 		"on_behalf_of_content_owner": {
 			Type:        "string",
 			Description: pkg.OBOCOUsage,
@@ -108,10 +112,10 @@ func init() {
 	)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
-	insertCmd.Flags().StringVarP(&language, "language", "l", "", insertLangUsage)
-	insertCmd.Flags().StringVarP(&license, "license", "L", "youtube", licenseUsage)
+	insertCmd.Flags().StringVarP(language, "language", "l", "", insertLangUsage)
+	insertCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
 	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
 	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", chidUsage)
 	insertCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
@@ -124,8 +128,8 @@ func init() {
 	insertCmd.Flags().BoolVarP(
 		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
 	)
-	insertCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
-	insertCmd.Flags().StringVarP(&publishAt, "publishAt", "U", "", paUsage)
+	insertCmd.Flags().StringVarP(recordingDate, "recordingDate", "D", "", rdUsage)
+	insertCmd.Flags().StringVarP(publishAt, "publishAt", "U", "", paUsage)
 	insertCmd.Flags().BoolVarP(stabilize, "stabilize", "S", true, stabilizeUsage)
 	insertCmd.Flags().BoolVarP(
 		notifySubscribers, "notifySubscribers", "N", true, nsUsage,

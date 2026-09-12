@@ -38,9 +38,9 @@ type Video struct {
 	AutoLevels  *bool    `yaml:"auto_levels" json:"auto_levels,omitzero"`
 	File        string   `yaml:"file" json:"file,omitempty"`
 	Title       string   `yaml:"title" json:"title,omitempty"`
-	Description string   `yaml:"description" json:"description,omitempty"`
+	Description *string  `yaml:"description" json:"description,omitzero"`
 	Tags        []string `yaml:"tags" json:"tags,omitempty"`
-	Language    string   `yaml:"language" json:"language,omitempty"`
+	Language    *string  `yaml:"language" json:"language,omitzero"`
 	Locale      string   `yaml:"locale" json:"locale,omitempty"`
 	License     string   `yaml:"license" json:"license,omitempty"`
 	Thumbnail   string   `yaml:"thumbnail" json:"thumbnail,omitempty"`
@@ -52,18 +52,19 @@ type Video struct {
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
 	ForKids     *bool    `yaml:"for_kids" json:"for_kids,omitzero"`
 	Embeddable  *bool    `yaml:"embeddable" json:"embeddable,omitzero"`
-	PublishAt   string   `yaml:"publish_at" json:"publish_at,omitempty"`
+	PublishAt   *string  `yaml:"publish_at" json:"publish_at,omitzero"`
 	RegionCode  string   `yaml:"region_code" json:"region_code,omitempty"`
 	ReasonId    string   `yaml:"reason_id" json:"reason_id,omitempty"`
 	Stabilize   *bool    `yaml:"stabilize" json:"stabilize,omitzero"`
 	MaxHeight   int64    `yaml:"max_height" json:"max_height,omitzero"`
 	MaxWidth    int64    `yaml:"max_width" json:"max_width,omitzero"`
 
-	RecordingDate                 string `yaml:"recording_date" json:"recording_date,omitempty"`
-	ContainsSyntheticMedia        *bool  `yaml:"contains_synthetic_media" json:"contains_synthetic_media,omitzero"`
-	SecondaryReasonId             string `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
-	NotifySubscribers             *bool  `yaml:"notify_subscribers" json:"notify_subscribers,omitzero"`
-	PublicStatsViewable           *bool  `yaml:"public_stats_viewable" json:"public_stats_viewable,omitzero"`
+	RecordingDate          *string `yaml:"recording_date" json:"recording_date,omitzero"`
+	ContainsSyntheticMedia *bool   `yaml:"contains_synthetic_media" json:"contains_synthetic_media,omitzero"`
+	SecondaryReasonId      string  `yaml:"secondary_reason_id" json:"secondary_reason_id,omitempty"`
+	NotifySubscribers      *bool   `yaml:"notify_subscribers" json:"notify_subscribers,omitzero"`
+	PublicStatsViewable    *bool   `yaml:"public_stats_viewable" json:"public_stats_viewable,omitzero"`
+
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
@@ -179,24 +180,33 @@ func (v *Video) Insert(writer io.Writer) error {
 
 	video := &youtube.Video{
 		Snippet: &youtube.VideoSnippet{
-			Title:                v.Title,
-			Description:          v.Description,
-			Tags:                 v.Tags,
-			CategoryId:           v.CategoryId,
-			ChannelId:            v.ChannelId,
-			DefaultLanguage:      v.Language,
-			DefaultAudioLanguage: v.Language,
+			Title:      v.Title,
+			Tags:       v.Tags,
+			CategoryId: v.CategoryId,
+			ChannelId:  v.ChannelId,
 		},
 		Status: &youtube.VideoStatus{
 			License:         v.License,
-			PublishAt:       v.PublishAt,
 			PrivacyStatus:   v.Privacy,
 			ForceSendFields: []string{"SelfDeclaredMadeForKids", "ContainsSyntheticMedia"},
 		},
 	}
+	if v.Description != nil {
+		video.Snippet.Description = *v.Description
+	}
+	if v.Language != nil {
+		video.Snippet.DefaultLanguage = *v.Language
+		video.Snippet.DefaultAudioLanguage = *v.Language
+	}
+	if v.PublishAt != nil {
+		video.Status.PublishAt = *v.PublishAt
+	}
 
 	if v.Embeddable != nil {
 		video.Status.Embeddable = *v.Embeddable
+		video.Status.ForceSendFields = append(
+			video.Status.ForceSendFields, "Embeddable",
+		)
 	}
 	if v.ForKids != nil {
 		video.Status.SelfDeclaredMadeForKids = *v.ForKids
@@ -206,12 +216,15 @@ func (v *Video) Insert(writer io.Writer) error {
 	}
 	if v.PublicStatsViewable != nil {
 		video.Status.PublicStatsViewable = *v.PublicStatsViewable
+		video.Status.ForceSendFields = append(
+			video.Status.ForceSendFields, "PublicStatsViewable",
+		)
 	}
 
 	insertParts := "snippet,status"
-	if v.RecordingDate != "" {
+	if v.RecordingDate != nil && *v.RecordingDate != "" {
 		video.RecordingDetails = &youtube.VideoRecordingDetails{
-			RecordingDate: v.RecordingDate,
+			RecordingDate: *v.RecordingDate,
 		}
 		insertParts += ",recordingDetails"
 	}
@@ -269,6 +282,9 @@ func (v *Video) Insert(writer io.Writer) error {
 	return nil
 }
 
+// Update preserves nil Description, Language, PublishAt, and RecordingDate inputs.
+// Non-nil empty strings clear those properties by omitting them from the updated
+// resource part; timestamp clears must not be sent as empty timestamp strings.
 func (v *Video) Update(writer io.Writer) error {
 	if err := v.EnsureService(); err != nil {
 		return err
@@ -291,7 +307,10 @@ func (v *Video) Update(writer io.Writer) error {
 	video := &youtube.Video{
 		Id:      original.Id,
 		Snippet: &youtube.VideoSnippet{},
-		Status:  &youtube.VideoStatus{},
+		Status: &youtube.VideoStatus{
+			// Status updates replace existing values; omitempty must not drop false booleans.
+			ForceSendFields: []string{"Embeddable", "PublicStatsViewable", "SelfDeclaredMadeForKids", "ContainsSyntheticMedia"},
+		},
 	}
 	if original.Snippet != nil {
 		video.Snippet.Title = original.Snippet.Title
@@ -313,8 +332,8 @@ func (v *Video) Update(writer io.Writer) error {
 	if v.Title != "" {
 		video.Snippet.Title = v.Title
 	}
-	if v.Description != "" {
-		video.Snippet.Description = v.Description
+	if v.Description != nil {
+		video.Snippet.Description = *v.Description
 	}
 	if v.Tags != nil {
 		if !slices.Contains(v.Tags, "yutu🐰") {
@@ -322,8 +341,8 @@ func (v *Video) Update(writer io.Writer) error {
 		}
 		video.Snippet.Tags = v.Tags
 	}
-	if v.Language != "" {
-		video.Snippet.DefaultLanguage = v.Language
+	if v.Language != nil {
+		video.Snippet.DefaultLanguage = *v.Language
 	}
 	if v.License != "" {
 		video.Status.License = v.License
@@ -334,13 +353,13 @@ func (v *Video) Update(writer io.Writer) error {
 	if v.Privacy != "" {
 		video.Status.PrivacyStatus = v.Privacy
 	}
-	if v.PublishAt != "" {
+	if v.PublishAt != nil {
 		// YouTube only accepts a schedule on private videos. Do not coerce
 		// public/unlisted to private here: that would take a live video offline.
-		if video.Status.PrivacyStatus != "private" {
+		if *v.PublishAt != "" && video.Status.PrivacyStatus != "private" {
 			return errors.Join(errUpdateVideo, errScheduleNonPrivate)
 		}
-		video.Status.PublishAt = v.PublishAt
+		video.Status.PublishAt = *v.PublishAt
 	}
 	if v.Embeddable != nil {
 		video.Status.Embeddable = *v.Embeddable
@@ -350,9 +369,9 @@ func (v *Video) Update(writer io.Writer) error {
 	}
 
 	updateParts := "snippet,status"
-	if v.RecordingDate != "" {
+	if v.RecordingDate != nil {
 		video.RecordingDetails = &youtube.VideoRecordingDetails{
-			RecordingDate: v.RecordingDate,
+			RecordingDate: *v.RecordingDate,
 		}
 		updateParts += ",recordingDetails"
 	}
@@ -469,10 +488,12 @@ func (v *Video) ReportAbuse(writer io.Writer) error {
 	for _, id := range v.Ids {
 		videoAbuseReport := &youtube.VideoAbuseReport{
 			Comments:          v.Comments,
-			Language:          v.Language,
 			ReasonId:          v.ReasonId,
 			SecondaryReasonId: v.SecondaryReasonId,
 			VideoId:           id,
+		}
+		if v.Language != nil {
+			videoAbuseReport.Language = *v.Language
 		}
 
 		call := v.Service.Videos.ReportAbuse(videoAbuseReport)
@@ -510,7 +531,7 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithDescription(description string) Option {
+func WithDescription(description *string) Option {
 	return func(v *Video) {
 		v.Description = description
 	}
@@ -522,7 +543,7 @@ func WithTags(tags []string) Option {
 	}
 }
 
-func WithLanguage(language string) Option {
+func WithLanguage(language *string) Option {
 	return func(v *Video) {
 		v.Language = language
 	}
@@ -608,13 +629,13 @@ func WithPublicStatsViewable(publicStatsViewable *bool) Option {
 	}
 }
 
-func WithPublishAt(publishAt string) Option {
+func WithPublishAt(publishAt *string) Option {
 	return func(v *Video) {
 		v.PublishAt = publishAt
 	}
 }
 
-func WithRecordingDate(recordingDate string) Option {
+func WithRecordingDate(recordingDate *string) Option {
 	return func(v *Video) {
 		v.RecordingDate = recordingDate
 	}
