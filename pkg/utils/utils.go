@@ -101,11 +101,12 @@ func BoolToStrPtr(b *bool) *string {
 	return new(strconv.FormatBool(*b))
 }
 
-func ResetBool(m map[string]**bool, flagSet *pflag.FlagSet) {
-	for k := range m {
-		flag := flagSet.Lookup(k)
+func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {
+	for name, value := range values {
+		flag := flagSet.Lookup(name)
 		if flag != nil && !flag.Changed {
-			*m[k] = nil
+			var zero T
+			*value = zero
 		}
 	}
 }

@@ -73,5 +73,5 @@ func resetFlags(flagSet *pflag.FlagSet) {
 		"isLarge":      &isLarge,
 	}
 
-	utils.ResetBool(boolMap, flagSet)
+	utils.ResetFlags(boolMap, flagSet)
 }
