@@ -68,7 +68,7 @@ var updateInSchema = &jsonschema.Schema{
 		"recording_date":           {Type: "string", Description: rdUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"json"`),
 		},
 	},
 }

@@ -47,9 +47,8 @@ var listInSchema = &jsonschema.Schema{
 			Default: jsontext.Value(`["id","snippet"]`),
 		},
 		"output": {
-			Type: "string", Description: pkg.TableUsage,
-			Enum:    []any{"json", "yaml", "table"},
-			Default: jsontext.Value(`"yaml"`),
+			Type: "string", Enum: []any{"json", "yaml", "table"},
+			Description: pkg.TableUsage, Default: jsontext.Value(`"json"`),
 		},
 	},
 }

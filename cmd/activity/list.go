@@ -52,7 +52,7 @@ var listInSchema = &jsonschema.Schema{
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "table"},
-			Description: pkg.TableUsage, Default: jsontext.Value(`"yaml"`),
+			Description: pkg.TableUsage, Default: jsontext.Value(`"json"`),
 		},
 	},
 }
