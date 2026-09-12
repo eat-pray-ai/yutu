@@ -17,7 +17,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -84,21 +83,6 @@ func GetFileName(file string) string {
 func IsJson(s string) bool {
 	var js jsontext.Value
 	return json.Unmarshal([]byte(s), &js) == nil
-}
-
-func StrToBoolPtr(b *string) *bool {
-	if b == nil || *b == "" || strings.ToLower(strings.TrimSpace(*b)) == "null" {
-		return nil
-	}
-	return new(*b == "true")
-}
-
-func BoolToStrPtr(b *bool) *string {
-	if b == nil {
-		return new("")
-	}
-
-	return new(strconv.FormatBool(*b))
 }
 
 func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {

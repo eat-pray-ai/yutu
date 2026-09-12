@@ -17,58 +17,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func TestStrToBoolPtr(t *testing.T) {
-	type args struct {
-		b *string
-	}
-	tests := []struct {
-		name string
-		args args
-		want *bool
-	}{
-		{
-			name: "true",
-			args: args{b: new("true")},
-			want: func() *bool {
-				b := true
-				return &b
-			}(),
-		},
-		{
-			name: "false",
-			args: args{b: new("false")},
-			want: func() *bool {
-				b := false
-				return &b
-			}(),
-		},
-		{
-			name: "empty",
-			args: args{b: new("")},
-			want: nil,
-		},
-		{
-			name: "null",
-			args: args{b: new("null")},
-			want: nil,
-		},
-		{
-			name: "NULL",
-			args: args{b: new("NULL")},
-			want: nil,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				if got := StrToBoolPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("BoolPtr() = %v, want %v", got, tt.want)
-				}
-			},
-		)
-	}
-}
-
 func TestGetFileName(t *testing.T) {
 	type args struct {
 		file string
@@ -344,44 +292,6 @@ func TestExtractHl(t *testing.T) {
 			tt.name, func(t *testing.T) {
 				if got := ExtractHl(tt.args.uri); got != tt.want {
 					t.Errorf("ExtractHl() = %v, want %v", got, tt.want)
-				}
-			},
-		)
-	}
-}
-
-func TestBoolToStrPtr(t *testing.T) {
-	bTrue := true
-	bFalse := false
-	type args struct {
-		b *bool
-	}
-	tests := []struct {
-		name string
-		args args
-		want *string
-	}{
-		{
-			name: "true",
-			args: args{b: &bTrue},
-			want: new("true"),
-		},
-		{
-			name: "false",
-			args: args{b: &bFalse},
-			want: new("false"),
-		},
-		{
-			name: "nil",
-			args: args{b: nil},
-			want: new(""),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				if got := BoolToStrPtr(tt.args.b); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("BoolToStrPtr() = %v, want %v", got, tt.want)
 				}
 			},
 		)
