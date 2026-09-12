@@ -38,7 +38,7 @@ var updateInSchema = &jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
 		"audio_track_type": {
 			Type: "string", Description: attUsage,
-			Default: jsontext.Value(`"unknown"`),
+			Enum: []any{"unknown", "primary", "commentary", "descriptive"},
 		},
 		"is_auto_synced": {Type: "boolean", Description: iasUsage},
 		"is_cc":          {Type: "boolean", Description: iscUsage},
@@ -49,8 +49,7 @@ var updateInSchema = &jsonschema.Schema{
 		"name":           {Type: "string", Description: nameUsage},
 		"track_kind": {
 			Type: "string", Description: tkUsage,
-			Enum:    []any{"standard", "ASR", "forced"},
-			Default: jsontext.Value(`"standard"`),
+			Enum: []any{"standard", "ASR", "forced"},
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},

@@ -81,7 +81,7 @@ func init() {
 	liveBroadcastCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringVarP(
 		&scheduledStartTime, "scheduledStartTime", "S", "", sstUsage,
 	)

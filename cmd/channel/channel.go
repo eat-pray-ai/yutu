@@ -5,6 +5,7 @@ package channel
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -31,10 +32,10 @@ var (
 	ids             []string
 	channelFor      string
 	maxResults      int64
-	country         string
+	country         = new("")
 	customUrl       string
-	defaultLanguage string
-	description     string
+	defaultLanguage = new("")
+	description     = new("")
 	title           string
 	parts           []string
 
@@ -45,6 +46,14 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: short,
 	Long:  long,
+	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+		stringFlags := map[string]**string{
+			"country":         &country,
+			"defaultLanguage": &defaultLanguage,
+			"description":     &description,
+		}
+		utils.ResetFlags(stringFlags, cmd.Flags())
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},

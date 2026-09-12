@@ -86,9 +86,9 @@ func init() {
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
-	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
+	updateCmd.Flags().StringVarP(language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)

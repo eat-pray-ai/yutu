@@ -265,7 +265,7 @@ func (v *Video) Insert(writer io.Writer) error {
 	if v.PlaylistId != "" {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(res.Snippet.Title),
-			playlistItem.WithDescription(res.Snippet.Description),
+			playlistItem.WithDescription(&res.Snippet.Description),
 			playlistItem.WithKind("video"),
 			playlistItem.WithKVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),
@@ -399,7 +399,7 @@ func (v *Video) Update(writer io.Writer) error {
 	if v.PlaylistId != "" {
 		pi := playlistItem.NewPlaylistItem(
 			playlistItem.WithTitle(res.Snippet.Title),
-			playlistItem.WithDescription(res.Snippet.Description),
+			playlistItem.WithDescription(&res.Snippet.Description),
 			playlistItem.WithKind("video"),
 			playlistItem.WithKVideoId(res.Id),
 			playlistItem.WithPlaylistId(v.PlaylistId),

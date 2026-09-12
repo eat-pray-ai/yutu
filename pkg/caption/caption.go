@@ -60,7 +60,6 @@ func NewCaption(opts ...Option) ICaption[youtube.Caption] {
 	return c
 }
 
-
 func (c *Caption) Get() ([]*youtube.Caption, error) {
 	if err := c.EnsureService(); err != nil {
 		return nil, err
@@ -159,18 +158,33 @@ func (c *Caption) Update(writer io.Writer) error {
 	}
 	if c.IsAutoSynced != nil {
 		caption.Snippet.IsAutoSynced = *c.IsAutoSynced
+		caption.Snippet.ForceSendFields = append(
+			caption.Snippet.ForceSendFields, "IsAutoSynced",
+		)
 	}
 	if c.IsCC != nil {
 		caption.Snippet.IsCC = *c.IsCC
+		caption.Snippet.ForceSendFields = append(
+			caption.Snippet.ForceSendFields, "IsCC",
+		)
 	}
 	if c.IsDraft != nil {
 		caption.Snippet.IsDraft = *c.IsDraft
+		caption.Snippet.ForceSendFields = append(
+			caption.Snippet.ForceSendFields, "IsDraft",
+		)
 	}
 	if c.IsEasyReader != nil {
 		caption.Snippet.IsEasyReader = *c.IsEasyReader
+		caption.Snippet.ForceSendFields = append(
+			caption.Snippet.ForceSendFields, "IsEasyReader",
+		)
 	}
 	if c.IsLarge != nil {
 		caption.Snippet.IsLarge = *c.IsLarge
+		caption.Snippet.ForceSendFields = append(
+			caption.Snippet.ForceSendFields, "IsLarge",
+		)
 	}
 	if c.Language != "" {
 		caption.Snippet.Language = c.Language
@@ -266,7 +280,9 @@ func (c *Caption) Download(writer io.Writer) error {
 		return errors.Join(errDownloadCaption, err)
 	}
 
-	file, err := pkg.Root.OpenFile(c.File, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	file, err := pkg.Root.OpenFile(
+		c.File, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600,
+	)
 	if err != nil {
 		return errors.Join(errDownloadCaption, err)
 	}

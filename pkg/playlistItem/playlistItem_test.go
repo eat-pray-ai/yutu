@@ -34,7 +34,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				opts: []Option{
 					WithIds([]string{"item1", "item2"}),
 					WithTitle("Test Item"),
-					WithDescription("Test item description"),
+					WithDescription(new("Test item description")),
 					WithKind("video"),
 					WithKVideoId("video123"),
 					WithKChannelId("channel123"),
@@ -59,7 +59,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				ChannelId:              "channel456",
 				OnBehalfOfContentOwner: "owner123",
 				Title:                  "Test Item",
-				Description:            "Test item description",
+				Description:            new("Test item description"),
 				Kind:                   "video",
 				KVideoId:               "video123",
 				KChannelId:             "channel123",
@@ -103,7 +103,7 @@ func TestNewPlaylistItem(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithTitle(""),
-					WithDescription(""),
+					WithDescription(new("")),
 					WithKind(""),
 					WithKVideoId(""),
 					WithKChannelId(""),
@@ -121,7 +121,7 @@ func TestNewPlaylistItem(t *testing.T) {
 				ChannelId:              "",
 				OnBehalfOfContentOwner: "",
 				Title:                  "",
-				Description:            "",
+				Description:            new(""),
 				Kind:                   "",
 				KVideoId:               "",
 				KChannelId:             "",
@@ -489,7 +489,7 @@ func TestPlaylistItem_Update(t *testing.T) {
 			name: "update playlist item description and privacy",
 			opts: []Option{
 				WithIds([]string{"item-id"}),
-				WithDescription("Updated Description"),
+				WithDescription(new("Updated Description")),
 				WithPrivacy("private"),
 				WithMaxResults(1),
 			},

@@ -22,15 +22,15 @@ var (
 
 type PlaylistItem struct {
 	common.Fields
-	Title       string `yaml:"title" json:"title,omitempty"`
-	Description string `yaml:"description" json:"description,omitempty"`
-	Kind        string `yaml:"kind" json:"kind,omitempty"`
-	KVideoId    string `yaml:"k_video_id" json:"k_video_id,omitempty"`
-	KChannelId  string `yaml:"k_channel_id" json:"k_channel_id,omitempty"`
-	KPlaylistId string `yaml:"k_playlist_id" json:"k_playlist_id,omitempty"`
-	VideoId     string `yaml:"video_id" json:"video_id,omitempty"`
-	PlaylistId  string `yaml:"playlist_id" json:"playlist_id,omitempty"`
-	Privacy     string `yaml:"privacy" json:"privacy,omitempty"`
+	Title       string  `yaml:"title" json:"title,omitempty"`
+	Description *string `yaml:"description" json:"description,omitzero"`
+	Kind        string  `yaml:"kind" json:"kind,omitempty"`
+	KVideoId    string  `yaml:"k_video_id" json:"k_video_id,omitempty"`
+	KChannelId  string  `yaml:"k_channel_id" json:"k_channel_id,omitempty"`
+	KPlaylistId string  `yaml:"k_playlist_id" json:"k_playlist_id,omitempty"`
+	VideoId     string  `yaml:"video_id" json:"video_id,omitempty"`
+	PlaylistId  string  `yaml:"playlist_id" json:"playlist_id,omitempty"`
+	Privacy     string  `yaml:"privacy" json:"privacy,omitempty"`
 }
 
 type IPlaylistItem[T any] interface {
@@ -135,15 +135,17 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 
 	playlistItem := &youtube.PlaylistItem{
 		Snippet: &youtube.PlaylistItemSnippet{
-			Title:       pi.Title,
-			Description: pi.Description,
-			ResourceId:  resourceId,
-			PlaylistId:  pi.PlaylistId,
-			ChannelId:   pi.ChannelId,
+			Title:      pi.Title,
+			ResourceId: resourceId,
+			PlaylistId: pi.PlaylistId,
+			ChannelId:  pi.ChannelId,
 		},
 		Status: &youtube.PlaylistItemStatus{
 			PrivacyStatus: pi.Privacy,
 		},
+	}
+	if pi.Description != nil {
+		playlistItem.Snippet.Description = *pi.Description
 	}
 
 	call := pi.Service.PlaylistItems.Insert(
@@ -182,8 +184,8 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 	if pi.Title != "" {
 		playlistItem.Snippet.Title = pi.Title
 	}
-	if pi.Description != "" {
-		playlistItem.Snippet.Description = pi.Description
+	if pi.Description != nil {
+		playlistItem.Snippet.Description = *pi.Description
 	}
 	if pi.Privacy != "" {
 		playlistItem.Status.PrivacyStatus = pi.Privacy
@@ -233,7 +235,7 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithDescription(description string) Option {
+func WithDescription(description *string) Option {
 	return func(p *PlaylistItem) {
 		p.Description = description
 	}

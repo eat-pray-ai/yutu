@@ -7,7 +7,6 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 const (
@@ -53,7 +52,7 @@ var captionCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		resetFlags(cmd.Flags())
+		resetFlags(cmd)
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
@@ -64,14 +63,22 @@ func init() {
 	cmd.RootCmd.AddCommand(captionCmd)
 }
 
-func resetFlags(flagSet *pflag.FlagSet) {
-	boolMap := map[string]**bool{
+func resetFlags(cmd *cobra.Command) {
+	flagSet := cmd.Flags()
+	boolFlags := map[string]**bool{
 		"isAutoSynced": &isAutoSynced,
 		"isCC":         &isCC,
 		"isDraft":      &isDraft,
 		"isEasyReader": &isEasyReader,
 		"isLarge":      &isLarge,
 	}
+	utils.ResetFlags(boolFlags, flagSet)
 
-	utils.ResetFlags(boolMap, flagSet)
+	if cmd.Name() == "update" {
+		stringFlags := map[string]*string{
+			"audioTrackType": &audioTrackType,
+			"trackKind":      &trackKind,
+		}
+		utils.ResetFlags(stringFlags, flagSet)
+	}
 }

@@ -35,7 +35,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 				opts: []Option{
 					WithIds([]string{"broadcast1", "broadcast2"}),
 					WithTitle("Test Broadcast"),
-					WithDescription("A test broadcast"),
+					WithDescription(new("A test broadcast")),
 					WithMine(&mine),
 					WithBroadcastStatus("active"),
 					WithBroadcastType("event"),
@@ -63,7 +63,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 				Ids:                           []string{"broadcast1", "broadcast2"},
 				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Broadcast",
-				Description:                   "A test broadcast",
+				Description:                   new("A test broadcast"),
 				Mine:                          &mine,
 				BroadcastStatus:               "active",
 				BroadcastType:                 "event",
@@ -112,7 +112,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithTitle(""),
-					WithDescription(""),
+					WithDescription(new("")),
 					WithBroadcastStatus(""),
 					WithBroadcastType(""),
 					WithPrivacyStatus(""),
@@ -124,7 +124,7 @@ func TestNewLiveBroadcast(t *testing.T) {
 			want: &LiveBroadcast{
 				Fields:             common.Fields{},
 				Title:              "",
-				Description:        "",
+				Description:        new(""),
 				BroadcastStatus:    "",
 				BroadcastType:      "",
 				PrivacyStatus:      "",
@@ -341,7 +341,7 @@ func TestLiveBroadcast_Insert(t *testing.T) {
 			name: "insert live broadcast",
 			opts: []Option{
 				WithTitle("New Broadcast"),
-				WithDescription("A new live broadcast"),
+				WithDescription(new("A new live broadcast")),
 				WithPrivacyStatus("public"),
 				WithScheduledStartTime("2026-01-01T00:00:00Z"),
 				WithScheduledEndTime("2026-01-01T01:00:00Z"),
@@ -429,7 +429,7 @@ func TestLiveBroadcast_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"broadcast-1"}),
 				WithTitle("Updated Broadcast"),
-				WithDescription("Updated description"),
+				WithDescription(new("Updated description")),
 				WithMaxResults(1),
 			},
 			wantErr: false,

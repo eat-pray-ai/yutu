@@ -40,8 +40,8 @@ var setInSchema = &jsonschema.Schema{
 			Type: "string", Description: ivpUsage,
 			Enum: []any{"topLeft", "topRight", "bottomLeft", "bottomRight"},
 		},
-		"duration_ms": {Type: "number", Description: dmUsage},
-		"offset_ms":   {Type: "number", Description: omUsage},
+		"duration_ms": {Type: "number", Description: dmUsage, Minimum: new(float64(0))},
+		"offset_ms":   {Type: "number", Description: omUsage, Minimum: new(float64(0))},
 		"offset_type": {
 			Type: "string", Description: otUsage,
 			Enum: []any{"offsetFromStart", "offsetFromEnd"},
