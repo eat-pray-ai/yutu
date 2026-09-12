@@ -53,7 +53,7 @@ var updateInSchema = &jsonschema.Schema{
 		"language": {Type: "string", Description: updateLangUsage},
 		"license": {
 			Type: "string", Enum: []any{"youtube", "creativeCommon"},
-			Description: licenseUsage, Default: jsontext.Value(`"youtube"`),
+			Description: licenseUsage,
 		},
 		"thumbnail":   {Type: "string", Description: thumbnailUsage},
 		"playlist_id": {Type: "string", Description: pidUsage},
@@ -99,22 +99,22 @@ func init() {
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
-	updateCmd.Flags().StringVarP(&language, "language", "l", "", updateLangUsage)
-	updateCmd.Flags().StringVarP(&license, "license", "L", "youtube", licenseUsage)
+	updateCmd.Flags().StringVarP(language, "language", "l", "", updateLangUsage)
+	updateCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
 	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
 	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
 	updateCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
 	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	updateCmd.Flags().StringVarP(&publishAt, "publishAt", "U", "", paUsage)
+	updateCmd.Flags().StringVarP(publishAt, "publishAt", "U", "", paUsage)
 	updateCmd.Flags().BoolVarP(
 		embeddable, "embeddable", "E", true, embeddableUsage,
 	)
 	updateCmd.Flags().BoolVarP(
 		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
 	)
-	updateCmd.Flags().StringVarP(&recordingDate, "recordingDate", "D", "", rdUsage)
+	updateCmd.Flags().StringVarP(recordingDate, "recordingDate", "D", "", rdUsage)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = updateCmd.MarkFlagRequired("id")

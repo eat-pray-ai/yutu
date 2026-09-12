@@ -83,7 +83,7 @@ func init() {
 	reportAbuseCmd.Flags().StringVarP(
 		&comments, "comments", "c", "", commentsUsage,
 	)
-	reportAbuseCmd.Flags().StringVarP(&language, "language", "l", "", raLangUsage)
+	reportAbuseCmd.Flags().StringVarP(language, "language", "l", "", raLangUsage)
 	reportAbuseCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
