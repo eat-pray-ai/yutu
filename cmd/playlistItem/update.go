@@ -50,7 +50,7 @@ var updateInSchema = &jsonschema.Schema{
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
-			Description: pkg.SilentUsage, Default: jsontext.Value(`"yaml"`),
+			Description: pkg.SilentUsage, Default: jsontext.Value(`"json"`),
 		},
 	},
 }
