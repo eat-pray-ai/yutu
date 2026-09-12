@@ -31,7 +31,7 @@ var channelSectionCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		utils.ResetBool(map[string]**bool{"mine": &mine}, cmd.Flags())
+		utils.ResetFlags(map[string]**bool{"mine": &mine}, cmd.Flags())
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()

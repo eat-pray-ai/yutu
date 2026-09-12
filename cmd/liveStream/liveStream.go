@@ -7,7 +7,6 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 const (
@@ -40,7 +39,7 @@ var liveStreamCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		resetFlags(cmd.Flags())
+		utils.ResetFlags(map[string]**bool{"mine": &mine}, cmd.Flags())
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
@@ -49,12 +48,4 @@ var liveStreamCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(liveStreamCmd)
-}
-
-func resetFlags(flagSet *pflag.FlagSet) {
-	boolMap := map[string]**bool{
-		"mine": &mine,
-	}
-
-	utils.ResetBool(boolMap, flagSet)
 }

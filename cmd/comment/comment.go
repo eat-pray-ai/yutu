@@ -46,7 +46,7 @@ var commentCmd = &cobra.Command{
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
 		boolMap := map[string]**bool{"canRate": &canRate, "banAuthor": &banAuthor}
-		utils.ResetBool(boolMap, cmd.Flags())
+		utils.ResetFlags(boolMap, cmd.Flags())
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
