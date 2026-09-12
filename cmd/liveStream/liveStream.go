@@ -23,7 +23,7 @@ const (
 var (
 	ids                           []string
 	title                         string
-	description                   string
+	description                   = new("")
 	mine                          = new(false)
 	frameRate                     string
 	ingestionType                 string
@@ -40,6 +40,9 @@ var liveStreamCmd = &cobra.Command{
 	Long:  long,
 	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
 		utils.ResetFlags(map[string]**bool{"mine": &mine}, cmd.Flags())
+		utils.ResetFlags(
+			map[string]**string{"description": &description}, cmd.Flags(),
+		)
 	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()

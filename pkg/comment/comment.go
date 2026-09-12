@@ -149,6 +149,9 @@ func (c *Comment) Update(writer io.Writer) error {
 	comment := comments[0]
 	if c.CanRate != nil {
 		comment.Snippet.CanRate = *c.CanRate
+		comment.Snippet.ForceSendFields = append(
+			comment.Snippet.ForceSendFields, "CanRate",
+		)
 	}
 
 	if c.TextOriginal != "" {

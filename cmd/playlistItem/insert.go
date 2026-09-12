@@ -81,7 +81,7 @@ func init() {
 	playlistItemCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringVarP(&kind, "kind", "k", "", kindUsage)
 	insertCmd.Flags().StringVarP(&kVideoId, "kVideoId", "V", "", kvidUsage)
 	insertCmd.Flags().StringVarP(&kChannelId, "kChannelId", "C", "", kcidUsage)

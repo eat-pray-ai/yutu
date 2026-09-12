@@ -17,7 +17,7 @@ const (
 	forUsage      = "mine|developer|contentOwner"
 	locationUsage = "Filter on location of the video"
 	lrUsage       = "Filter on distance from the location"
-	orderUsage    = "searchSortUnspecified, date, rating, viewCount, relevance, title, videoCount"
+	orderUsage    = "searchSortUnspecified|date|rating|viewCount|relevance|title|videoCount"
 	paUsage       = "Filter on resources published after this date"
 	pbUsage       = "Filter on resources published before this date"
 	qUsage        = "Textual search terms to match"

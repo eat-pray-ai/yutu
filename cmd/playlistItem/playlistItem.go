@@ -5,6 +5,7 @@ package playlistItem
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +26,7 @@ const (
 var (
 	ids         []string
 	title       string
-	description string
+	description = new("")
 	kind        string
 	kVideoId    string
 	kChannelId  string
@@ -44,6 +45,11 @@ var playlistItemCmd = &cobra.Command{
 	Use:   "playlistItem",
 	Short: short,
 	Long:  long,
+	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+		utils.ResetFlags(
+			map[string]**string{"description": &description}, cmd.Flags(),
+		)
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},

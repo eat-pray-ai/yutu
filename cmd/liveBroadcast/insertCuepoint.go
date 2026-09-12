@@ -42,9 +42,15 @@ var insertCuepointInSchema = &jsonschema.Schema{
 			Type: "string", Enum: []any{"cueTypeAd"},
 			Description: ctUsage,
 		},
-		"cue_duration_secs":          {Type: "number", Description: cdsUsage},
-		"cue_insertion_offset_ms":    {Type: "number", Description: ciomUsage},
-		"cue_walltime_ms":            {Type: "number", Description: cwmUsage},
+		"cue_duration_secs": {
+			Type: "number", Description: cdsUsage, Minimum: new(float64(0)),
+		},
+		"cue_insertion_offset_ms": {
+			Type: "number", Description: ciomUsage, Minimum: new(float64(0)),
+		},
+		"cue_walltime_ms": {
+			Type: "number", Description: cwmUsage, Minimum: new(float64(0)),
+		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"on_behalf_of_content_owner_channel": {
 			Type: "string", Description: obococUsage,

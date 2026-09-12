@@ -35,7 +35,7 @@ func TestNewLiveStream(t *testing.T) {
 				opts: []Option{
 					WithIds([]string{"stream1", "stream2"}),
 					WithTitle("Test Stream"),
-					WithDescription("A test stream"),
+					WithDescription(new("A test stream")),
 					WithMine(&mine),
 					WithFrameRate("60fps"),
 					WithIngestionType("rtmp"),
@@ -56,7 +56,7 @@ func TestNewLiveStream(t *testing.T) {
 				Ids:                           []string{"stream1", "stream2"},
 				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Stream",
-				Description:                   "A test stream",
+				Description:                   new("A test stream"),
 				Mine:                          &mine,
 				FrameRate:                     "60fps",
 				IngestionType:                 "rtmp",
@@ -98,7 +98,7 @@ func TestNewLiveStream(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithTitle(""),
-					WithDescription(""),
+					WithDescription(new("")),
 					WithFrameRate(""),
 					WithIngestionType(""),
 					WithResolution(""),
@@ -107,7 +107,7 @@ func TestNewLiveStream(t *testing.T) {
 			want: &LiveStream{
 				Fields:        common.Fields{},
 				Title:         "",
-				Description:   "",
+				Description:   new(""),
 				FrameRate:     "",
 				IngestionType: "",
 				Resolution:    "",
@@ -301,7 +301,7 @@ func TestLiveStream_Insert(t *testing.T) {
 			name: "insert live stream",
 			opts: []Option{
 				WithTitle("New Stream"),
-				WithDescription("A new live stream"),
+				WithDescription(new("A new live stream")),
 				WithFrameRate("60fps"),
 				WithIngestionType("rtmp"),
 				WithResolution("1080p"),
@@ -394,7 +394,7 @@ func TestLiveStream_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"stream-1"}),
 				WithTitle("Updated Stream"),
-				WithDescription("Updated description"),
+				WithDescription(new("Updated description")),
 				WithMaxResults(1),
 			},
 			wantErr: false,

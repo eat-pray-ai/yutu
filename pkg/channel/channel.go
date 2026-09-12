@@ -20,15 +20,15 @@ var (
 
 type Channel struct {
 	common.Fields
-	CategoryId      string `yaml:"category_id" json:"category_id,omitempty"`
-	ForHandle       string `yaml:"for_handle" json:"for_handle,omitempty"`
-	ForUsername     string `yaml:"for_username" json:"for_username,omitempty"`
-	For             string `yaml:"for" json:"for,omitempty"`
-	Country         string `yaml:"country" json:"country,omitempty"`
-	CustomUrl       string `yaml:"custom_url" json:"custom_url,omitempty"`
-	DefaultLanguage string `yaml:"default_language" json:"default_language,omitempty"`
-	Description     string `yaml:"description" json:"description,omitempty"`
-	Title           string `yaml:"title" json:"title,omitempty"`
+	CategoryId      string  `yaml:"category_id" json:"category_id,omitempty"`
+	ForHandle       string  `yaml:"for_handle" json:"for_handle,omitempty"`
+	ForUsername     string  `yaml:"for_username" json:"for_username,omitempty"`
+	For             string  `yaml:"for" json:"for,omitempty"`
+	Country         *string `yaml:"country" json:"country,omitzero"`
+	CustomUrl       string  `yaml:"custom_url" json:"custom_url,omitempty"`
+	DefaultLanguage *string `yaml:"default_language" json:"default_language,omitzero"`
+	Description     *string `yaml:"description" json:"description,omitzero"`
+	Title           string  `yaml:"title" json:"title,omitempty"`
 }
 
 type IChannel[T youtube.Channel] interface {
@@ -119,17 +119,17 @@ func (c *Channel) Update(writer io.Writer) error {
 	}
 
 	cha := channels[0]
-	if c.Country != "" {
-		cha.Snippet.Country = c.Country
+	if c.Country != nil {
+		cha.Snippet.Country = *c.Country
 	}
 	if c.CustomUrl != "" {
 		cha.Snippet.CustomUrl = c.CustomUrl
 	}
-	if c.DefaultLanguage != "" {
-		cha.Snippet.DefaultLanguage = c.DefaultLanguage
+	if c.DefaultLanguage != nil {
+		cha.Snippet.DefaultLanguage = *c.DefaultLanguage
 	}
-	if c.Description != "" {
-		cha.Snippet.Description = c.Description
+	if c.Description != nil {
+		cha.Snippet.Description = *c.Description
 	}
 	if c.Title != "" {
 		cha.Snippet.Title = c.Title
@@ -169,7 +169,7 @@ func WithFor(f string) Option {
 	}
 }
 
-func WithCountry(country string) Option {
+func WithCountry(country *string) Option {
 	return func(c *Channel) {
 		c.Country = country
 	}
@@ -181,13 +181,13 @@ func WithCustomUrl(url string) Option {
 	}
 }
 
-func WithDefaultLanguage(language string) Option {
+func WithDefaultLanguage(language *string) Option {
 	return func(c *Channel) {
 		c.DefaultLanguage = language
 	}
 }
 
-func WithDescription(desc string) Option {
+func WithDescription(desc *string) Option {
 	return func(c *Channel) {
 		c.Description = desc
 	}

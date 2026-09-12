@@ -35,8 +35,13 @@ var insertInSchema = &jsonschema.Schema{
 	Properties: map[string]*jsonschema.Schema{
 		"live_chat_id":           {Type: "string", Description: lcidUsage},
 		"banned_user_channel_id": {Type: "string", Description: bucidUsage},
-		"ban_type":               {Type: "string", Description: banTypeUsage},
-		"ban_duration_seconds":   {Type: "number", Description: banDurationUsage},
+		"ban_type": {
+			Type: "string", Description: banTypeUsage,
+			Enum: []any{"permanent", "temporary"},
+		},
+		"ban_duration_seconds": {
+			Type: "number", Description: banDurationUsage, Minimum: new(float64(0)),
+		},
 		"parts": {
 			Type: "array", Description: "Parts to include in the response",
 			Items: &jsonschema.Schema{Type: "string"}, Default: jsontext.Value(`["snippet"]`),

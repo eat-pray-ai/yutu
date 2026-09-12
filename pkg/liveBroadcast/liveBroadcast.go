@@ -25,15 +25,15 @@ var (
 
 type LiveBroadcast struct {
 	common.Fields
-	Title              string `yaml:"title" json:"title,omitempty"`
-	Description        string `yaml:"description" json:"description,omitempty"`
-	Mine               *bool  `yaml:"mine" json:"mine,omitzero"`
-	BroadcastStatus    string `yaml:"broadcast_status" json:"broadcast_status,omitempty"`
-	BroadcastType      string `yaml:"broadcast_type" json:"broadcast_type,omitempty"`
-	PrivacyStatus      string `yaml:"privacy_status" json:"privacy_status,omitempty"`
-	ScheduledStartTime string `yaml:"scheduled_start_time" json:"scheduled_start_time,omitempty"`
-	ScheduledEndTime   string `yaml:"scheduled_end_time" json:"scheduled_end_time,omitempty"`
-	StreamId           string `yaml:"stream_id" json:"stream_id,omitempty"`
+	Title              string  `yaml:"title" json:"title,omitempty"`
+	Description        *string `yaml:"description" json:"description,omitzero"`
+	Mine               *bool   `yaml:"mine" json:"mine,omitzero"`
+	BroadcastStatus    string  `yaml:"broadcast_status" json:"broadcast_status,omitempty"`
+	BroadcastType      string  `yaml:"broadcast_type" json:"broadcast_type,omitempty"`
+	PrivacyStatus      string  `yaml:"privacy_status" json:"privacy_status,omitempty"`
+	ScheduledStartTime string  `yaml:"scheduled_start_time" json:"scheduled_start_time,omitempty"`
+	ScheduledEndTime   string  `yaml:"scheduled_end_time" json:"scheduled_end_time,omitempty"`
+	StreamId           string  `yaml:"stream_id" json:"stream_id,omitempty"`
 
 	CueType              string `yaml:"cue_type" json:"cue_type,omitempty"`
 	CueDurationSecs      int64  `yaml:"cue_duration_secs" json:"cue_duration_secs,omitzero"`
@@ -129,13 +129,15 @@ func (b *LiveBroadcast) Insert(writer io.Writer) error {
 	broadcast := &youtube.LiveBroadcast{
 		Snippet: &youtube.LiveBroadcastSnippet{
 			Title:              b.Title,
-			Description:        b.Description,
 			ScheduledStartTime: b.ScheduledStartTime,
 			ScheduledEndTime:   b.ScheduledEndTime,
 		},
 		Status: &youtube.LiveBroadcastStatus{
 			PrivacyStatus: b.PrivacyStatus,
 		},
+	}
+	if b.Description != nil {
+		broadcast.Snippet.Description = *b.Description
 	}
 
 	call := b.Service.LiveBroadcasts.Insert(b.Parts, broadcast)
@@ -188,8 +190,8 @@ func (b *LiveBroadcast) Update(writer io.Writer) error {
 	if b.Title != "" {
 		broadcast.Snippet.Title = b.Title
 	}
-	if b.Description != "" {
-		broadcast.Snippet.Description = b.Description
+	if b.Description != nil {
+		broadcast.Snippet.Description = *b.Description
 	}
 	if b.ScheduledStartTime != "" {
 		broadcast.Snippet.ScheduledStartTime = b.ScheduledStartTime
@@ -339,7 +341,7 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithDescription(description string) Option {
+func WithDescription(description *string) Option {
 	return func(b *LiveBroadcast) {
 		b.Description = description
 	}

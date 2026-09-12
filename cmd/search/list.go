@@ -59,6 +59,10 @@ var listInSchema = &jsonschema.Schema{
 		"order": {
 			Type: "string", Description: orderUsage,
 			Default: jsontext.Value(`"relevance"`),
+			Enum: []any{
+				"searchSortUnspecified", "date", "rating",
+				"viewCount", "relevance", "title", "videoCount",
+			},
 		},
 		"published_after":    {Type: "string", Description: paUsage},
 		"published_before":   {Type: "string", Description: pbUsage},
@@ -85,7 +89,10 @@ var listInSchema = &jsonschema.Schema{
 			Default: jsontext.Value(`"any"`),
 		},
 		"video_category_id": {Type: "string", Description: vcidUsage},
-		"video_definition":  {Type: "string", Description: vdeUsage},
+		"video_definition": {
+			Type: "string", Description: vdeUsage,
+			Enum: []any{"any", "high", "standard"},
+		},
 		"video_dimension": {
 			Type: "string", Enum: []any{"any", "2d", "3d"},
 			Description: vdiUsage, Default: jsontext.Value(`"any"`),

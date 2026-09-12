@@ -23,10 +23,10 @@ var (
 type Playlist struct {
 	common.Fields
 	Title       string   `yaml:"title" json:"title,omitempty"`
-	Description string   `yaml:"description" json:"description,omitempty"`
+	Description *string  `yaml:"description" json:"description,omitzero"`
 	Mine        *bool    `yaml:"mine" json:"mine,omitzero"`
 	Tags        []string `yaml:"tags" json:"tags,omitempty"`
-	Language    string   `yaml:"language" json:"language,omitempty"`
+	Language    *string  `yaml:"language" json:"language,omitzero"`
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
 
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
@@ -110,15 +110,19 @@ func (p *Playlist) Insert(writer io.Writer) error {
 	}
 	upload := &youtube.Playlist{
 		Snippet: &youtube.PlaylistSnippet{
-			Title:           p.Title,
-			Description:     p.Description,
-			Tags:            p.Tags,
-			DefaultLanguage: p.Language,
-			ChannelId:       p.ChannelId,
+			Title:     p.Title,
+			Tags:      p.Tags,
+			ChannelId: p.ChannelId,
 		},
 		Status: &youtube.PlaylistStatus{
 			PrivacyStatus: p.Privacy,
 		},
+	}
+	if p.Description != nil {
+		upload.Snippet.Description = *p.Description
+	}
+	if p.Language != nil {
+		upload.Snippet.DefaultLanguage = *p.Language
 	}
 
 	call := p.Service.Playlists.Insert([]string{"snippet", "status"}, upload)
@@ -153,14 +157,14 @@ func (p *Playlist) Update(writer io.Writer) error {
 	if p.Title != "" {
 		playlist.Snippet.Title = p.Title
 	}
-	if p.Description != "" {
-		playlist.Snippet.Description = p.Description
+	if p.Description != nil {
+		playlist.Snippet.Description = *p.Description
 	}
 	if p.Tags != nil {
 		playlist.Snippet.Tags = p.Tags
 	}
-	if p.Language != "" {
-		playlist.Snippet.DefaultLanguage = p.Language
+	if p.Language != nil {
+		playlist.Snippet.DefaultLanguage = *p.Language
 	}
 	if p.Privacy != "" {
 		playlist.Status.PrivacyStatus = p.Privacy
@@ -204,7 +208,7 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithDescription(description string) Option {
+func WithDescription(description *string) Option {
 	return func(p *Playlist) {
 		p.Description = description
 	}
@@ -216,7 +220,7 @@ func WithTags(tags []string) Option {
 	}
 }
 
-func WithLanguage(language string) Option {
+func WithLanguage(language *string) Option {
 	return func(p *Playlist) {
 		p.Language = language
 	}

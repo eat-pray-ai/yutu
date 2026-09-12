@@ -77,14 +77,12 @@ func init() {
 	channelCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
-	updateCmd.Flags().StringVarP(&country, "country", "c", "", countryUsage)
+	updateCmd.Flags().StringVarP(country, "country", "c", "", countryUsage)
 	updateCmd.Flags().StringVarP(&customUrl, "customUrl", "u", "", curlUsage)
 	updateCmd.Flags().StringVarP(
-		&defaultLanguage, "defaultLanguage", "l", "", dlUsage,
+		defaultLanguage, "defaultLanguage", "l", "", dlUsage,
 	)
-	updateCmd.Flags().StringVarP(
-		&description, "description", "d", "", descUsage,
-	)
+	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)

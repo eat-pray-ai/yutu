@@ -22,12 +22,12 @@ var (
 
 type LiveStream struct {
 	common.Fields
-	Title         string `yaml:"title" json:"title,omitempty"`
-	Description   string `yaml:"description" json:"description,omitempty"`
-	Mine          *bool  `yaml:"mine" json:"mine,omitzero"`
-	FrameRate     string `yaml:"frame_rate" json:"frame_rate,omitempty"`
-	IngestionType string `yaml:"ingestion_type" json:"ingestion_type,omitempty"`
-	Resolution    string `yaml:"resolution" json:"resolution,omitempty"`
+	Title         string  `yaml:"title" json:"title,omitempty"`
+	Description   *string `yaml:"description" json:"description,omitzero"`
+	Mine          *bool   `yaml:"mine" json:"mine,omitzero"`
+	FrameRate     string  `yaml:"frame_rate" json:"frame_rate,omitempty"`
+	IngestionType string  `yaml:"ingestion_type" json:"ingestion_type,omitempty"`
+	Resolution    string  `yaml:"resolution" json:"resolution,omitempty"`
 
 	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
@@ -106,14 +106,16 @@ func (s *LiveStream) Insert(writer io.Writer) error {
 	}
 	stream := &youtube.LiveStream{
 		Snippet: &youtube.LiveStreamSnippet{
-			Title:       s.Title,
-			Description: s.Description,
+			Title: s.Title,
 		},
 		Cdn: &youtube.CdnSettings{
 			FrameRate:     s.FrameRate,
 			IngestionType: s.IngestionType,
 			Resolution:    s.Resolution,
 		},
+	}
+	if s.Description != nil {
+		stream.Snippet.Description = *s.Description
 	}
 
 	call := s.Service.LiveStreams.Insert(s.Parts, stream)
@@ -166,8 +168,8 @@ func (s *LiveStream) Update(writer io.Writer) error {
 	if s.Title != "" {
 		stream.Snippet.Title = s.Title
 	}
-	if s.Description != "" {
-		stream.Snippet.Description = s.Description
+	if s.Description != nil {
+		stream.Snippet.Description = *s.Description
 	}
 	if s.FrameRate != "" {
 		stream.Cdn.FrameRate = s.FrameRate
@@ -227,7 +229,7 @@ func WithTitle(title string) Option {
 	}
 }
 
-func WithDescription(description string) Option {
+func WithDescription(description *string) Option {
 	return func(s *LiveStream) {
 		s.Description = description
 	}

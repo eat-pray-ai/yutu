@@ -37,9 +37,9 @@ func TestNewPlaylist(t *testing.T) {
 				opts: []Option{
 					WithIds([]string{"playlist1", "playlist2"}),
 					WithTitle("Test Playlist"),
-					WithDescription("Test playlist description"),
+					WithDescription(new("Test playlist description")),
 					WithTags([]string{"tag1", "tag2", "tag3"}),
-					WithLanguage("en"),
+					WithLanguage(new("en")),
 					WithChannelId("channel123"),
 					WithPrivacy("public"),
 					WithHl("en"),
@@ -62,9 +62,9 @@ func TestNewPlaylist(t *testing.T) {
 				ChannelId:                     "channel123",
 				OnBehalfOfContentOwner:        "owner123",
 				Title:                         "Test Playlist",
-				Description:                   "Test playlist description",
+				Description:                   new("Test playlist description"),
 				Tags:                          []string{"tag1", "tag2", "tag3"},
-				Language:                      "en",
+				Language:                      new("en"),
 				Privacy:                       "public",
 				Mine:                          &mineTrue,
 				OnBehalfOfContentOwnerChannel: "ownerChannel123",
@@ -125,8 +125,8 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithTitle(""),
-					WithDescription(""),
-					WithLanguage(""),
+					WithDescription(new("")),
+					WithLanguage(new("")),
 					WithChannelId(""),
 					WithPrivacy(""),
 					WithHl(""),
@@ -137,8 +137,8 @@ func TestNewPlaylist(t *testing.T) {
 			want: &Playlist{
 				Fields:                        common.Fields{},
 				Title:                         "",
-				Description:                   "",
-				Language:                      "",
+				Description:                   new(""),
+				Language:                      new(""),
 				Privacy:                       "",
 				OnBehalfOfContentOwnerChannel: "",
 			},
@@ -148,7 +148,7 @@ func TestNewPlaylist(t *testing.T) {
 			args: args{
 				opts: []Option{
 					WithTitle("My Playlist"),
-					WithDescription("A great playlist"),
+					WithDescription(new("A great playlist")),
 					WithPrivacy("private"),
 					WithMaxResults(25),
 				},
@@ -156,7 +156,7 @@ func TestNewPlaylist(t *testing.T) {
 			want: &Playlist{
 				MaxResults:  25,
 				Title:       "My Playlist",
-				Description: "A great playlist",
+				Description: new("A great playlist"),
 				Privacy:     "private",
 			},
 		},
@@ -364,7 +364,7 @@ func TestPlaylist_Insert(t *testing.T) {
 			name: "insert playlist",
 			opts: []Option{
 				WithTitle("New Playlist"),
-				WithDescription("Description"),
+				WithDescription(new("Description")),
 				WithPrivacy("public"),
 			},
 			verify: func(r *http.Request) {
@@ -436,9 +436,9 @@ func TestPlaylist_Update(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"playlist-id"}),
 				WithTitle("Updated Title"),
-				WithDescription("Updated Description"),
+				WithDescription(new("Updated Description")),
 				WithTags([]string{"tag1", "tag2"}),
-				WithLanguage("en"),
+				WithLanguage(new("en")),
 				WithPrivacy("private"),
 				WithOnBehalfOfContentOwner("owner-id"),
 				WithMaxResults(1),

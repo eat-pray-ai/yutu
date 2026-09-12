@@ -87,7 +87,7 @@ func init() {
 	liveStreamCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
+	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	insertCmd.Flags().StringVarP(&frameRate, "frameRate", "f", "", frUsage)
 	insertCmd.Flags().StringVarP(&ingestionType, "ingestionType", "I", "", itUsage)
 	insertCmd.Flags().StringVarP(&resolution, "resolution", "r", "", resUsage)
