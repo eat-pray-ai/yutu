@@ -35,23 +35,21 @@ import (
 const (
 	short   = "Start an agent to automate YouTube workflows"
 	long    = "Start an agent to automate YouTube workflows."
-	example = `# Gemini (default)
-yutu agent --provider google --model gemini-3.7-flash --api-key "YOUR_KEY"
-# OpenAI
-yutu agent --provider openai --model gpt-5.6-terra
-# OpenAI-compatible endpoint (DeepSeek, Ollama, vLLM, etc.)
-yutu agent --provider openai-compatible --model deepseek-v4-flash --base-url "https://api.deepseek.com/"
-# Custom Gemini endpoint
-yutu agent --provider google --model gemini-3.7-flash --base-url "https://custom-endpoint.example.com/"`
+	example = `# Gemini(compatible) (default)
+yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
+yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
+# OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
+yutu agent --provider openai --model gpt-5.6-terra --api-key "YOUR_KEY"
+yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"`
 	argsUsage        = "Launcher arguments as a single string"
-	providerUsage    = "LLM provider (google, openai, openai-compatible)"
+	providerUsage    = "LLM provider: google for Gemini(compatible), openai for OpenAI(compatible)"
 	modelUsage       = "Model name"
 	apiKeyUsage      = "API key for the model provider"
 	baseURLUsage     = "Base URL for the model provider's API endpoint"
 	instructionUsage = "Override the built-in agent instruction"
 	agentDescription = "YouTube growth strategist and workflow assistant — retrieve, create, update, and delete YouTube content."
 
-	errUnsupportedProvider = "unsupported provider %q: supported providers are google, openai, openai-compatible"
+	errUnsupportedProvider = "unsupported provider %q: supported providers are google and openai"
 	errModelConfig         = "model configuration error"
 	errMCPConnect          = "failed to connect to MCP server"
 	errMCPToolSet          = "failed to create MCP tool set"
@@ -98,7 +96,7 @@ func init() {
 		&provider, "provider", "p", "google", providerUsage,
 	)
 	agentCmd.Flags().StringVarP(
-		&modelName, "model", "m", "gemini-3.7-flash", modelUsage,
+		&modelName, "model", "m", "gemini-3.8-flash", modelUsage,
 	)
 	agentCmd.Flags().StringVar(&apiKey, "api-key", "", apiKeyUsage)
 	agentCmd.Flags().StringVar(&baseURL, "base-url", "", baseURLUsage)
@@ -116,7 +114,7 @@ func newModel(ctx context.Context) (model.LLM, error) {
 			cfg.HTTPOptions.BaseURL = baseURL
 		}
 		return gemini.NewModel(ctx, modelName, cfg)
-	case "openai", "openai-compatible":
+	case "openai":
 		return openaimodel.NewModel(
 			ctx, modelName, &openaimodel.ClientConfig{
 				APIKey:  apiKey,
@@ -141,7 +139,7 @@ func buildAgent(
 	m model.LLM, mcpToolSet, skillToolset tool.Toolset,
 ) (agent.Agent, error) {
 	var tools []tool.Tool
-	if provider == "google" {
+	if provider == "google" && baseURL == "" {
 		tools = append(tools, geminitool.GoogleSearch{})
 	}
 	return llmagent.New(
