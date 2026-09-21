@@ -24,7 +24,7 @@ jobs:
         if: "!contains(github.ref_name, '-')"
         run: |
           git tag -l | grep -E '\-dev|\-rc|\-beta|\-alpha' | xargs -r git tag -d
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version-file: ./go.mod
       - name: Run goreleaser
@@ -118,7 +118,7 @@ jobs:
             LICENSE
             README.md
           sparse-checkout-cone-mode: false
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - uses: actions/download-artifact@v8
