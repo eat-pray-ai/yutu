@@ -28,10 +28,10 @@ runs:
     - id: check-latest
       shell: bash
       run: |
-        if [[ "${GITHUB_REF}" =~ ^refs/tags/[^/]+$ && ! "${GITHUB_REF}" =~ -(rc|beta|alpha|dev)$ ]]; then
-          echo "is_latest=true" >> $GITHUB_OUTPUT
+        if [[ "${GITHUB_REF}" =~ ^refs/tags/[^/]+$ && ! "${GITHUB_REF}" =~ -(rc|beta|alpha|dev) ]]; then
+          echo "is_latest=true" >> "$GITHUB_OUTPUT"
         else
-          echo "is_latest=false" >> $GITHUB_OUTPUT
+          echo "is_latest=false" >> "$GITHUB_OUTPUT"
         fi
     - uses: actions/download-artifact@v8
       with:

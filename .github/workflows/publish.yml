@@ -22,8 +22,9 @@ jobs:
           fetch-depth: 0
       - name: Ignore prerelease tags
         if: "!contains(github.ref_name, '-')"
+        shell: bash
         run: |
-          git tag -l | grep -E '\-dev|\-rc|\-beta|\-alpha' | xargs -r git tag -d
+          git tag -l | grep -E '\-rc|\-beta|\-alpha|\-dev' | xargs -r git tag -d
       - uses: actions/setup-go@v7
         with:
           go-version-file: ./go.mod
@@ -92,6 +93,7 @@ jobs:
       contents: read
       packages: write
       attestations: write
+      artifact-metadata: write
       id-token: write
     steps:
       - uses: eat-pray-ai/yutu/.github/actions/container-registry@main
@@ -126,10 +128,12 @@ jobs:
           name: binary
           path: ${{ github.workspace }}/dist
       - name: Publish to npm
+        shell: bash
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           scripts/npm-publish.sh "$VERSION" "${{ github.workspace }}/dist"
       - name: Publish MCP server
+        shell: bash
         run: |
           sed -i "s/0.0.0-dev/${GITHUB_REF_NAME#v}/g" server.json
           mcp_publisher="mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz"
