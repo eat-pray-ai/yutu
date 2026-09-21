@@ -1,5 +1,5 @@
-name: Release to GitHub Packages
-description: Release to GitHub Packages
+name: Release container images
+description: Release container images to GitHub Container Registry and Docker Hub
 
 inputs:
   arm64_binary:
@@ -7,6 +7,12 @@ inputs:
     required: true
   amd64_binary:
     description: Directory for linux amd64 binary
+    required: true
+  dockerhub_username:
+    description: Docker Hub username
+    required: true
+  dockerhub_token:
+    description: Docker Hub personal access token
     required: true
 
 
@@ -38,10 +44,16 @@ runs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ github.token }}
+    - uses: docker/login-action@v4
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_token }}
     - id: meta
       uses: docker/metadata-action@v6
       with:
-        images: ghcr.io/${{ github.repository }}
+        images: |
+          ghcr.io/${{ github.repository }}
+          docker.io/eatprayai/yutu
         flavor: |
           latest=${{ steps.check-latest.outputs.is_latest }}
         labels: |
@@ -59,10 +71,15 @@ runs:
         provenance: true
         sbom: true
         build-args: |
-          arm64_binary=${{ inputs.amd64_binary }}
+          arm64_binary=${{ inputs.arm64_binary }}
           amd64_binary=${{ inputs.amd64_binary }}
     - uses: actions/attest@v4
       with:
         subject-name: ghcr.io/${{ github.repository }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
+    - uses: actions/attest@v4
+      with:
+        subject-name: docker.io/eatprayai/yutu
         subject-digest: ${{ steps.push.outputs.digest }}
         push-to-registry: true
