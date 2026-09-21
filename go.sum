@@ -24,8 +24,6 @@ github.com/cpuguy83/go-md2man/v2 v2.0.6 h1:XJtiaUW6dEEqVuZiMTn1ldk455QWwEIsMIJlo
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/eat-pray-ai/cobra-mcp v0.4.1 h1:z21A/tnsNiTjyuAPIcrgjNVT37TJ7jH9PbCj+4fPQNc=
-github.com/eat-pray-ai/cobra-mcp v0.4.1/go.mod h1:YfRGGxp7LXAowS408XJ8SzCn74oaXGmjbcbjyYyPYqQ=
 github.com/eat-pray-ai/cobra-mcp v0.4.5 h1:HXYaxvXF0PoYjlF+B0myikx4w/X+H/LFjgmYw89BB70=
 github.com/eat-pray-ai/cobra-mcp v0.4.5/go.mod h1:ikePQIGp+iDcFTk6WkhYY8clOzn0cl2+sr8JupthOmQ=
 github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
@@ -73,8 +71,8 @@ github.com/mattn/go-runewidth v0.0.28 h1:rPyg2ybwEKPebvpzVWe1gKBkH8EQFkxO4Y0hjBe
 github.com/mattn/go-runewidth v0.0.28/go.mod h1:3qAiGCV4Koz/yuveO58qUefmUTRm8r0IGEXZ9jeHp/8=
 github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
-github.com/modelcontextprotocol/go-sdk v1.7.0 h1:yqjY2dsbKAC0LSuWZVBMrHgiG8ukXv6NRo0JiALay44=
-github.com/modelcontextprotocol/go-sdk v1.7.0/go.mod h1:dL7u98E/zjJTGzEq+j30jQ8K2k1mb6LeAH4inEcSGts=
+github.com/modelcontextprotocol/go-sdk v1.8.0 h1:KIvahhYqwtbeniWVPs3TcXEA7b8jEtwfBpOTAI+Urx4=
+github.com/modelcontextprotocol/go-sdk v1.8.0/go.mod h1:dL7u98E/zjJTGzEq+j30jQ8K2k1mb6LeAH4inEcSGts=
 github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 h1:zYyBkD/k9seD2A7fsi6Oo2LfFZAehjjQMERAvZLEDnQ=
 github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646/go.mod h1:jpp1/29i3P1S/RLdc7JQKbRpFeM1dOBd8T9ki5s+AY8=
 github.com/openai/openai-go/v3 v3.49.0 h1:/BObwLKdgHJ3AbJ7AXK8BRDfjuTAV+eTmEQFbG86wnQ=
