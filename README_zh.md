@@ -203,29 +203,29 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 `yutu` 提供了 Agent 模式（Miffy）来自动化 YouTube 工作流程。该 Agent 可以检索、创建、更新和删除 YouTube 内容，内置 YouTube 增长策略和 SEO 专业知识。
 
-目前，Agent 模式仍在积极开发中，仅支持 Google 的 Gemini 模型。
-
 ```shell
-# 控制台模式（默认）
-❯ yutu agent --api-key "YOUR_GEMINI_API_KEY"
-# 指定不同的模型
-❯ yutu agent --model "google:gemini-3.7-flash" --api-key "YOUR_GEMINI_API_KEY"
+# Gemini（兼容）（默认）
+❯ yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
+❯ yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
+# OpenAI（兼容）（OpenAI、DeepSeek、Ollama、vLLM 等）
+❯ yutu agent --provider openai --model gpt-5.6-terra --api-key "YOUR_KEY"
+❯ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"
 # Web 模式
-❯ yutu agent --args "web api a2a webui" --api-key "YOUR_GEMINI_API_KEY"
+❯ yutu agent --args "web api a2a webui" --api-key "YOUR_KEY"
 # 查看可用的启动参数
 ❯ yutu agent --args ""
 ```
 
 ### Agent 参数
 
-| 参数                | 描述                              | 默认值                                     |
-|---------------------|-----------------------------------|--------------------------------------------|
-| `-a, --args`        | 启动参数（单个字符串）            | `console`                                  |
-| `-m, --model`       | 模型（`provider:modelName` 格式） | `google:gemini-3.7-flash`                  |
-| `--api-key`         | 模型提供商的 API 密钥             |                                            |
-| `-i, --instruction` | 覆盖内置的 Agent 指令             | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
-
-可选设置环境变量 `GOOGLE_GEMINI_BASE_URL` 来使用自定义的 Gemini API 地址。
+| 参数                | 描述                                                                   | 默认值                                     |
+|---------------------|------------------------------------------------------------------------|--------------------------------------------|
+| `-a, --args`        | 启动参数（单个字符串）                                                 | `console`                                  |
+| `-p, --provider`    | LLM 提供商：`google` 对应 Gemini（兼容），`openai` 对应 OpenAI（兼容） | `google`                                   |
+| `-m, --model`       | 模型名称                                                               | `gemini-3.8-flash`                         |
+| `--api-key`         | 模型提供商的 API 密钥                                                  |                                            |
+| `--base-url`        | 模型提供商的 API 端点地址                                              |                                            |
+| `-i, --instruction` | 覆盖内置的 Agent 指令                                                  | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
 
 ## MCP 服务器
 
@@ -245,7 +245,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
   -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
-# HTTP 模式（先启动服务器：yutu mcp --mode http --auth）
+# HTTP 模式（先启动服务器：yutu mcp --mode http）
 ❯ claude mcp add --transport http \
   --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
   --client-secret \
@@ -263,7 +263,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
   --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
-# HTTP 模式（先启动服务器：yutu mcp --mode http --auth）
+# HTTP 模式（先启动服务器：yutu mcp --mode http）
 ❯ codex mcp add --url http://localhost:8216/mcp \
   --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
   yutu

@@ -197,29 +197,29 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 `yutu` provides an agent mode (Miffy) to automate YouTube workflows. The agent can retrieve, create, update, and delete YouTube content, with built-in YouTube growth strategy and SEO expertise.
 
-Currently, the agent mode is under active development, only supports Google's Gemini models.
-
 ```shell
-# console mode (default)
-❯ yutu agent --api-key "YOUR_GEMINI_API_KEY"
-# specify a different model
-❯ yutu agent --model "google:gemini-3.7-flash" --api-key "YOUR_GEMINI_API_KEY"
+# Gemini(compatible) (default)
+❯ yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
+❯ yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
+# OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
+❯ yutu agent --provider openai --model gpt-5.6-terra --api-key "YOUR_KEY"
+❯ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"
 # web mode with sub-launchers
-❯ yutu agent --args "web api a2a webui" --api-key "YOUR_GEMINI_API_KEY"
+❯ yutu agent --args "web api a2a webui" --api-key "YOUR_KEY"
 # show available launcher args
 ❯ yutu agent --args ""
 ```
 
 ### Agent Flags
 
-| Flag                | Description                             | Default                                    |
-|---------------------|-----------------------------------------|--------------------------------------------|
-| `-a, --args`        | Launcher arguments as a single string   | `console`                                  |
-| `-m, --model`       | Model in `provider:modelName` format    | `google:gemini-3.7-flash`                  |
-| `--api-key`         | API key for the model provider          |                                            |
-| `-i, --instruction` | Override the built-in agent instruction | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
-
-The `GOOGLE_GEMINI_BASE_URL` environment variable can optionally be set to use a custom Gemini API base URL.
+| Flag                | Description                                                                    | Default                                    |
+|---------------------|--------------------------------------------------------------------------------|--------------------------------------------|
+| `-a, --args`        | Launcher arguments as a single string                                          | `console`                                  |
+| `-p, --provider`    | LLM provider: `google` for Gemini(compatible), `openai` for OpenAI(compatible) | `google`                                   |
+| `-m, --model`       | Model name                                                                     | `gemini-3.8-flash`                         |
+| `--api-key`         | API key for the model provider                                                 |                                            |
+| `--base-url`        | Base URL for the model provider's API endpoint                                 |                                            |
+| `-i, --instruction` | Override the built-in agent instruction                                        | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
 
 ## MCP Server
 
@@ -239,7 +239,7 @@ You can add `yutu` as an MCP server in VS Code or Cursor by clicking correspondi
   -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
-# HTTP mode (start the server first: yutu mcp --mode http --auth)
+# HTTP mode (start the server first: yutu mcp --mode http)
 ❯ claude mcp add --transport http \
   --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
   --client-secret \
@@ -257,7 +257,7 @@ You can add `yutu` as an MCP server in VS Code or Cursor by clicking correspondi
   --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
-# HTTP mode (start the server first: yutu mcp --mode http --auth)
+# HTTP mode (start the server first: yutu mcp --mode http)
 ❯ codex mcp add --url http://localhost:8216/mcp \
   --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
   yutu
