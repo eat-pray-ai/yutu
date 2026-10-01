@@ -1,0 +1,44 @@
+pkg/auth/auth.go
+  h_3884c6bf11f31f 263
+pkg/auth/auth_test.go
+  h_3884c6bf11f31f 124
+pkg/auth/verifier.go
+  h_3884c6bf11f31f 34
+pkg/caption/caption.go
+  h_3884c6bf11f31f 105,109,202,206,270,283
+pkg/caption/caption_test.go
+  h_3884c6bf11f31f 385,703,719,729-736,773
+pkg/channelBanner/channelBanner.go
+  h_3884c6bf11f31f 44,48
+pkg/channelBanner/channelBanner_test.go
+  h_3884c6bf11f31f 30,74,284
+pkg/init.go
+  h_3884c6bf11f31f 7,10,12,16-29,88-94
+pkg/init_test.go
+  h_3884c6bf11f31f 7,83-119
+pkg/playlistImage/playlistImage.go
+  h_3884c6bf11f31f 98,102,166,170
+pkg/playlistImage/playlistImage_test.go
+  h_3884c6bf11f31f 379,473
+pkg/thumbnail/thumbnail.go
+  h_3884c6bf11f31f 42,46
+pkg/thumbnail/thumbnail_test.go
+  h_3884c6bf11f31f 165
+pkg/video/video.go
+  h_3884c6bf11f31f 164,168
+pkg/watermark/watermark.go
+  h_3884c6bf11f31f 49,53
+pkg/watermark/watermark_test.go
+  h_3884c6bf11f31f 179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55f51a201a3cb538608c620875f0186f70cd59e3",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
