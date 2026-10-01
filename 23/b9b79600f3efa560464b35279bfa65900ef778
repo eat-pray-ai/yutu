@@ -1,0 +1,22 @@
+AGENTS.md
+  h_3884c6bf11f31f 18,27,43-50
+cmd/AGENTS.md
+  h_3884c6bf11f31f 13,20
+internal/AGENTS.md
+  h_3884c6bf11f31f 9
+pkg/AGENTS.md
+  h_3884c6bf11f31f 9,28
+scripts/AGENTS.md
+  h_3884c6bf11f31f 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "23b9b79600f3efa560464b35279bfa65900ef778",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
