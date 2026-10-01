@@ -77,23 +77,32 @@ changelog:
   sort: ""
   abbrev: 0
   groups:
-    - title: "Features"
-      regexp: "^.*?:(boom|sparkles|art|zap|recycle|wheelchair|children_crossing):.+"
+    - title: "Breaking Changes"
+      regexp: "^.*?:boom:.+"
       order: 0
-    - title: "Bug Fixes and Tests"
-      regexp: "^.*?:(bug|ambulance|white_check_mark|lock|rotating_light|pencil2):.+"
+    - title: "Features"
+      regexp: "^.*?:(sparkles|tada|alien|egg):.+"
       order: 1
-    - title: "Documentation"
-      regexp: "^.*?:memo:.+"
+    - title: "Bug Fixes"
+      regexp: "^.*?:(bug|ambulance|lock|adhesive_bandage|goal_net):.+"
       order: 2
-    - title: "CI/CD"
-      regexp: "^.*?:(green_heart|construction_worker|rocket):.+"
+    - title: "Refactor & Improvements"
+      regexp: "^.*?:(recycle|zap|art|children_crossing|wheelchair|fire|coffin|truck|lipstick|bento|loud_sound|mute|necktie|passport_control):.+"
       order: 3
+    - title: "Documentation"
+      regexp: "^.*?:(memo|pencil2|page_facing_up|speech_balloon|bulb|mag):.+"
+      order: 4
+    - title: "Tests"
+      regexp: "^.*?:(white_check_mark|test_tube|rotating_light|safety_vest):.+"
+      order: 5
+    - title: "Build & CI/CD"
+      regexp: "^.*?:(green_heart|construction_worker|rocket|wrench|hammer|building_construction|technologist|see_no_evil|package|heavy_plus_sign|heavy_minus_sign):.+"
+      order: 6
     - title: "Others"
       order: 999
   filters:
     exclude:
-      - "^.*?:arrow_up:.+"
+      - "^.*?:(arrow_up|arrow_down|pushpin|bookmark):.+"
 
 release:
   replace_existing_draft: true
