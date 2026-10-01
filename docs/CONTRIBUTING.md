@@ -71,7 +71,7 @@ dist
 ❯ bazel build --platforms=@rules_go//go/toolchain:linux_amd64 //:yutu
 ❯ bazel cquery --output=files //:yutu-linux-amd64
 
-❯ tree -L 1 bazel-bin/yutu_
+❯ tree -L 1 "$(bazel info bazel-bin)/yutu_"
 bazel-bin/yutu_
 ├── yutu
 ├── yutu-0.params
@@ -82,7 +82,7 @@ bazel-bin/yutu_
 2 directories, 4 files
 
 ## verify binary commands, detect shorthands conflicts, etc.
-❯ ./scripts/command-test.sh bazel-bin/yutu_/yutu
+❯ ./scripts/command-test.sh "$(bazel info bazel-bin)/yutu_/yutu"
 
 ## script to install yutu
 ❯ ./scripts/install.sh
