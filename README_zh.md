@@ -231,18 +231,15 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 在将 `yutu` 用作 MCP 服务器之前，请确保已安装 `yutu`（参见[安装](#安装)部分），并且您有有效的 `client_secret.json` 和 `youtube.token.json` 文件（参考[前提条件](#前提条件)部分）。
 
-您可以通过点击下方徽章将 `yutu` 添加为 VS Code 或 Cursor 中的 MCP 服务器，或使用下面的 CLI 命令。
-
-[![在 VS Code 中安装](https://img.shields.io/badge/VS_Code-Install_YUTU-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
-[![在 Cursor 中安装](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+您可以参考下方说明为您常用的工具配置 `yutu` MCP 服务器。
 
 <details>
 <summary>Claude Code</summary>
 
 ```shell
 # Stdio 模式
-❯ claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+❯ claude mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
 # HTTP 模式（先启动服务器：yutu mcp --mode http）

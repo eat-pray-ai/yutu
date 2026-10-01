@@ -225,18 +225,15 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 Before using `yutu` as an MCP server, make sure `yutu` is installed(see [Installation](#installation) section), and you have a valid `client_secret.json` and `youtube.token.json` files(refer to [Prerequisites](#prerequisites) section).
 
-You can add `yutu` as an MCP server in VS Code or Cursor by clicking corresponding badge, or use the CLI commands below for your preferred tool.
-
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_YUTU-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=yutu&config=%7B%22type%22%3A%20%22stdio%22%2C%22command%22%3A%20%22yutu%22%2C%22args%22%3A%20%5B%22mcp%22%5D%2C%22env%22%3A%20%7B%22YUTU_CREDENTIAL%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fclient_secret.json%22%2C%22YUTU_CACHE_TOKEN%22%3A%20%22%2Fabsolute%2Fpath%2Fto%2Fyoutube.token.json%22%7D%7D)
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/install-mcp?name=yutu&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMnl1dHUlMjBtY3AlMjIlMkMlMjJlbnYlMjIlM0ElN0IlMjJZVVRVX0NSRURFTlRJQUwlMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRmNsaWVudF9zZWNyZXQuanNvbiUyMiUyQyUyMllVVFVfQ0FDSEVfVE9LRU4lMjIlM0ElMjIlMkZhYnNvbHV0ZSUyRnBhdGglMkZ0byUyRnlvdXR1YmUudG9rZW4uanNvbiUyMiU3RCU3RA%3D%3D)
+You can configure `yutu` as an MCP server for your preferred tool using the instructions below.
 
 <details>
 <summary>Claude Code</summary>
 
 ```shell
 # Stdio mode
-❯ claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
+❯ claude mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
+  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
   yutu -- yutu mcp
 
 # HTTP mode (start the server first: yutu mcp --mode http)
