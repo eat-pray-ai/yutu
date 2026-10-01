@@ -10,15 +10,11 @@ CLI command definitions and MCP tool bindings.
 
 ## Conventions
 
-- `resetFlags` in `PersistentPreRun`: ensures clean state for MCP.
+- `utils.ResetFlags` in `PersistentPreRun`: resets omitted optional pointer flags (`!flag.Changed`) to `nil`.
 - MCP tools registered via `mcp.AddTool`.
 - Flags bound to package-level variables.
 - `BUILD.bazel` files are auto-generated — do NOT create or edit them manually.
 
 ## Subcommands
 
-Each subdirectory is a 1:1 mapping to a YouTube API resource:
-
-`abuseReport/`, `activity/`, `agent/`, `caption/`, `channel/`, `channelBanner/`, `channelSection/`, `comment/`, `commentThread/`, `i18nLanguage/`, `i18nRegion/`, `liveBroadcast/`, `liveChatBan/`, `liveChatMessage/`, `liveChatModerator/`, `liveStream/`, `member/`, `membershipsLevel/`, `playlist/`, `playlistImage/`, `playlistItem/`, `search/`, `subscription/`, `superChatEvent/`, `thirdPartyLink/`, `thumbnail/`, `video/`, `videoAbuseReportReason/`, `videoCategory/`, `watermark/`
-
-All follow the same pattern — see [Wiring](#wiring) above.
+Each subdirectory corresponds to a YouTube API resource (e.g. `video/`, `channel/`, `playlist/`) or tool subcommand (`agent/`). All follow the same pattern — see [Wiring](#wiring) above.

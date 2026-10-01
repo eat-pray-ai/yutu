@@ -15,7 +15,7 @@ Go CLI + MCP server + Agent for YouTube.
 |-----------|-------------|
 | [cmd/](cmd/AGENTS.md) | CLI command definitions and MCP tool bindings |
 | [pkg/](pkg/AGENTS.md) | Core domain logic and shared infrastructure |
-| [internal/](internal/AGENTS.md) | Internal tools (docgen, skillgen) |
+| [internal/](internal/AGENTS.md) | Internal tools (cmdtestgen, skillgen) |
 | [scripts/](scripts/AGENTS.md) | Utility scripts and smoke tests |
 | [docs/](docs) | Project documentation |
 
@@ -24,6 +24,7 @@ Go CLI + MCP server + Agent for YouTube.
 - [docs/FEATURES.md](docs/FEATURES.md) — Feature overview
 - [docs/HOW_TO_TEST.md](docs/HOW_TO_TEST.md) — Testing guide
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — Contribution guidelines
+- [docs/BEFORE_RELEASE.md](docs/BEFORE_RELEASE.md) — Pre-release checklist
 - [docs/CODE_OF_CONDUCT.md](docs/CODE_OF_CONDUCT.md) — Code of conduct
 
 ## Conventions
@@ -39,6 +40,11 @@ Go CLI + MCP server + Agent for YouTube.
 Every new resource package under `pkg/` and `cmd/` must also be registered in:
 
 1. **`main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
-2. **`internal/tools/skillgen/main.go`** — add a blank import and a `categoryMap` entry.
-3. **`internal/tools/cmdtestgen/main.go`** — add a blank import.
-4. **`cmd/agent/agents.go`** — add the resource's MCP tool names to the appropriate agent definition (`Aagje` for read-only, `Knorretje` for create/update, `Daan` for delete).
+2. **`internal/tools/skillgen/main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
+3. **`internal/tools/cmdtestgen/main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
+
+Then regenerate generated files and build definitions:
+
+- Run `go run ./internal/tools/skillgen` (or `bazel run //internal/tools/skillgen`) to regenerate agent instruction and skill.
+- Run `go run ./internal/tools/cmdtestgen` (or `bazel run //internal/tools/cmdtestgen`) to regenerate smoke tests (`scripts/command-test.sh`).
+- Run `bazel run //:gazelle` to regenerate `BUILD.bazel` files.

@@ -1,6 +1,6 @@
 # scripts/
 
-Utility scripts for build, test, and release.
+Utility scripts for build, test, and release. See [docs/BEFORE_RELEASE.md](../docs/BEFORE_RELEASE.md) for the pre-release checklist.
 
 ## Scripts
 
