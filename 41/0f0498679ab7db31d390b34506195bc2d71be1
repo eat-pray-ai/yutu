@@ -1,0 +1,42 @@
+cmd/caption/insert.go
+  h_3884c6bf11f31f 23,79,124
+cmd/caption/update.go
+  h_3884c6bf11f31f 23,77-81,125-129
+cmd/channelBanner/insert.go
+  h_3884c6bf11f31f 23,67,98
+cmd/comment/insert.go
+  h_3884c6bf11f31f 24
+cmd/comment/markAsSpam.go
+  h_3884c6bf11f31f 24
+cmd/comment/setModerationStatus.go
+  h_3884c6bf11f31f 24
+cmd/commentThread/insert.go
+  h_3884c6bf11f31f 24
+cmd/liveBroadcast/insertCuepoint.go
+  h_3884c6bf11f31f 24
+cmd/playlistImage/insert.go
+  h_3884c6bf11f31f 23,77,111
+cmd/playlistItem/insert.go
+  h_3884c6bf11f31f 24
+cmd/subscription/insert.go
+  h_3884c6bf11f31f 23-26
+cmd/thumbnail/set.go
+  h_3884c6bf11f31f 23,58,82
+cmd/video/reportAbuse.go
+  h_3884c6bf11f31f 25
+cmd/watermark/set.go
+  h_3884c6bf11f31f 22,66,98
+cmd/watermark/unset.go
+  h_3884c6bf11f31f 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "410f0498679ab7db31d390b34506195bc2d71be1",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
