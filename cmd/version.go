@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"runtime/debug"
+	"strings"
 
 	"github.com/savioxavier/termlink"
 	"github.com/spf13/cobra"
@@ -15,6 +16,15 @@ const (
 	verLong  = "Show the version of yutu."
 	repo     = "Github/eat-pray-ai/yutu"
 	repoUrl  = "https://github.com/eat-pray-ai/yutu"
+)
+
+var banner = strings.TrimPrefix(
+	`
+  _(\_/)_     yutu %s %s/%s
+ │   ▶   │    The AI-powered toolkit for YouTube
+ │ • x • │    📦 build: %s-%s
+ ╰─/───\─╯    🌟 Star:  %s
+`, "\n",
 )
 
 var (
@@ -51,9 +61,10 @@ var versionCmd = &cobra.Command{
 			}
 		}
 
-		cmd.Printf("🐰yutu %s %s/%s\n", Version, Os, Arch)
-		cmd.Printf("📦build %s-%s\n", Builder, CommitDate)
-		cmd.Printf("🌟Star: %s\n", termlink.Link(repo, repoUrl))
+		cmd.Printf(
+			banner, Version, Os, Arch, Builder, CommitDate,
+			termlink.Link(repo, repoUrl),
+		)
 	},
 }
 
