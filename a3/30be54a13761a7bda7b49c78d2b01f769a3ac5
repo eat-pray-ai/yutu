@@ -1,0 +1,14 @@
+docs/BEFORE_RELEASE.md
+  h_3884c6bf11f31f 1-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a330be54a13761a7bda7b49c78d2b01f769a3ac5",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}

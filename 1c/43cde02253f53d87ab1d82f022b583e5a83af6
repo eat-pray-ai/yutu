@@ -1,0 +1,14 @@
+docs/CONTRIBUTING.md
+  h_3884c6bf11f31f 74,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c43cde02253f53d87ab1d82f022b583e5a83af6",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
