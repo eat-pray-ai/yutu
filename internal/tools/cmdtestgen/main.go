@@ -69,9 +69,9 @@ if [[ -z "$YUTU_PATH" ]]; then
     Builder="${MOD}.Builder=${GITHUB_ACTOR:-$USER}"
     ldflags="-s -X ${Version} -X ${Commit} -X ${CommitDate} -X ${Os} -X ${Arch} -X ${Builder}"
 
+    trap 'rm -f yutu' EXIT INT TERM
     go mod download
     go build -ldflags "${ldflags}" -o yutu .
-    trap 'rm yutu' EXIT
     chmod +x yutu
 
     YUTU_PATH="./yutu"
