@@ -176,9 +176,7 @@ func TestWatermark_Set(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_watermark.jpg")
-	}()
+	defer func() { _ = os.Remove("test_watermark.jpg") }()
 
 	for _, tt := range tests {
 		t.Run(

@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json/v2"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -32,9 +31,7 @@ func NewGoogleTokenVerifier(tokenInfoURL string) sdkauth.TokenVerifier {
 		if err != nil {
 			return nil, fmt.Errorf("%w: %w", sdkauth.ErrInvalidToken, err)
 		}
-		defer func(Body io.ReadCloser) {
-			_ = Body.Close()
-		}(resp.Body)
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf(

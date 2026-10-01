@@ -260,10 +260,7 @@ func (s *svc) saveToken(token *oauth2.Token) error {
 		slog.Error(cacheTokenFailed, "file", s.tokenFile, "error", err)
 		return fmt.Errorf("%s: %w", cacheTokenFailed, err)
 	}
-
-	defer func() {
-		_ = f.Close()
-	}()
+	defer func() { _ = f.Close() }()
 	err = json.MarshalWrite(f, token)
 	if err != nil {
 		return fmt.Errorf("%s: %w", cacheTokenFailed, err)

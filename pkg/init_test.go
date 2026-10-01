@@ -4,6 +4,7 @@
 package pkg
 
 import (
+	"errors"
 	"os"
 	"testing"
 )
@@ -78,4 +79,41 @@ func TestInitRootDir(t *testing.T) {
 			}
 		},
 	)
+}
+
+func TestOpenUploadFile(t *testing.T) {
+	tests := []struct {
+		name      string
+		file      string
+		wantBlock bool
+	}{
+		{"json file", "client_secret.json", true},
+		{"token file", "youtube.token.json", true},
+		{"env file", ".env", true},
+		{"key file", "id_rsa.key", true},
+		{"pem file", "server.pem", true},
+		{"crt file", "tls.crt", true},
+		{"cert file", "client.cert", true},
+		{"pfx file", "bundle.pfx", true},
+		{"p12 file", "cert.p12", true},
+		{"uppercase JSON", "SECRET.JSON", true},
+		{"valid mp4", "video.mp4", false},
+		{"valid srt", "caption.srt", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(
+			tt.name, func(t *testing.T) {
+				_, err := OpenFile(tt.file)
+				if tt.wantBlock && !errors.Is(err, ErrBlockedFile) {
+					t.Errorf(
+						"OpenUploadFile(%q) error = %v, want ErrBlockedFile", tt.file, err,
+					)
+				}
+				if !tt.wantBlock && errors.Is(err, ErrBlockedFile) {
+					t.Errorf("OpenUploadFile(%q) blocked unexpectedly", tt.file)
+				}
+			},
+		)
+	}
 }

@@ -6,7 +6,6 @@ package channelBanner
 import (
 	"errors"
 	"io"
-	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -42,13 +41,11 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 	if err := cb.EnsureService(); err != nil {
 		return err
 	}
-	file, err := pkg.Root.Open(cb.File)
+	file, err := pkg.OpenFile(cb.File)
 	if err != nil {
 		return errors.Join(errInsertChannelBanner, err)
 	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
+	defer func() { _ = file.Close() }()
 	cbr := &youtube.ChannelBannerResource{}
 
 	call := cb.Service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)

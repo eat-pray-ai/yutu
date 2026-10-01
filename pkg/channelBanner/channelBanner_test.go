@@ -27,9 +27,7 @@ func TestChannelBanner_Insert_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer func(f *os.Root) {
-		_ = f.Close()
-	}(f)
+	defer func() { _ = f.Close() }()
 
 	svc, _ := youtube.NewService(t.Context(), option.WithAPIKey("test"))
 
@@ -73,9 +71,7 @@ func TestChannelBanner_Insert_Output(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer func(f *os.Root) {
-		_ = f.Close()
-	}(f)
+	defer func() { _ = f.Close() }()
 
 	if err := os.WriteFile(
 		tmpDir+"/test.jpg", []byte("content"), 0644,
@@ -285,9 +281,7 @@ func TestChannelBanner_Insert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_banner.jpg")
-	}()
+	defer func() { _ = os.Remove("test_banner.jpg") }()
 
 	for _, tt := range tests {
 		t.Run(

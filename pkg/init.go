@@ -4,15 +4,29 @@
 package pkg
 
 import (
+	"errors"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 var (
-	RootDir *string
-	Root    *os.Root
-	logger  *slog.Logger
+	RootDir        *string
+	Root           *os.Root
+	logger         *slog.Logger
+	ErrBlockedFile = errors.New("access denied: blocked file extension")
+	blockedExts    = map[string]bool{
+		".json": true,
+		".env":  true,
+		".key":  true,
+		".pem":  true,
+		".crt":  true,
+		".cert": true,
+		".pfx":  true,
+		".p12":  true,
+	}
 )
 
 func init() {
@@ -70,4 +84,11 @@ func initRootDir() {
 		panic(err)
 	}
 	slog.Debug("Root directory set", "dir", *RootDir)
+}
+
+func OpenFile(name string) (*os.File, error) {
+	if blockedExts[strings.ToLower(filepath.Ext(name))] {
+		return nil, ErrBlockedFile
+	}
+	return Root.Open(name)
 }

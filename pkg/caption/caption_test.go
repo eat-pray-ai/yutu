@@ -382,9 +382,7 @@ func TestCaption_Insert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_caption.srt")
-	}()
+	defer func() { _ = os.Remove("test_caption.srt") }()
 
 	for _, tt := range tests {
 		t.Run(
@@ -702,9 +700,7 @@ func TestCaption_Download(t *testing.T) {
 				if err := c.Download(&buf); (err != nil) != tt.wantErr {
 					t.Errorf("Caption.Download() error = %v, wantErr %v", err, tt.wantErr)
 				}
-				defer func() {
-					_ = os.Remove("downloaded.srt")
-				}()
+				defer func() { _ = os.Remove("downloaded.srt") }()
 			},
 		)
 	}
@@ -720,9 +716,7 @@ func TestCaption_Insert_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer func(f *os.Root) {
-		_ = f.Close()
-	}(f)
+	defer func() { _ = f.Close() }()
 
 	svc, _ := youtube.NewService(t.Context(), option.WithAPIKey("test"))
 
@@ -730,6 +724,14 @@ func TestCaption_Insert_Error(t *testing.T) {
 	c := NewCaption(WithFile("non_existent.srt"), WithService(svc))
 	if err := c.Insert(&bytes.Buffer{}); err == nil {
 		t.Error("expected error for non-existent file, got nil")
+	}
+
+	// Test: Blocked credential file
+	cBlocked := NewCaption(WithFile("client_secret.json"), WithService(svc))
+	if err := cBlocked.Insert(&bytes.Buffer{}); !errors.Is(
+		err, pkg.ErrBlockedFile,
+	) {
+		t.Errorf("expected ErrBlockedFile for client_secret.json, got %v", err)
 	}
 
 	// Test: API error
@@ -768,9 +770,7 @@ func TestCaption_Update_Error(t *testing.T) {
 	oldRoot := pkg.Root
 	pkg.Root = f
 	defer func() { pkg.Root = oldRoot }()
-	defer func(f *os.Root) {
-		_ = f.Close()
-	}(f)
+	defer func() { _ = f.Close() }()
 
 	// Test: File open error (when file is specified)
 	ts := httptest.NewServer(

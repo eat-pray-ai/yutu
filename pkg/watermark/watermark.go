@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -47,14 +46,12 @@ func (w *Watermark) Set(writer io.Writer) error {
 	if err := w.EnsureService(); err != nil {
 		return err
 	}
-	file, err := pkg.Root.Open(w.File)
+	file, err := pkg.OpenFile(w.File)
 	if err != nil {
 		return errors.Join(errSetWatermark, err)
 	}
+	defer func() { _ = file.Close() }()
 
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
 	inVideoBranding := &youtube.InvideoBranding{
 		Position: &youtube.InvideoPosition{},
 		Timing:   &youtube.InvideoTiming{},

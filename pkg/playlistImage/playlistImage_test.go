@@ -376,9 +376,7 @@ func TestPlaylistImage_Insert(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_image.jpg")
-	}()
+	defer func() { _ = os.Remove("test_image.jpg") }()
 
 	for _, tt := range tests {
 		t.Run(
@@ -472,9 +470,7 @@ func TestPlaylistImage_Update(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_image.jpg")
-	}()
+	defer func() { _ = os.Remove("test_image.jpg") }()
 
 	for _, tt := range tests {
 		t.Run(

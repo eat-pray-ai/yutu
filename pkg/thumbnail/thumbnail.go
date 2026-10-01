@@ -39,10 +39,11 @@ func (t *Thumbnail) Set(writer io.Writer) error {
 	if err := t.EnsureService(); err != nil {
 		return err
 	}
-	file, err := pkg.Root.Open(t.File)
+	file, err := pkg.OpenFile(t.File)
 	if err != nil {
 		return errors.Join(errSetThumbnail, err)
 	}
+	defer func() { _ = file.Close() }()
 
 	call := t.Service.Thumbnails.Set(t.VideoId).Media(file)
 	res, err := call.Do()

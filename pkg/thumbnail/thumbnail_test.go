@@ -162,9 +162,7 @@ func TestThumbnail_Set(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create dummy file: %v", err)
 	}
-	defer func() {
-		_ = os.Remove("test_thumbnail.jpg")
-	}()
+	defer func() { _ = os.Remove("test_thumbnail.jpg") }()
 
 	for _, tt := range tests {
 		t.Run(

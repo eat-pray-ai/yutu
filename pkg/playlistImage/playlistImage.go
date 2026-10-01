@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -96,13 +95,11 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 	if err := pi.EnsureService(); err != nil {
 		return err
 	}
-	file, err := pkg.Root.Open(pi.File)
+	file, err := pkg.OpenFile(pi.File)
 	if err != nil {
 		return errors.Join(errInsertPlaylistImage, err)
 	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
+	defer func() { _ = file.Close() }()
 
 	playlistImage := &youtube.PlaylistImage{
 		Kind: "youtube#playlistImages",
@@ -166,13 +163,11 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
 	}
 	if pi.File != "" {
-		file, err := pkg.Root.Open(pi.File)
+		file, err := pkg.OpenFile(pi.File)
 		if err != nil {
 			return errors.Join(errUpdatePlaylistImage, err)
 		}
-		defer func(file *os.File) {
-			_ = file.Close()
-		}(file)
+		defer func() { _ = file.Close() }()
 		call = call.Media(file)
 	}
 	call = call.Part("id", "kind", "snippet")

@@ -121,9 +121,7 @@ func TestStartWebServer_PortConflict(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to listen on random port: %v", err)
 	}
-	defer func(ln net.Listener) {
-		_ = ln.Close()
-	}(ln)
+	defer func() { _ = ln.Close() }()
 
 	addr := ln.Addr().String()
 	redirectURL := fmt.Sprintf("http://%s", addr)

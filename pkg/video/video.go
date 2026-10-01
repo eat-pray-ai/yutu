@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"
@@ -162,13 +161,11 @@ func (v *Video) Insert(writer io.Writer) error {
 	if err := v.EnsureService(); err != nil {
 		return err
 	}
-	file, err := pkg.Root.Open(v.File)
+	file, err := pkg.OpenFile(v.File)
 	if err != nil {
 		return errors.Join(errInsertVideo, err)
 	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
+	defer func() { _ = file.Close() }()
 
 	if !slices.Contains(v.Tags, "yutu🐰") {
 		v.Tags = append(v.Tags, "yutu🐰")
