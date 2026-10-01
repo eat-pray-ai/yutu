@@ -1,0 +1,17 @@
+scripts/pre-hooks.sh
+  h_3884c6bf11f31f 1-94,100-103,108-113,115-117,119-133,136-323,325-334,338-352,356-361,363-377
+  h_3884c6bf11f31f 95-99,104-107,114,118,134-135,324,335-337,353-355,362
+scripts/AGENTS.md
+  h_3884c6bf11f31f 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "12b5ae18458b6492736e559dfdb3202ec41bd9cb",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
