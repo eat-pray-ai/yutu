@@ -21,7 +21,7 @@ import (
 
 const (
 	smsTool    = "comment-setModerationStatus"
-	smsConfirm = "Set moderation status of comment(s): %s to %s"
+	smsConfirm = "Set moderation status of comment(s) %s to %s"
 	smsShort   = "Set comment moderation status"
 	smsLong    = "Set comment moderation status. Use this tool to set comment moderation status."
 	smsExample = `# Publish a held comment

@@ -20,7 +20,7 @@ import (
 
 const (
 	updateTool    = "caption-update"
-	updateConfirm = "Update caption: %s"
+	updateConfirm = "Update caption for video %s"
 	updateShort   = "Update a caption"
 	updateLong    = "Update a caption. Use this tool to update a caption."
 	updateExample = `# Publish a draft caption
@@ -74,7 +74,11 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			updateTool, cobramcp.ConfirmThen(
 				func(input caption.Caption) string {
-					return fmt.Sprintf(updateConfirm, input.VideoId)
+					target := input.VideoId
+					if input.File != "" {
+						target += " with file: " + input.File
+					}
+					return fmt.Sprintf(updateConfirm, target)
 				},
 				func(input caption.Caption, w io.Writer) error {
 					return input.Update(w)
@@ -118,7 +122,11 @@ var updateCmd = &cobra.Command{
 	Long:    updateLong,
 	Example: updateExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, videoId))
+		target := videoId
+		if file != "" {
+			target += " with file: " + file
+		}
+		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, target))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -19,7 +19,7 @@ import (
 
 const (
 	setTool    = "watermark-set"
-	setConfirm = "Set watermark for channel: %s"
+	setConfirm = "Set watermark %s for channel %s"
 	setShort   = "Set a channel watermark"
 	setLong    = "Set a channel watermark. Use this tool to set a channel watermark."
 	setExample = `# Set a watermark for a channel
@@ -63,7 +63,7 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			setTool, cobramcp.ConfirmThen(
 				func(input watermark.Watermark) string {
-					return fmt.Sprintf(setConfirm, input.ChannelId)
+					return fmt.Sprintf(setConfirm, input.File, input.ChannelId)
 				},
 				func(input watermark.Watermark, w io.Writer) error {
 					return input.Set(w)
@@ -95,7 +95,7 @@ var setCmd = &cobra.Command{
 	Long:    setLong,
 	Example: setExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, channelId))
+		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, file, channelId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		input := watermark.NewWatermark(

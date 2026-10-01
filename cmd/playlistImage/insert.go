@@ -20,7 +20,7 @@ import (
 
 const (
 	insertTool    = "playlistImage-insert"
-	insertConfirm = "Upload playlist image: %s"
+	insertConfirm = "Upload playlist image %s for playlist %s"
 	insertShort   = "Upload a playlist image"
 	insertLong    = "Upload a playlist image. Use this tool to upload a playlist image."
 	insertExample = `# Insert a playlist cover image
@@ -74,7 +74,7 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			insertTool, cobramcp.ConfirmThen(
 				func(input playlistImage.PlaylistImage) string {
-					return fmt.Sprintf(insertConfirm, input.File)
+					return fmt.Sprintf(insertConfirm, input.File, input.PlaylistId)
 				},
 				func(input playlistImage.PlaylistImage, w io.Writer) error {
 					return input.Insert(w)
@@ -108,7 +108,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file, playlistId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

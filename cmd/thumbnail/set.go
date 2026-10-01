@@ -20,7 +20,7 @@ import (
 
 const (
 	setTool    = "thumbnail-set"
-	setConfirm = "Set thumbnail for video: %s"
+	setConfirm = "Set thumbnail %s for video %s"
 	setShort   = "Set a thumbnail for a video"
 	setLong    = "Set a thumbnail for a video. Use this tool to set a thumbnail for a video."
 	setExample = `# Set a thumbnail for a video
@@ -55,7 +55,7 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			setTool, cobramcp.ConfirmThen(
 				func(input thumbnail.Thumbnail) string {
-					return fmt.Sprintf(setConfirm, input.VideoId)
+					return fmt.Sprintf(setConfirm, input.File, input.VideoId)
 				},
 				func(input thumbnail.Thumbnail, w io.Writer) error {
 					return input.Set(w)
@@ -79,7 +79,7 @@ var setCmd = &cobra.Command{
 	Long:    setLong,
 	Example: setExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, videoId))
+		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, file, videoId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

@@ -20,7 +20,7 @@ import (
 
 const (
 	insertTool    = "channelBanner-insert"
-	insertConfirm = "Upload channel banner: %s"
+	insertConfirm = "Upload channel banner %s for channel %s"
 	insertShort   = "Upload a channel banner"
 	insertLong    = "Upload a channel banner. Use this tool to upload a channel banner."
 	insertExample = `# Upload a channel banner
@@ -64,7 +64,7 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			insertTool, cobramcp.ConfirmThen(
 				func(input channelBanner.ChannelBanner) string {
-					return fmt.Sprintf(insertConfirm, input.File)
+					return fmt.Sprintf(insertConfirm, input.File, input.ChannelId)
 				},
 				func(input channelBanner.ChannelBanner, w io.Writer) error {
 					return input.Insert(w)
@@ -95,7 +95,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file, channelId))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

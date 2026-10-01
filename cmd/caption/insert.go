@@ -20,7 +20,7 @@ import (
 
 const (
 	insertTool    = "caption-insert"
-	insertConfirm = "Upload caption: %s"
+	insertConfirm = "Upload caption for video %s with %s"
 	insertShort   = "Upload a caption"
 	insertLong    = "Upload a caption. Use this tool to upload a caption to a video."
 	insertExample = `# Insert a caption to a video
@@ -76,7 +76,7 @@ func init() {
 		}, cobramcp.GenToolHandlerWithMRTR(
 			insertTool, cobramcp.ConfirmThen(
 				func(input caption.Caption) string {
-					return fmt.Sprintf(insertConfirm, input.VideoId)
+					return fmt.Sprintf(insertConfirm, input.VideoId, input.File)
 				},
 				func(input caption.Caption, w io.Writer) error {
 					return input.Insert(w)
@@ -121,7 +121,7 @@ var insertCmd = &cobra.Command{
 	Long:    insertLong,
 	Example: insertExample,
 	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId))
+		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId, file))
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		output, _ := c.Flags().GetString("output")

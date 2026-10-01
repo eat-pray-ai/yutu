@@ -21,7 +21,7 @@ import (
 
 const (
 	masTool    = "comment-markAsSpam"
-	masConfirm = "Mark comment(s) as spam: %s"
+	masConfirm = "Mark comment(s) %s as spam"
 	masShort   = "Mark comments as spam"
 	masLong    = "Mark comments as spam. Use this tool to mark comments as spam."
 	masExample = `# Mark a comment as spam

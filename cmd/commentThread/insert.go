@@ -21,7 +21,7 @@ import (
 const (
 	insertTool     = "commentThread-insert"
 	insertVidUsage = "ID of the video"
-	insertConfirm  = "Create comment thread on video: %s"
+	insertConfirm  = "Create comment thread on video %s"
 	insertShort    = "Create a comment thread"
 	insertLong     = "Create a comment thread. Use this tool to create a comment thread."
 	insertExample  = `# Post a comment on a video

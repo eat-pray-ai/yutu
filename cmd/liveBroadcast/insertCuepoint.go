@@ -21,7 +21,7 @@ import (
 
 const (
 	insertCuepointTool    = "liveBroadcast-insertCuepoint"
-	insertCuepointConfirm = "Insert cuepoint into live broadcast(s): %s"
+	insertCuepointConfirm = "Insert cuepoint into live broadcast(s) %s"
 	insertCuepointShort   = "Insert a cuepoint into a live broadcast"
 	insertCuepointLong    = "Insert a cuepoint into a live broadcast. Use this tool to insert an ad break cuepoint into a currently live broadcast."
 	insertCuepointExample = `# Insert an ad cuepoint of 30 seconds

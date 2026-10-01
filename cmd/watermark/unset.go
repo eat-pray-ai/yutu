@@ -19,7 +19,7 @@ import (
 
 const (
 	unsetTool    = "watermark-unset"
-	unsetConfirm = "Unset watermark for channel: %s"
+	unsetConfirm = "Unset watermark for channel %s"
 	unsetShort   = "Unset a channel watermark"
 	unsetLong    = "Unset a channel watermark. Use this tool to unset a channel watermark."
 	unsetExample = `# Unset watermark for a channel

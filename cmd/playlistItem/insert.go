@@ -21,7 +21,7 @@ import (
 const (
 	insertTool     = "playlistItem-insert"
 	insertPidUsage = "The id that YouTube uses to uniquely identify the playlist that the item is in"
-	insertConfirm  = "Add playlist item to playlist: %s"
+	insertConfirm  = "Add playlist item to playlist %s"
 	insertShort    = "Add a playlist item"
 	insertLong     = "Add a playlist item. Use this tool to add a playlist item to a playlist."
 	insertExample  = `# Add a video to a playlist

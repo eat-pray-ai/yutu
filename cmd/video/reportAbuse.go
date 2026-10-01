@@ -22,7 +22,7 @@ const (
 	reportAbuseTool    = "video-reportAbuse"
 	raIdsUsage         = "IDs of the videos to report abuse on"
 	raLangUsage        = "Language that the content was viewed in"
-	reportAbuseConfirm = "Report abuse on video(s): %s"
+	reportAbuseConfirm = "Report abuse on video(s) %s"
 	reportAbuseShort   = "Report abuse on a video"
 	reportAbuseLong    = "Report abuse on a video. Use this tool to report abuse on a video."
 	reportAbuseExample = `# Report abuse on a video
