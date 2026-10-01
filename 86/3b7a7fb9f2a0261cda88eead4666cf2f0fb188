@@ -1,0 +1,14 @@
+.goreleaser.yaml
+  h_3884c6bf11f31f 80-81,83-84,86-87,89-90,92-100,105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "863b7a7fb9f2a0261cda88eead4666cf2f0fb188",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
