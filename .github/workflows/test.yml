@@ -61,7 +61,6 @@ jobs:
           github.ref == 'refs/heads/main'
   bazel-test:
     runs-on: ubuntu-latest
-    if: false
     steps:
       - uses: actions/checkout@v7
         with:
