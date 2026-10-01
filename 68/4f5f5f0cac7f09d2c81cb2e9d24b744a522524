@@ -1,0 +1,14 @@
+cmd/version.go
+  h_3884c6bf11f31f 8,21-29,64-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "684f5f5f0cac7f09d2c81cb2e9d24b744a522524",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
