@@ -1,0 +1,20 @@
+cmd/video/insert.go
+  h_3884c6bf11f31f 45-46,117-119
+cmd/video/video.go
+  h_3884c6bf11f31f 116,119
+pkg/video/video.go
+  h_3884c6bf11f31f 169-170
+pkg/video/video_test.go
+  h_3884c6bf11f31f 572-608,793,798
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9dc51737bb64fca3425b05eb31103d99abad60d2",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
