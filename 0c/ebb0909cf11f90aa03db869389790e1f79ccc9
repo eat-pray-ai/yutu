@@ -1,0 +1,23 @@
+scripts/pre-hooks.sh
+  h_3884c6bf11f31f 1-83,85,87,89-427
+  h_3884c6bf11f31f 84,86,88
+scripts/command-test.sh
+  h_3884c6bf11f31f 23
+internal/tools/cmdtestgen/main.go
+  h_3884c6bf11f31f 72
+docs/CONTRIBUTING.md
+  h_3884c6bf11f31f 3,8-10,13-19,21,26-27,31,41,43,49
+scripts/AGENTS.md
+  h_3884c6bf11f31f 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0cebb0909cf11f90aa03db869389790e1f79ccc9",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
