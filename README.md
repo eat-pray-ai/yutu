@@ -313,7 +313,7 @@ Usage:
 
 Available Commands:
   abuseReport            Manage YouTube abuse reports
-  activity               Manage activities on YouTube
+  activity               Manage YouTube activities
   agent                  Start an agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
   caption                Manage YouTube video captions
@@ -333,7 +333,7 @@ Available Commands:
   liveStream             Manage YouTube live streams
   mcp                    Start MCP server
   member                 Manage YouTube channel members
-  membershipsLevel       Manage YouTube memberships levels
+  membershipsLevel       Manage YouTube membership levels
   playlist               Manage YouTube playlists
   playlistImage          Manage YouTube playlist images
   playlistItem           Manage YouTube playlist items

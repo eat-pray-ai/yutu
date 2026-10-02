@@ -42,11 +42,11 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 
 开始之前，您需要在 [Google Cloud Platform](https://console.cloud.google.com/) 上创建一个账户来新建**项目**，并为该项目启用以下 API，位置在 `APIs & Services -> Enable APIs and services -> + ENABLE APIS AND SERVICES`:
 
-- [YouTube Data API v3（必需）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
+- [YouTube Data API v3（必需）](https://console.cloud.google.com/apis/api/youtube.googleapis.com/overview)
 - [YouTube Analytics API（可选）](https://console.cloud.google.com/apis/api/youtubeanalytics.googleapis.com/overview)
 - [YouTube Reporting API（可选）](https://console.cloud.google.com/apis/api/youtubereporting.googleapis.com/overview)
 
-启用 API 后，创建一个 `OAuth content screen`，将您自己设置为测试用户，然后创建一个类型为 `Desktop app` 的 `OAuth Client ID`。
+启用 API 后，创建一个 `OAuth consent screen`，将您自己设置为测试用户，然后创建一个类型为 `Desktop app` 的 `OAuth Client ID`。
 
 将此凭据下载到本地机器，命名为 `client_secret.json`，它应该看起来像这样：
 
@@ -77,8 +77,8 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 ```json
 {
   "access_token": "ya29.XXXXXXXXX",
-  "token_type":"Bearer",
-  "refresh_token":"1//XXXXXXXXXX",
+  "token_type": "Bearer",
+  "refresh_token": "1//XXXXXXXXXX",
   "expiry": "2024-05-26T18:49:56.1911165+08:00",
   "expires_in": 3599
 }
@@ -319,7 +319,7 @@ Usage:
 
 Available Commands:
   abuseReport            Manage YouTube abuse reports
-  activity               Manage activities on YouTube
+  activity               Manage YouTube activities
   agent                  Start an agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
   caption                Manage YouTube video captions
@@ -339,7 +339,7 @@ Available Commands:
   liveStream             Manage YouTube live streams
   mcp                    Start MCP server
   member                 Manage YouTube channel members
-  membershipsLevel       Manage YouTube memberships levels
+  membershipsLevel       Manage YouTube membership levels
   playlist               Manage YouTube playlists
   playlistImage          Manage YouTube playlist images
   playlistItem           Manage YouTube playlist items
