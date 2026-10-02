@@ -1,0 +1,16 @@
+.github/actions/container-registry/action.yml
+  h_3884c6bf11f31f 53-54,62-65,76
+Dockerfile
+  h_3884c6bf11f31f 19,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82b7273eae1fbb113bc33034b5fd1eb177bb40be",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
