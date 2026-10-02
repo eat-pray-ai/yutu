@@ -50,6 +50,8 @@ runs:
         password: ${{ inputs.dockerhub_token }}
     - id: meta
       uses: docker/metadata-action@v6
+      env:
+        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       with:
         images: |
           ghcr.io/${{ github.repository }}
@@ -57,7 +59,8 @@ runs:
         flavor: |
           latest=${{ steps.check-latest.outputs.is_latest }}
         labels: |
-          io.modelcontextprotocol.server.name=io.github.eat-pray-ai/yutu
+          io.modelcontextprotocol.server.name=io.github.${{ github.repository }}
+          com.docker.image.source.entrypoint=Dockerfile
     - id: push
       uses: docker/build-push-action@v7
       with:
@@ -68,7 +71,7 @@ runs:
         annotations: ${{ steps.meta.outputs.annotations }}
         labels: ${{ steps.meta.outputs.labels }}
         platforms: linux/amd64,linux/arm64
-        provenance: true
+        provenance: mode=max
         sbom: true
         build-args: |
           arm64_binary=${{ inputs.arm64_binary }}

@@ -16,7 +16,9 @@ RUN if [[ "${TARGETARCH}" == "arm64" ]]; then \
 
 FROM scratch AS yutu
 WORKDIR /app
+USER 10001:10001
 EXPOSE 8216/tcp
 COPY --from=binary /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=binary /app/yutu /yutu
 ENTRYPOINT ["/yutu"]
+CMD ["--help"]
