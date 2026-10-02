@@ -113,12 +113,12 @@ func resetFlags(cmd *cobra.Command) {
 		"recordingDate": &recordingDate,
 	}
 
+	flagSet := cmd.Flags()
 	if cmd.Name() == "update" {
 		boolMap["containsSyntheticMedia"] = &containsSyntheticMedia
+		utils.ResetFlags(map[string]*[]string{"tags": &tags}, flagSet)
 	}
 
-	flagSet := cmd.Flags()
 	utils.ResetFlags(boolMap, flagSet)
 	utils.ResetFlags(stringFlag, flagSet)
-	utils.ResetFlags(map[string]*[]string{"tags": &tags}, flagSet)
 }

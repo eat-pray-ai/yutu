@@ -569,6 +569,43 @@ func TestVideo_Insert(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "insert video with nil tags defaults to yutu",
+			opts: []Option{
+				WithFile("test_video.mp4"),
+				WithTitle("Default Tagged Video"),
+				WithPrivacy("public"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					return
+				}
+				body := decodeMultipartVideo(t, r)
+				if len(body.Snippet.Tags) != 1 || body.Snippet.Tags[0] != "yutu🐰" {
+					t.Errorf("expected [yutu🐰] tag, got %v", body.Snippet.Tags)
+				}
+			},
+			wantErr: false,
+		},
+		{
+			name: "insert video with explicit empty tags does not add yutu",
+			opts: []Option{
+				WithFile("test_video.mp4"),
+				WithTitle("Empty Tagged Video"),
+				WithTags([]string{}),
+				WithPrivacy("public"),
+			},
+			verify: func(r *http.Request) {
+				if r.Method != "POST" {
+					return
+				}
+				body := decodeMultipartVideo(t, r)
+				if len(body.Snippet.Tags) != 0 {
+					t.Errorf("expected no tags, got %v", body.Snippet.Tags)
+				}
+			},
+			wantErr: false,
+		},
 	}
 
 	tmpDir := t.TempDir()
@@ -753,12 +790,12 @@ func TestVideo_Update(t *testing.T) {
 					}
 					found := false
 					for _, tag := range body.Snippet.Tags {
-						if tag == "yutu🐰" {
+						if tag == "new-tag" {
 							found = true
 						}
 					}
 					if !found {
-						t.Errorf("expected yutu🐰 tag in %v", body.Snippet.Tags)
+						t.Errorf("expected new-tag in %v", body.Snippet.Tags)
 					}
 				}
 			},

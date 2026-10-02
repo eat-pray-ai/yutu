@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"slices"
 
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/common"
@@ -167,8 +166,8 @@ func (v *Video) Insert(writer io.Writer) error {
 	}
 	defer func() { _ = file.Close() }()
 
-	if !slices.Contains(v.Tags, "yutu🐰") {
-		v.Tags = append(v.Tags, "yutu🐰")
+	if v.Tags == nil {
+		v.Tags = []string{"yutu🐰"}
 	}
 
 	if v.Title == "" {
@@ -333,9 +332,6 @@ func (v *Video) Update(writer io.Writer) error {
 		video.Snippet.Description = *v.Description
 	}
 	if v.Tags != nil {
-		if !slices.Contains(v.Tags, "yutu🐰") {
-			v.Tags = append(v.Tags, "yutu🐰")
-		}
 		video.Snippet.Tags = v.Tags
 	}
 	if v.Language != nil {

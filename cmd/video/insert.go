@@ -42,7 +42,8 @@ var insertInSchema = &jsonschema.Schema{
 		"description": {Type: "string", Description: descUsage},
 		"tags": {
 			Type: "array", Description: tagsUsage,
-			Items: &jsonschema.Schema{Type: "string"},
+			Items:   &jsonschema.Schema{Type: "string"},
+			Default: jsontext.Value(`["yutu🐰"]`),
 		},
 		"language": {Type: "string", Description: insertLangUsage},
 		"license": {
@@ -113,7 +114,9 @@ func init() {
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	insertCmd.Flags().StringSliceVarP(
+		&tags, "tags", "a", []string{"yutu🐰"}, tagsUsage,
+	)
 	insertCmd.Flags().StringVarP(language, "language", "l", "", insertLangUsage)
 	insertCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
 	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
