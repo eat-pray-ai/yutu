@@ -1,0 +1,169 @@
+cmd/root.go
+  h_3884c6bf11f31f 7,28,38
+  h_3884c6bf11f31f 25-27,36,39-43
+cmd/abuseReport/insert.go
+  h_3884c6bf11f31f 115,127
+cmd/activity/list.go
+  h_3884c6bf11f31f 98,110
+cmd/caption/delete.go
+  h_3884c6bf11f31f 88,94
+cmd/caption/download.go
+  h_3884c6bf11f31f 89,98
+cmd/caption/insert.go
+  h_3884c6bf11f31f 126,144
+cmd/caption/list.go
+  h_3884c6bf11f31f 90,100
+cmd/caption/update.go
+  h_3884c6bf11f31f 131,149
+cmd/channel/list.go
+  h_3884c6bf11f31f 116,130
+cmd/channel/update.go
+  h_3884c6bf11f31f 102,113
+cmd/channelBanner/insert.go
+  h_3884c6bf11f31f 100,109
+cmd/channelSection/delete.go
+  h_3884c6bf11f31f 86,91
+cmd/channelSection/list.go
+  h_3884c6bf11f31f 93,104
+cmd/comment/delete.go
+  h_3884c6bf11f31f 81,83
+cmd/comment/insert.go
+  h_3884c6bf11f31f 103,114
+cmd/comment/list.go
+  h_3884c6bf11f31f 99,109
+cmd/comment/markAsSpam.go
+  h_3884c6bf11f31f 87,93
+cmd/comment/setModerationStatus.go
+  h_3884c6bf11f31f 106,114
+cmd/comment/update.go
+  h_3884c6bf11f31f 103,112
+cmd/commentThread/insert.go
+  h_3884c6bf11f31f 93,102
+cmd/commentThread/list.go
+  h_3884c6bf11f31f 120,135
+cmd/i18nLanguage/list.go
+  h_3884c6bf11f31f 58,65
+cmd/i18nRegion/list.go
+  h_3884c6bf11f31f 47,54
+cmd/liveBroadcast/bind.go
+  h_3884c6bf11f31f 113,123
+cmd/liveBroadcast/delete.go
+  h_3884c6bf11f31f 93,99
+cmd/liveBroadcast/insert.go
+  h_3884c6bf11f31f 117,130
+cmd/liveBroadcast/insertCuepoint.go
+  h_3884c6bf11f31f 127,139
+cmd/liveBroadcast/list.go
+  h_3884c6bf11f31f 109,122
+cmd/liveBroadcast/transition.go
+  h_3884c6bf11f31f 121,131
+cmd/liveBroadcast/update.go
+  h_3884c6bf11f31f 117,131
+cmd/liveChatBan/delete.go
+  h_3884c6bf11f31f 82,86
+cmd/liveChatBan/insert.go
+  h_3884c6bf11f31f 109,119
+cmd/liveChatMessage/delete.go
+  h_3884c6bf11f31f 82,86
+cmd/liveChatMessage/insert.go
+  h_3884c6bf11f31f 89,97
+cmd/liveChatMessage/list.go
+  h_3884c6bf11f31f 88,97
+cmd/liveChatMessage/transition.go
+  h_3884c6bf11f31f 95,102
+cmd/liveChatModerator/delete.go
+  h_3884c6bf11f31f 82,86
+cmd/liveChatModerator/insert.go
+  h_3884c6bf11f31f 95,103
+cmd/liveChatModerator/list.go
+  h_3884c6bf11f31f 84,92
+cmd/liveStream/delete.go
+  h_3884c6bf11f31f 93,99
+cmd/liveStream/insert.go
+  h_3884c6bf11f31f 119,132
+cmd/liveStream/list.go
+  h_3884c6bf11f31f 103,114
+cmd/liveStream/update.go
+  h_3884c6bf11f31f 119,133
+cmd/member/list.go
+  h_3884c6bf11f31f 94,104
+cmd/membershipsLevel/list.go
+  h_3884c6bf11f31f 73,79
+cmd/playlist/delete.go
+  h_3884c6bf11f31f 86,91
+cmd/playlist/insert.go
+  h_3884c6bf11f31f 102,113
+cmd/playlist/list.go
+  h_3884c6bf11f31f 112,125
+cmd/playlist/update.go
+  h_3884c6bf11f31f 108,119
+cmd/playlistImage/delete.go
+  h_3884c6bf11f31f 85,90
+cmd/playlistImage/insert.go
+  h_3884c6bf11f31f 113,126
+cmd/playlistImage/list.go
+  h_3884c6bf11f31f 96,107
+cmd/playlistImage/update.go
+  h_3884c6bf11f31f 106,118
+cmd/playlistItem/delete.go
+  h_3884c6bf11f31f 86,91
+cmd/playlistItem/insert.go
+  h_3884c6bf11f31f 112,127
+cmd/playlistItem/list.go
+  h_3884c6bf11f31f 97,108
+cmd/playlistItem/update.go
+  h_3884c6bf11f31f 103,113
+cmd/search/list.go
+  h_3884c6bf11f31f 202,235
+cmd/subscription/delete.go
+  h_3884c6bf11f31f 82,86
+cmd/subscription/insert.go
+  h_3884c6bf11f31f 91,100
+cmd/subscription/list.go
+  h_3884c6bf11f31f 123,137
+cmd/superChatEvent/list.go
+  h_3884c6bf11f31f 81,89
+cmd/thirdPartyLink/delete.go
+  h_3884c6bf11f31f 83,89
+cmd/thirdPartyLink/insert.go
+  h_3884c6bf11f31f 96,106
+cmd/thirdPartyLink/list.go
+  h_3884c6bf11f31f 85,94
+cmd/thirdPartyLink/update.go
+  h_3884c6bf11f31f 97,107
+cmd/thumbnail/set.go
+  h_3884c6bf11f31f 84,91
+cmd/video/delete.go
+  h_3884c6bf11f31f 82,84
+cmd/video/getRating.go
+  h_3884c6bf11f31f 77,85
+cmd/video/insert.go
+  h_3884c6bf11f31f 165,192
+cmd/video/list.go
+  h_3884c6bf11f31f 118,135
+cmd/video/rate.go
+  h_3884c6bf11f31f 93,98
+cmd/video/reportAbuse.go
+  h_3884c6bf11f31f 105,114
+cmd/video/update.go
+  h_3884c6bf11f31f 133,153
+cmd/videoAbuseReportReason/list.go
+  h_3884c6bf11f31f 76,83
+cmd/videoCategory/list.go
+  h_3884c6bf11f31f 50,59
+cmd/watermark/set.go
+  h_3884c6bf11f31f 100,110
+cmd/watermark/unset.go
+  h_3884c6bf11f31f 73,75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f288ac54aed908be0938527bf96688412cc37814",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
