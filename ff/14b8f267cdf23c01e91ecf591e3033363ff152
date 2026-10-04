@@ -1,0 +1,22 @@
+docs/HOW_TO_TEST.md
+  h_3884c6bf11f31f 13,20,25,70,74,77,88,94,97-100,102-103,106-107,110-133,146-190,206-258
+pkg/auth/auth_test.go
+  h_3884c6bf11f31f 9,13,16,31-34,40,115-212,482-529
+pkg/common/common_test.go
+  h_3884c6bf11f31f 10,289-337,349-369
+pkg/playlistItem/playlistItem_test.go
+  h_3884c6bf11f31f 8,20-27,325-390
+pkg/subscription/subscription_test.go
+  h_3884c6bf11f31f 9,14,360-433,572-607
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ff14b8f267cdf23c01e91ecf591e3033363ff152",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
