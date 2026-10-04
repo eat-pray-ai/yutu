@@ -1,0 +1,28 @@
+pkg/abuseReport/abuseReport.go
+  h_3884c6bf11f31f 72
+pkg/auth/service.go
+  h_3884c6bf11f31f 61-66,101
+pkg/channelBanner/channelBanner.go
+  h_3884c6bf11f31f 64
+pkg/common/common.go
+  h_3884c6bf11f31f 170,173,175,183-186,191,194,196,198,200-201
+pkg/common/common_test.go
+  h_3884c6bf11f31f 8,203-205,213-228,266-268,282-287
+pkg/thumbnail/thumbnail.go
+  h_3884c6bf11f31f 54
+pkg/utils/utils.go
+  h_3884c6bf11f31f 37,40,42,44-48,51-64,67,69-71,73
+pkg/utils/utils_test.go
+  h_3884c6bf11f31f 172-174,204-206,215-245,336-343
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e3bc70b1c3243d91b8597295d795c3e6e60e792",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
