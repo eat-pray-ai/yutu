@@ -1,0 +1,18 @@
+pkg/liveBroadcast/liveBroadcast_test.go
+  h_3884c6bf11f31f 9,14,533-568,627-665,727-765,837-875
+pkg/liveChatBan/liveChatBan.go
+  h_3884c6bf11f31f 64,69-71,77-78,81-82,84
+pkg/liveChatMessage/liveChatMessage_test.go
+  h_3884c6bf11f31f 9,14,397-432,490-527
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6588302ee64966baa8f788a902eaa844ee22e91d",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
