@@ -1,0 +1,29 @@
+pkg/auth/service.go
+  h_3884c6bf11f31f 14,16,18,27-30,39,43,60,83-85,96-110,112-113
+  h_3884c6bf11f31f 26,86-88,111,114-115
+pkg/auth/auth.go
+  h_3884c6bf11f31f 16,36,155,158,163,177,198-209,229,233,236,238-241,251,253
+pkg/auth/auth_test.go
+  h_3884c6bf11f31f 8,10,18,112,135,154,158,266,270,376-403
+pkg/auth/service_test.go
+  h_3884c6bf11f31f 61,81,102,115,127,130
+pkg/auth/verifier_test.go
+  h_3884c6bf11f31f 17,36,59,67,80,87
+pkg/caption/caption_test.go
+  h_3884c6bf11f31f 745,754,775,784,795,804,813,823,832,846,856,864,875,883,894,903
+pkg/channelBanner/channelBanner_test.go
+  h_3884c6bf11f31f 46,54,81,90
+pkg/common/testutil.go
+  h_3884c6bf11f31f 23,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed14040d9fe6ed783ac8299bdd564977827fd002",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
