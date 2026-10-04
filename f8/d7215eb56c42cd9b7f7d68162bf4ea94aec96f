@@ -1,0 +1,19 @@
+pkg/video/video.go
+  h_3884c6bf11f31f 25-26,142,157-159,262-263,280-281,285-286,399,417,459
+  h_3884c6bf11f31f 143-156,163-165,264,282,287-288,294-296,400-401,418-419,422-425,428-430,436-437,439-440,442,458,460-463,466-468,478-479,481-482,484,487-489,509-510,513-514,516
+cmd/video/getRating.go
+  h_3884c6bf11f31f 68
+pkg/video/video_test.go
+  h_3884c6bf11f31f 9,684-801,1140-1212,1312
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f8d7215eb56c42cd9b7f7d68162bf4ea94aec96f",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
