@@ -1,0 +1,78 @@
+pkg/liveStream/liveStream.go
+  h_3884c6bf11f31f 85,99-101
+  h_3884c6bf11f31f 86-98,136,198,203-205,218-219,222-223,225
+pkg/search/search.go
+  h_3884c6bf11f31f 165,179-181
+  h_3884c6bf11f31f 166-178
+pkg/liveChatMessage/liveChatMessage.go
+  h_3884c6bf11f31f 71,89-91,120-121,128,132,138-139,146,150,153
+  h_3884c6bf11f31f 72-88,115,122,129,133,135,140,147,151-152,154,157
+pkg/thirdPartyLink/thirdPartyLink.go
+  h_3884c6bf11f31f 77
+  h_3884c6bf11f31f 117,162,184-185
+pkg/playlistImage/playlistImage.go
+  h_3884c6bf11f31f 84,90-92
+  h_3884c6bf11f31f 85-89,130,181,186-188,199-200,202-203,205
+pkg/commentThread/commentThread.go
+  h_3884c6bf11f31f 93,100-102
+  h_3884c6bf11f31f 94-99,131
+pkg/membershipsLevel/membershipsLevel.go
+  h_3884c6bf11f31f 57
+pkg/member/member.go
+  h_3884c6bf11f31f 70,75-77
+  h_3884c6bf11f31f 71-74
+pkg/liveBroadcast/liveBroadcast.go
+  h_3884c6bf11f31f 105,121-123,227-228,242,246,252-253,270,274,277,284-285,299,303,305-306,313-314,335,339,341-342
+  h_3884c6bf11f31f 106-120,158,222,229,243,247,249,254,271,275-276,278,281,286,300,304,307,310,315,336,340,343,346
+pkg/videoCategory/videoCategory.go
+  h_3884c6bf11f31f 68
+pkg/videoAbuseReportReason/videoAbuseReportReason.go
+  h_3884c6bf11f31f 63
+pkg/activity/activity.go
+  h_3884c6bf11f31f 84,89-91
+  h_3884c6bf11f31f 21-22,24,85-88
+pkg/playlistItem/playlistItem.go
+  h_3884c6bf11f31f 86,109
+  h_3884c6bf11f31f 87-106,110-111,165,207,212-214,224-225,228-229,231
+pkg/channel/channel.go
+  h_3884c6bf11f31f 96,107-109,146-147
+  h_3884c6bf11f31f 97-106,148
+pkg/channelSection/channelSection.go
+  h_3884c6bf11f31f 80
+  h_3884c6bf11f31f 88-90,100-101,104-105,107
+pkg/caption/caption.go
+  h_3884c6bf11f31f 92,138,221
+  h_3884c6bf11f31f 139-140,222-223,226-228,241-242,245-246,248
+pkg/i18nRegion/i18nRegion.go
+  h_3884c6bf11f31f 61
+pkg/comment/comment.go
+  h_3884c6bf11f31f 87,101-103,133-134,174-175,189-190
+  h_3884c6bf11f31f 88-100,135,176,191,209,215-217,223-224,226-227,229
+pkg/liveChatModerator/liveChatModerator.go
+  h_3884c6bf11f31f 65,75-77
+  h_3884c6bf11f31f 66-74,100,105-107,113-114,117-118,120
+pkg/superChatEvent/superChatEvent.go
+  h_3884c6bf11f31f 61,66-68
+  h_3884c6bf11f31f 62-65
+pkg/subscription/subscription.go
+  h_3884c6bf11f31f 97,112-114
+  h_3884c6bf11f31f 98-111,139,144-146,152-153,156-157,159
+pkg/playlist/playlist.go
+  h_3884c6bf11f31f 92,103-105,142,185
+  h_3884c6bf11f31f 93-102,143-144,186-187,190-192,202-203,205-206,208
+pkg/i18nLanguage/i18nLanguage.go
+  h_3884c6bf11f31f 63
+pkg/activity/activity_test.go
+  h_3884c6bf11f31f 7,340-383
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7358b70d76e7835812ed227de1b1d179e75efb1a",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
