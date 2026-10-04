@@ -1,0 +1,66 @@
+pkg/liveChatMessage/liveChatMessage.go
+  h_3884c6bf11f31f 71-91,115,120-122,128-129,132-133,135,138-140,146-147,150-154,157
+pkg/playlist/playlist.go
+  h_3884c6bf11f31f 92-105,142-144,185-187,190-192,202-203,205-206,208
+pkg/member/member.go
+  h_3884c6bf11f31f 70-77
+pkg/subscription/subscription.go
+  h_3884c6bf11f31f 97-114,139,144-146,152-153,156-157,159
+pkg/videoCategory/videoCategory.go
+  h_3884c6bf11f31f 68
+pkg/liveChatModerator/liveChatModerator.go
+  h_3884c6bf11f31f 65-77,100,105-107,113-114,117-118,120
+pkg/membershipsLevel/membershipsLevel.go
+  h_3884c6bf11f31f 57
+pkg/playlistImage/playlistImage.go
+  h_3884c6bf11f31f 84-92,130,181,186-188,199-200,202-203,205
+pkg/search/search.go
+  h_3884c6bf11f31f 165-181
+pkg/i18nLanguage/i18nLanguage.go
+  h_3884c6bf11f31f 63
+pkg/caption/caption.go
+  h_3884c6bf11f31f 92,138-140,221-223,226-228,241-242,245-246,248
+pkg/liveStream/liveStream.go
+  h_3884c6bf11f31f 85-101,136,198,203-205,218-219,222-223,225
+pkg/playlistItem/playlistItem.go
+  h_3884c6bf11f31f 86-106,109-111,165,207,212-214,224-225,228-229,231
+pkg/commentThread/commentThread.go
+  h_3884c6bf11f31f 93-102,131
+pkg/liveChatMessage/liveChatMessage_test.go
+  h_3884c6bf11f31f 9,14,397-432,490-527
+pkg/channel/channel.go
+  h_3884c6bf11f31f 96-109,146-148
+pkg/liveBroadcast/liveBroadcast_test.go
+  h_3884c6bf11f31f 9,14,533-568,627-665,727-765,837-875
+pkg/comment/comment.go
+  h_3884c6bf11f31f 87-103,133-135,174-176,189-191,209,215-217,223-224,226-227,229
+pkg/liveChatBan/liveChatBan.go
+  h_3884c6bf11f31f 64,69-71,77-78,81-82,84
+pkg/i18nRegion/i18nRegion.go
+  h_3884c6bf11f31f 61
+pkg/channelSection/channelSection.go
+  h_3884c6bf11f31f 80,88-90,100-101,104-105,107
+pkg/thirdPartyLink/thirdPartyLink.go
+  h_3884c6bf11f31f 77,117,162,184-185
+pkg/videoAbuseReportReason/videoAbuseReportReason.go
+  h_3884c6bf11f31f 63
+pkg/liveBroadcast/liveBroadcast.go
+  h_3884c6bf11f31f 105-123,158,222,227-229,242-243,246-247,249,252-254,270-271,274-278,281,284-286,299-300,303-307,310,313-315,335-336,339-343,346
+pkg/superChatEvent/superChatEvent.go
+  h_3884c6bf11f31f 61-68
+pkg/activity/activity.go
+  h_3884c6bf11f31f 21-22,24,84-91
+pkg/activity/activity_test.go
+  h_3884c6bf11f31f 7,340-383
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08473f75a3c0294d14d6ba96496dd8cee1540177",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
