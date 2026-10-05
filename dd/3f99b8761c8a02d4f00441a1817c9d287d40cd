@@ -1,0 +1,28 @@
+cmd/i18nLanguage/list.go
+  h_3884c6bf11f31f 7,71,73,82,85
+cmd/i18nRegion/list.go
+  h_3884c6bf11f31f 7,61,64
+cmd/videoCategory/list.go
+  h_3884c6bf11f31f 7,65,68
+go.mod
+  h_3884c6bf11f31f 6
+go.sum
+  h_3884c6bf11f31f 27-28
+pkg/i18nLanguage/i18nLanguage.go
+  h_3884c6bf11f31f 76
+pkg/i18nRegion/i18nRegion.go
+  h_3884c6bf11f31f 74
+pkg/videoCategory/videoCategory.go
+  h_3884c6bf11f31f 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dd3f99b8761c8a02d4f00441a1817c9d287d40cd",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
