@@ -1,0 +1,30 @@
+BUILD.bazel
+  h_3884c6bf11f31f 21
+cmd/resources/BUILD.bazel
+  h_3884c6bf11f31f 1-39
+cmd/resources/resources.go
+  h_3884c6bf11f31f 1-36
+internal/tools/cmdtestgen/BUILD.bazel
+  h_3884c6bf11f31f 11
+internal/tools/cmdtestgen/main.go
+  h_3884c6bf11f31f 19
+internal/tools/skillgen/BUILD.bazel
+  h_3884c6bf11f31f 19
+internal/tools/skillgen/main.go
+  h_3884c6bf11f31f 15,101
+main.go
+  h_3884c6bf11f31f 9
+scripts/pre-hooks.sh
+  h_3884c6bf11f31f 14-15,84-85,93-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fdd655b01324bc37dcc21e7633e4d12e77c4e100",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
