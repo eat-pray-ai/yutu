@@ -1,0 +1,18 @@
+cmd/mcp.go
+  h_3884c6bf11f31f 37-40
+go.mod
+  h_3884c6bf11f31f 6
+go.sum
+  h_3884c6bf11f31f 27-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "afd764d305668e0382e4a4875d36ec6afc4afda8",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
