@@ -1,0 +1,14 @@
+docs/FEATURES.md
+  h_3884c6bf11f31f 3,109,154,159,164,169,174,179,184,190,195,201,206,211,216,222,227,232,238,243,248,253,334,356,400
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "958a2a21ee5ea6017887cd1377b4938faae26183",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
