@@ -1,0 +1,18 @@
+.github/workflows/publish.yml
+  h_3884c6bf11f31f 125
+Dockerfile
+  h_3884c6bf11f31f 10-15,19
+npm/yutu/package.json
+  h_3884c6bf11f31f 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d67ada4ba778914ac45e84b9f920f05cc49e7fc4",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
