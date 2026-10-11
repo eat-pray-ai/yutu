@@ -296,7 +296,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 `yutu` 提供了一个统一的 [skill](https://opencode.ai/docs/skills)，为 AI Agent 扩展 YouTube 领域知识、常用工作流和 SEO 最佳实践——涵盖视频、播放列表、评论、频道、字幕、订阅等。
 
 ```shell
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube
+❯ npx skills add eat-pray-ai/yutu --skill youtube
 ```
 
 完整的支持操作列表请参见 [skills/youtube/SKILL.md](skills/youtube/SKILL.md)。

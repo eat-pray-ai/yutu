@@ -290,7 +290,7 @@ Add the following to your MCP settings. Remember to replace the values of `YUTU_
 `yutu` provides a unified [skill](https://opencode.ai/docs/skills) that extends AI agents with YouTube domain knowledge, common workflows, and SEO best practices — covering videos, playlists, comments, channels, captions, subscriptions, and more.
 
 ```shell
-❯ npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube
+❯ npx skills add eat-pray-ai/yutu --skill youtube
 ```
 
 See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supported operations.

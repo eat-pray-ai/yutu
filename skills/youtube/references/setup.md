@@ -83,7 +83,7 @@ For VS Code, Cursor, or other tools, add to your MCP settings:
 ## Skills
 
 ```bash
-npx skills add https://github.com/eat-pray-ai/yutu/tree/main/skills/youtube
+npx skills add eat-pray-ai/yutu --skill youtube
 ```
 
 ## Environment Variables
