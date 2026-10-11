@@ -6,6 +6,7 @@
 set -euo pipefail
 
 REPO="github.com/eat-pray-ai/yutu"
+INSTALL_DIR="${XDG_BIN_HOME:-${HOME}/.local/bin}"
 
 ARCH="UNKNOWN"
 case $(uname -m) in
@@ -14,8 +15,8 @@ case $(uname -m) in
 esac
 
 if [[ "${ARCH}" == "UNKNOWN" ]]; then
-  echo "Unlisted architecture: $(uname -m)"
-  echo "Please create an issue at ${REPO}/issues"
+  echo "Unsupported architecture: $(uname -m)"
+  echo "Report: https://${REPO}/issues"
   exit 1
 fi
 
@@ -26,18 +27,32 @@ case $(uname -s) in
 esac
 
 if [[ "${OS}" == "UNKNOWN" ]]; then
-  echo "Unlisted OS: $(uname -s)"
-  echo "Please create an issue at ${REPO}/issues"
+  echo "Unsupported OS: $(uname -s)"
+  echo "Report: https://${REPO}/issues"
   exit 1
 fi
 
 FILE="yutu-${OS}-${ARCH}"
-curl -sSfL https://${REPO}/releases/latest/download/${FILE} -o ./yutu
-chmod +x ./yutu
-./yutu version
+mkdir -p "${INSTALL_DIR}"
+curl -sSfL https://${REPO}/releases/latest/download/${FILE} -o "${INSTALL_DIR}/yutu"
+chmod +x "${INSTALL_DIR}/yutu"
+"${INSTALL_DIR}/yutu" version
+
+if command -v npx >/dev/null 2>&1; then
+  echo "Installing skill..."
+  if npx --yes skills add eat-pray-ai/yutu --skill youtube -y; then
+    echo "Skill installed."
+  else
+    echo "Skill install failed. Run manually:"
+    echo "  npx skills add eat-pray-ai/yutu --skill youtube"
+  fi
+else
+  echo "Skill skipped: npx not found."
+fi
 
 echo """
-yutu🐰 is downloaded to the current directory.
-You may want to move it to a directory in your PATH, e.g.:
-  sudo mv ./yutu /usr/local/bin/yutu
+yutu🐰 installed:
+  ${INSTALL_DIR}/yutu
+
+Add ${INSTALL_DIR} to PATH if needed.
 """
