@@ -1,0 +1,20 @@
+README.md
+  h_3884c6bf11f31f 293
+README_zh.md
+  h_3884c6bf11f31f 299
+internal/tools/skillgen/setup.md
+  h_3884c6bf11f31f 86
+skills/youtube/references/setup.md
+  h_3884c6bf11f31f 86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ce62c4f081428ce86c05aa429de5b1d4b65afa6",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
