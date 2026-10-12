@@ -1,0 +1,14 @@
+scripts/install.sh
+  h_3884c6bf11f31f 9,18-19,30-31,36-51,54-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8d6ffc66d8a7f9cd70c99e6c7c7fadf237b36dfe",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
