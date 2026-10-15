@@ -19,12 +19,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v7
-      with:
-        sparse-checkout: |
-          Dockerfile
-          server.json
-        sparse-checkout-cone-mode: false
     - id: check-latest
       shell: bash
       run: |

@@ -56,10 +56,6 @@ publish_platform() {
 
 echo "📦 Publishing yutu npm packages v${VERSION} (tag: ${NPM_TAG})"
 
-for pkg_dir in "${!PLATFORM_MAP[@]}"; do
-  publish_platform "$pkg_dir"
-done
-
 echo "==> @eat-pray-ai/yutu@${VERSION} (root)"
 root_dir="$NPM_DIR/yutu"
 cp "$REPO_ROOT/LICENSE" "$root_dir/LICENSE"
@@ -70,5 +66,9 @@ stamp_version "$root_dir/package.json"
 
 restore_version "$root_dir/package.json"
 rm -f "${root_dir:?}/LICENSE" "${root_dir:?}/README.md"
+
+for pkg_dir in "${!PLATFORM_MAP[@]}"; do
+  publish_platform "$pkg_dir"
+done
 
 echo "✅ All packages published successfully!"
