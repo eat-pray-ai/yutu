@@ -1,0 +1,18 @@
+README_zh.md
+  h_3884c6bf11f31f 110
+  h_3884c6bf11f31f 26,308
+README.md
+  h_3884c6bf11f31f 104
+  h_3884c6bf11f31f 26,302
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d801de3ec03c2bb54bc749a2f1460c57e08f5da7",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
