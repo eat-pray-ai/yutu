@@ -2,7 +2,7 @@
   "name": "@eat-pray-ai/yutu",
   "version": "0.0.0",
   "mcpName": "io.github.eat-pray-ai/yutu",
-  "description": "The AI-powered toolkit that grows your YouTube channel on autopilot",
+  "description": "CLI, MCP server, and AI agent to automate YouTube workflows",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eat-pray-ai/yutu.git"

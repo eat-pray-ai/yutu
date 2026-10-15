@@ -21,7 +21,7 @@ const (
 var banner = strings.TrimPrefix(
 	`
   _(\_/)_     yutu %s %s/%s
- │   ▶   │    The AI-powered toolkit for YouTube
+ │   ▶   │    CLI, MCP server, and AI agent to automate YouTube workflows
  │ • x • │    📦 build: %s-%s
  ╰─/───\─╯    🌟 Star:  %s
 `, "\n",
