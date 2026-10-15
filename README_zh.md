@@ -23,7 +23,7 @@
 <!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
 Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent) -->
 
-`yutu` 是一个 YouTube CLI、MCP 服务器和 AI Agent，可以自动化您的整个 YouTube 工作流程——从上传和优化视频到管理评论、播放列表和频道品牌——帮助您获得更多播放量、更高的点击率和更强的观众互动，同时大幅减少手动操作。
+`yutu` 是一个用于自动化 YouTube 工作流程的 CLI、MCP 服务器和 AI Agent——从上传和优化视频到管理评论、播放列表和频道品牌——并提供面向 AI Agent 的 Skill，帮助您获得更多播放量、更高的点击率和更强的观众互动，同时大幅减少手动操作。
 
 [![mcp demo](./assets/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
@@ -107,7 +107,7 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 如果您正在使用 AI Agent，可以复制以下提示词来完成安装：
 
 ```plaintext
-Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/refs/heads/main/internal/tools/skillgen/setup.md
+Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/main/internal/tools/skillgen/setup.md
 ```
 
 您可以直接从[发布页面](https://github.com/eat-pray-ai/yutu/releases/latest)下载 `yutu`，或使用以下您喜欢的方法。
@@ -305,7 +305,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
+yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI client.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
