@@ -23,7 +23,7 @@
 <!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
 Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent) -->
 
-`yutu` is a CLI, MCP server, and AI agent for YouTube that automates your entire YouTube workflow — from uploading and optimizing videos to managing comments, playlists, and channel branding — so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
+`yutu` is a CLI, MCP server, and AI agent to automate YouTube workflows — from uploading and optimizing videos to managing comments, playlists, and channel branding — and provides a skill for AI agents, so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
 
 [![mcp demo](./assets/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
@@ -101,7 +101,7 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 If you're using an AI agent, copy and paste the following prompt to finish the installation:
 
 ```plaintext
-Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/refs/heads/main/internal/tools/skillgen/setup.md
+Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/main/internal/tools/skillgen/setup.md
 ```
 
 You can download `yutu` from [releases page](https://github.com/eat-pray-ai/yutu/releases/latest) directly, or use the following methods as you prefer.
@@ -126,7 +126,11 @@ There are two actions available for yutu, one is for general purpose and the oth
 <summary>Docker</summary>
 
 ```shell
+# GitHub Container Registry (GHCR)
 ❯ docker pull ghcr.io/eat-pray-ai/yutu:latest
+# or Docker Hub
+❯ docker pull eatprayai/yutu:latest
+
 ❯ docker run --rm ghcr.io/eat-pray-ai/yutu:latest
 # make sure client_secret.json is in the current directory
 ❯ docker run --rm -it -u $(id -u):$(id -g) -v $(pwd):/app -p 8216:8216 ghcr.io/eat-pray-ai/yutu:latest
@@ -183,6 +187,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 ```shell
 # Docker
 ❯ gh attestation verify oci://ghcr.io/eat-pray-ai/yutu:latest --repo eat-pray-ai/yutu
+❯ gh attestation verify oci://docker.io/eatprayai/yutu:latest --repo eat-pray-ai/yutu
 
 # Linux and macOS(if installed using shell script)
 ❯ gh attestation verify $(which yutu) --repo eat-pray-ai/yutu
@@ -299,7 +304,7 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent for YouTube that can automate almost all YouTube workflows.
+yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI client.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
