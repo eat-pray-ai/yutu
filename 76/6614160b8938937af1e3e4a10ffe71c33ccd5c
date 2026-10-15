@@ -1,0 +1,20 @@
+cmd/root.go
+  h_3884c6bf11f31f 14-15
+cmd/version.go
+  h_3884c6bf11f31f 24
+npm/yutu/package.json
+  h_3884c6bf11f31f 5
+server.json
+  h_3884c6bf11f31f 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "766614160b8938937af1e3e4a10ffe71c33ccd5c",
+  "prompts": {},
+  "humans": {
+    "h_3884c6bf11f31f": {
+      "author": "OpenWaygate <27287694+OpenWaygate@users.noreply.github.com>"
+    }
+  }
+}
