@@ -13,7 +13,7 @@ require (
 	golang.org/x/oauth2 v0.37.0
 	golang.org/x/term v0.47.0
 	google.golang.org/adk/v2 v2.6.0
-	google.golang.org/api v0.306.0
+	google.golang.org/api v0.308.0
 	google.golang.org/genai v1.75.0
 	gopkg.in/yaml.v3 v3.0.1
 )
