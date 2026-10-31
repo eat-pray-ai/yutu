@@ -36,6 +36,7 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 - [Skills](#skills)
 - [使用方法](#使用方法)
 - [功能特性](#功能特性)
+- [赞助](#赞助)
 - [贡献](#贡献)
 
 ## 前提条件
@@ -368,6 +369,12 @@ Use "yutu [command] --help" for more information about a command.
 ## 功能特性
 
 请参考 [FEATURES.md](docs/FEATURES.md) 获取更多信息。
+
+## 赞助
+
+如果 `yutu` 帮你节省了时间，欢迎在 GitHub 上点个 [⭐ Star](https://github.com/eat-pray-ai/yutu)，让更多人发现这个项目。
+
+你也可以通过捐赠（支付宝 / 微信）支持项目开发，详见 [yutu.ifor.dev](https://yutu.ifor.dev/#donate)。感谢你的支持！💖
 
 ## 贡献
 

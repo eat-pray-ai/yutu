@@ -36,6 +36,7 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 - [Skills](#skills)
 - [Usage](#usage)
 - [Features](#features)
+- [Sponsor](#sponsor)
 - [Contributing](#contributing)
 
 ## Prerequisites
@@ -362,6 +363,12 @@ Use "yutu [command] --help" for more information about a command.
 ## Features
 
 Please refer to [FEATURES.md](docs/FEATURES.md) for more information.
+
+## Sponsor
+
+If `yutu` saves you time, a [⭐ star](https://github.com/eat-pray-ai/yutu) on GitHub goes a long way and helps others discover the project.
+
+You can also support its development with a donation (Alipay / WeChat) at [yutu.ifor.dev](https://yutu.ifor.dev/#donate). Thank you! 💖
 
 ## Contributing
 
