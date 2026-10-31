@@ -25,6 +25,7 @@ qodana.yaml
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 *.html
+!pkg/auth/authorized.html
 genhtml
 
 # Dependency directories (remove the comment below to include it)

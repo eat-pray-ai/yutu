@@ -4,6 +4,7 @@
 package auth
 
 import (
+	_ "embed"
 	"encoding/json/v2"
 	"fmt"
 	"log/slog"
@@ -37,7 +38,6 @@ const (
 
 	browserOpenedHint = "Your browser has been opened to an authorization URL. yutu will resume once authorization has been provided.\n%s\n"
 	openBrowserHint   = "It seems that your browser is not open. Go to the following link in your browser:\n%s\n"
-	receivedCodeHint  = "Authorization code received: %s\nYou can now safely close the browser window.\n"
 	manualInputHint   = `
 After completing the authorization flow, enter the authorization code on command line.
 
@@ -47,6 +47,12 @@ and the url in the address bar is in the form of
 ONLY 'COPY-THIS' part is the code you need to enter on command line.
 `
 )
+
+// authorizedPage is shown in the browser once the OAuth redirect is received.
+// It must stay self-contained: the loopback server closes right after serving it.
+//
+//go:embed authorized.html
+var authorizedPage []byte
 
 // Scopes is the set of YouTube OAuth scopes required by yutu.
 var Scopes = []string{
@@ -181,8 +187,8 @@ func (s *svc) startWebServer(redirectURL string) (chan string, func() error, err
 					code := r.FormValue("code")
 					select {
 					case codeCh <- code:
-						w.Header().Set("Content-Type", "text/plain")
-						_, _ = fmt.Fprintf(w, receivedCodeHint, code)
+						w.Header().Set("Content-Type", "text/html; charset=utf-8")
+						_, _ = w.Write(authorizedPage)
 						_ = listener.Close()
 					default:
 						http.Error(
