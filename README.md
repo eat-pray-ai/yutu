@@ -231,65 +231,16 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 Before using `yutu` as an MCP server, make sure `yutu` is installed(see [Installation](#installation) section), and you have a valid `client_secret.json` and `youtube.token.json` files(refer to [Prerequisites](#prerequisites) section).
 
-You can configure `yutu` as an MCP server for your preferred tool using the instructions below.
-
-<details>
-<summary>Claude Code</summary>
+Setup yutu MCP for one or more selected AI Agents:
 
 ```shell
-# Stdio mode
-❯ claude mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-
-# HTTP mode (start the server first: yutu mcp --mode http)
-❯ claude mcp add --transport http \
-  --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
-  --client-secret \
-  yutu http://localhost:8216/mcp
+❯ yutu mcp setup --agents claude,opencode,pi,codex \
+  --credential /absolute/path/to/client_secret.json \
+  --cacheToken /absolute/path/to/youtube.token.json
 ```
 
-</details>
+`--agents` is required. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Relative paths are converted to absolute paths. Prefer file paths to avoid copying inline secrets into agent settings.
 
-<details>
-<summary>Codex</summary>
-
-```shell
-# Stdio mode
-❯ codex mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-
-# HTTP mode (start the server first: yutu mcp --mode http)
-❯ codex mcp add --url http://localhost:8216/mcp \
-  --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
-  yutu
-```
-
-</details>
-
-<details>
-<summary>Manual Configuration (VS Code, Cursor, OpenCode, etc.)</summary>
-
-Add the following to your MCP settings. Remember to replace the values of `YUTU_CREDENTIAL` and `YUTU_CACHE_TOKEN` with correct paths on your local machine.
-
-```json
-{
-  "yutu": {
-    "type": "stdio",
-    "command": "yutu",
-    "args": [
-      "mcp"
-    ],
-    "env": {
-      "YUTU_CREDENTIAL": "/absolute/path/to/client_secret.json",
-      "YUTU_CACHE_TOKEN": "/absolute/path/to/youtube.token.json"
-    }
-  }
-}
-```
-
-</details>
 
 ## Skills
 
@@ -305,7 +256,7 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI client.
+yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI Agent.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)

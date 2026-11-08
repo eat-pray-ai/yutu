@@ -16,8 +16,7 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)](https://github.com/eat-pray-ai/yutu/releases/latest)
 [![Homebrew Formula Version](https://img.shields.io/homebrew/v/yutu?style=flat-square&logo=homebrew)](https://formulae.brew.sh/formula/yutu)
-[![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget
-)](https://winstall.app/apps/eat-pray-ai.yutu)
+[![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget)](https://winstall.app/apps/eat-pray-ai.yutu)
 [![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
 <!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
@@ -60,9 +59,7 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_secret": "XXXXXXXXXXXXXXXX",
-    "redirect_uris": [
-      "http://localhost"
-    ]
+    "redirect_uris": ["http://localhost"]
   }
 }
 ```
@@ -97,7 +94,7 @@ Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=11
 ### 全局环境变量
 
 | 变量               | 描述                                       | 默认值               |
-|--------------------|--------------------------------------------|----------------------|
+| ------------------ | ------------------------------------------ | -------------------- |
 | `YUTU_CREDENTIAL`  | OAuth 客户端密钥的路径、Base64 或 JSON     | `client_secret.json` |
 | `YUTU_CACHE_TOKEN` | 缓存的 OAuth 令牌的路径、Base64 或 JSON    | `youtube.token.json` |
 | `YUTU_ROOT`        | 文件解析的根目录                           | 当前工作目录         |
@@ -225,7 +222,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 ### Agent 参数
 
 | 参数                | 描述                                                                   | 默认值                                     |
-|---------------------|------------------------------------------------------------------------|--------------------------------------------|
+| ------------------- | ---------------------------------------------------------------------- | ------------------------------------------ |
 | `-a, --args`        | 启动参数（单个字符串）                                                 | `console`                                  |
 | `-p, --provider`    | LLM 提供商：`google` 对应 Gemini（兼容），`openai` 对应 OpenAI（兼容） | `google`                                   |
 | `-m, --model`       | 模型名称                                                               | `gemini-3.8-flash`                         |
@@ -237,65 +234,15 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 在将 `yutu` 用作 MCP 服务器之前，请确保已安装 `yutu`（参见[安装](#安装)部分），并且您有有效的 `client_secret.json` 和 `youtube.token.json` 文件（参考[前提条件](#前提条件)部分）。
 
-您可以参考下方说明为您常用的工具配置 `yutu` MCP 服务器。
-
-<details>
-<summary>Claude Code</summary>
+使用以下命令为一个或多个 AI Agent 配置全局 MCP：
 
 ```shell
-# Stdio 模式
-❯ claude mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-
-# HTTP 模式（先启动服务器：yutu mcp --mode http）
-❯ claude mcp add --transport http \
-  --client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
-  --client-secret \
-  yutu http://localhost:8216/mcp
+❯ yutu mcp setup --agents claude,opencode,pi,codex \
+  --credential /absolute/path/to/client_secret.json \
+  --cacheToken /absolute/path/to/youtube.token.json
 ```
 
-</details>
-
-<details>
-<summary>Codex</summary>
-
-```shell
-# Stdio 模式
-❯ codex mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-
-# HTTP 模式（先启动服务器：yutu mcp --mode http）
-❯ codex mcp add --url http://localhost:8216/mcp \
-  --oauth-client-id YOUR_CLIENT_ID.apps.googleusercontent.com \
-  yutu
-```
-
-</details>
-
-<details>
-<summary>手动配置（VS Code、Cursor、OpenCode 等）</summary>
-
-将以下配置添加到您的 MCP 设置中。记得将 `YUTU_CREDENTIAL` 和 `YUTU_CACHE_TOKEN` 的值替换为您本地机器上的正确路径。
-
-```json
-{
-  "yutu": {
-    "type": "stdio",
-    "command": "yutu",
-    "args": [
-      "mcp"
-    ],
-    "env": {
-      "YUTU_CREDENTIAL": "/absolute/path/to/client_secret.json",
-      "YUTU_CACHE_TOKEN": "/absolute/path/to/youtube.token.json"
-    }
-  }
-}
-```
-
-</details>
+`--agents` 为必填项。凭据和令牌参数支持文件路径、Base64 或 JSON；省略时使用对应的环境变量或默认文件路径。相对路径会转换为绝对路径。建议使用文件路径，避免将内联密钥复制到 Agent 配置中。
 
 ## Skills
 
@@ -311,7 +258,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI client.
+yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI Agent.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)

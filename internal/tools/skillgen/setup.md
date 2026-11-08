@@ -50,34 +50,12 @@ Download a prebuilt binary from the [releases page](https://github.com/eat-pray-
 
 ## MCP Server
 
-Add `yutu` as an MCP server after installation and authentication:
+After installation and authentication, setup one or more AI Agents (`claude`, `opencode`, `pi`, `codex`, `agy`) using `yutu mcp setup --agents`. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Prefer file paths rather than copying inline secrets into agent settings.
 
 ```bash
-# Claude Code
-claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-
-# Codex
-codex mcp add --env YUTU_CREDENTIAL=/absolute/path/to/client_secret.json \
-  --env YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json \
-  yutu -- yutu mcp
-```
-
-For VS Code, Cursor, or other tools, add to your MCP settings:
-
-```json
-{
-  "yutu": {
-    "type": "stdio",
-    "command": "yutu",
-    "args": ["mcp"],
-    "env": {
-      "YUTU_CREDENTIAL": "/absolute/path/to/client_secret.json",
-      "YUTU_CACHE_TOKEN": "/absolute/path/to/youtube.token.json"
-    }
-  }
-}
+yutu mcp setup -a claude,opencode,pi,codex \
+  -c /absolute/path/to/client_secret.json \
+  -t /absolute/path/to/youtube.token.json
 ```
 
 ## Skills
@@ -88,11 +66,11 @@ npx skills add eat-pray-ai/yutu --skill youtube
 
 ## Environment Variables
 
-| Variable | Description                                  | Default |
-|----------|----------------------------------------------|---------|
-| `YUTU_CREDENTIAL` | Path, Base64, or JSON of OAuth client secret | `client_secret.json` |
-| `YUTU_CACHE_TOKEN` | Path, Base64, or JSON of cached OAuth token  | `youtube.token.json` |
-| `YUTU_ROOT` | Root directory for file resolution           | Current working directory |
-| `YUTU_LOG_LEVEL` | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO` |
+| Variable           | Description                                  | Default                   |
+| ------------------ | -------------------------------------------- | ------------------------- |
+| `YUTU_CREDENTIAL`  | Path, Base64, or JSON of OAuth client secret | `client_secret.json`      |
+| `YUTU_CACHE_TOKEN` | Path, Base64, or JSON of cached OAuth token  | `youtube.token.json`      |
+| `YUTU_ROOT`        | Root directory for file resolution           | Current working directory |
+| `YUTU_LOG_LEVEL`   | Log level: `DEBUG`, `INFO`, `WARN`, `ERROR`  | `INFO`                    |
 
 For more details, see the [README](https://github.com/eat-pray-ai/yutu#readme).
