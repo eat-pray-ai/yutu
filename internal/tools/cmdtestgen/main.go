@@ -105,7 +105,14 @@ func generate() string {
 	for _, c := range coreCommands {
 		name := c.Name()
 		_, _ = fmt.Fprintf(&b, "echo \"======= %s =======\"\n", name)
-		_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n\n", name)
+		_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s --help\n", name)
+		for _, sub := range c.Commands() {
+			if sub.Name() == "help" {
+				continue
+			}
+			_, _ = fmt.Fprintf(&b, "\"$YUTU_PATH\" %s %s --help\n", name, sub.Name())
+		}
+		b.WriteString("\n")
 	}
 
 	b.WriteString("# youtube api\n")

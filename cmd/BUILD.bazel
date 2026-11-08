@@ -22,6 +22,7 @@ go_library(
         "//pkg",
         "//pkg/auth",
         "//pkg/common",
+        "//pkg/utils",
         "@com_github_eat_pray_ai_cobra_mcp//:cobra-mcp",
         "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_savioxavier_termlink//:termlink",

@@ -5,6 +5,7 @@ package utils
 
 import (
 	"bufio"
+	"cmp"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json/jsontext"
@@ -92,6 +93,23 @@ func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {
 			*value = zero
 		}
 	}
+}
+
+func ResolveCredential(cmd *cobra.Command, flag, env, value string) (string, error) {
+	if !cmd.Flags().Changed(flag) {
+		value = cmp.Or(os.Getenv(env), value)
+	}
+	if strings.TrimSpace(value) == "" {
+		return "", nil
+	}
+	// Keep inline values intact; make paths independent of the agent's cwd.
+	if jsontext.Value(value).IsValid() {
+		return value, nil
+	}
+	if _, err := base64.StdEncoding.DecodeString(value); err == nil {
+		return value, nil
+	}
+	return filepath.Abs(value)
 }
 
 func ExtractHl(uri string) string {

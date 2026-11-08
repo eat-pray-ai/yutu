@@ -53,6 +53,7 @@ echo "======= auth ======="
 
 echo "======= mcp ======="
 "$YUTU_PATH" mcp --help
+"$YUTU_PATH" mcp setup --help
 
 # youtube api
 echo "======= abuseReport ======="
