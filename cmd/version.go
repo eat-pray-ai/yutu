@@ -21,7 +21,7 @@ const (
 var banner = strings.TrimPrefix(
 	`
   _(\_/)_     yutu %s %s/%s
- │   ▶   │    CLI, MCP server, and AI agent to automate YouTube workflows
+ │   ▶   │    CLI, MCP server, and AI Agent to automate YouTube workflows
  │ • x • │    📦 build: %s-%s
  ╰─/───\─╯    🌟 Star:  %s
 `, "\n",

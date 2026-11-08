@@ -163,7 +163,7 @@ func parseAgents(values []string) iter.Seq2[string, error] {
 		for _, value := range values {
 			name := strings.ToLower(strings.TrimSpace(value))
 			if !slices.Contains(agentNames, name) {
-				err := fmt.Errorf("unsupported agent %q: choose %s", name, strings.Join(agentNames, ", "))
+				err := fmt.Errorf("unsupported Agent %q: choose %s", name, strings.Join(agentNames, ", "))
 				if !yield("", err) {
 					return
 				}
@@ -189,7 +189,7 @@ func runAgentCommand(ctx context.Context, binary string, args []string) error {
 	}
 	out, err := exec.CommandContext(ctx, binary, args...).CombinedOutput()
 	if err != nil {
-		return errors.New(cmp.Or(strings.TrimSpace(string(out)), "check the agent's MCP settings"))
+		return errors.New(cmp.Or(strings.TrimSpace(string(out)), "check the Agent's MCP settings"))
 	}
 	return nil
 }

@@ -258,7 +258,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI Agent.
+yutu is a CLI, MCP server, and AI Agent that automates your YouTube workflows from the terminal or any AI Agent.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
@@ -273,7 +273,7 @@ Usage:
 Available Commands:
   abuseReport            Manage YouTube abuse reports
   activity               Manage YouTube activities
-  agent                  Start an agent to automate YouTube workflows
+  agent                  Start an Agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
   caption                Manage YouTube video captions
   channel                Manage YouTube channels

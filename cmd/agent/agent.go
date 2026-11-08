@@ -33,8 +33,8 @@ import (
 )
 
 const (
-	short   = "Start an agent to automate YouTube workflows"
-	long    = "Start an agent to automate YouTube workflows."
+	short   = "Start an Agent to automate YouTube workflows"
+	long    = "Start an Agent to automate YouTube workflows."
 	example = `# Gemini(compatible) (default)
 yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
 yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
@@ -46,7 +46,7 @@ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-
 	modelUsage       = "Model name"
 	apiKeyUsage      = "API key for the model provider"
 	baseURLUsage     = "Base URL for the model provider's API endpoint"
-	instructionUsage = "Override the built-in agent instruction"
+	instructionUsage = "Override the built-in Agent instruction"
 	agentDescription = "YouTube growth strategist and workflow assistant — retrieve, create, update, and delete YouTube content."
 
 	errUnsupportedProvider = "unsupported provider %q: supported providers are google and openai"
@@ -54,8 +54,8 @@ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-
 	errMCPConnect          = "failed to connect to MCP server"
 	errMCPToolSet          = "failed to create MCP tool set"
 	errSkillToolset        = "failed to create skill toolset"
-	errBuildAgent          = "failed to build agent"
-	errLaunchAgent         = "failed to launch agent"
+	errBuildAgent          = "failed to build Agent"
+	errLaunchAgent         = "failed to launch Agent"
 )
 
 var (

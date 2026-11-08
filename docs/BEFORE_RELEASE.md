@@ -5,14 +5,15 @@ Follow this checklist before creating and pushing a release tag to ensure all as
 ## 1. Code & Resource Registration
 
 - [ ] **Verify Resource Registration**:
-  Every resource package under `pkg/` and `cmd/` must be blank-imported in:
+      Every resource package under `pkg/` and `cmd/` must be blank-imported in:
   - `main.go` (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`)
   - `internal/tools/skillgen/main.go`
   - `internal/tools/cmdtestgen/main.go`
 
 - [ ] **Run Code Generators**:
+
   ```shell
-  # Regenerate agent instructions and skill
+  # Regenerate Agent instructions and skill
   go run ./internal/tools/skillgen
 
   # Regenerate smoke tests
@@ -80,7 +81,7 @@ bazel test //...
   git pull origin main
   ```
 - [ ] **Tag and Push**:
-  The tag name **must** start with `v` (e.g., `v0.5.2`) to trigger the release workflow in `.github/workflows/publish.yml`:
+      The tag name **must** start with `v` (e.g., `v0.5.2`) to trigger the release workflow in `.github/workflows/publish.yml`:
   ```shell
   git tag -a vX.Y.Z -m ":bookmark: vX.Y.Z"
   git push origin main

@@ -11,13 +11,13 @@ Go CLI + MCP server + Agent for YouTube.
 
 ## Directory Index
 
-| Directory | Description |
-|-----------|-------------|
-| [cmd/](cmd/AGENTS.md) | CLI command definitions and MCP tool bindings |
-| [pkg/](pkg/AGENTS.md) | Core domain logic and shared infrastructure |
-| [internal/](internal/AGENTS.md) | Internal tools (cmdtestgen, skillgen) |
-| [scripts/](scripts/AGENTS.md) | Utility scripts and smoke tests |
-| [docs/](docs) | Project documentation |
+| Directory                       | Description                                   |
+| ------------------------------- | --------------------------------------------- |
+| [cmd/](cmd/AGENTS.md)           | CLI command definitions and MCP tool bindings |
+| [pkg/](pkg/AGENTS.md)           | Core domain logic and shared infrastructure   |
+| [internal/](internal/AGENTS.md) | Internal tools (cmdtestgen, skillgen)         |
+| [scripts/](scripts/AGENTS.md)   | Utility scripts and smoke tests               |
+| [docs/](docs)                   | Project documentation                         |
 
 ## Documentation
 
@@ -45,6 +45,6 @@ Every new resource package under `pkg/` and `cmd/` must also be registered in:
 
 Then regenerate generated files and build definitions:
 
-- Run `go run ./internal/tools/skillgen` (or `bazel run //internal/tools/skillgen`) to regenerate agent instruction and skill.
+- Run `go run ./internal/tools/skillgen` (or `bazel run //internal/tools/skillgen`) to regenerate Agent instruction and Skill.
 - Run `go run ./internal/tools/cmdtestgen` (or `bazel run //internal/tools/cmdtestgen`) to regenerate smoke tests (`scripts/command-test.sh`).
 - Run `bazel run //:gazelle` to regenerate `BUILD.bazel` files.

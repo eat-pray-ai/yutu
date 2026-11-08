@@ -2,13 +2,11 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "title": "yutu",
   "name": "io.github.eat-pray-ai/yutu",
-  "description": "CLI, MCP server, and AI agent to automate YouTube workflows",
+  "description": "CLI, MCP server, and AI Agent to automate YouTube workflows",
   "icons": [
     {
       "mimeType": "image/svg+xml",
-      "sizes": [
-        "any"
-      ],
+      "sizes": ["any"],
       "src": "https://raw.githubusercontent.com/eat-pray-ai/yutu/main/assets/yutu-ico.svg"
     }
   ],
@@ -60,12 +58,7 @@
           "isSecret": false,
           "name": "YUTU_LOG_LEVEL",
           "default": "INFO",
-          "choices": [
-            "DEBUG",
-            "INFO",
-            "WARNING",
-            "ERROR"
-          ]
+          "choices": ["DEBUG", "INFO", "WARNING", "ERROR"]
         }
       ]
     },
@@ -126,12 +119,7 @@
           "isSecret": false,
           "name": "YUTU_LOG_LEVEL",
           "default": "INFO",
-          "choices": [
-            "DEBUG",
-            "INFO",
-            "WARNING",
-            "ERROR"
-          ]
+          "choices": ["DEBUG", "INFO", "WARNING", "ERROR"]
         }
       ]
     }

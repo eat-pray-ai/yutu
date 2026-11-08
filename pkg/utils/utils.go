@@ -102,7 +102,7 @@ func ResolveCredential(cmd *cobra.Command, flag, env, value string) (string, err
 	if strings.TrimSpace(value) == "" {
 		return "", nil
 	}
-	// Keep inline values intact; make paths independent of the agent's cwd.
+	// Keep inline values intact; make paths independent of the Agent's cwd.
 	if jsontext.Value(value).IsValid() {
 		return value, nil
 	}

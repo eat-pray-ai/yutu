@@ -76,7 +76,7 @@ func generateSkill(baseDir string, t skillTarget, resources []resourceEntry) {
 
 func main() {
 	skillDir := flag.String("skill-dir", ".", "base directory for generated skill")
-	instructionDir := flag.String("instruction-dir", "./cmd/agent", "base directory for generated instruction and agent skill")
+	instructionDir := flag.String("instruction-dir", "./cmd/agent", "base directory for generated instruction and Agent skill")
 	flag.Parse()
 
 	root := cmd.RootCmd

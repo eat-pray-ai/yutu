@@ -50,7 +50,7 @@ Download a prebuilt binary from the [releases page](https://github.com/eat-pray-
 
 ## MCP Server
 
-After installation and authentication, setup one or more AI Agents (`claude`, `opencode`, `pi`, `codex`, `agy`) using `yutu mcp setup --agents`. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Prefer file paths rather than copying inline secrets into agent settings.
+After installation and authentication, setup one or more AI Agents (`claude`, `opencode`, `pi`, `codex`, `agy`) using `yutu mcp setup --agents`. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Prefer file paths rather than copying inline secrets into Agent settings.
 
 ```bash
 yutu mcp setup -a claude,opencode,pi,codex \

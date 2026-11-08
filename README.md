@@ -16,14 +16,13 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/eat-pray-ai/yutu?sort=semver&style=flat-square&logo=go)](https://github.com/eat-pray-ai/yutu/releases/latest)
 [![Homebrew Formula Version](https://img.shields.io/homebrew/v/yutu?style=flat-square&logo=homebrew)](https://formulae.brew.sh/formula/yutu)
-[![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget
-)](https://winstall.app/apps/eat-pray-ai.yutu)
+[![WinGet Package Version](https://img.shields.io/winget/v/eat-pray-ai.yutu?style=flat-square&label=%F0%9F%93%A6%20winget)](https://winstall.app/apps/eat-pray-ai.yutu)
 [![npm Version](https://img.shields.io/npm/v/%40eat-pray-ai/yutu?style=flat-square&logo=npm)](https://www.npmjs.com/package/@eat-pray-ai/yutu)
 
 <!-- [![YouTube CLI, MCP server, Skill and Agent - AI-powered toolkit that grows YouTube channel on autopilot | Product
 Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1138118&theme=light)](https://www.producthunt.com/products/yutu?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-youtube-cli-mcp-server-skill-and-agent) -->
 
-`yutu` is a CLI, MCP server, and AI agent to automate YouTube workflows — from uploading and optimizing videos to managing comments, playlists, and channel branding — and provides a skill for AI agents, so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
+`yutu` is a CLI, MCP server, and AI Agent to automate YouTube workflows — from uploading and optimizing videos to managing comments, playlists, and channel branding — and provides a skill for AI Agents, so you can get more views, higher click-through rates, and stronger audience engagement with less manual effort. [中文文档](./README_zh.md)
 
 [![mcp demo](./assets/mcp-demo.gif)](https://asciinema.org/a/wXIHU4ciFBAKrHfaFNkMoIs12)
 
@@ -61,9 +60,7 @@ An account on [Google Cloud Platform](https://console.cloud.google.com/) is requ
        "token_uri": "https://oauth2.googleapis.com/token",
        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
        "client_secret": "XXXXXXXXXXXXXXXX",
-       "redirect_uris": [
-         "http://localhost"
-       ]
+       "redirect_uris": ["http://localhost"]
      }
    }
    ```
@@ -91,7 +88,7 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 ### Global Environment Variables
 
 | Variable           | Description                                  | Default                   |
-|--------------------|----------------------------------------------|---------------------------|
+| ------------------ | -------------------------------------------- | ------------------------- |
 | `YUTU_CREDENTIAL`  | Path, Base64, or JSON of OAuth client secret | `client_secret.json`      |
 | `YUTU_CACHE_TOKEN` | Path, Base64, or JSON of cached OAuth token  | `youtube.token.json`      |
 | `YUTU_ROOT`        | Root directory for file resolution           | Current working directory |
@@ -99,7 +96,7 @@ By default, `yutu` will read `client_secret.json` and `youtube.token.json` from 
 
 ## Installation
 
-If you're using an AI agent, copy and paste the following prompt to finish the installation:
+If you're using an AI Agent, copy and paste the following prompt to finish the installation:
 
 ```plaintext
 Install and configure yutu by following https://raw.githubusercontent.com/eat-pray-ai/yutu/main/internal/tools/skillgen/setup.md
@@ -201,7 +198,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ## Agent
 
-`yutu` provides an agent mode (Miffy) to automate YouTube workflows. The agent can retrieve, create, update, and delete YouTube content, with built-in YouTube growth strategy and SEO expertise.
+`yutu` provides an Agent mode (Miffy) to automate YouTube workflows. The Agent can retrieve, create, update, and delete YouTube content, with built-in YouTube growth strategy and SEO expertise.
 
 ```shell
 # Gemini(compatible) (default)
@@ -219,13 +216,13 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 ### Agent Flags
 
 | Flag                | Description                                                                    | Default                                    |
-|---------------------|--------------------------------------------------------------------------------|--------------------------------------------|
+| ------------------- | ------------------------------------------------------------------------------ | ------------------------------------------ |
 | `-a, --args`        | Launcher arguments as a single string                                          | `console`                                  |
 | `-p, --provider`    | LLM provider: `google` for Gemini(compatible), `openai` for OpenAI(compatible) | `google`                                   |
 | `-m, --model`       | Model name                                                                     | `gemini-3.8-flash`                         |
 | `--api-key`         | API key for the model provider                                                 |                                            |
 | `--base-url`        | Base URL for the model provider's API endpoint                                 |                                            |
-| `-i, --instruction` | Override the built-in agent instruction                                        | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
+| `-i, --instruction` | Override the built-in Agent instruction                                        | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
 
 ## MCP Server
 
@@ -239,12 +236,11 @@ Setup yutu MCP for one or more selected AI Agents:
   --cacheToken /absolute/path/to/youtube.token.json
 ```
 
-`--agents` is required. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Relative paths are converted to absolute paths. Prefer file paths to avoid copying inline secrets into agent settings.
-
+`--agents` is required. Credential/token flags accept Path/Base64/JSON; omitted flags use the corresponding environment variable or default file path. Relative paths are converted to absolute paths. Prefer file paths to avoid copying inline secrets into Agent settings.
 
 ## Skills
 
-`yutu` provides a unified [skill](https://opencode.ai/docs/skills) that extends AI agents with YouTube domain knowledge, common workflows, and SEO best practices — covering videos, playlists, comments, channels, captions, subscriptions, and more.
+`yutu` provides a unified [skill](https://opencode.ai/docs/skills) that extends AI Agents with YouTube domain knowledge, common workflows, and SEO best practices — covering videos, playlists, comments, channels, captions, subscriptions, and more.
 
 ```shell
 ❯ npx skills add eat-pray-ai/yutu --skill youtube
@@ -256,7 +252,7 @@ See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supp
 
 ```shell
 ❯ yutu
-yutu is a CLI, MCP server, and AI agent that automates your YouTube workflows from the terminal or any AI Agent.
+yutu is a CLI, MCP server, and AI Agent that automates your YouTube workflows from the terminal or any AI Agent.
 
 Environment variables:
   YUTU_CREDENTIAL    Path/Base64/JSON of OAuth client secret (default: client_secret.json)
@@ -271,7 +267,7 @@ Usage:
 Available Commands:
   abuseReport            Manage YouTube abuse reports
   activity               Manage YouTube activities
-  agent                  Start an agent to automate YouTube workflows
+  agent                  Start an Agent to automate YouTube workflows
   auth                   Authenticate with YouTube APIs
   caption                Manage YouTube video captions
   channel                Manage YouTube channels
