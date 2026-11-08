@@ -76,7 +76,7 @@ func init() {
 	)
 	channelCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
 	updateCmd.Flags().StringVarP(country, "country", "c", "", countryUsage)
 	updateCmd.Flags().StringVarP(&customUrl, "customUrl", "u", "", curlUsage)
 	updateCmd.Flags().StringVarP(

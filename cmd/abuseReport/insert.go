@@ -77,7 +77,7 @@ func init() {
 	abuseReportCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringSliceVarP(
-		&abuseTypes, "abuseTypes", "a", []string{}, abuseTypesUsage,
+		&abuseTypes, "abuseTypes", "a", nil, abuseTypesUsage,
 	)
 	insertCmd.Flags().StringVarP(
 		&description, "description", "d", "", descriptionUsage,

@@ -66,7 +66,7 @@ func init() {
 	)
 	captionCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, deleteIdsUsage)
 	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,

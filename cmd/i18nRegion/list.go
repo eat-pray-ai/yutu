@@ -45,14 +45,14 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: listShort,
 	Long:  listLong,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := i18nRegion.NewI18nRegion(
 			i18nRegion.WithHl(hl),
 			i18nRegion.WithParts(parts),
 			i18nRegion.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }
 

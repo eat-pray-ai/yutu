@@ -93,8 +93,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := playlistImage.NewPlaylistImage(
 			playlistImage.WithParent(parent),
 			playlistImage.WithMaxResults(maxResults),
@@ -104,6 +104,6 @@ var listCmd = &cobra.Command{
 			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
 			playlistImage.WithService(nil),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

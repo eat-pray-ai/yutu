@@ -56,14 +56,14 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: listShort,
 	Long:  listLong,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := i18nLanguage.NewI18nLanguage(
 			i18nLanguage.WithHl(hl),
 			i18nLanguage.WithParts(parts),
 			i18nLanguage.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }
 

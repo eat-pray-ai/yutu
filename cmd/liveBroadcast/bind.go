@@ -81,7 +81,7 @@ func init() {
 	liveBroadcastCmd.AddCommand(bindCmd)
 
 	bindCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, "IDs of the broadcasts to bind",
+		&ids, "ids", "i", nil, "IDs of the broadcasts to bind",
 	)
 	bindCmd.Flags().StringVarP(&streamId, "streamId", "s", "", sidUsage)
 	bindCmd.Flags().StringVarP(

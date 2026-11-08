@@ -51,11 +51,11 @@ var captionCmd = &cobra.Command{
 	Use:   "caption",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		resetFlags(cmd)
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
+		resetFlags(c)
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 
@@ -63,8 +63,8 @@ func init() {
 	cmd.RootCmd.AddCommand(captionCmd)
 }
 
-func resetFlags(cmd *cobra.Command) {
-	flagSet := cmd.Flags()
+func resetFlags(c *cobra.Command) {
+	flagSet := c.Flags()
 	boolFlags := map[string]**bool{
 		"isAutoSynced": &isAutoSynced,
 		"isCC":         &isCC,
@@ -74,7 +74,7 @@ func resetFlags(cmd *cobra.Command) {
 	}
 	utils.ResetFlags(boolFlags, flagSet)
 
-	if cmd.Name() == "update" {
+	if c.Name() == "update" {
 		stringFlags := map[string]*string{
 			"audioTrackType": &audioTrackType,
 			"trackKind":      &trackKind,

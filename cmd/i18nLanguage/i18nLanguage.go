@@ -29,8 +29,8 @@ var i18nLanguageCmd = &cobra.Command{
 	Use:   "i18nLanguage",
 	Short: short,
 	Long:  long,
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

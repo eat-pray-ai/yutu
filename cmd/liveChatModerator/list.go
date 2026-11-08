@@ -81,14 +81,14 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := liveChatModerator.NewLiveChatModerator(
 			liveChatModerator.WithLiveChatId(liveChatId),
 			liveChatModerator.WithMaxResults(maxResults),
 			liveChatModerator.WithParts(parts),
 			liveChatModerator.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

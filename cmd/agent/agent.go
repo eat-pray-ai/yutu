@@ -78,14 +78,14 @@ var agentCmd = &cobra.Command{
 	Short:   short,
 	Long:    long,
 	Example: example,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Run: func(c *cobra.Command, _ []string) {
 		if launcherArgs == "" {
 			_, _ = fmt.Fprintln(
-				cmd.OutOrStdout(), full.NewLauncher().CommandLineSyntax(),
+				c.OutOrStdout(), full.NewLauncher().CommandLineSyntax(),
 			)
 			return
 		}
-		launch(cmd.Context(), cmd.OutOrStdout(), strings.Fields(launcherArgs))
+		launch(c.Context(), c.OutOrStdout(), strings.Fields(launcherArgs))
 	},
 }
 

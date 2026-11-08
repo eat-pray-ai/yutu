@@ -64,7 +64,7 @@ func init() {
 	)
 	liveChatModeratorCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, deleteIdsUsage)
 	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
 }

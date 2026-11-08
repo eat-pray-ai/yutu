@@ -45,13 +45,13 @@ var playlistItemCmd = &cobra.Command{
 	Use:   "playlistItem",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
 		utils.ResetFlags(
-			map[string]**string{"description": &description}, cmd.Flags(),
+			map[string]**string{"description": &description}, c.Flags(),
 		)
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

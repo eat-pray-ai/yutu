@@ -73,7 +73,7 @@ func init() {
 	liveChatMessageCmd.AddCommand(transitionCmd)
 
 	transitionCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, "IDs of the messages to transition",
+		&ids, "ids", "i", nil, "IDs of the messages to transition",
 	)
 	transitionCmd.Flags().StringVarP(&status, "status", "s", "", statusUsage)
 	transitionCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)

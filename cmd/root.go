@@ -27,8 +27,8 @@ var RootCmd = &cobra.Command{
 	Long:         long,
 	SilenceUsage: true,
 
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

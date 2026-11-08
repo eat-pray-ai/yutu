@@ -96,7 +96,7 @@ func init() {
 	)
 	subscriptionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&forChannelId, "forChannelId", "C", "", fcidUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
@@ -120,8 +120,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := subscription.NewSubscription(
 			subscription.WithIds(ids),
 			subscription.WithChannelId(channelId),
@@ -134,6 +134,6 @@ var listCmd = &cobra.Command{
 			subscription.WithParts(parts),
 			subscription.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

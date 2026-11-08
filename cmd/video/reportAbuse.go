@@ -73,9 +73,7 @@ func init() {
 	)
 	videoCmd.AddCommand(reportAbuseCmd)
 
-	reportAbuseCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, raIdsUsage,
-	)
+	reportAbuseCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, raIdsUsage)
 	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", ridUsage)
 	reportAbuseCmd.Flags().StringVarP(
 		&secondaryReasonId, "secondaryReasonId", "s", "", sridUsage,

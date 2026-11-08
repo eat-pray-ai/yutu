@@ -65,9 +65,7 @@ func init() {
 	)
 	captionCmd.AddCommand(downloadCmd)
 
-	downloadCmd.Flags().StringSliceVarP(
-		&ids, "id", "i", []string{}, downloadIdUsage,
-	)
+	downloadCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, downloadIdUsage)
 	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
 	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)
@@ -86,7 +84,7 @@ var downloadCmd = &cobra.Command{
 	Short:   downloadShort,
 	Long:    downloadLong,
 	Example: downloadExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
+	RunE: func(c *cobra.Command, _ []string) error {
 		input := caption.NewCaption(
 			caption.WithIds(ids),
 			caption.WithFile(file),
@@ -95,6 +93,6 @@ var downloadCmd = &cobra.Command{
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 		)
-		return input.Download(cmd.OutOrStdout())
+		return input.Download(c.OutOrStdout())
 	},
 }

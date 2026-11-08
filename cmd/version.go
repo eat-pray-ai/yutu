@@ -40,7 +40,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: verShort,
 	Long:  verLong,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Run: func(c *cobra.Command, _ []string) {
 		info, ok := debug.ReadBuildInfo()
 		if ok && Version == "" {
 			Version = info.Main.Version
@@ -61,7 +61,7 @@ var versionCmd = &cobra.Command{
 			}
 		}
 
-		cmd.Printf(
+		c.Printf(
 			banner, Version, Os, Arch, Builder, CommitDate,
 			termlink.Link(repo, repoUrl),
 		)

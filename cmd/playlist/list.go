@@ -86,7 +86,7 @@ func init() {
 	)
 	playlistCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", listCidUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
@@ -109,8 +109,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := playlist.NewPlaylist(
 			playlist.WithIds(ids),
 			playlist.WithChannelId(channelId),
@@ -122,6 +122,6 @@ var listCmd = &cobra.Command{
 			playlist.WithParts(parts),
 			playlist.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

@@ -92,7 +92,7 @@ func init() {
 	)
 	commentThreadCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
 	listCmd.Flags().StringVarP(
 		&allThreadsRelatedToChannelId, "allThreadsRelatedToChannelId", "a", "",
 		atrtcidUsage,
@@ -117,8 +117,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := commentThread.NewCommentThread(
 			commentThread.WithIds(ids),
 			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
@@ -132,6 +132,6 @@ var listCmd = &cobra.Command{
 			commentThread.WithParts(parts),
 			commentThread.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

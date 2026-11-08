@@ -86,11 +86,11 @@ var videoCmd = &cobra.Command{
 	Use:   "video",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		resetFlags(cmd)
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
+		resetFlags(c)
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 
@@ -98,7 +98,7 @@ func init() {
 	cmd.RootCmd.AddCommand(videoCmd)
 }
 
-func resetFlags(cmd *cobra.Command) {
+func resetFlags(c *cobra.Command) {
 	boolMap := map[string]**bool{
 		"autoLevels":          &autoLevels,
 		"embeddable":          &embeddable,
@@ -113,8 +113,8 @@ func resetFlags(cmd *cobra.Command) {
 		"recordingDate": &recordingDate,
 	}
 
-	flagSet := cmd.Flags()
-	if cmd.Name() == "update" {
+	flagSet := c.Flags()
+	if c.Name() == "update" {
 		boolMap["containsSyntheticMedia"] = &containsSyntheticMedia
 		utils.ResetFlags(map[string]*[]string{"tags": &tags}, flagSet)
 	}

@@ -95,8 +95,8 @@ func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {
 	}
 }
 
-func ResolveCredential(cmd *cobra.Command, flag, env, value string) (string, error) {
-	if !cmd.Flags().Changed(flag) {
+func ResolveCredential(c *cobra.Command, flag, env, value string) (string, error) {
+	if !c.Flags().Changed(flag) {
 		value = cmp.Or(os.Getenv(env), value)
 	}
 	if strings.TrimSpace(value) == "" {
@@ -123,19 +123,19 @@ func ExtractHl(uri string) string {
 
 var ErrNotConfirmed = errors.New("operation not confirmed (pass confirm: true or rerun with --yes)")
 
-func ConfirmPreRun(cmd *cobra.Command, msg string) error {
-	if yes, _ := cmd.Flags().GetBool("yes"); yes {
+func ConfirmPreRun(c *cobra.Command, msg string) error {
+	if yes, _ := c.Flags().GetBool("yes"); yes {
 		return nil
 	}
 
-	if !IsInteractive(cmd.InOrStdin()) {
-		_, _ = fmt.Fprintln(cmd.ErrOrStderr(), msg)
+	if !IsInteractive(c.InOrStdin()) {
+		_, _ = fmt.Fprintln(c.ErrOrStderr(), msg)
 		return ErrNotConfirmed
 	}
 
-	_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "%s [y/N] ", msg)
+	_, _ = fmt.Fprintf(c.ErrOrStderr(), "%s [y/N] ", msg)
 
-	scanner := bufio.NewScanner(cmd.InOrStdin())
+	scanner := bufio.NewScanner(c.InOrStdin())
 	if !scanner.Scan() {
 		return ErrNotConfirmed
 	}

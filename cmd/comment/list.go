@@ -77,7 +77,7 @@ func init() {
 	)
 	commentCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
 	listCmd.Flags().Int64VarP(
 		&maxResults, "maxResults", "n", 5, pkg.MRUsage,
 	)
@@ -96,8 +96,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := comment.NewComment(
 			comment.WithIds(ids),
 			comment.WithMaxResults(maxResults),
@@ -106,6 +106,6 @@ var listCmd = &cobra.Command{
 			comment.WithParts(parts),
 			comment.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

@@ -73,7 +73,7 @@ func init() {
 	)
 	videoCmd.AddCommand(rateCmd)
 
-	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, rateIdsUsage)
+	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, rateIdsUsage)
 	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
 	rateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = rateCmd.MarkFlagRequired("ids")

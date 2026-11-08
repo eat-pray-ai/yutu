@@ -68,7 +68,7 @@ func init() {
 	)
 	commentCmd.AddCommand(markAsSpamCmd)
 
-	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
 	markAsSpamCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	markAsSpamCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = markAsSpamCmd.MarkFlagRequired("ids")

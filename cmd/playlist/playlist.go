@@ -43,18 +43,18 @@ var playlistCmd = &cobra.Command{
 	Use:   "playlist",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
-		utils.ResetFlags(map[string]**bool{"mine": &mine}, cmd.Flags())
-		utils.ResetFlags(map[string]*[]string{"tags": &tags}, cmd.Flags())
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
+		utils.ResetFlags(map[string]**bool{"mine": &mine}, c.Flags())
+		utils.ResetFlags(map[string]*[]string{"tags": &tags}, c.Flags())
 
 		stringFlags := map[string]**string{
 			"description": &description,
 			"language":    &language,
 		}
-		utils.ResetFlags(stringFlags, cmd.Flags())
+		utils.ResetFlags(stringFlags, c.Flags())
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

@@ -97,10 +97,10 @@ func init() {
 	)
 	videoCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", []string{}, tagsUsage)
+	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", nil, tagsUsage)
 	updateCmd.Flags().StringVarP(language, "language", "l", "", updateLangUsage)
 	updateCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
 	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)

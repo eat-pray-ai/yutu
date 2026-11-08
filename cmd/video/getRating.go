@@ -61,7 +61,7 @@ func init() {
 	)
 	videoCmd.AddCommand(getRatingCmd)
 
-	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, grIdsUsage)
+	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, grIdsUsage)
 	getRatingCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
@@ -74,14 +74,14 @@ var getRatingCmd = &cobra.Command{
 	Short:   getRatingShort,
 	Long:    getRatingLong,
 	Example: getRatingExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := video.NewVideo(
 			video.WithIds(ids),
 			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
 			video.WithOutput(output),
 			video.WithService(nil),
 		)
-		return input.GetRating(cmd.OutOrStdout())
+		return input.GetRating(c.OutOrStdout())
 	},
 }

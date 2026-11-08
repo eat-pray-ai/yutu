@@ -76,8 +76,8 @@ func init() {
 	_ = mcpCmd.Flags().MarkHidden("baseUrl")
 	_ = mcpCmd.Flags().MarkHidden("stateless")
 
-	mcpCmd.PreRunE = func(cmd *cobra.Command, _ []string) error {
-		mode, _ := cmd.Flags().GetString("mode")
+	mcpCmd.PreRunE = func(c *cobra.Command, _ []string) error {
+		mode, _ := c.Flags().GetString("mode")
 		if mode == "http" {
 			mcpConfig.Auth = &cobramcp.AuthConfig{
 				TokenVerifier:        auth.GoogleTokenVerifier,

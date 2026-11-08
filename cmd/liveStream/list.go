@@ -76,7 +76,7 @@ func init() {
 	)
 	liveStreamCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
 	listCmd.Flags().BoolVarP(
 		mine, "mine", "m", false, "List streams owned by the authenticated user",
 	)
@@ -100,8 +100,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := liveStream.NewLiveStream(
 			liveStream.WithIds(ids),
 			liveStream.WithMine(mine),
@@ -111,6 +111,6 @@ var listCmd = &cobra.Command{
 			liveStream.WithParts(parts),
 			liveStream.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

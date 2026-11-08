@@ -30,8 +30,8 @@ var liveChatBanCmd = &cobra.Command{
 	Use:   "liveChatBan",
 	Short: short,
 	Long:  long,
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

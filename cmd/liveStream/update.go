@@ -88,7 +88,7 @@ func init() {
 	)
 	liveStreamCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
 	updateCmd.Flags().StringVarP(&frameRate, "frameRate", "f", "", frUsage)

@@ -70,7 +70,7 @@ func init() {
 	)
 	captionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
 	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	listCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	listCmd.Flags().StringVarP(
@@ -87,8 +87,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := caption.NewCaption(
 			caption.WithIds(ids),
 			caption.WithVideoId(videoId),
@@ -97,6 +97,6 @@ var listCmd = &cobra.Command{
 			caption.WithParts(parts),
 			caption.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

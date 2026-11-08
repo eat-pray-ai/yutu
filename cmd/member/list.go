@@ -91,8 +91,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := member.NewMember(
 			member.WithMemberChannelId(memberChannelId),
 			member.WithHasAccessToLevel(hasAccessToLevel),
@@ -101,6 +101,6 @@ var listCmd = &cobra.Command{
 			member.WithParts(parts),
 			member.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

@@ -30,7 +30,7 @@ func init() {
 		}, categoriesHandler,
 	)
 	videoCategoryCmd.AddCommand(listCmd)
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", rcUsage)
 	listCmd.Flags().StringSliceVarP(
@@ -48,8 +48,8 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: listShort,
 	Long:  listLong,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := videoCategory.NewVideoCategory(
 			videoCategory.WithIds(ids),
 			videoCategory.WithHl(hl),
@@ -57,7 +57,7 @@ var listCmd = &cobra.Command{
 			videoCategory.WithParts(parts),
 			videoCategory.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }
 

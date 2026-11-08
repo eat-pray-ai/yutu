@@ -46,16 +46,16 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
 		stringFlags := map[string]**string{
 			"country":         &country,
 			"defaultLanguage": &defaultLanguage,
 			"description":     &description,
 		}
-		utils.ResetFlags(stringFlags, cmd.Flags())
+		utils.ResetFlags(stringFlags, c.Flags())
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

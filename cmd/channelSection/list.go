@@ -72,7 +72,7 @@ func init() {
 	)
 	channelSectionCmd.AddCommand(listCmd)
 
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, listIdsUsage)
+	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
 	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
 	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
 	listCmd.Flags().BoolVarP(mine, "mine", "M", false, mineUsage)
@@ -90,8 +90,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := channelSection.NewChannelSection(
 			channelSection.WithIds(ids),
 			channelSection.WithChannelId(channelId),
@@ -101,6 +101,6 @@ var listCmd = &cobra.Command{
 			channelSection.WithParts(parts),
 			channelSection.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

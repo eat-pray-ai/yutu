@@ -65,7 +65,7 @@ func init() {
 	)
 	playlistCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, deleteIdsUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, deleteIdsUsage)
 	deleteCmd.Flags().StringVarP(
 		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)

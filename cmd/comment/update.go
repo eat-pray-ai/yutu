@@ -77,7 +77,7 @@ func init() {
 	)
 	commentCmd.AddCommand(updateCmd)
 
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", []string{}, updateIdUsage)
+	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
 	updateCmd.Flags().BoolVarP(canRate, "canRate", "R", false, crUsage)
 	updateCmd.Flags().StringVarP(
 		&textOriginal, "textOriginal", "t", "", toUsage,

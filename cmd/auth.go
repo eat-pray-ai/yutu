@@ -29,7 +29,7 @@ var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: authShort,
 	Long:  authLong,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Run: func(c *cobra.Command, _ []string) {
 		if _, err := auth.NewY2BService(
 			auth.WithCredential(credential, pkg.Root.FS()),
 			auth.WithCacheToken(cacheToken, pkg.Root.FS()),

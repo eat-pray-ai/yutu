@@ -79,7 +79,7 @@ func init() {
 	commentCmd.AddCommand(setModerationStatusCmd)
 
 	setModerationStatusCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, idsUsage,
+		&ids, "ids", "i", nil, idsUsage,
 	)
 	setModerationStatusCmd.Flags().StringVarP(
 		&moderationStatus, "moderationStatus", "s", "", msUsage,

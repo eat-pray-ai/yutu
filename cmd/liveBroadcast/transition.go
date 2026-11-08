@@ -86,7 +86,7 @@ func init() {
 	liveBroadcastCmd.AddCommand(transitionCmd)
 
 	transitionCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, "IDs of the broadcasts to transition",
+		&ids, "ids", "i", nil, "IDs of the broadcasts to transition",
 	)
 	transitionCmd.Flags().StringVarP(
 		&broadcastStatus, "broadcastStatus", "s", "", transitionBsUsage,

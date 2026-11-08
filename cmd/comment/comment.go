@@ -44,12 +44,12 @@ var commentCmd = &cobra.Command{
 	Use:   "comment",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+	PersistentPreRun: func(c *cobra.Command, _ []string) {
 		boolMap := map[string]**bool{"canRate": &canRate, "banAuthor": &banAuthor}
-		utils.ResetFlags(boolMap, cmd.Flags())
+		utils.ResetFlags(boolMap, c.Flags())
 	},
-	Run: func(cmd *cobra.Command, _ []string) {
-		_ = cmd.Help()
+	Run: func(c *cobra.Command, _ []string) {
+		_ = c.Help()
 	},
 }
 

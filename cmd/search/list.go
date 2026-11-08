@@ -175,7 +175,7 @@ func init() {
 	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", rlUsage)
 	listCmd.Flags().StringVar(&safeSearch, "safeSearch", "moderate", ssUsage)
 	listCmd.Flags().StringVar(&topicId, "topicId", "", tidUsage)
-	listCmd.Flags().StringSliceVar(&types, "types", []string{}, typesUsage)
+	listCmd.Flags().StringSliceVar(&types, "types", nil, typesUsage)
 	listCmd.Flags().StringVar(&videoCaption, "videoCaption", "any", vcUsage)
 	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", vcidUsage)
 	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", vdeUsage)
@@ -199,8 +199,8 @@ var listCmd = &cobra.Command{
 	Short:   listShort,
 	Long:    listLong,
 	Example: listExample,
-	RunE: func(cmd *cobra.Command, _ []string) error {
-		output, _ := cmd.Flags().GetString("output")
+	RunE: func(c *cobra.Command, _ []string) error {
+		output, _ := c.Flags().GetString("output")
 		input := search.NewSearch(
 			search.WithChannelId(channelId),
 			search.WithChannelType(channelType),
@@ -232,6 +232,6 @@ var listCmd = &cobra.Command{
 			search.WithParts(parts),
 			search.WithOutput(output),
 		)
-		return input.List(cmd.OutOrStdout())
+		return input.List(c.OutOrStdout())
 	},
 }

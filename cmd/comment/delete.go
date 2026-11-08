@@ -63,7 +63,7 @@ func init() {
 	)
 	commentCmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", []string{}, idsUsage)
+	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
 	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
 	_ = deleteCmd.MarkFlagRequired("ids")
 }

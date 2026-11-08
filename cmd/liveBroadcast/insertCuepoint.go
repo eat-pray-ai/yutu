@@ -88,7 +88,7 @@ func init() {
 	liveBroadcastCmd.AddCommand(insertCuepointCmd)
 
 	insertCuepointCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", []string{}, "IDs of the broadcasts",
+		&ids, "ids", "i", nil, "IDs of the broadcasts",
 	)
 	insertCuepointCmd.Flags().StringVarP(
 		&cueType, "cueType", "c", "cueTypeAd", ctUsage,
