@@ -543,3 +543,33 @@ func TestChannel_Update_BrandingSettingsBody(t *testing.T) {
 		t.Errorf("PUT body must not send snippet")
 	}
 }
+
+func TestChannel_Update_Keywords(t *testing.T) {
+	var body map[string]any
+	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == "GET" {
+			_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "description": "keep me"}}}]}`))
+			return
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Fatalf("decode PUT body: %v", err)
+		}
+		_, _ = w.Write([]byte(`{"id": "channel-id"}`))
+	}))
+	c := NewChannel(
+		WithService(svc),
+		WithIds([]string{"channel-id"}),
+		WithKeywords(new(`"AI agents" "agent security" MCP`)),
+	)
+	if err := c.Update(&bytes.Buffer{}); err != nil {
+		t.Fatalf("Channel.Update() error = %v", err)
+	}
+	ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
+	if ch["keywords"] != `"AI agents" "agent security" MCP` {
+		t.Errorf("keywords = %v", ch["keywords"])
+	}
+	if ch["description"] != "keep me" {
+		t.Errorf("description must be kept, got %v", ch["description"])
+	}
+}

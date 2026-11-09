@@ -23,6 +23,9 @@ go_library(
 
 go_test(
     name = "channel_test",
-    srcs = ["update_test.go"],
+    srcs = [
+        "channel_test.go",
+        "update_test.go",
+    ],
     embed = [":channel"],
 )
