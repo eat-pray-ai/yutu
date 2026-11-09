@@ -5,6 +5,7 @@ package channel
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"math"
 	"net/http"
@@ -431,8 +432,8 @@ func TestChannel_Update(t *testing.T) {
 			verify: func(r *http.Request) {
 				switch r.Method {
 				case "PUT":
-					if r.URL.Query().Get("part") != "snippet" {
-						t.Errorf("expected part=snippet, got %s", r.URL.Query().Get("part"))
+					if r.URL.Query().Get("part") != "brandingSettings" {
+						t.Errorf("expected part=brandingSettings, got %s", r.URL.Query().Get("part"))
 					}
 				case "GET":
 					if r.URL.Query().Get("id") != "channel-id" {
@@ -445,18 +446,26 @@ func TestChannel_Update(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			// The CLI and MCP tool never pass WithMaxResults; the lookup must still find the channel.
+			name: "update channel without max results",
+			opts: []Option{
+				WithIds([]string{"channel-id"}),
+				WithDescription(new("New Description")),
+			},
+			wantErr: false,
+		},
+		{
 			name: "update channel full",
 			opts: []Option{
 				WithIds([]string{"channel-id"}),
 				WithCountry(new("US")),
-				WithCustomUrl("my-url"),
 				WithDefaultLanguage(new("en")),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
-					if r.URL.Query().Get("part") != "snippet" {
-						t.Errorf("expected part=snippet, got %s", r.URL.Query().Get("part"))
+					if r.URL.Query().Get("part") != "brandingSettings" {
+						t.Errorf("expected part=brandingSettings, got %s", r.URL.Query().Get("part"))
 					}
 				}
 			},
@@ -497,5 +506,55 @@ func TestChannel_Update(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+// YouTube only accepts brandingSettings (not snippet) on channels.update, and the
+// update must keep branding fields the caller did not touch.
+func TestChannel_Update_BrandingSettingsBody(t *testing.T) {
+	var body map[string]any
+	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == "GET" {
+			if got := r.URL.Query().Get("part"); got != "brandingSettings" {
+				t.Errorf("GET part = %q, want brandingSettings", got)
+			}
+			_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "keywords": "ai agents"}}}]}`))
+			return
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Fatalf("decode PUT body: %v", err)
+		}
+		_, _ = w.Write([]byte(`{"id": "channel-id"}`))
+	}))
+	c := NewChannel(
+		WithService(svc),
+		WithIds([]string{"channel-id"}),
+		WithDescription(new("New Description")),
+		WithCountry(new("DE")),
+		WithDefaultLanguage(new("en")),
+	)
+	if err := c.Update(&bytes.Buffer{}); err != nil {
+		t.Fatalf("Channel.Update() error = %v", err)
+	}
+	ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
+	for k, want := range map[string]string{"description": "New Description", "country": "DE", "defaultLanguage": "en", "keywords": "ai agents", "title": "Old"} {
+		if ch[k] != want {
+			t.Errorf("brandingSettings.channel.%s = %v, want %q", k, ch[k], want)
+		}
+	}
+	if _, ok := body["snippet"]; ok {
+		t.Errorf("PUT body must not send snippet")
+	}
+}
+
+func TestChannel_Update_CustomUrlRejected(t *testing.T) {
+	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Errorf("no API call expected, got %s", r.Method)
+	}))
+	// WithMaxResults(1) makes the old code reach the API, so this guards the early return.
+	c := NewChannel(WithService(svc), WithIds([]string{"channel-id"}), WithCustomUrl("my-url"), WithMaxResults(1))
+	if err := c.Update(&bytes.Buffer{}); err == nil {
+		t.Errorf("Channel.Update() with customUrl: want error, got nil")
 	}
 }

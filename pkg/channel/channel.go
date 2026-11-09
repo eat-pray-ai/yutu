@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	errGetChannel    = errors.New("failed to get channel")
-	errUpdateChannel = errors.New("failed to update channel")
+	errGetChannel        = errors.New("failed to get channel")
+	errUpdateChannel     = errors.New("failed to update channel")
+	errCustomUrlReadOnly = errors.New("the custom URL (handle) cannot be changed through the YouTube API; change it in YouTube Studio")
 )
 
 type Channel struct {
@@ -111,7 +112,13 @@ func (c *Channel) List(writer io.Writer) error {
 }
 
 func (c *Channel) Update(writer io.Writer) error {
-	c.Parts = []string{"snippet"}
+	if c.CustomUrl != "" {
+		return errors.Join(errUpdateChannel, errCustomUrlReadOnly)
+	}
+	// channels.update only accepts brandingSettings (snippet fails with ERROR_PART_UNEXPECTED).
+	c.Parts = []string{"brandingSettings"}
+	// Update targets one channel; without this Paginate fetches nothing when MaxResults is unset.
+	c.MaxResults = 1
 	channels, err := c.Get()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)
@@ -121,20 +128,24 @@ func (c *Channel) Update(writer io.Writer) error {
 	}
 
 	cha := channels[0]
-	if c.Country != nil {
-		cha.Snippet.Country = *c.Country
+	if cha.BrandingSettings == nil {
+		cha.BrandingSettings = &youtube.ChannelBrandingSettings{}
 	}
-	if c.CustomUrl != "" {
-		cha.Snippet.CustomUrl = c.CustomUrl
+	if cha.BrandingSettings.Channel == nil {
+		cha.BrandingSettings.Channel = &youtube.ChannelSettings{}
+	}
+	settings := cha.BrandingSettings.Channel
+	if c.Country != nil {
+		settings.Country = *c.Country
 	}
 	if c.DefaultLanguage != nil {
-		cha.Snippet.DefaultLanguage = *c.DefaultLanguage
+		settings.DefaultLanguage = *c.DefaultLanguage
 	}
 	if c.Description != nil {
-		cha.Snippet.Description = *c.Description
+		settings.Description = *c.Description
 	}
 	if c.Title != "" {
-		cha.Snippet.Title = c.Title
+		settings.Title = c.Title
 	}
 
 	call := c.Service.Channels.Update(c.Parts, cha)
