@@ -13,7 +13,7 @@ const (
 	short         = "Manage YouTube video captions"
 	long          = "Manage YouTube video captions. Use this tool to list, insert, update, download, or delete video captions."
 	fileUsage     = "Path to save the caption file"
-	attUsage      = "unknown|primary|commentary|descriptive"
+	attUsage      = "unknown|primary|commentary|descriptive; omitted by default and not sent (YouTube rejects it on caption insert)"
 	iasUsage      = "Whether YouTube synchronized the caption track to the audio track in the video"
 	iscUsage      = "Whether the track contains closed captions for the deaf and hard of hearing"
 	isdUsage      = "whether the caption track is a draft"

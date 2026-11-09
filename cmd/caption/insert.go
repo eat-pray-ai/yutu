@@ -38,8 +38,7 @@ var insertInSchema = &jsonschema.Schema{
 		"file": {Type: "string", Description: fileUsage},
 		"audio_track_type": {
 			Type: "string", Description: attUsage,
-			Enum:    []any{"unknown", "primary", "commentary", "descriptive"},
-			Default: jsontext.Value(`"unknown"`),
+			Enum: []any{"unknown", "primary", "commentary", "descriptive"},
 		},
 		"is_auto_synced": {Type: "boolean", Description: iasUsage},
 		"is_cc":          {Type: "boolean", Description: iscUsage},
@@ -88,7 +87,8 @@ func init() {
 
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
 	insertCmd.Flags().StringVarP(
-		&audioTrackType, "audioTrackType", "a", "unknown", attUsage,
+		// No default: YouTube rejects captions.insert when audioTrackType is sent.
+		&audioTrackType, "audioTrackType", "a", "", attUsage,
 	)
 	insertCmd.Flags().BoolVarP(
 		isAutoSynced, "isAutoSynced", "A", true, iasUsage,
