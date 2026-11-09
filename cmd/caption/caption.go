@@ -21,7 +21,7 @@ const (
 	islUsage      = "Whether the caption track uses large text for the vision-impaired"
 	languageUsage = "Language of the caption track"
 	nameUsage     = "Name of the caption track"
-	tkUsage       = "standard|ASR|forced"
+	tkUsage       = "standard|ASR|forced; omitted by default and not sent (YouTube rejects it on caption insert)"
 	vidUsage      = "ID of the video"
 	tfmtUsage     = "sbv|srt|vtt"
 	tlangUsage    = "Translate the captions into this language"

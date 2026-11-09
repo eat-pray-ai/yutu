@@ -106,7 +106,7 @@ func init() {
 	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	updateCmd.Flags().StringVarP(&name, "name", "n", "", nameUsage)
 	updateCmd.Flags().StringVarP(
-		&trackKind, "trackKind", "t", "standard", tkUsage,
+		&trackKind, "trackKind", "t", "", tkUsage,
 	)
 	updateCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)

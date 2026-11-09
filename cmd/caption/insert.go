@@ -28,7 +28,7 @@ yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
 # Insert a caption with language and name
 yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
 # Insert a standard caption and publish immediately
-yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --isDraft=false`
 )
 
 var insertInSchema = &jsonschema.Schema{
@@ -49,8 +49,7 @@ var insertInSchema = &jsonschema.Schema{
 		"name":           {Type: "string", Description: nameUsage},
 		"track_kind": {
 			Type: "string", Description: tkUsage,
-			Enum:    []any{"standard", "ASR", "forced"},
-			Default: jsontext.Value(`"standard"`),
+			Enum: []any{"standard", "ASR", "forced"},
 		},
 		"video_id":                   {Type: "string", Description: vidUsage},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
@@ -102,7 +101,7 @@ func init() {
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	insertCmd.Flags().StringVarP(&name, "name", "n", "", nameUsage)
 	insertCmd.Flags().StringVarP(
-		&trackKind, "trackKind", "t", "standard", tkUsage,
+		&trackKind, "trackKind", "t", "", tkUsage,
 	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	insertCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
