@@ -27,6 +27,7 @@ type Channel struct {
 	Country         *string `yaml:"country" json:"country,omitzero"`
 	DefaultLanguage *string `yaml:"default_language" json:"default_language,omitzero"`
 	Description     *string `yaml:"description" json:"description,omitzero"`
+	Keywords        *string `yaml:"keywords" json:"keywords,omitzero"`
 	Title           string  `yaml:"title" json:"title,omitempty"`
 }
 
@@ -139,6 +140,9 @@ func (c *Channel) Update(writer io.Writer) error {
 	if c.Description != nil {
 		settings.Description = *c.Description
 	}
+	if c.Keywords != nil {
+		settings.Keywords = *c.Keywords
+	}
 	if c.Title != "" {
 		settings.Title = c.Title
 	}
@@ -181,6 +185,12 @@ func WithFor(f string) Option {
 func WithCountry(country *string) Option {
 	return func(c *Channel) {
 		c.Country = country
+	}
+}
+
+func WithKeywords(keywords *string) Option {
+	return func(c *Channel) {
+		c.Keywords = keywords
 	}
 }
 
