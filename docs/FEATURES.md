@@ -450,3 +450,5 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
     </tr>
   </tbody>
 </table>
+
+`yutu channel update` cannot change the channel handle (custom URL): the YouTube API does not allow it, so there is no `--customUrl` flag or MCP `custom_url` field. Change the handle in YouTube Studio.

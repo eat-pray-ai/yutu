@@ -14,9 +14,8 @@ import (
 )
 
 var (
-	errGetChannel        = errors.New("failed to get channel")
-	errUpdateChannel     = errors.New("failed to update channel")
-	errCustomUrlReadOnly = errors.New("the custom URL (handle) cannot be changed through the YouTube API; change it in YouTube Studio")
+	errGetChannel    = errors.New("failed to get channel")
+	errUpdateChannel = errors.New("failed to update channel")
 )
 
 type Channel struct {
@@ -26,7 +25,6 @@ type Channel struct {
 	ForUsername     string  `yaml:"for_username" json:"for_username,omitempty"`
 	For             string  `yaml:"for" json:"for,omitempty"`
 	Country         *string `yaml:"country" json:"country,omitzero"`
-	CustomUrl       string  `yaml:"custom_url" json:"custom_url,omitempty"`
 	DefaultLanguage *string `yaml:"default_language" json:"default_language,omitzero"`
 	Description     *string `yaml:"description" json:"description,omitzero"`
 	Title           string  `yaml:"title" json:"title,omitempty"`
@@ -112,9 +110,6 @@ func (c *Channel) List(writer io.Writer) error {
 }
 
 func (c *Channel) Update(writer io.Writer) error {
-	if c.CustomUrl != "" {
-		return errors.Join(errUpdateChannel, errCustomUrlReadOnly)
-	}
 	// channels.update only accepts brandingSettings (snippet fails with ERROR_PART_UNEXPECTED).
 	c.Parts = []string{"brandingSettings"}
 	// Update targets one channel; without this Paginate fetches nothing when MaxResults is unset.
@@ -186,12 +181,6 @@ func WithFor(f string) Option {
 func WithCountry(country *string) Option {
 	return func(c *Channel) {
 		c.Country = country
-	}
-}
-
-func WithCustomUrl(url string) Option {
-	return func(c *Channel) {
-		c.CustomUrl = url
 	}
 }
 

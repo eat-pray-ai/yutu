@@ -41,7 +41,6 @@ func TestNewChannel(t *testing.T) {
 					WithMaxResults(100),
 					WithOnBehalfOfContentOwner("owner123"),
 					WithCountry(new("US")),
-					WithCustomUrl("testchannel"),
 					WithDefaultLanguage(new("en")),
 					WithDescription(new("Test channel description")),
 					WithTitle("Test Channel"),
@@ -63,7 +62,6 @@ func TestNewChannel(t *testing.T) {
 				ForUsername:            "testuser",
 				For:                    "managedByMe",
 				Country:                new("US"),
-				CustomUrl:              "testchannel",
 				DefaultLanguage:        new("en"),
 				Description:            new("Test channel description"),
 				Title:                  "Test Channel",
@@ -139,7 +137,6 @@ func TestNewChannel(t *testing.T) {
 					WithHl(""),
 					WithOnBehalfOfContentOwner(""),
 					WithCountry(new("")),
-					WithCustomUrl(""),
 					WithDefaultLanguage(new("")),
 					WithDescription(new("")),
 					WithTitle(""),
@@ -152,7 +149,6 @@ func TestNewChannel(t *testing.T) {
 				ForHandle:       "",
 				ForUsername:     "",
 				Country:         new(""),
-				CustomUrl:       "",
 				DefaultLanguage: new(""),
 				Description:     new(""),
 				Title:           "",
@@ -545,16 +541,5 @@ func TestChannel_Update_BrandingSettingsBody(t *testing.T) {
 	}
 	if _, ok := body["snippet"]; ok {
 		t.Errorf("PUT body must not send snippet")
-	}
-}
-
-func TestChannel_Update_CustomUrlRejected(t *testing.T) {
-	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Errorf("no API call expected, got %s", r.Method)
-	}))
-	// WithMaxResults(1) makes the old code reach the API, so this guards the early return.
-	c := NewChannel(WithService(svc), WithIds([]string{"channel-id"}), WithCustomUrl("my-url"), WithMaxResults(1))
-	if err := c.Update(&bytes.Buffer{}); err == nil {
-		t.Errorf("Channel.Update() with customUrl: want error, got nil")
 	}
 }

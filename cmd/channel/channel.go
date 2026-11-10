@@ -18,7 +18,6 @@ const (
 	hlUsage      = "Specifies the localization language of the metadata"
 	forUsage     = "managedByMe|mine|mySubscribers"
 	countryUsage = "Country of the channel"
-	curlUsage    = "Custom URL of the channel (read-only through the API; returns an error, change it in YouTube Studio)"
 	dlUsage      = "The language of the channel's default title and description"
 	descUsage    = "Description of the channel"
 	titleUsage   = "Title of the channel"
@@ -33,7 +32,6 @@ var (
 	channelFor      string
 	maxResults      int64
 	country         = new("")
-	customUrl       string
 	defaultLanguage = new("")
 	description     = new("")
 	title           string
