@@ -42,7 +42,6 @@ var updateInSchema = &jsonschema.Schema{
 			Items: &jsonschema.Schema{Type: "string"},
 		},
 		"country":          {Type: "string", Description: countryUsage},
-		"custom_url":       {Type: "string", Description: curlUsage},
 		"default_language": {Type: "string", Description: dlUsage},
 		"description":      {Type: "string", Description: descUsage},
 		"title":            {Type: "string", Description: titleUsage},
@@ -78,7 +77,6 @@ func init() {
 
 	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
 	updateCmd.Flags().StringVarP(country, "country", "c", "", countryUsage)
-	updateCmd.Flags().StringVarP(&customUrl, "customUrl", "u", "", curlUsage)
 	updateCmd.Flags().StringVarP(
 		defaultLanguage, "defaultLanguage", "l", "", dlUsage,
 	)
@@ -104,7 +102,6 @@ var updateCmd = &cobra.Command{
 		input := channel.NewChannel(
 			channel.WithIds(ids),
 			channel.WithCountry(country),
-			channel.WithCustomUrl(customUrl),
 			channel.WithDefaultLanguage(defaultLanguage),
 			channel.WithDescription(description),
 			channel.WithTitle(title),
