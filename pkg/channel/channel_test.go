@@ -545,31 +545,41 @@ func TestChannel_Update_BrandingSettingsBody(t *testing.T) {
 }
 
 func TestChannel_Update_Keywords(t *testing.T) {
-	var body map[string]any
-	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if r.Method == "GET" {
-			_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "description": "keep me"}}}]}`))
-			return
-		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			t.Fatalf("decode PUT body: %v", err)
-		}
-		_, _ = w.Write([]byte(`{"id": "channel-id"}`))
-	}))
-	c := NewChannel(
-		WithService(svc),
-		WithIds([]string{"channel-id"}),
-		WithKeywords(new(`"AI agents" "agent security" MCP`)),
-	)
-	if err := c.Update(&bytes.Buffer{}); err != nil {
-		t.Fatalf("Channel.Update() error = %v", err)
+	tests := []struct {
+		name     string
+		keywords []string
+		want     any
+	}{
+		{"multi-word keywords are quoted", []string{"AI agents", "agent security", "MCP"}, `"AI agents" "agent security" MCP`},
+		{"single keyword", []string{"MCP"}, "MCP"},
+		{"empty list clears keywords", []string{}, nil},
+		{"omitted keeps existing keywords", nil, "old keep"},
 	}
-	ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
-	if ch["keywords"] != `"AI agents" "agent security" MCP` {
-		t.Errorf("keywords = %v", ch["keywords"])
-	}
-	if ch["description"] != "keep me" {
-		t.Errorf("description must be kept, got %v", ch["description"])
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var body map[string]any
+			svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if r.Method == "GET" {
+					_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "description": "keep me", "keywords": "old keep"}}}]}`))
+					return
+				}
+				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+					t.Fatalf("decode PUT body: %v", err)
+				}
+				_, _ = w.Write([]byte(`{"id": "channel-id"}`))
+			}))
+			c := NewChannel(WithService(svc), WithIds([]string{"channel-id"}), WithKeywords(tt.keywords))
+			if err := c.Update(&bytes.Buffer{}); err != nil {
+				t.Fatalf("Channel.Update() error = %v", err)
+			}
+			ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
+			if ch["keywords"] != tt.want {
+				t.Errorf("keywords = %#v, want %#v", ch["keywords"], tt.want)
+			}
+			if ch["description"] != "keep me" {
+				t.Errorf("description must be kept, got %v", ch["description"])
+			}
+		})
 	}
 }

@@ -452,3 +452,5 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
 </table>
 
 `yutu channel update` cannot change the channel handle (custom URL): the YouTube API does not allow it, so there is no `--customUrl` flag or MCP `custom_url` field. Change the handle in YouTube Studio.
+
+`yutu channel update --keywords` takes comma separated keywords (MCP: a `keywords` array), for example `--keywords 'AI agents,MCP'`. yutu stores them in YouTube's space-separated format and quotes multi-word keywords. Omitting the flag keeps the current keywords; `--keywords ""` clears them.
