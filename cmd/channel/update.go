@@ -30,7 +30,9 @@ yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description
 # Update channel title and country
 yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
 # Update channel default language
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en`
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en
+# Update channel keywords
+yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --keywords 'AI agents,MCP'`
 )
 
 var updateInSchema = &jsonschema.Schema{
@@ -44,8 +46,11 @@ var updateInSchema = &jsonschema.Schema{
 		"country":          {Type: "string", Description: countryUsage},
 		"default_language": {Type: "string", Description: dlUsage},
 		"description":      {Type: "string", Description: descUsage},
-		"keywords":         {Type: "string", Description: keywordsUsage},
-		"title":            {Type: "string", Description: titleUsage},
+		"keywords": {
+			Type: "array", Description: keywordsUsage,
+			Items: &jsonschema.Schema{Type: "string"},
+		},
+		"title": {Type: "string", Description: titleUsage},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
 			Description: pkg.SilentUsage, Default: jsontext.Value(`"json"`),
@@ -82,7 +87,7 @@ func init() {
 		defaultLanguage, "defaultLanguage", "l", "", dlUsage,
 	)
 	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringVarP(keywords, "keywords", "k", "", keywordsUsage)
+	updateCmd.Flags().StringSliceVarP(&keywords, "keywords", "k", nil, keywordsUsage)
 	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
 	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
 	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)

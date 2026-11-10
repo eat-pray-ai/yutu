@@ -18,7 +18,7 @@ const (
 	hlUsage       = "Specifies the localization language of the metadata"
 	forUsage      = "managedByMe|mine|mySubscribers"
 	countryUsage  = "Country of the channel"
-	keywordsUsage = "Channel keywords, space-separated; quote multi-word keywords, e.g. '\"AI agents\" MCP'"
+	keywordsUsage = "Comma separated channel keywords"
 	dlUsage       = "The language of the channel's default title and description"
 	descUsage     = "Description of the channel"
 	titleUsage    = "Title of the channel"
@@ -35,7 +35,7 @@ var (
 	country         = new("")
 	defaultLanguage = new("")
 	description     = new("")
-	keywords        = new("")
+	keywords        []string
 	title           string
 	parts           []string
 
@@ -51,9 +51,9 @@ var channelCmd = &cobra.Command{
 			"country":         &country,
 			"defaultLanguage": &defaultLanguage,
 			"description":     &description,
-			"keywords":        &keywords,
 		}
 		utils.ResetFlags(stringFlags, c.Flags())
+		utils.ResetFlags(map[string]*[]string{"keywords": &keywords}, c.Flags())
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
