@@ -452,3 +452,5 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
 </table>
 
 `yutu channel update` cannot change the channel handle (custom URL): the YouTube API does not allow it, so there is no `--customUrl` flag or MCP `custom_url` field. Change the handle in YouTube Studio.
+
+`yutu caption insert` has no `--audioTrackType` or `--trackKind` flag (MCP: no `audio_track_type` or `track_kind`): YouTube rejects both fields when uploading a caption. Set them afterwards with `yutu caption update`, which leaves them unchanged when the flags are omitted.

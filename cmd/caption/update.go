@@ -89,8 +89,6 @@ func init() {
 	captionCmd.AddCommand(updateCmd)
 
 	updateCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	// Shares audioTrackType with insert: a non-empty default here would
-	// override insert's and send a value YouTube rejects.
 	updateCmd.Flags().StringVarP(
 		&audioTrackType, "audioTrackType", "a", "", attUsage,
 	)
