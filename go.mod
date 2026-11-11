@@ -12,7 +12,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/oauth2 v0.37.0
 	golang.org/x/term v0.47.0
-	google.golang.org/adk/v2 v2.6.0
+	google.golang.org/adk/v2 v2.7.1
 	google.golang.org/api v0.306.0
 	google.golang.org/genai v1.77.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -48,7 +48,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.30 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
-	github.com/openai/openai-go/v3 v3.71.1 // indirect
+	github.com/openai/openai-go/v3 v3.82.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
