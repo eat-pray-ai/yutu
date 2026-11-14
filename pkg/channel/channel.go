@@ -6,6 +6,7 @@ package channel
 import (
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -20,14 +21,15 @@ var (
 
 type Channel struct {
 	common.Fields
-	CategoryId      string  `yaml:"category_id" json:"category_id,omitempty"`
-	ForHandle       string  `yaml:"for_handle" json:"for_handle,omitempty"`
-	ForUsername     string  `yaml:"for_username" json:"for_username,omitempty"`
-	For             string  `yaml:"for" json:"for,omitempty"`
-	Country         *string `yaml:"country" json:"country,omitzero"`
-	DefaultLanguage *string `yaml:"default_language" json:"default_language,omitzero"`
-	Description     *string `yaml:"description" json:"description,omitzero"`
-	Title           string  `yaml:"title" json:"title,omitempty"`
+	CategoryId      string   `yaml:"category_id" json:"category_id,omitempty"`
+	ForHandle       string   `yaml:"for_handle" json:"for_handle,omitempty"`
+	ForUsername     string   `yaml:"for_username" json:"for_username,omitempty"`
+	For             string   `yaml:"for" json:"for,omitempty"`
+	Country         *string  `yaml:"country" json:"country,omitzero"`
+	DefaultLanguage *string  `yaml:"default_language" json:"default_language,omitzero"`
+	Description     *string  `yaml:"description" json:"description,omitzero"`
+	Keywords        []string `yaml:"keywords" json:"keywords,omitempty"`
+	Title           string   `yaml:"title" json:"title,omitempty"`
 }
 
 type IChannel[T youtube.Channel] interface {
@@ -139,6 +141,9 @@ func (c *Channel) Update(writer io.Writer) error {
 	if c.Description != nil {
 		settings.Description = *c.Description
 	}
+	if c.Keywords != nil {
+		settings.Keywords = joinKeywords(c.Keywords)
+	}
 	if c.Title != "" {
 		settings.Title = c.Title
 	}
@@ -181,6 +186,24 @@ func WithFor(f string) Option {
 func WithCountry(country *string) Option {
 	return func(c *Channel) {
 		c.Country = country
+	}
+}
+
+// joinKeywords builds YouTube's space-separated keywords string, quoting multi-word keywords.
+func joinKeywords(keywords []string) string {
+	quoted := make([]string, len(keywords))
+	for i, k := range keywords {
+		if strings.Contains(k, " ") {
+			k = `"` + k + `"`
+		}
+		quoted[i] = k
+	}
+	return strings.Join(quoted, " ")
+}
+
+func WithKeywords(keywords []string) Option {
+	return func(c *Channel) {
+		c.Keywords = keywords
 	}
 }
 

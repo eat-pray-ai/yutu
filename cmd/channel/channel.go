@@ -10,17 +10,18 @@ import (
 )
 
 const (
-	short        = "Manage YouTube channels"
-	long         = "Manage YouTube channels. Use this tool to list or update channels."
-	cidUsage     = "Return the channels within the specified guide category id"
-	fhUsage      = "Return the channel associated with a YouTube handle"
-	fuUsage      = "Return the channel associated with a YouTube username"
-	hlUsage      = "Specifies the localization language of the metadata"
-	forUsage     = "managedByMe|mine|mySubscribers"
-	countryUsage = "Country of the channel"
-	dlUsage      = "The language of the channel's default title and description"
-	descUsage    = "Description of the channel"
-	titleUsage   = "Title of the channel"
+	short         = "Manage YouTube channels"
+	long          = "Manage YouTube channels. Use this tool to list or update channels."
+	cidUsage      = "Return the channels within the specified guide category id"
+	fhUsage       = "Return the channel associated with a YouTube handle"
+	fuUsage       = "Return the channel associated with a YouTube username"
+	hlUsage       = "Specifies the localization language of the metadata"
+	forUsage      = "managedByMe|mine|mySubscribers"
+	countryUsage  = "Country of the channel"
+	keywordsUsage = "Comma separated channel keywords"
+	dlUsage       = "The language of the channel's default title and description"
+	descUsage     = "Description of the channel"
+	titleUsage    = "Title of the channel"
 )
 
 var (
@@ -34,6 +35,7 @@ var (
 	country         = new("")
 	defaultLanguage = new("")
 	description     = new("")
+	keywords        []string
 	title           string
 	parts           []string
 
@@ -51,6 +53,7 @@ var channelCmd = &cobra.Command{
 			"description":     &description,
 		}
 		utils.ResetFlags(stringFlags, c.Flags())
+		utils.ResetFlags(map[string]*[]string{"keywords": &keywords}, c.Flags())
 	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
