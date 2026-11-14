@@ -28,31 +28,21 @@ yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
 # Insert a caption with language and name
 yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
 # Insert a standard caption and publish immediately
-yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --trackKind standard --isDraft=false`
+yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --isDraft=false`
 )
 
 var insertInSchema = &jsonschema.Schema{
 	Type:     "object",
 	Required: []string{"file", "video_id"},
 	Properties: map[string]*jsonschema.Schema{
-		"file": {Type: "string", Description: fileUsage},
-		"audio_track_type": {
-			Type: "string", Description: attUsage,
-			Enum:    []any{"unknown", "primary", "commentary", "descriptive"},
-			Default: jsontext.Value(`"unknown"`),
-		},
-		"is_auto_synced": {Type: "boolean", Description: iasUsage},
-		"is_cc":          {Type: "boolean", Description: iscUsage},
-		"is_draft":       {Type: "boolean", Description: isdUsage},
-		"is_easy_reader": {Type: "boolean", Description: iserUsage},
-		"is_large":       {Type: "boolean", Description: islUsage},
-		"language":       {Type: "string", Description: languageUsage},
-		"name":           {Type: "string", Description: nameUsage},
-		"track_kind": {
-			Type: "string", Description: tkUsage,
-			Enum:    []any{"standard", "ASR", "forced"},
-			Default: jsontext.Value(`"standard"`),
-		},
+		"file":                       {Type: "string", Description: fileUsage},
+		"is_auto_synced":             {Type: "boolean", Description: iasUsage},
+		"is_cc":                      {Type: "boolean", Description: iscUsage},
+		"is_draft":                   {Type: "boolean", Description: isdUsage},
+		"is_easy_reader":             {Type: "boolean", Description: iserUsage},
+		"is_large":                   {Type: "boolean", Description: islUsage},
+		"language":                   {Type: "string", Description: languageUsage},
+		"name":                       {Type: "string", Description: nameUsage},
 		"video_id":                   {Type: "string", Description: vidUsage},
 		"on_behalf_of":               {Type: "string", Description: pkg.OBOUsage},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
@@ -87,9 +77,6 @@ func init() {
 	captionCmd.AddCommand(insertCmd)
 
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	insertCmd.Flags().StringVarP(
-		&audioTrackType, "audioTrackType", "a", "unknown", attUsage,
-	)
 	insertCmd.Flags().BoolVarP(
 		isAutoSynced, "isAutoSynced", "A", true, iasUsage,
 	)
@@ -101,9 +88,6 @@ func init() {
 	insertCmd.Flags().BoolVarP(isLarge, "isLarge", "L", false, islUsage)
 	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
 	insertCmd.Flags().StringVarP(&name, "name", "n", "", nameUsage)
-	insertCmd.Flags().StringVarP(
-		&trackKind, "trackKind", "t", "standard", tkUsage,
-	)
 	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
 	insertCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
 	insertCmd.Flags().StringVarP(
@@ -127,7 +111,6 @@ var insertCmd = &cobra.Command{
 		output, _ := c.Flags().GetString("output")
 		input := caption.NewCaption(
 			caption.WithFile(file),
-			caption.WithAudioTrackType(audioTrackType),
 			caption.WithIsAutoSynced(isAutoSynced),
 			caption.WithIsCC(isCC),
 			caption.WithIsDraft(isDraft),
@@ -135,7 +118,6 @@ var insertCmd = &cobra.Command{
 			caption.WithIsLarge(isLarge),
 			caption.WithLanguage(language),
 			caption.WithName(name),
-			caption.WithTrackKind(trackKind),
 			caption.WithVideoId(videoId),
 			caption.WithOnBehalfOf(onBehalfOf),
 			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
