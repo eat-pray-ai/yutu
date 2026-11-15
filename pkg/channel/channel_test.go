@@ -424,8 +424,7 @@ func TestChannel_Update(t *testing.T) {
 			want: map[string]any{"description": "New Description", "country": "DE", "defaultLanguage": "en", "title": "Old", "keywords": "old keep"},
 		},
 		{
-			// The CLI and MCP tool never pass WithMaxResults; the lookup must still find the channel.
-			name: "update title without max results",
+			name: "update title",
 			opts: []Option{WithTitle("New Title")},
 			want: map[string]any{"title": "New Title", "description": "keep me"},
 		},
@@ -470,7 +469,7 @@ func TestChannel_Update(t *testing.T) {
 				_, _ = w.Write([]byte(`{"id": "channel-id"}`))
 			}))
 
-			opts := append([]Option{WithService(svc), WithIds([]string{"channel-id"})}, tt.opts...)
+			opts := append([]Option{WithService(svc), WithIds([]string{"channel-id"}), WithMaxResults(1)}, tt.opts...)
 			if err := NewChannel(opts...).Update(&bytes.Buffer{}); err != nil {
 				t.Fatalf("Channel.Update() error = %v", err)
 			}

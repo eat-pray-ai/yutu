@@ -114,8 +114,6 @@ func (c *Channel) List(writer io.Writer) error {
 func (c *Channel) Update(writer io.Writer) error {
 	// channels.update only accepts brandingSettings (snippet fails with ERROR_PART_UNEXPECTED).
 	c.Parts = []string{"brandingSettings"}
-	// Update targets one channel; without this Paginate fetches nothing when MaxResults is unset.
-	c.MaxResults = 1
 	channels, err := c.Get()
 	if err != nil {
 		return errors.Join(errUpdateChannel, err)

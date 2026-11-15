@@ -74,6 +74,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
 				},
 				func(input channel.Channel, w io.Writer) error {
+					channel.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),

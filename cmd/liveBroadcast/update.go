@@ -74,7 +74,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
 				},
 				func(input liveBroadcast.LiveBroadcast, w io.Writer) error {
-					input.MaxResults = 1
+					liveBroadcast.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),

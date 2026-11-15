@@ -70,6 +70,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
 				},
 				func(input comment.Comment, w io.Writer) error {
+					comment.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),
@@ -107,6 +108,7 @@ var updateCmd = &cobra.Command{
 			comment.WithCanRate(canRate),
 			comment.WithTextOriginal(textOriginal),
 			comment.WithViewerRating(viewerRating),
+			comment.WithMaxResults(1),
 			comment.WithOutput(output),
 		)
 		return input.Update(c.OutOrStdout())

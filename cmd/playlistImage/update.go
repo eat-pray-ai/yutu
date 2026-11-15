@@ -72,6 +72,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, input.PlaylistId)
 				},
 				func(input playlistImage.PlaylistImage, w io.Writer) error {
+					playlistImage.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),

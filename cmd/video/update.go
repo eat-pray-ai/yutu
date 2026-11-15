@@ -89,7 +89,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
 				},
 				func(input video.Video, w io.Writer) error {
-					input.MaxResults = 1
+					video.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),

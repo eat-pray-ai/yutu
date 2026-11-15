@@ -71,6 +71,7 @@ func init() {
 					return fmt.Sprintf(updateConfirm, strings.Join(input.Ids, ", "))
 				},
 				func(input playlistItem.PlaylistItem, w io.Writer) error {
+					playlistItem.WithMaxResults(1)(&input)
 					return input.Update(w)
 				},
 			),
@@ -108,6 +109,7 @@ var updateCmd = &cobra.Command{
 			playlistItem.WithDescription(description),
 			playlistItem.WithPrivacy(privacy),
 			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
+			playlistItem.WithMaxResults(1),
 			playlistItem.WithOutput(output),
 		)
 		return input.Update(c.OutOrStdout())
