@@ -16,7 +16,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -144,4 +146,16 @@ func ConfirmPreRun(c *cobra.Command, msg string) error {
 		return ErrNotConfirmed
 	}
 	return nil
+}
+
+// JoinKeywords builds YouTube's space-separated keywords string,
+// quoting keywords that contain whitespace.
+func JoinKeywords(keywords []string) string {
+	quoted := slices.Clone(keywords)
+	for i, k := range quoted {
+		if strings.ContainsFunc(k, unicode.IsSpace) {
+			quoted[i] = `"` + k + `"`
+		}
+	}
+	return strings.Join(quoted, " ")
 }

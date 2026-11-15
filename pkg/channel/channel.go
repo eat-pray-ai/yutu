@@ -6,9 +6,9 @@ package channel
 import (
 	"errors"
 	"io"
-	"strings"
 
 	"github.com/eat-pray-ai/yutu/pkg/common"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 
 	"google.golang.org/api/youtube/v3"
@@ -142,7 +142,7 @@ func (c *Channel) Update(writer io.Writer) error {
 		settings.Description = *c.Description
 	}
 	if c.Keywords != nil {
-		settings.Keywords = joinKeywords(c.Keywords)
+		settings.Keywords = utils.JoinKeywords(c.Keywords)
 	}
 	if c.Title != "" {
 		settings.Title = c.Title
@@ -187,18 +187,6 @@ func WithCountry(country *string) Option {
 	return func(c *Channel) {
 		c.Country = country
 	}
-}
-
-// joinKeywords builds YouTube's space-separated keywords string, quoting multi-word keywords.
-func joinKeywords(keywords []string) string {
-	quoted := make([]string, len(keywords))
-	for i, k := range keywords {
-		if strings.Contains(k, " ") {
-			k = `"` + k + `"`
-		}
-		quoted[i] = k
-	}
-	return strings.Join(quoted, " ")
 }
 
 func WithKeywords(keywords []string) Option {

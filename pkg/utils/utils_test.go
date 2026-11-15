@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -428,5 +429,29 @@ func TestConfirmPreRun(t *testing.T) {
 				}
 			},
 		)
+	}
+}
+
+func TestJoinKeywords(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []string
+		want string
+	}{
+		{"nil", nil, ""},
+		{"single", []string{"MCP"}, "MCP"},
+		{"multi-word quoted", []string{"AI agents", "MCP"}, `"AI agents" MCP`},
+		{"tab quoted", []string{"a\tb"}, "\"a\tb\""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			in := slices.Clone(tt.in)
+			if got := JoinKeywords(tt.in); got != tt.want {
+				t.Errorf("JoinKeywords() = %q, want %q", got, tt.want)
+			}
+			if !slices.Equal(in, tt.in) {
+				t.Errorf("input mutated: %v", tt.in)
+			}
+		})
 	}
 }

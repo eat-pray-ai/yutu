@@ -411,157 +411,57 @@ func TestChannel_List(t *testing.T) {
 }
 
 func TestChannel_Update(t *testing.T) {
+	const existing = `{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "description": "keep me", "keywords": "old keep"}}}]}`
+
 	tests := []struct {
-		name    string
-		opts    []Option
-		verify  func(*http.Request)
-		wantErr bool
+		name string
+		opts []Option
+		want map[string]any // expected brandingSettings.channel fields; nil = absent
 	}{
 		{
-			name: "update channel",
-			opts: []Option{
-				WithIds([]string{"channel-id"}),
-				WithTitle("New Title"),
-				WithDescription(new("New Description")),
-				WithMaxResults(1),
-			},
-			verify: func(r *http.Request) {
-				switch r.Method {
-				case "PUT":
-					if r.URL.Query().Get("part") != "brandingSettings" {
-						t.Errorf("expected part=brandingSettings, got %s", r.URL.Query().Get("part"))
-					}
-				case "GET":
-					if r.URL.Query().Get("id") != "channel-id" {
-						t.Errorf("expected id=channel-id, got %s", r.URL.Query().Get("id"))
-					}
-				default:
-					t.Errorf("unexpected method %s", r.Method)
-				}
-			},
-			wantErr: false,
+			name: "update description, country and language, keep the rest",
+			opts: []Option{WithDescription(new("New Description")), WithCountry(new("DE")), WithDefaultLanguage(new("en"))},
+			want: map[string]any{"description": "New Description", "country": "DE", "defaultLanguage": "en", "title": "Old", "keywords": "old keep"},
 		},
 		{
 			// The CLI and MCP tool never pass WithMaxResults; the lookup must still find the channel.
-			name: "update channel without max results",
-			opts: []Option{
-				WithIds([]string{"channel-id"}),
-				WithDescription(new("New Description")),
-			},
-			wantErr: false,
+			name: "update title without max results",
+			opts: []Option{WithTitle("New Title")},
+			want: map[string]any{"title": "New Title", "description": "keep me"},
 		},
 		{
-			name: "update channel full",
-			opts: []Option{
-				WithIds([]string{"channel-id"}),
-				WithCountry(new("US")),
-				WithDefaultLanguage(new("en")),
-				WithMaxResults(1),
-			},
-			verify: func(r *http.Request) {
-				if r.Method == "PUT" {
-					if r.URL.Query().Get("part") != "brandingSettings" {
-						t.Errorf("expected part=brandingSettings, got %s", r.URL.Query().Get("part"))
-					}
-				}
-			},
-			wantErr: false,
+			name: "multi-word keywords are quoted",
+			opts: []Option{WithKeywords([]string{"AI agents", "agent security", "MCP"})},
+			want: map[string]any{"keywords": `"AI agents" "agent security" MCP`, "description": "keep me"},
+		},
+		{
+			name: "single keyword",
+			opts: []Option{WithKeywords([]string{"MCP"})},
+			want: map[string]any{"keywords": "MCP", "description": "keep me"},
+		},
+		{
+			name: "empty keywords clears them",
+			opts: []Option{WithKeywords([]string{})},
+			want: map[string]any{"keywords": nil, "description": "keep me"},
+		},
+		{
+			name: "omitted keywords keeps existing",
+			opts: []Option{WithDescription(new("x"))},
+			want: map[string]any{"keywords": "old keep", "description": "x"},
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(
-			tt.name, func(t *testing.T) {
-				svc := common.NewTestService(
-					t, http.HandlerFunc(
-						func(w http.ResponseWriter, r *http.Request) {
-							if tt.verify != nil {
-								tt.verify(r)
-							}
-							w.Header().Set("Content-Type", "application/json")
-							if r.Method == "GET" {
-								_, _ = w.Write(
-									[]byte(`{
-						"items": [
-							{"id": "channel-id", "snippet": {"title": "Old Title"}}
-						]
-					}`),
-								)
-							} else {
-								_, _ = w.Write([]byte(`{"id": "channel-id", "snippet": {"title": "New Title"}}`))
-							}
-						},
-					),
-				)
-
-				opts := append([]Option{WithService(svc)}, tt.opts...)
-				c := NewChannel(opts...)
-				var buf bytes.Buffer
-				if err := c.Update(&buf); (err != nil) != tt.wantErr {
-					t.Errorf("Channel.Update() error = %v, wantErr %v", err, tt.wantErr)
-				}
-			},
-		)
-	}
-}
-
-// YouTube only accepts brandingSettings (not snippet) on channels.update, and the
-// update must keep branding fields the caller did not touch.
-func TestChannel_Update_BrandingSettingsBody(t *testing.T) {
-	var body map[string]any
-	svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		if r.Method == "GET" {
-			if got := r.URL.Query().Get("part"); got != "brandingSettings" {
-				t.Errorf("GET part = %q, want brandingSettings", got)
-			}
-			_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "keywords": "ai agents"}}}]}`))
-			return
-		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			t.Fatalf("decode PUT body: %v", err)
-		}
-		_, _ = w.Write([]byte(`{"id": "channel-id"}`))
-	}))
-	c := NewChannel(
-		WithService(svc),
-		WithIds([]string{"channel-id"}),
-		WithDescription(new("New Description")),
-		WithCountry(new("DE")),
-		WithDefaultLanguage(new("en")),
-	)
-	if err := c.Update(&bytes.Buffer{}); err != nil {
-		t.Fatalf("Channel.Update() error = %v", err)
-	}
-	ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
-	for k, want := range map[string]string{"description": "New Description", "country": "DE", "defaultLanguage": "en", "keywords": "ai agents", "title": "Old"} {
-		if ch[k] != want {
-			t.Errorf("brandingSettings.channel.%s = %v, want %q", k, ch[k], want)
-		}
-	}
-	if _, ok := body["snippet"]; ok {
-		t.Errorf("PUT body must not send snippet")
-	}
-}
-
-func TestChannel_Update_Keywords(t *testing.T) {
-	tests := []struct {
-		name     string
-		keywords []string
-		want     any
-	}{
-		{"multi-word keywords are quoted", []string{"AI agents", "agent security", "MCP"}, `"AI agents" "agent security" MCP`},
-		{"single keyword", []string{"MCP"}, "MCP"},
-		{"empty list clears keywords", []string{}, nil},
-		{"omitted keeps existing keywords", nil, "old keep"},
-	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var body map[string]any
 			svc := common.NewTestService(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				if r.Method == "GET" {
-					_, _ = w.Write([]byte(`{"items": [{"id": "channel-id", "brandingSettings": {"channel": {"title": "Old", "description": "keep me", "keywords": "old keep"}}}]}`))
+				// YouTube only accepts brandingSettings (not snippet) on channels.update.
+				if got := r.URL.Query().Get("part"); got != "brandingSettings" {
+					t.Errorf("%s part = %q, want brandingSettings", r.Method, got)
+				}
+				if r.Method == http.MethodGet {
+					_, _ = w.Write([]byte(existing))
 					return
 				}
 				if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -569,16 +469,19 @@ func TestChannel_Update_Keywords(t *testing.T) {
 				}
 				_, _ = w.Write([]byte(`{"id": "channel-id"}`))
 			}))
-			c := NewChannel(WithService(svc), WithIds([]string{"channel-id"}), WithKeywords(tt.keywords))
-			if err := c.Update(&bytes.Buffer{}); err != nil {
+
+			opts := append([]Option{WithService(svc), WithIds([]string{"channel-id"})}, tt.opts...)
+			if err := NewChannel(opts...).Update(&bytes.Buffer{}); err != nil {
 				t.Fatalf("Channel.Update() error = %v", err)
 			}
-			ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
-			if ch["keywords"] != tt.want {
-				t.Errorf("keywords = %#v, want %#v", ch["keywords"], tt.want)
+			if _, ok := body["snippet"]; ok {
+				t.Error("PUT body must not send snippet")
 			}
-			if ch["description"] != "keep me" {
-				t.Errorf("description must be kept, got %v", ch["description"])
+			ch := body["brandingSettings"].(map[string]any)["channel"].(map[string]any)
+			for k, want := range tt.want {
+				if ch[k] != want {
+					t.Errorf("brandingSettings.channel.%s = %#v, want %#v", k, ch[k], want)
+				}
 			}
 		})
 	}

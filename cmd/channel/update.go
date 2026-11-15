@@ -113,6 +113,7 @@ var updateCmd = &cobra.Command{
 			channel.WithDescription(description),
 			channel.WithKeywords(keywords),
 			channel.WithTitle(title),
+			channel.WithMaxResults(1),
 			channel.WithOutput(output),
 		)
 		return input.Update(c.OutOrStdout())
