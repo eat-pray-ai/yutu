@@ -32,7 +32,7 @@ type skillTarget struct {
 }
 
 var extSkill = skillTarget{
-	subdir: filepath.Join("skills", "youtube"),
+	subdir: filepath.Join("skills", "youtube-automation"),
 	refs: map[string]string{
 		"setup.md":     setupContent,
 		"workflows.md": workflowsContent,
@@ -43,7 +43,7 @@ var extSkill = skillTarget{
 }
 
 var agentSkill = skillTarget{
-	subdir: filepath.Join("skills", "youtube"),
+	subdir: filepath.Join("skills", "youtube-automation"),
 	refs: map[string]string{
 		"workflows.md": workflowsContent,
 		"seo-guide.md": seoGuideContent,

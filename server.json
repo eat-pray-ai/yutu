@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "title": "yutu",
+  "title": "youtube-automation",
   "name": "io.github.eat-pray-ai/yutu",
   "description": "CLI, MCP server, and AI Agent to automate YouTube workflows",
   "icons": [

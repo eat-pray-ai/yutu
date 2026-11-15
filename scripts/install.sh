@@ -40,11 +40,11 @@ chmod +x "${INSTALL_DIR}/yutu"
 
 if command -v npx >/dev/null 2>&1; then
   echo "Installing skill..."
-  if npx --yes skills add eat-pray-ai/yutu --skill youtube -y; then
+  if npx --yes skills add eat-pray-ai/yutu --skill youtube-automation -y; then
     echo "Skill installed."
   else
     echo "Skill install failed. Run manually:"
-    echo "  npx skills add eat-pray-ai/yutu --skill youtube"
+    echo "  npx skills add eat-pray-ai/yutu --skill youtube-automation"
   fi
 else
   echo "Skill skipped: npx not found."

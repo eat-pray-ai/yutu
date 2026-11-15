@@ -243,10 +243,10 @@ Setup yutu MCP for one or more selected AI Agents:
 `yutu` provides a unified [skill](https://opencode.ai/docs/skills) that extends AI Agents with YouTube domain knowledge, common workflows, and SEO best practices — covering videos, playlists, comments, channels, captions, subscriptions, and more.
 
 ```shell
-❯ npx skills add eat-pray-ai/yutu --skill youtube
+❯ npx skills add eat-pray-ai/yutu --skill youtube-automation
 ```
 
-See [skills/youtube/SKILL.md](skills/youtube/SKILL.md) for the full list of supported operations.
+See [skills/youtube-automation/SKILL.md](skills/youtube-automation/SKILL.md) for the full list of supported operations.
 
 ## Usage
 

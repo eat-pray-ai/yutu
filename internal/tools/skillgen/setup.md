@@ -61,7 +61,7 @@ yutu mcp setup -a claude,opencode,pi,codex \
 ## Skills
 
 ```bash
-npx skills add eat-pray-ai/yutu --skill youtube
+npx skills add eat-pray-ai/yutu --skill youtube-automation
 ```
 
 ## Environment Variables

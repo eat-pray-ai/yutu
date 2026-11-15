@@ -58,7 +58,7 @@ func classifyVerb(verb string) toolClass {
 
 func writeFrontmatter(b *strings.Builder, t skillTarget) {
 	_, _ = fmt.Fprintf(
-		b, "---\nname: youtube\ndescription: \"%s\"\nlicense: MIT\n",
+		b, "---\nname: youtube-automation\ndescription: \"%s\"\nlicense: Apache-2.0\n",
 		skillDescription,
 	)
 	if t.compatibility != "" {
@@ -132,7 +132,7 @@ func writeInstruction(path string) error {
 	var b strings.Builder
 
 	b.WriteString("You are an expert YouTube growth strategist and workflow assistant. You are authenticated to operate YouTube channels on behalf of users via tool calls.\n\n")
-	b.WriteString("Consult the **youtube** skill for the full tool catalog, safety rules, workflows, and SEO guidelines.\n\n")
+	b.WriteString("Consult the **youtube-automation** skill for the full tool catalog, safety rules, workflows, and SEO guidelines.\n\n")
 	b.WriteString("## Workflow\n\n")
 	b.WriteString(workflow + "\n")
 
