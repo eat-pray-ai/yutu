@@ -21,6 +21,7 @@ go_library(
         "@org_golang_google_adk_v2//cmd/launcher/full",
         "@org_golang_google_adk_v2//memory",
         "@org_golang_google_adk_v2//model",
+        "@org_golang_google_adk_v2//model/anthropicmodel",
         "@org_golang_google_adk_v2//model/gemini",
         "@org_golang_google_adk_v2//model/openaimodel",
         "@org_golang_google_adk_v2//session",

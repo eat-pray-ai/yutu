@@ -21,6 +21,7 @@ import (
 	"google.golang.org/adk/v2/cmd/launcher/full"
 	"google.golang.org/adk/v2/memory"
 	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/anthropicmodel"
 	"google.golang.org/adk/v2/model/gemini"
 	"google.golang.org/adk/v2/model/openaimodel"
 	"google.golang.org/adk/v2/session"
@@ -40,16 +41,19 @@ yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
 yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
 # OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
 yutu agent --provider openai --model gpt-5.6-terra --api-key "YOUR_KEY"
-yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"`
+yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"
+# Anthropic(compatible)
+yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
+yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"`
 	argsUsage        = "Launcher arguments as a single string"
-	providerUsage    = "LLM provider: google for Gemini(compatible), openai for OpenAI(compatible)"
+	providerUsage    = "LLM provider: google, openai or anthropic"
 	modelUsage       = "Model name"
 	apiKeyUsage      = "API key for the model provider"
 	baseURLUsage     = "Base URL for the model provider's API endpoint"
 	instructionUsage = "Override the built-in Agent instruction"
 	agentDescription = "YouTube growth strategist and workflow assistant — retrieve, create, update, and delete YouTube content."
 
-	errUnsupportedProvider = "unsupported provider %q: supported providers are google and openai"
+	errUnsupportedProvider = "unsupported provider %q: supported providers are google, openai and anthropic"
 	errModelConfig         = "model configuration error"
 	errMCPConnect          = "failed to connect to MCP server"
 	errMCPToolSet          = "failed to create MCP tool set"
@@ -117,6 +121,13 @@ func newModel(ctx context.Context) (model.LLM, error) {
 	case "openai":
 		return openaimodel.NewModel(
 			ctx, modelName, &openaimodel.ClientConfig{
+				APIKey:  apiKey,
+				BaseURL: baseURL,
+			},
+		)
+	case "anthropic":
+		return anthropicmodel.NewModel(
+			ctx, modelName, anthropicmodel.ClientConfig{
 				APIKey:  apiKey,
 				BaseURL: baseURL,
 			},
