@@ -37,11 +37,11 @@ const (
 	short   = "Start an Agent to automate YouTube workflows"
 	long    = "Start an Agent to automate YouTube workflows."
 	example = `# Gemini(compatible) (default)
-yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY"
-yutu agent --provider google --model gemini-3.8-flash --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com/"
+yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
+yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
 # OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
-yutu agent --provider openai --model gpt-5.6-terra --api-key "YOUR_KEY"
-yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com/"
+yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
+yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
 # Anthropic(compatible)
 yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
 yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"`
@@ -100,7 +100,7 @@ func init() {
 		&provider, "provider", "p", "google", providerUsage,
 	)
 	agentCmd.Flags().StringVarP(
-		&modelName, "model", "m", "gemini-3.8-flash", modelUsage,
+		&modelName, "model", "m", "gemini-4-hydrogen", modelUsage,
 	)
 	agentCmd.Flags().StringVar(&apiKey, "api-key", "", apiKeyUsage)
 	agentCmd.Flags().StringVar(&baseURL, "base-url", "", baseURLUsage)
