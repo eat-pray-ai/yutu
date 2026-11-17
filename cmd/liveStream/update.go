@@ -25,10 +25,10 @@ const (
 	updateIdUsage = "ID of the live stream to update"
 	updateShort   = "Update a live stream"
 	updateLong    = "Update a live stream. Use this tool to update an existing live stream's settings."
-	updateExample = `# Update live stream title
-yutu liveStream update --id stream123 --title "New Title"
-# Update live stream CDN settings
-yutu liveStream update --id stream123 --resolution 1080p --frameRate 60fps`
+	updateExample = `  # Update live stream title
+  yutu liveStream update --id stream123 --title "New Title"
+  # Update live stream CDN settings
+  yutu liveStream update --id stream123 --resolution 1080p --frameRate 60fps`
 )
 
 var updateInSchema = &jsonschema.Schema{

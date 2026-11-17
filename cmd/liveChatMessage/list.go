@@ -20,10 +20,10 @@ const (
 	listTool    = "liveChatMessage-list"
 	listShort   = "List live chat messages"
 	listLong    = "List live chat messages. Use this tool to list messages in a live chat."
-	listExample = `# List messages for a live chat
-yutu liveChatMessage list --liveChatId abc123
-# List messages with limit
-yutu liveChatMessage list --liveChatId abc123 --maxResults 10`
+	listExample = `  # List messages for a live chat
+  yutu liveChatMessage list --liveChatId abc123
+  # List messages with limit
+  yutu liveChatMessage list --liveChatId abc123 --maxResults 10`
 )
 
 var listInSchema = &jsonschema.Schema{

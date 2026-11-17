@@ -24,10 +24,10 @@ const (
 	deleteConfirm  = "Delete playlist item(s): %s"
 	deleteShort    = "Delete playlist items"
 	deleteLong     = "Delete playlist items. Use this tool to delete playlist items by IDs."
-	deleteExample  = `# Delete a playlist item by ID
-yutu playlistItem delete --ids abc123
-# Delete multiple playlist items
-yutu playlistItem delete --ids abc123,def456`
+	deleteExample  = `  # Delete a playlist item by ID
+  yutu playlistItem delete --ids abc123
+  # Delete multiple playlist items
+  yutu playlistItem delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

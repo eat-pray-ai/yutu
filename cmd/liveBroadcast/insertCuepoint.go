@@ -24,10 +24,10 @@ const (
 	insertCuepointConfirm = "Insert cuepoint into live broadcast(s) %s"
 	insertCuepointShort   = "Insert a cuepoint into a live broadcast"
 	insertCuepointLong    = "Insert a cuepoint into a live broadcast. Use this tool to insert an ad break cuepoint into a currently live broadcast."
-	insertCuepointExample = `# Insert an ad cuepoint of 30 seconds
-yutu liveBroadcast insertCuepoint --ids broadcast123 --cueType cueTypeAd --cueDurationSecs 30
-# Insert a cuepoint with offset
-yutu liveBroadcast insertCuepoint --ids broadcast123 --cueType cueTypeAd --cueInsertionOffsetMs 5000`
+	insertCuepointExample = `  # Insert an ad cuepoint of 30 seconds
+  yutu liveBroadcast insertCuepoint --ids broadcast123 --cueType cueTypeAd --cueDurationSecs 30
+  # Insert a cuepoint with offset
+  yutu liveBroadcast insertCuepoint --ids broadcast123 --cueType cueTypeAd --cueInsertionOffsetMs 5000`
 )
 
 var insertCuepointInSchema = &jsonschema.Schema{

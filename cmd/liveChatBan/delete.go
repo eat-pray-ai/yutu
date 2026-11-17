@@ -24,10 +24,10 @@ const (
 	deleteIdsUsage = "IDs of the live chat bans to delete"
 	deleteShort    = "Delete live chat bans"
 	deleteLong     = "Delete live chat bans. Use this tool to unban users from a live chat by ban IDs."
-	deleteExample  = `# Delete a live chat ban by ID
-yutu liveChatBan delete --ids abc123
-# Delete multiple live chat bans
-yutu liveChatBan delete --ids abc123,def456`
+	deleteExample  = `  # Delete a live chat ban by ID
+  yutu liveChatBan delete --ids abc123
+  # Delete multiple live chat bans
+  yutu liveChatBan delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

@@ -20,12 +20,12 @@ const (
 	downloadIdUsage = "ID of the caption to download"
 	downloadShort   = "Download a caption"
 	downloadLong    = "Download a caption. Use this tool to download a caption from a video."
-	downloadExample = `# Download a caption as SRT
-yutu caption download --id abc123 --file subtitle.srt
-# Download a caption as VTT
-yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
-# Download a caption translated to French
-yutu caption download --id abc123 --file subtitle.srt --tlang fr`
+	downloadExample = `  # Download a caption as SRT
+  yutu caption download --id abc123 --file subtitle.srt
+  # Download a caption as VTT
+  yutu caption download --id abc123 --file subtitle.vtt --tfmt vtt
+  # Download a caption translated to French
+  yutu caption download --id abc123 --file subtitle.srt --tlang fr`
 )
 
 var downloadInSchema = &jsonschema.Schema{

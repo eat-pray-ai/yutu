@@ -22,8 +22,8 @@ const (
 	deleteConfirm = "Delete third-party link(s): %s"
 	deleteShort   = "Delete third-party links"
 	deleteLong    = "Delete third-party links. Use this tool to delete third-party links."
-	deleteExample = `# Delete a third-party link
-yutu thirdPartyLink delete --linkingToken abc123 --type channelToStoreLink`
+	deleteExample = `  # Delete a third-party link
+  yutu thirdPartyLink delete --linkingToken abc123 --type channelToStoreLink`
 )
 
 var deleteInSchema = &jsonschema.Schema{

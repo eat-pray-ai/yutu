@@ -23,10 +23,10 @@ const (
 	insertConfirm = "Ban user %s in live chat %s"
 	insertShort   = "Create a live chat ban"
 	insertLong    = "Create a live chat ban. Use this tool to ban a user from a live chat."
-	insertExample = `# Ban a user permanently
-yutu liveChatBan insert --liveChatId abc123 --bannedUserChannelId UC_xyz --banType permanent
-# Ban a user temporarily for 5 minutes
-yutu liveChatBan insert --liveChatId abc123 --bannedUserChannelId UC_xyz --banType temporary --banDurationSeconds 300`
+	insertExample = `  # Ban a user permanently
+  yutu liveChatBan insert --liveChatId abc123 --bannedUserChannelId UC_xyz --banType permanent
+  # Ban a user temporarily for 5 minutes
+  yutu liveChatBan insert --liveChatId abc123 --bannedUserChannelId UC_xyz --banType temporary --banDurationSeconds 300`
 )
 
 var insertInSchema = &jsonschema.Schema{

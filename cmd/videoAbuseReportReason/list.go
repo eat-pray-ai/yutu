@@ -20,8 +20,8 @@ const (
 	listTool    = "videoAbuseReportReason-list"
 	listShort   = "List video abuse report reasons"
 	listLong    = "List video abuse report reasons. Use this tool to list available abuse report reasons."
-	listExample = `# List video abuse report reasons
-yutu videoAbuseReportReason list --hl en`
+	listExample = `  # List video abuse report reasons
+  yutu videoAbuseReportReason list --hl en`
 )
 
 var listInSchema = &jsonschema.Schema{

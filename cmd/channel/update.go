@@ -25,14 +25,14 @@ const (
 	updateConfirm = "Update channel: %s"
 	updateShort   = "Update a channel"
 	updateLong    = "Update a channel. Use this tool to update a channel."
-	updateExample = `# Update channel description
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
-# Update channel title and country
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
-# Update channel default language
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en
-# Update channel keywords
-yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --keywords 'AI agents,MCP'`
+	updateExample = `  # Update channel description
+  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --description 'New description'
+  # Update channel title and country
+  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --title 'New Title' --country US
+  # Update channel default language
+  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --defaultLanguage en
+  # Update channel keywords
+  yutu channel update --id UC_x5XG1OV2P6uZZ5FSM9Ttw --keywords 'AI agents,MCP'`
 )
 
 var updateInSchema = &jsonschema.Schema{

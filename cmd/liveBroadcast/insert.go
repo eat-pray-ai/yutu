@@ -23,10 +23,10 @@ const (
 	insertConfirm = "Create live broadcast: %s"
 	insertShort   = "Create a live broadcast"
 	insertLong    = "Create a live broadcast. Use this tool to create a live broadcast for the authenticated user."
-	insertExample = `# Create a public live broadcast
-yutu liveBroadcast insert --title "My Broadcast" --privacyStatus public --scheduledStartTime 2026-01-01T00:00:00Z
-# Create a private broadcast with description
-yutu liveBroadcast insert --title "Test Stream" --description "Testing" --privacyStatus private --scheduledStartTime 2026-01-01T00:00:00Z`
+	insertExample = `  # Create a public live broadcast
+  yutu liveBroadcast insert --title "My Broadcast" --privacyStatus public --scheduledStartTime 2026-01-01T00:00:00Z
+  # Create a private broadcast with description
+  yutu liveBroadcast insert --title "Test Stream" --description "Testing" --privacyStatus private --scheduledStartTime 2026-01-01T00:00:00Z`
 )
 
 var insertInSchema = &jsonschema.Schema{

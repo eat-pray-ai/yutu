@@ -23,8 +23,8 @@ const (
 	updateConfirm = "Update playlist image: %s"
 	updateShort   = "Update a playlist image"
 	updateLong    = "Update a playlist image. Use this tool to update a playlist image."
-	updateExample = `# Update a playlist image
-yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152`
+	updateExample = `  # Update a playlist image
+  yutu playlistImage update --playlistId PLxxx --type hero --width 2048 --height 1152`
 )
 
 var updateInSchema = &jsonschema.Schema{

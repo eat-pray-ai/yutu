@@ -21,14 +21,14 @@ const (
 	listIdsUsage = "Return the channels with the specified Ids"
 	listShort    = "List channels"
 	listLong     = "List channels. Use this tool to list channels."
-	listExample  = `# List my channel info
-yutu channel list --for mine
-# List channel by handle
-yutu channel list --forHandle @GoogleDevelopers
-# List channel by ID in JSON format
-yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
-# List channels in table format
-yutu channel list --maxResults 10 --output table`
+	listExample  = `  # List my channel info
+  yutu channel list --for mine
+  # List channel by handle
+  yutu channel list --forHandle @GoogleDevelopers
+  # List channel by ID in JSON format
+  yutu channel list --ids UC_x5XG1OV2P6uZZ5FSM9Ttw --output json
+  # List channels in table format
+  yutu channel list --maxResults 10 --output table`
 )
 
 var listInSchema = &jsonschema.Schema{

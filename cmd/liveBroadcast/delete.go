@@ -24,10 +24,10 @@ const (
 	deleteIdsUsage = "IDs of the live broadcasts to delete"
 	deleteShort    = "Delete live broadcasts"
 	deleteLong     = "Delete live broadcasts. Use this tool to delete live broadcasts by their IDs."
-	deleteExample  = `# Delete a live broadcast by ID
-yutu liveBroadcast delete --ids broadcast123
-# Delete multiple live broadcasts
-yutu liveBroadcast delete --ids broadcast123,broadcast456`
+	deleteExample  = `  # Delete a live broadcast by ID
+  yutu liveBroadcast delete --ids broadcast123
+  # Delete multiple live broadcasts
+  yutu liveBroadcast delete --ids broadcast123,broadcast456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

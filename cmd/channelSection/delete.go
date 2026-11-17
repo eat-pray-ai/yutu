@@ -24,10 +24,10 @@ const (
 	deleteConfirm  = "Delete channel section(s): %s"
 	deleteShort    = "Delete channel sections"
 	deleteLong     = "Delete channel sections. Use this tool to delete channel sections by IDs."
-	deleteExample  = `# Delete a channel section by ID
-yutu channelSection delete --ids abc123
-# Delete multiple channel sections
-yutu channelSection delete --ids abc123,def456`
+	deleteExample  = `  # Delete a channel section by ID
+  yutu channelSection delete --ids abc123
+  # Delete multiple channel sections
+  yutu channelSection delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

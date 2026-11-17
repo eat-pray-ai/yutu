@@ -24,10 +24,10 @@ const (
 	insertConfirm  = "Create comment on parent %s"
 	insertShort    = "Create a comment"
 	insertLong     = "Create a comment. Use this tool to create a comment on a video."
-	insertExample  = `# Reply to a comment
-yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
-# Reply with rating enabled
-yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate`
+	insertExample  = `  # Reply to a comment
+  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Hello'
+  # Reply with rating enabled
+  yutu comment insert --channelId UC_x5X --videoId dQw4w9 --authorChannelId UA_x5X --parentId UgyXXX --textOriginal 'Reply' --canRate`
 )
 
 var insertInSchema = &jsonschema.Schema{

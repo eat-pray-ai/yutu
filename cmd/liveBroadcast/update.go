@@ -25,10 +25,10 @@ const (
 	updateIdUsage = "ID of the live broadcast to update"
 	updateShort   = "Update a live broadcast"
 	updateLong    = "Update a live broadcast. Use this tool to update an existing live broadcast's settings."
-	updateExample = `# Update live broadcast title
-yutu liveBroadcast update --id broadcast123 --title "New Title"
-# Update privacy status
-yutu liveBroadcast update --id broadcast123 --privacyStatus unlisted`
+	updateExample = `  # Update live broadcast title
+  yutu liveBroadcast update --id broadcast123 --title "New Title"
+  # Update privacy status
+  yutu liveBroadcast update --id broadcast123 --privacyStatus unlisted`
 )
 
 var updateInSchema = &jsonschema.Schema{

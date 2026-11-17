@@ -23,10 +23,10 @@ const (
 	updateConfirm = "Update third-party link: %s"
 	updateShort   = "Update a third-party link"
 	updateLong    = "Update a third-party link. Use this tool to update the status or type of a link between a YouTube channel and a third-party service."
-	updateExample = `# Update a third-party link status
-yutu thirdPartyLink update --linkingToken abc123 --linkStatus linked --parts snippet,status
-# Update a third-party link type
-yutu thirdPartyLink update --linkingToken abc123 --type channelToStoreLink --parts snippet,status`
+	updateExample = `  # Update a third-party link status
+  yutu thirdPartyLink update --linkingToken abc123 --linkStatus linked --parts snippet,status
+  # Update a third-party link type
+  yutu thirdPartyLink update --linkingToken abc123 --type channelToStoreLink --parts snippet,status`
 )
 
 var updateInSchema = &jsonschema.Schema{

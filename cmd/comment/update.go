@@ -25,12 +25,12 @@ const (
 	updateConfirm = "Update comment: %s"
 	updateShort   = "Update a comment"
 	updateLong    = "Update a comment. Use this tool to update a comment."
-	updateExample = `# Update comment text
-yutu comment update --id abc123 --textOriginal 'Updated comment'
-# Like a comment
-yutu comment update --id abc123 --viewerRating like
-# Update comment text with rating enabled
-yutu comment update --id abc123 --textOriginal 'New text' --canRate`
+	updateExample = `  # Update comment text
+  yutu comment update --id abc123 --textOriginal 'Updated comment'
+  # Like a comment
+  yutu comment update --id abc123 --viewerRating like
+  # Update comment text with rating enabled
+  yutu comment update --id abc123 --textOriginal 'New text' --canRate`
 )
 
 var updateInSchema = &jsonschema.Schema{

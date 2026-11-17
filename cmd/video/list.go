@@ -22,14 +22,14 @@ const (
 	listMrUsage  = "Return videos liked/disliked by the authenticated user"
 	listShort    = "List videos"
 	listLong     = "List videos. Use this tool to list videos."
-	listExample  = `# List a video by ID
-yutu video list --ids IBju0NwjQRc
-# List multiple videos in JSON format
-yutu video list --ids IBju0NwjQRc,wZ9z3FUuNvQ --output json
-# List most popular videos by region
-yutu video list --chart mostPopular --regionCode US --maxResults 10
-# List my liked videos
-yutu video list --myRating like --output yaml`
+	listExample  = `  # List a video by ID
+  yutu video list --ids IBju0NwjQRc
+  # List multiple videos in JSON format
+  yutu video list --ids IBju0NwjQRc,wZ9z3FUuNvQ --output json
+  # List most popular videos by region
+  yutu video list --chart mostPopular --regionCode US --maxResults 10
+  # List my liked videos
+  yutu video list --myRating like --output yaml`
 )
 
 var listInSchema = &jsonschema.Schema{

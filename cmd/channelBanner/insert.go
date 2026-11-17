@@ -23,10 +23,10 @@ const (
 	insertConfirm = "Upload channel banner %s for channel %s"
 	insertShort   = "Upload a channel banner"
 	insertLong    = "Upload a channel banner. Use this tool to upload a channel banner."
-	insertExample = `# Upload a channel banner
-yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
-# Upload a channel banner with JSON output
-yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
+	insertExample = `  # Upload a channel banner
+  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.jpg
+  # Upload a channel banner with JSON output
+  yutu channelBanner insert --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file banner.png --output json`
 )
 
 var insertInSchema = &jsonschema.Schema{

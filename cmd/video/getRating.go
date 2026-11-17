@@ -21,10 +21,10 @@ const (
 	grIdsUsage       = "IDs of the videos to get the rating for"
 	getRatingShort   = "Get video ratings"
 	getRatingLong    = "Get video ratings. Use this tool to get video ratings by IDs."
-	getRatingExample = `# Get rating of a video
-yutu video getRating --ids dQw4w9WgXcQ
-# Get ratings of multiple videos in JSON format
-yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json`
+	getRatingExample = `  # Get rating of a video
+  yutu video getRating --ids dQw4w9WgXcQ
+  # Get ratings of multiple videos in JSON format
+  yutu video getRating --ids dQw4w9WgXcQ,abc123 --output json`
 )
 
 var getRatingInSchema = &jsonschema.Schema{

@@ -24,10 +24,10 @@ const (
 	deleteConfirm  = "Delete subscription(s): %s"
 	deleteShort    = "Delete subscriptions"
 	deleteLong     = "Delete subscriptions. Use this tool to delete subscriptions by IDs."
-	deleteExample  = `# Delete a subscription by ID
-yutu subscription delete --ids abc123
-# Delete multiple subscriptions
-yutu subscription delete --ids abc123,def456`
+	deleteExample  = `  # Delete a subscription by ID
+  yutu subscription delete --ids abc123
+  # Delete multiple subscriptions
+  yutu subscription delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

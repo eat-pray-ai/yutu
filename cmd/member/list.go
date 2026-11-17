@@ -20,10 +20,10 @@ const (
 	listTool    = "member-list"
 	listShort   = "List channel members"
 	listLong    = "List channel members. Use this tool to list information about channel members."
-	listExample = `# List all current members
-yutu member list --mode all_current
-# List members with limit
-yutu member list --maxResults 10`
+	listExample = `  # List all current members
+  yutu member list --mode all_current
+  # List members with limit
+  yutu member list --maxResults 10`
 )
 
 var listInSchema = &jsonschema.Schema{

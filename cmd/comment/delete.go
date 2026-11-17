@@ -23,10 +23,10 @@ const (
 	deleteConfirm = "Delete comment(s): %s"
 	deleteShort   = "Delete comments"
 	deleteLong    = "Delete comments. Use this tool to delete comments by IDs."
-	deleteExample = `# Delete a comment by ID
-yutu comment delete --ids abc123
-# Delete multiple comments
-yutu comment delete --ids abc123,def456`
+	deleteExample = `  # Delete a comment by ID
+  yutu comment delete --ids abc123
+  # Delete multiple comments
+  yutu comment delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

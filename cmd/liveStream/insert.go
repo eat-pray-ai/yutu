@@ -23,10 +23,10 @@ const (
 	insertConfirm = "Create live stream: %s"
 	insertShort   = "Create a live stream"
 	insertLong    = "Create a live stream. Use this tool to create a live stream."
-	insertExample = `# Create a live stream with RTMP at 1080p
-yutu liveStream insert --title "My Stream" --ingestionType rtmp --resolution 1080p --frameRate 60fps
-# Create a live stream with description
-yutu liveStream insert --title "Gaming Stream" --description "Live gaming session" --ingestionType rtmp --resolution 720p`
+	insertExample = `  # Create a live stream with RTMP at 1080p
+  yutu liveStream insert --title "My Stream" --ingestionType rtmp --resolution 1080p --frameRate 60fps
+  # Create a live stream with description
+  yutu liveStream insert --title "Gaming Stream" --description "Live gaming session" --ingestionType rtmp --resolution 720p`
 )
 
 var insertInSchema = &jsonschema.Schema{

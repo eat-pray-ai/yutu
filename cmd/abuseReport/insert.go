@@ -23,10 +23,10 @@ const (
 	insertConfirm = "Create abuse report for %s %s"
 	insertShort   = "Create an abuse report"
 	insertLong    = "Create an abuse report. Use this tool to report abusive content on YouTube such as spam, harassment, or violent content."
-	insertExample = `# Report a video as spam
-yutu abuseReport insert --abuseTypes spam --subjectId VIDEO_ID --subjectTypeId video --description "This video is spam"
-# Report a comment as harassment
-yutu abuseReport insert --abuseTypes harassment --subjectId COMMENT_ID --subjectTypeId comment --description "Harassment in comment"`
+	insertExample = `  # Report a video as spam
+  yutu abuseReport insert --abuseTypes spam --subjectId VIDEO_ID --subjectTypeId video --description "This video is spam"
+  # Report a comment as harassment
+  yutu abuseReport insert --abuseTypes harassment --subjectId COMMENT_ID --subjectTypeId comment --description "Harassment in comment"`
 )
 
 var insertInSchema = &jsonschema.Schema{

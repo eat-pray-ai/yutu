@@ -23,12 +23,12 @@ const (
 	insertConfirm = "Upload playlist image %s for playlist %s"
 	insertShort   = "Upload a playlist image"
 	insertLong    = "Upload a playlist image. Use this tool to upload a playlist image."
-	insertExample = `# Insert a playlist cover image
-yutu playlistImage insert --file cover.jpg --playlistId PLxxx
-# Insert a hero image
-yutu playlistImage insert --file cover.png --playlistId PLxxx --type hero
-# Insert an image with custom dimensions
-yutu playlistImage insert --file cover.jpg --playlistId PLxxx --width 2048 --height 1152`
+	insertExample = `  # Insert a playlist cover image
+  yutu playlistImage insert --file cover.jpg --playlistId PLxxx
+  # Insert a hero image
+  yutu playlistImage insert --file cover.png --playlistId PLxxx --type hero
+  # Insert an image with custom dimensions
+  yutu playlistImage insert --file cover.jpg --playlistId PLxxx --width 2048 --height 1152`
 )
 
 var insertInSchema = &jsonschema.Schema{

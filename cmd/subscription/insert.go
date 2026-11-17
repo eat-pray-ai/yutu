@@ -24,10 +24,10 @@ const (
 	insertConfirm  = "Subscribe to channel: %s"
 	insertShort    = "Subscribe to a channel"
 	insertLong     = "Subscribe to a channel. Use this tool to subscribe to a YouTube channel."
-	insertExample  = `# Subscribe to a channel
-yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
-# Subscribe with a title
-yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'`
+	insertExample  = `  # Subscribe to a channel
+  yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw
+  # Subscribe with a title
+  yutu subscription insert --subscriberChannelId UC_abc --channelId UC_x5X --title 'Google Developers'`
 )
 
 var insertInSchema = &jsonschema.Schema{

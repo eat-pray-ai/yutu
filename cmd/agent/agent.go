@@ -36,15 +36,15 @@ import (
 const (
 	short   = "Start an Agent to automate YouTube workflows"
 	long    = "Start an Agent to automate YouTube workflows."
-	example = `# Gemini(compatible) (default)
-yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
-yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
-# OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
-yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
-yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
-# Anthropic(compatible)
-yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
-yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"`
+	example = `  # Gemini(compatible) (default)
+  yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
+  yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+  # OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
+  yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
+  yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
+  # Anthropic(compatible)
+  yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
+  yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"`
 	argsUsage        = "Launcher arguments as a single string"
 	providerUsage    = "LLM provider: google, openai or anthropic"
 	modelUsage       = "Model name"

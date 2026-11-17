@@ -26,14 +26,14 @@ const (
 	updateConfirm   = "Update video: %s"
 	updateShort     = "Update a video"
 	updateLong      = "Update a video. Use this tool to update a video."
-	updateExample   = `# Update video title
-yutu video update --id dQw4w9WgXcQ --title 'New Title'
-# Update video description and privacy
-yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
-# Schedule a private video to publish later
-yutu video update --id dQw4w9WgXcQ --privacy private --publishAt 2026-08-18T15:00:00Z
-# Update video tags and category
-yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
+	updateExample   = `  # Update video title
+  yutu video update --id dQw4w9WgXcQ --title 'New Title'
+  # Update video description and privacy
+  yutu video update --id dQw4w9WgXcQ --description 'Updated description' --privacy public
+  # Schedule a private video to publish later
+  yutu video update --id dQw4w9WgXcQ --privacy private --publishAt 2026-08-18T15:00:00Z
+  # Update video tags and category
+  yutu video update --id dQw4w9WgXcQ --tags 'music,pop,2024' --categoryId 10`
 )
 
 var updateInSchema = &jsonschema.Schema{

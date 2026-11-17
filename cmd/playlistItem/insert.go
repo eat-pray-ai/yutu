@@ -24,10 +24,10 @@ const (
 	insertConfirm  = "Add playlist item to playlist %s"
 	insertShort    = "Add a playlist item"
 	insertLong     = "Add a playlist item. Use this tool to add a playlist item to a playlist."
-	insertExample  = `# Add a video to a playlist
-yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
-# Add a video to a playlist with privacy setting
-yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public`
+	insertExample  = `  # Add a video to a playlist
+  yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9WgXcQ
+  # Add a video to a playlist with privacy setting
+  yutu playlistItem insert --kind video --playlistId PLxxx --channelId UC_x5X --kVideoId dQw4w9 --privacy public`
 )
 
 var insertInSchema = &jsonschema.Schema{

@@ -22,12 +22,12 @@ const (
 	setConfirm = "Set watermark %s for channel %s"
 	setShort   = "Set a channel watermark"
 	setLong    = "Set a channel watermark. Use this tool to set a channel watermark."
-	setExample = `# Set a watermark for a channel
-yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
-# Set a watermark with position and offset
-yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
-# Set a watermark with duration
-yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
+	setExample = `  # Set a watermark for a channel
+  yutu watermark set --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw --file watermark.png
+  # Set a watermark with position and offset
+  yutu watermark set --channelId UC_x5X --file logo.png --inVideoPosition bottomRight --offsetType offsetFromEnd --offsetMs 1000
+  # Set a watermark with duration
+  yutu watermark set --channelId UC_x5X --file logo.png --durationMs 5000 --offsetMs 2000`
 )
 
 var setInSchema = &jsonschema.Schema{

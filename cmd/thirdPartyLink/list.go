@@ -20,12 +20,12 @@ const (
 	listTool    = "thirdPartyLink-list"
 	listShort   = "List third-party links"
 	listLong    = "List third-party links. Use this tool to list links between a YouTube channel and a third-party service."
-	listExample = `# List all third-party links
-yutu thirdPartyLink list --parts snippet,status
-# List links by linking token
-yutu thirdPartyLink list --linkingToken abc123 --parts snippet,status
-# List links by type
-yutu thirdPartyLink list --type channelToStoreLink --parts snippet,status`
+	listExample = `  # List all third-party links
+  yutu thirdPartyLink list --parts snippet,status
+  # List links by linking token
+  yutu thirdPartyLink list --linkingToken abc123 --parts snippet,status
+  # List links by type
+  yutu thirdPartyLink list --type channelToStoreLink --parts snippet,status`
 )
 
 var listInSchema = &jsonschema.Schema{

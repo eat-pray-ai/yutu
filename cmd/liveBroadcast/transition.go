@@ -25,10 +25,10 @@ const (
 	transitionBsUsage = "Broadcast status to transition to (testing, live, complete)"
 	transitionShort   = "Transition a live broadcast"
 	transitionLong    = "Transition a live broadcast. Use this tool to change the status of a live broadcast (e.g., go live, end broadcast)."
-	transitionExample = `# Transition a broadcast to live
-yutu liveBroadcast transition --ids broadcast123 --broadcastStatus live
-# End a broadcast
-yutu liveBroadcast transition --ids broadcast123 --broadcastStatus complete`
+	transitionExample = `  # Transition a broadcast to live
+  yutu liveBroadcast transition --ids broadcast123 --broadcastStatus live
+  # End a broadcast
+  yutu liveBroadcast transition --ids broadcast123 --broadcastStatus complete`
 )
 
 var transitionInSchema = &jsonschema.Schema{

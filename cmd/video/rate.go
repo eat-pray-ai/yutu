@@ -25,12 +25,12 @@ const (
 	rateConfirm  = "Rate video(s) %s as %s"
 	rateShort    = "Rate a video"
 	rateLong     = "Rate a video. Use this tool to rate a video."
-	rateExample  = `# Like a video
-yutu video rate --ids dQw4w9WgXcQ --rating like
-# Dislike multiple videos
-yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
-# Remove rating from a video
-yutu video rate --ids dQw4w9WgXcQ --rating none`
+	rateExample  = `  # Like a video
+  yutu video rate --ids dQw4w9WgXcQ --rating like
+  # Dislike multiple videos
+  yutu video rate --ids dQw4w9WgXcQ,abc123 --rating dislike
+  # Remove rating from a video
+  yutu video rate --ids dQw4w9WgXcQ --rating none`
 )
 
 var rateInSchema = &jsonschema.Schema{

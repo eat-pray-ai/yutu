@@ -24,10 +24,10 @@ const (
 	deleteConfirm  = "Delete caption(s): %s"
 	deleteShort    = "Delete captions"
 	deleteLong     = "Delete captions. Use this tool to delete captions of a video by IDs."
-	deleteExample  = `# Delete a caption by ID
-yutu caption delete --ids abc123
-# Delete multiple captions
-yutu caption delete --ids abc123,def456`
+	deleteExample  = `  # Delete a caption by ID
+  yutu caption delete --ids abc123
+  # Delete multiple captions
+  yutu caption delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

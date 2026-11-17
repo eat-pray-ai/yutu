@@ -22,8 +22,8 @@ const (
 	unsetConfirm = "Unset watermark for channel %s"
 	unsetShort   = "Unset a channel watermark"
 	unsetLong    = "Unset a channel watermark. Use this tool to unset a channel watermark."
-	unsetExample = `# Unset watermark for a channel
-yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw`
+	unsetExample = `  # Unset watermark for a channel
+  yutu watermark unset --channelId UC_x5XG1OV2P6uZZ5FSM9Ttw`
 )
 
 var unsetInSchema = &jsonschema.Schema{

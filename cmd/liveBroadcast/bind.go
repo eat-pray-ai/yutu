@@ -24,10 +24,10 @@ const (
 	bindConfirm = "Bind live broadcast(s) %s to stream %s"
 	bindShort   = "Bind a live broadcast to a stream"
 	bindLong    = "Bind a live broadcast to a stream. Use this tool to bind or unbind a live stream to/from a live broadcast."
-	bindExample = `# Bind a broadcast to a stream
-yutu liveBroadcast bind --ids broadcast123 --streamId stream456
-# Unbind a broadcast (omit streamId)
-yutu liveBroadcast bind --ids broadcast123`
+	bindExample = `  # Bind a broadcast to a stream
+  yutu liveBroadcast bind --ids broadcast123 --streamId stream456
+  # Unbind a broadcast (omit streamId)
+  yutu liveBroadcast bind --ids broadcast123`
 )
 
 var bindInSchema = &jsonschema.Schema{

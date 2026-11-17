@@ -20,10 +20,10 @@ const (
 	listTool    = "playlistImage-list"
 	listShort   = "List playlist images"
 	listLong    = "List playlist images. Use this tool to list playlist images."
-	listExample = `# List images of a playlist
-yutu playlistImage list --parent PLxxx
-# List playlist images with limit in JSON format
-yutu playlistImage list --parent PLxxx --maxResults 10 --output json`
+	listExample = `  # List images of a playlist
+  yutu playlistImage list --parent PLxxx
+  # List playlist images with limit in JSON format
+  yutu playlistImage list --parent PLxxx --maxResults 10 --output json`
 )
 
 var listInSchema = &jsonschema.Schema{

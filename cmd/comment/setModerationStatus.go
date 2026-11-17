@@ -24,12 +24,12 @@ const (
 	smsConfirm = "Set moderation status of comment(s) %s to %s"
 	smsShort   = "Set comment moderation status"
 	smsLong    = "Set comment moderation status. Use this tool to set comment moderation status."
-	smsExample = `# Publish a held comment
-yutu comment setModerationStatus --ids abc123 --moderationStatus published
-# Hold multiple comments for review
-yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview
-# Reject a comment and ban author
-yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor`
+	smsExample = `  # Publish a held comment
+  yutu comment setModerationStatus --ids abc123 --moderationStatus published
+  # Hold multiple comments for review
+  yutu comment setModerationStatus --ids abc123,def456 --moderationStatus heldForReview
+  # Reject a comment and ban author
+  yutu comment setModerationStatus --ids abc123 --moderationStatus rejected --banAuthor`
 )
 
 var setModerationStatusInSchema = &jsonschema.Schema{

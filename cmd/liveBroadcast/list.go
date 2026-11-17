@@ -21,12 +21,12 @@ const (
 	listIdsUsage = "Return live broadcasts with the given ids"
 	listShort    = "List live broadcasts"
 	listLong     = "List live broadcasts. Use this tool to list live broadcasts for the authenticated user."
-	listExample  = `# List my live broadcasts
-yutu liveBroadcast list --mine
-# List live broadcasts by ID
-yutu liveBroadcast list --ids broadcast1,broadcast2
-# List active live broadcasts
-yutu liveBroadcast list --mine --broadcastStatus active --output json`
+	listExample  = `  # List my live broadcasts
+  yutu liveBroadcast list --mine
+  # List live broadcasts by ID
+  yutu liveBroadcast list --ids broadcast1,broadcast2
+  # List active live broadcasts
+  yutu liveBroadcast list --mine --broadcastStatus active --output json`
 )
 
 var listInSchema = &jsonschema.Schema{

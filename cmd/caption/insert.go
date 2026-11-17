@@ -23,12 +23,12 @@ const (
 	insertConfirm = "Upload caption for video %s with %s"
 	insertShort   = "Upload a caption"
 	insertLong    = "Upload a caption. Use this tool to upload a caption to a video."
-	insertExample = `# Insert a caption to a video
-yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
-# Insert a caption with language and name
-yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
-# Insert a standard caption and publish immediately
-yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --isDraft=false`
+	insertExample = `  # Insert a caption to a video
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ
+  # Insert a caption with language and name
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --language en --name English
+  # Insert a standard caption and publish immediately
+  yutu caption insert --file subtitle.srt --videoId dQw4w9WgXcQ --isDraft=false`
 )
 
 var insertInSchema = &jsonschema.Schema{

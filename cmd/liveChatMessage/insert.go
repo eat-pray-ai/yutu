@@ -23,8 +23,8 @@ const (
 	insertConfirm = "Send message to live chat %s"
 	insertShort   = "Send a live chat message"
 	insertLong    = "Send a live chat message. Use this tool to post a text message to a live chat."
-	insertExample = `# Send a message to a live chat
-yutu liveChatMessage insert --liveChatId abc123 --messageText "Hello everyone!"`
+	insertExample = `  # Send a message to a live chat
+  yutu liveChatMessage insert --liveChatId abc123 --messageText "Hello everyone!"`
 )
 
 var insertInSchema = &jsonschema.Schema{

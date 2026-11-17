@@ -24,10 +24,10 @@ const (
 	deleteIdsUsage = "IDs of the live chat moderators to delete"
 	deleteShort    = "Delete live chat moderators"
 	deleteLong     = "Delete live chat moderators. Use this tool to remove moderators from a live chat by their IDs."
-	deleteExample  = `# Delete a live chat moderator by ID
-yutu liveChatModerator delete --ids abc123
-# Delete multiple live chat moderators
-yutu liveChatModerator delete --ids abc123,def456`
+	deleteExample  = `  # Delete a live chat moderator by ID
+  yutu liveChatModerator delete --ids abc123
+  # Delete multiple live chat moderators
+  yutu liveChatModerator delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

@@ -24,8 +24,8 @@ const (
 	transitionConfirm = "Transition live chat message(s) %s to %s"
 	transitionShort   = "Transition a live chat message"
 	transitionLong    = "Transition a durable live chat event. Use this tool to change the status of a live chat message (e.g., close a poll)."
-	transitionExample = `# Transition a live chat message to closed
-yutu liveChatMessage transition --ids abc123 --status closed`
+	transitionExample = `  # Transition a live chat message to closed
+  yutu liveChatMessage transition --ids abc123 --status closed`
 )
 
 var transitionInSchema = &jsonschema.Schema{

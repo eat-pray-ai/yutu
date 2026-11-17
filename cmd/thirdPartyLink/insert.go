@@ -23,8 +23,8 @@ const (
 	insertConfirm = "Create third-party link: %s"
 	insertShort   = "Create a third-party link"
 	insertLong    = "Create a third-party link. Use this tool to create a third-party link."
-	insertExample = `# Insert a new third-party link
-yutu thirdPartyLink insert --linkingToken abc123 --type channelToStoreLink --linkStatus pending --parts snippet,status`
+	insertExample = `  # Insert a new third-party link
+  yutu thirdPartyLink insert --linkingToken abc123 --type channelToStoreLink --linkStatus pending --parts snippet,status`
 )
 
 var insertInSchema = &jsonschema.Schema{

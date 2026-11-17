@@ -24,10 +24,10 @@ const (
 	masConfirm = "Mark comment(s) %s as spam"
 	masShort   = "Mark comments as spam"
 	masLong    = "Mark comments as spam. Use this tool to mark comments as spam."
-	masExample = `# Mark a comment as spam
-yutu comment markAsSpam --ids abc123
-# Mark multiple comments as spam
-yutu comment markAsSpam --ids abc123,def456`
+	masExample = `  # Mark a comment as spam
+  yutu comment markAsSpam --ids abc123
+  # Mark multiple comments as spam
+  yutu comment markAsSpam --ids abc123,def456`
 )
 
 var markAsSpamInSchema = &jsonschema.Schema{

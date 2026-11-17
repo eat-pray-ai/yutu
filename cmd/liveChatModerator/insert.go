@@ -23,8 +23,8 @@ const (
 	insertConfirm = "Add moderator %s to live chat %s"
 	insertShort   = "Add a live chat moderator"
 	insertLong    = "Add a live chat moderator. Use this tool to add a moderator to a live chat."
-	insertExample = `# Add a moderator to a live chat
-yutu liveChatModerator insert --liveChatId abc123 --moderatorChannelId UC_xyz`
+	insertExample = `  # Add a moderator to a live chat
+  yutu liveChatModerator insert --liveChatId abc123 --moderatorChannelId UC_xyz`
 )
 
 var insertInSchema = &jsonschema.Schema{

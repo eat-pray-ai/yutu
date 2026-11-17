@@ -24,10 +24,10 @@ const (
 	deleteIdsUsage = "IDs of the live chat messages to delete"
 	deleteShort    = "Delete live chat messages"
 	deleteLong     = "Delete live chat messages. Use this tool to remove messages from a live chat by their IDs."
-	deleteExample  = `# Delete a live chat message by ID
-yutu liveChatMessage delete --ids abc123
-# Delete multiple live chat messages
-yutu liveChatMessage delete --ids abc123,def456`
+	deleteExample  = `  # Delete a live chat message by ID
+  yutu liveChatMessage delete --ids abc123
+  # Delete multiple live chat messages
+  yutu liveChatMessage delete --ids abc123,def456`
 )
 
 var deleteInSchema = &jsonschema.Schema{

@@ -24,10 +24,10 @@ const (
 	deleteConfirm  = "Delete video(s): %s"
 	deleteShort    = "Delete videos"
 	deleteLong     = "Delete videos. Use this tool to delete videos by IDs."
-	deleteExample  = `# Delete a video by ID
-yutu video delete --ids dQw4w9WgXcQ
-# Delete multiple videos
-yutu video delete --ids dQw4w9WgXcQ,abc123`
+	deleteExample  = `  # Delete a video by ID
+  yutu video delete --ids dQw4w9WgXcQ
+  # Delete multiple videos
+  yutu video delete --ids dQw4w9WgXcQ,abc123`
 )
 
 var deleteInSchema = &jsonschema.Schema{

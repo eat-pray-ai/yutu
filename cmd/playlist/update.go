@@ -25,12 +25,12 @@ const (
 	updateConfirm = "Update playlist: %s"
 	updateShort   = "Update a playlist"
 	updateLong    = "Update a playlist. Use this tool to update a playlist."
-	updateExample = `# Update playlist title
-yutu playlist update --id PLxxx --title 'Updated Title'
-# Update playlist description and privacy
-yutu playlist update --id PLxxx --description 'New description' --privacy public
-# Update playlist tags
-yutu playlist update --id PLxxx --tags 'music,pop,2024'`
+	updateExample = `  # Update playlist title
+  yutu playlist update --id PLxxx --title 'Updated Title'
+  # Update playlist description and privacy
+  yutu playlist update --id PLxxx --description 'New description' --privacy public
+  # Update playlist tags
+  yutu playlist update --id PLxxx --tags 'music,pop,2024'`
 )
 
 var updateInSchema = &jsonschema.Schema{

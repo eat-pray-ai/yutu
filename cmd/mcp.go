@@ -21,19 +21,19 @@ import (
 )
 
 const (
-	example = `# Start MCP server in stdio mode (default)
-yutu mcp
-
-# Start MCP server in HTTP mode at http://localhost:8216/mcp
-# Requires OAuth (Google account) for all MCP tool calls
-yutu mcp --mode http`
+	example = `  # Start MCP server in stdio mode (default)
+  yutu mcp
+  
+  # Start MCP server in HTTP mode at http://localhost:8216/mcp
+  # Requires OAuth (Google account) for all MCP tool calls
+  yutu mcp --mode http`
 	setupShort   = "Setup yutu MCP in AI Agents"
 	setupLong    = "Setup yutu as a global stdio MCP server for the selected AI Agents."
-	setupExample = `# Setup MCP for multiple AI Agents
-yutu mcp setup -a claude,opencode -c client_secret.json -t youtube.token.json
-
-# Setup MCP for Antigravity
-yutu mcp setup -a agy -c client_secret.json -t youtube.token.json`
+	setupExample = `  # Setup MCP for multiple AI Agents
+  yutu mcp setup -a claude,opencode -c client_secret.json -t youtube.token.json
+  
+  # Setup MCP for Antigravity
+  yutu mcp setup -a agy -c client_secret.json -t youtube.token.json`
 	agentsUsage     = "Comma-separated AI Agents: claude,opencode,pi,codex,agy"
 	credentialUsage = "Path/Base64/JSON of OAuth client secret"
 	cacheTokenUsage = "Path/Base64/JSON of cached OAuth token"

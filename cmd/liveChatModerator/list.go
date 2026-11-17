@@ -20,10 +20,10 @@ const (
 	listTool    = "liveChatModerator-list"
 	listShort   = "List live chat moderators"
 	listLong    = "List live chat moderators. Use this tool to list moderators for a live chat."
-	listExample = `# List moderators for a live chat
-yutu liveChatModerator list --liveChatId abc123
-# List moderators with limit
-yutu liveChatModerator list --liveChatId abc123 --maxResults 10`
+	listExample = `  # List moderators for a live chat
+  yutu liveChatModerator list --liveChatId abc123
+  # List moderators with limit
+  yutu liveChatModerator list --liveChatId abc123 --maxResults 10`
 )
 
 var listInSchema = &jsonschema.Schema{
