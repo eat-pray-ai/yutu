@@ -10,7 +10,7 @@ metadata:
 
 # YouTube
 
-Manage YouTube resources via MCP tool calls — abuseReport, activity, caption, channel, channelBanner, channelSection, comment, commentThread, i18nLanguage, i18nRegion, liveBroadcast, liveChatBan, liveChatMessage, liveChatModerator, liveStream, member, membershipsLevel, playlist, playlistImage, playlistItem, search, subscription, superChatEvent, thirdPartyLink, thumbnail, video, videoAbuseReportReason, videoCategory, watermark.
+Manage YouTube resources via MCP tool calls — abuseReport, activity, caption, channel, channelBanner, channelSection, comment, commentThread, i18nLanguage, i18nRegion, liveBroadcast, liveChatBan, liveChatMessage, liveChatModerator, liveStream, member, membershipsLevel, playlist, playlistImage, playlistItem, search, subscription, superChatEvent, thirdPartyLink, thumbnail, video, videoAbuseReportReason, videoCategory, videoTrainability, watermark.
 
 ## Setup
 
@@ -53,6 +53,7 @@ Ensure `yutu` is installed and running as an MCP server. See [references/setup.m
 - `video-list`
 - `videoAbuseReportReason-list`
 - `videoCategory-list`
+- `videoTrainability-list`
 
 ### Write (create or update content)
 

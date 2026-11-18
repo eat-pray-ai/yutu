@@ -290,6 +290,11 @@ echo "======= videoCategory ======="
 echo "------- list -------"
 "$YUTU_PATH" videoCategory list --help
 
+echo "======= videoTrainability ======="
+"$YUTU_PATH" videoTrainability --help
+echo "------- list -------"
+"$YUTU_PATH" videoTrainability list --help
+
 echo "======= watermark ======="
 "$YUTU_PATH" watermark --help
 echo "------- set -------"
