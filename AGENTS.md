@@ -37,11 +37,9 @@ Go CLI + MCP server + Agent for YouTube.
 
 ## Adding a New YouTube Resource
 
-Every new resource package under `pkg/` and `cmd/` must also be registered in:
+Every new resource package under `cmd/` must also be registered in:
 
-1. **`main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
-2. **`internal/tools/skillgen/main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
-3. **`internal/tools/cmdtestgen/main.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
+- **`cmd/resources/resources.go`** — add a blank import (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`).
 
 Then regenerate generated files and build definitions:
 

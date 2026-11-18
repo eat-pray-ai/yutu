@@ -5,10 +5,8 @@ Follow this checklist before creating and pushing a release tag to ensure all as
 ## 1. Code & Resource Registration
 
 - [ ] **Verify Resource Registration**:
-      Every resource package under `pkg/` and `cmd/` must be blank-imported in:
-  - `main.go` (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`)
-  - `internal/tools/skillgen/main.go`
-  - `internal/tools/cmdtestgen/main.go`
+      Every resource package under `cmd/` must be blank-imported in:
+  - `cmd/resources/resources.go` (`_ "github.com/eat-pray-ai/yutu/cmd/<resource>"`)
 
 - [ ] **Run Code Generators**:
 

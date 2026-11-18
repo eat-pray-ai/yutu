@@ -438,6 +438,12 @@ Here are the features that are currently supported by yutu 🟢, and the ones th
       <td>resourceTemplate</td>
     </tr>
     <tr>
+      <td>videoTrainability</td>
+      <td>🟢 list</td>
+      <td>?</td>
+      <td>tool</td>
+    </tr>
+    <tr>
       <td rowspan="2">watermarks</td>
       <td>🟢 set</td>
       <td>50</td>

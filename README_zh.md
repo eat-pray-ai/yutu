@@ -308,6 +308,7 @@ Available Commands:
   video                  Manage YouTube videos
   videoAbuseReportReason Manage YouTube video abuse report reasons
   videoCategory          Manage YouTube video categories
+  videoTrainability      Manage YouTube video trainability
   watermark              Manage YouTube watermarks
 
 Flags:
