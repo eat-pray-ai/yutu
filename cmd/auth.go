@@ -14,15 +14,17 @@ import (
 )
 
 const (
-	authShort  = "Authenticate with YouTube APIs"
-	authLong   = "Authenticate with YouTube APIs to access and manage YouTube resources."
-	credUsage  = "Path to client secret file, or Base64 encoded string, or JSON string (env: YUTU_CREDENTIAL)"
-	cacheUsage = "Path to token cache file, or Base64 encoded string, or JSON string (env: YUTU_CACHE_TOKEN)"
+	authShort      = "Authenticate with YouTube APIs"
+	authLong       = "Authenticate with YouTube APIs to access and manage YouTube resources."
+	credUsage      = "Path to client secret file, or Base64 encoded string, or JSON string (env: YUTU_CREDENTIAL)"
+	cacheUsage     = "Path to token cache file, or Base64 encoded string, or JSON string (env: YUTU_CACHE_TOKEN)"
+	noBrowserUsage = "Do not open browser automatically"
 )
 
 var (
 	credential string
 	cacheToken string
+	noBrowser  bool
 )
 
 var authCmd = &cobra.Command{
@@ -31,9 +33,11 @@ var authCmd = &cobra.Command{
 	Long:  authLong,
 	Run: func(c *cobra.Command, _ []string) {
 		if _, err := auth.NewY2BService(
+			auth.WithContext(c.Context()),
 			auth.WithCredential(credential, pkg.Root.FS()),
 			auth.WithCacheToken(cacheToken, pkg.Root.FS()),
 			auth.WithRedirectURL(common.DefaultRedirectURL),
+			auth.WithNoBrowser(noBrowser),
 		).GetService(); err != nil {
 			slog.Error("authentication failed", "error", err)
 			os.Exit(1)
@@ -50,4 +54,5 @@ func init() {
 	authCmd.Flags().StringVarP(
 		&cacheToken, "cacheToken", "t", "youtube.token.json", cacheUsage,
 	)
+	authCmd.Flags().BoolVar(&noBrowser, "no-browser", false, noBrowserUsage)
 }

@@ -279,9 +279,10 @@ func TestStartWebServer_StateMismatch(t *testing.T) {
 
 func TestGetCodeFromPrompt_Success(t *testing.T) {
 	var out bytes.Buffer
-	in := strings.NewReader("some-code")
+	in := strings.NewReader("http://localhost:8216/?state=test-state&code=some-code\n")
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
+	s.state = "test-state"
 
 	code, err := s.getCodeFromPrompt(
 		"http://example.com/auth", "http://localhost:8216",
@@ -296,22 +297,23 @@ func TestGetCodeFromPrompt_Success(t *testing.T) {
 	outStr := out.String()
 	if !strings.Contains(
 		outStr, openBrowserHint[:20],
-	) { // basic sanity check that hint was written
+	) {
 		t.Fatalf("expected openBrowserHint to be written to out, got %q", outStr)
 	}
-	if !strings.Contains(outStr, "After completing the authorization flow") {
+	if !strings.Contains(outStr, "Paste the full redirect URL") {
 		t.Fatalf("expected manualInputHint to be written to out, got %q", outStr)
 	}
-	if !strings.Contains(outStr, "http://localhost:8216/?state=DONOT-COPY") {
+	if !strings.Contains(outStr, "http://localhost:8216/?state=...&code=...") {
 		t.Fatalf("expected redirect URL in manualInputHint, got %q", outStr)
 	}
 }
 
 func TestGetCodeFromPrompt_URLDecode(t *testing.T) {
 	var out bytes.Buffer
-	in := strings.NewReader("4%2Fabc")
+	in := strings.NewReader("http://localhost:8216/?state=test-state&code=4%2Fabc\n")
 
 	s := NewY2BService(WithIO(in, &out)).(*svc)
+	s.state = "test-state"
 
 	code, err := s.getCodeFromPrompt(
 		"http://example.com/auth", "http://localhost:8216",
@@ -488,8 +490,9 @@ func TestGetTokenFromWeb_PromptFallbackSuccess(t *testing.T) {
 
 	s := NewY2BService(
 		WithCredential(validCredentialJSONWithTokenURL("http://127.0.0.1:0", tokenServer.URL), os.DirFS(".")),
-		WithIO(strings.NewReader("manual-code\n"), io.Discard),
+		WithIO(strings.NewReader("http://localhost:8216/?state=test-state&code=manual-code\n"), io.Discard),
 	).(*svc)
+	s.state = "test-state"
 	s.openURLFunc = func(string) error { return errors.New("browser unavailable") }
 
 	config, err := s.getConfig()
@@ -513,8 +516,9 @@ func TestGetTokenFromWeb_ExchangeError(t *testing.T) {
 
 	s := NewY2BService(
 		WithCredential(validCredentialJSONWithTokenURL("http://127.0.0.1:0", tokenServer.URL), os.DirFS(".")),
-		WithIO(strings.NewReader("manual-code\n"), io.Discard),
+		WithIO(strings.NewReader("http://localhost:8216/?state=test-state&code=manual-code\n"), io.Discard),
 	).(*svc)
+	s.state = "test-state"
 	s.openURLFunc = func(string) error { return errors.New("browser unavailable") }
 
 	config, err := s.getConfig()
@@ -553,4 +557,268 @@ func TestWaitForCode_Timeout(t *testing.T) {
 			)
 		}
 	})
+}
+
+func TestParseAuthInput(t *testing.T) {
+	tests := []struct {
+		name          string
+		raw           string
+		expectedState string
+		want          string
+		wantErr       string
+	}{
+		{
+			name:          "full redirect URL with matching state",
+			raw:           "http://localhost:8216/?state=expected-state&code=4%2F0Abc&scope=https://www.googleapis.com/auth/youtube",
+			expectedState: "expected-state",
+			want:          "4/0Abc",
+		},
+		{
+			name:          "full redirect URL with mismatched state",
+			raw:           "http://localhost:8216/?state=wrong-state&code=4%2F0Abc",
+			expectedState: "expected-state",
+			wantErr:       stateMatchFailed,
+		},
+		{
+			name:          "full redirect URL missing state",
+			raw:           "http://localhost:8216/?code=4%2F0Abc",
+			expectedState: "expected-state",
+			wantErr:       stateMatchFailed,
+		},
+		{
+			name:          "full redirect URL missing code",
+			raw:           "http://localhost:8216/?state=expected-state",
+			expectedState: "expected-state",
+			wantErr:       "missing code parameter",
+		},
+		{
+			name:          "non-URL rejected",
+			raw:           "raw-code-only",
+			expectedState: "st",
+			wantErr:       "expected full redirect URL",
+		},
+		{
+			name:          "empty input",
+			raw:           "   ",
+			expectedState: "st",
+			wantErr:       readPromptFailed,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parseAuthInput(tt.raw, tt.expectedState)
+			if tt.wantErr != "" {
+				if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
+					t.Fatalf("parseAuthInput() error = %v, want substring %q", err, tt.wantErr)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("parseAuthInput() unexpected error = %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("parseAuthInput() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRefreshClient_NonInteractive(t *testing.T) {
+	t.Run("missing token returns ErrAuthRequired", func(t *testing.T) {
+		s := NewY2BService(
+			WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
+			WithNonInteractive(true),
+		).(*svc)
+
+		_, err := s.refreshClient()
+		if !errors.Is(err, ErrAuthRequired) {
+			t.Fatalf("refreshClient() error = %v, want %v", err, ErrAuthRequired)
+		}
+	})
+
+	t.Run("malformed token wraps underlying error with ErrAuthRequired", func(t *testing.T) {
+		s := NewY2BService(
+			WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
+			WithNonInteractive(true),
+		).(*svc)
+		s.CacheToken = "{bad-json"
+
+		_, err := s.refreshClient()
+		if !errors.Is(err, ErrAuthRequired) {
+			t.Fatalf("refreshClient() error = %v, want %v", err, ErrAuthRequired)
+		}
+		if err == ErrAuthRequired {
+			t.Fatal("refreshClient() hid underlying unmarshal error")
+		}
+	})
+
+	t.Run("expired unrefreshable token returns ErrAuthRequired", func(t *testing.T) {
+		s := NewY2BService(
+			WithCredential(validCredentialJSON("http://localhost"), os.DirFS(".")),
+			WithCacheToken(`{"access_token":"expired","token_type":"Bearer","expiry":"2000-01-01T00:00:00Z"}`, os.DirFS(".")),
+			WithNonInteractive(true),
+		).(*svc)
+
+		_, err := s.refreshClient()
+		if !errors.Is(err, ErrAuthRequired) {
+			t.Fatalf("refreshClient() error = %v, want %v", err, ErrAuthRequired)
+		}
+	})
+}
+
+func TestGetTokenFromWeb_NoBrowserWithFullRedirectURL(t *testing.T) {
+	var receivedCode string
+	tokenServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = r.ParseForm()
+		receivedCode = r.FormValue("code")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"access_token":"remote-token","token_type":"Bearer","expires_in":3600}`)
+	}))
+	defer tokenServer.Close()
+
+	browserOpened := false
+	var observedAuthURL string
+	s := NewY2BService(
+		WithCredential(validCredentialJSONWithTokenURL("http://127.0.0.1:0", tokenServer.URL), os.DirFS(".")),
+		WithNoBrowser(true),
+		WithOpenURL(func(string) error {
+			browserOpened = true
+			return nil
+		}),
+		WithOnAuthURL(func(u string) {
+			observedAuthURL = u
+		}),
+	).(*svc)
+	s.state = "remote-state"
+	s.in = strings.NewReader("http://localhost:8216/?state=remote-state&code=4%2Fremote-code&scope=test\n")
+	s.out = io.Discard
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig() error = %v", err)
+	}
+	token, err := s.getTokenFromWeb(config, "http://example.com/auth", "verifier")
+	if err != nil {
+		t.Fatalf("getTokenFromWeb() error = %v", err)
+	}
+	if browserOpened {
+		t.Error("expected openURL not to be called when WithNoBrowser(true)")
+	}
+	if observedAuthURL != "http://example.com/auth" {
+		t.Errorf("observedAuthURL = %q, want %q", observedAuthURL, "http://example.com/auth")
+	}
+	if receivedCode != "4/remote-code" {
+		t.Errorf("exchanged code = %q, want %q", receivedCode, "4/remote-code")
+	}
+	if token.AccessToken != "remote-token" {
+		t.Errorf("AccessToken = %q, want remote-token", token.AccessToken)
+	}
+}
+
+func TestGetTokenFromWeb_RemoteSSHAutoNoBrowser(t *testing.T) {
+	t.Setenv("SSH_CONNECTION", "10.0.0.1 12345 10.0.0.2 22")
+
+	tokenServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"access_token":"ssh-token","token_type":"Bearer","expires_in":3600}`)
+	}))
+	defer tokenServer.Close()
+
+	s := NewY2BService(
+		WithCredential(validCredentialJSONWithTokenURL("http://127.0.0.1:0", tokenServer.URL), os.DirFS(".")),
+		WithIO(strings.NewReader("http://localhost:8216/?state=ssh-state&code=ssh-code\n"), io.Discard),
+	).(*svc)
+	s.state = "ssh-state"
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig() error = %v", err)
+	}
+	token, err := s.getTokenFromWeb(config, "http://example.com/auth", "verifier")
+	if err != nil {
+		t.Fatalf("getTokenFromWeb() error = %v", err)
+	}
+	if token.AccessToken != "ssh-token" {
+		t.Errorf("AccessToken = %q, want ssh-token", token.AccessToken)
+	}
+}
+
+func TestGetTokenFromWeb_CodeProvider(t *testing.T) {
+	tokenServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"access_token":"gui-token","token_type":"Bearer","expires_in":3600}`)
+	}))
+	defer tokenServer.Close()
+
+	s := NewY2BService(
+		WithCredential(validCredentialJSONWithTokenURL("http://127.0.0.1:0", tokenServer.URL), os.DirFS(".")),
+		WithNoBrowser(true),
+		WithIO(nil, nil),
+		WithCodeProvider(func(_ context.Context, _, _ string) (string, error) {
+			return "http://localhost:8216/?state=gui-state&code=gui-code", nil
+		}),
+	).(*svc)
+	s.state = "gui-state"
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig() error = %v", err)
+	}
+	token, err := s.getTokenFromWeb(config, "http://example.com/auth", "verifier")
+	if err != nil {
+		t.Fatalf("getTokenFromWeb() error = %v", err)
+	}
+	if token.AccessToken != "gui-token" {
+		t.Errorf("AccessToken = %q, want gui-token", token.AccessToken)
+	}
+}
+
+func TestGetTokenFromWeb_NoBrowserCallbackWinsRace(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to listen: %v", err)
+	}
+	addr := ln.Addr().String()
+	_ = ln.Close()
+	redirectURL := fmt.Sprintf("http://%s", addr)
+
+	tokenServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"access_token":"forwarded-token","token_type":"Bearer","expires_in":3600}`)
+	}))
+	defer tokenServer.Close()
+
+	pr, pw := io.Pipe()
+	defer func() {
+		_ = pw.Close()
+		_ = pr.Close()
+	}()
+
+	s := NewY2BService(
+		WithCredential(validCredentialJSONWithTokenURL(redirectURL, tokenServer.URL), os.DirFS(".")),
+		WithNoBrowser(true),
+		WithIO(pr, io.Discard),
+		WithOnAuthURL(func(string) {
+			go func() {
+				resp, reqErr := http.Get(redirectURL + "/?state=race-state&code=forwarded-code")
+				if reqErr == nil {
+					_ = resp.Body.Close()
+				}
+			}()
+		}),
+	).(*svc)
+	s.state = "race-state"
+
+	config, err := s.getConfig()
+	if err != nil {
+		t.Fatalf("getConfig() error = %v", err)
+	}
+	token, err := s.getTokenFromWeb(config, "http://example.com/auth", "verifier")
+	if err != nil {
+		t.Fatalf("getTokenFromWeb() error = %v", err)
+	}
+	if token.AccessToken != "forwarded-token" {
+		t.Errorf("AccessToken = %q, want forwarded-token", token.AccessToken)
+	}
 }

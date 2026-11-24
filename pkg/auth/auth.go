@@ -4,8 +4,10 @@
 package auth
 
 import (
+	"bufio"
 	_ "embed"
 	"encoding/json/v2"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -17,6 +19,7 @@ import (
 	"time"
 
 	"github.com/eat-pray-ai/yutu/pkg"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -38,15 +41,10 @@ const (
 
 	browserOpenedHint = "Your browser has been opened to an authorization URL. yutu will resume once authorization has been provided.\n%s\n"
 	openBrowserHint   = "It seems that your browser is not open. Go to the following link in your browser:\n%s\n"
-	manualInputHint   = `
-After completing the authorization flow, enter the authorization code on command line.
-
-If you end up in an error page after completing the authorization flow,
-and the url in the address bar is in the form of
-'%s/?state=DONOT-COPY&code=COPY-THIS&scope=DONOT-COPY'
-ONLY 'COPY-THIS' part is the code you need to enter on command line.
-`
+	manualInputHint   = "\nPaste the full redirect URL (e.g. '%s/?state=...&code=...') below:\n"
 )
+
+var ErrAuthRequired = errors.New("interactive authentication required")
 
 // authorizedPage is shown in the browser once the OAuth redirect is received.
 // It must stay self-contained: the loopback server closes right after serving it.
@@ -87,6 +85,12 @@ func (s *svc) refreshClient() (client *http.Client, err error) {
 	authedToken := &oauth2.Token{}
 	err = json.Unmarshal([]byte(s.CacheToken), authedToken)
 	if err != nil {
+		if s.nonInteractive {
+			if s.CacheToken == "" {
+				return nil, ErrAuthRequired
+			}
+			return nil, fmt.Errorf("%w: %w", ErrAuthRequired, err)
+		}
 		client, authedToken, err = s.newClient(config)
 		if err != nil {
 			return nil, err
@@ -102,6 +106,9 @@ func (s *svc) refreshClient() (client *http.Client, err error) {
 	if !authedToken.Valid() {
 		tokenSource := config.TokenSource(s.ctx, authedToken)
 		authedToken, err = tokenSource.Token()
+		if err != nil && s.nonInteractive {
+			return nil, fmt.Errorf("%w: %w", ErrAuthRequired, err)
+		}
 		if err != nil && s.tokenFile != "" {
 			client, authedToken, err = s.newClient(config)
 			if err != nil {
@@ -218,13 +225,36 @@ func (s *svc) waitForCode(codeCh <-chan string) (string, error) {
 func (s *svc) getCodeFromPrompt(authURL string, redirectURL string) (code string, err error) {
 	_, _ = fmt.Fprintf(s.out, openBrowserHint, authURL)
 	_, _ = fmt.Fprintf(s.out, manualInputHint, redirectURL)
-	_, err = fmt.Fscan(s.in, &code)
-	if err != nil {
-		return "", fmt.Errorf("%s: %w", readPromptFailed, err)
+	scanner := bufio.NewScanner(s.in)
+	if !scanner.Scan() {
+		if scanErr := scanner.Err(); scanErr != nil {
+			return "", fmt.Errorf("%s: %w", readPromptFailed, scanErr)
+		}
+		return "", fmt.Errorf("%s: empty input", readPromptFailed)
+	}
+	return parseAuthInput(scanner.Text(), s.state)
+}
+
+func parseAuthInput(raw string, expectedState string) (string, error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "", fmt.Errorf("%s: empty input", readPromptFailed)
+	}
+	if !strings.HasPrefix(raw, "http://") && !strings.HasPrefix(raw, "https://") {
+		return "", fmt.Errorf("%s: expected full redirect URL", parseUrlFailed)
 	}
 
-	if strings.HasPrefix(code, "4%2F") {
-		code = strings.Replace(code, "4%2F", "4/", 1)
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", fmt.Errorf("%s: %w", parseUrlFailed, err)
+	}
+	q := u.Query()
+	if expectedState != "" && q.Get("state") != expectedState {
+		return "", errors.New(stateMatchFailed)
+	}
+	code := q.Get("code")
+	if code == "" {
+		return "", fmt.Errorf("%s: redirect URL missing code parameter", readPromptFailed)
 	}
 	return code, nil
 }
@@ -238,17 +268,24 @@ func (s *svc) getTokenFromWeb(
 	}
 	defer func() { _ = closeServer() }()
 
+	if s.onAuthURL != nil {
+		s.onAuthURL(authURL)
+	}
+
 	var code string
-	if err := s.openURL(authURL); err == nil {
-		_, _ = fmt.Fprintf(s.out, browserOpenedHint, authURL)
-		code, err = s.waitForCode(codeCh)
-		if err != nil {
-			return nil, err
+	tryBrowser := !s.noBrowser && (s.openURLFunc != nil || !utils.IsRemoteOrHeadless())
+	if tryBrowser {
+		if err := s.openURL(authURL); err == nil {
+			_, _ = fmt.Fprintf(s.out, browserOpenedHint, authURL)
+			code, err = s.waitForCode(codeCh)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
 	if code == "" {
-		code, err = s.getCodeFromPrompt(authURL, config.RedirectURL)
+		code, err = s.waitForManualOrCallback(codeCh, authURL, config.RedirectURL)
 		if err != nil {
 			return nil, err
 		}
@@ -263,6 +300,44 @@ func (s *svc) getTokenFromWeb(
 	}
 
 	return token, nil
+}
+
+func (s *svc) waitForManualOrCallback(
+	codeCh <-chan string, authURL string, redirectURL string,
+) (string, error) {
+	if s.codeProvider == nil && s.in == nil {
+		return s.waitForCode(codeCh)
+	}
+
+	type manualResult struct {
+		code string
+		err  error
+	}
+	manualCh := make(chan manualResult, 1)
+	go func() {
+		var code string
+		var err error
+		if s.codeProvider != nil {
+			code, err = s.codeProvider(s.ctx, authURL, redirectURL)
+			if err == nil {
+				code, err = parseAuthInput(code, s.state)
+			}
+		} else {
+			code, err = s.getCodeFromPrompt(authURL, redirectURL)
+		}
+		manualCh <- manualResult{code: code, err: err}
+	}()
+
+	select {
+	case code := <-codeCh:
+		return code, nil
+	case res := <-manualCh:
+		return res.code, res.err
+	case <-s.ctx.Done():
+		return "", s.ctx.Err()
+	case <-time.After(s.timeout):
+		return "", fmt.Errorf(authTimeout, s.timeout)
+	}
 }
 
 func (s *svc) saveToken(token *oauth2.Token) error {

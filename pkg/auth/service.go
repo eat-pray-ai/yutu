@@ -31,16 +31,20 @@ const (
 )
 
 type svc struct {
-	Credential  string `yaml:"credential" json:"credential"`
-	CacheToken  string `yaml:"cache_token" json:"cache_token"`
-	credFile    string
-	tokenFile   string
-	redirectURL string
-	timeout     time.Duration
-	initErr     error
-	in          io.Reader
-	out         io.Writer
-	openURLFunc func(string) error
+	Credential     string `yaml:"credential" json:"credential"`
+	CacheToken     string `yaml:"cache_token" json:"cache_token"`
+	credFile       string
+	tokenFile      string
+	redirectURL    string
+	timeout        time.Duration
+	initErr        error
+	in             io.Reader
+	out            io.Writer
+	openURLFunc    func(string) error
+	onAuthURL      func(string)
+	codeProvider   func(ctx context.Context, authURL, redirectURL string) (string, error)
+	noBrowser      bool
+	nonInteractive bool
 
 	service *youtube.Service
 	ctx     context.Context
@@ -94,7 +98,42 @@ func WithCallbackTimeout(timeout time.Duration) Option {
 func WithIO(in io.Reader, out io.Writer) Option {
 	return func(s *svc) {
 		s.in = in
+		if out == nil {
+			out = io.Discard
+		}
 		s.out = out
+	}
+}
+
+func WithNoBrowser(noBrowser bool) Option {
+	return func(s *svc) {
+		s.noBrowser = noBrowser
+	}
+}
+
+func WithNonInteractive(nonInteractive bool) Option {
+	return func(s *svc) {
+		s.nonInteractive = nonInteractive
+	}
+}
+
+func WithOpenURL(fn func(string) error) Option {
+	return func(s *svc) {
+		s.openURLFunc = fn
+	}
+}
+
+func WithOnAuthURL(fn func(authURL string)) Option {
+	return func(s *svc) {
+		s.onAuthURL = fn
+	}
+}
+
+func WithCodeProvider(
+	fn func(ctx context.Context, authURL, redirectURL string) (string, error),
+) Option {
+	return func(s *svc) {
+		s.codeProvider = fn
 	}
 }
 

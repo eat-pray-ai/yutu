@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"slices"
 	"strings"
 	"unicode"
@@ -158,4 +159,15 @@ func JoinKeywords(keywords []string) string {
 		}
 	}
 	return strings.Join(quoted, " ")
+}
+
+func IsRemoteOrHeadless() bool {
+	if os.Getenv("SSH_CONNECTION") != "" ||
+		os.Getenv("SSH_TTY") != "" ||
+		os.Getenv("SSH_CLIENT") != "" {
+		return true
+	}
+	return runtime.GOOS == "linux" &&
+		os.Getenv("DISPLAY") == "" &&
+		os.Getenv("WAYLAND_DISPLAY") == ""
 }
