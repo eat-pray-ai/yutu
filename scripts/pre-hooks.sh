@@ -125,6 +125,23 @@ hook_pre_commit() {
         warn "'addlicense' not found in PATH; skipping license header check."
     fi
 
+    if echo "$changed_files" | grep -qE '(^go\.work$|(^|/)go\.mod$)'; then
+        info "Syncing Go version from go.work..."
+        local go_ver
+        go_ver="$(awk '$1 == "go" { print $2; exit }' go.work)"
+        local mods=()
+        for mod in go.mod gui/go.mod; do
+            if [[ -f "$mod" ]]; then
+                go mod edit -go="$go_ver" "$mod"
+                mods+=("$mod")
+            fi
+        done
+        if [[ ${#mods[@]} -gt 0 ]] && ! git diff --exit-code -- "${mods[@]}" >/dev/null 2>&1; then
+            abort "go.mod files were out of sync with go.work ($go_ver). Please stage the updated go.mod files."
+        fi
+        success "Go version ($go_ver) is in sync across workspace modules."
+    fi
+
     if echo "$changed_files" | grep -qE '(\.go$|^go\.(mod|sum)$)'; then
         info "Checking go mod tidy..."
         go mod tidy

@@ -10,3 +10,4 @@ bazel-yutu
 .bazelversion
 
 .DS_Store
+gui

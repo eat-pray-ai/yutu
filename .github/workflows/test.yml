@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./go.work
       - name: Lint
         uses: golangci/golangci-lint-action@v9
         with:

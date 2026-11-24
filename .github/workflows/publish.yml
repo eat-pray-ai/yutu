@@ -28,7 +28,7 @@ jobs:
           git tag -l | grep -E '\-rc|\-beta|\-alpha|\-dev' | xargs -r git tag -d
       - uses: actions/setup-go@v7
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./go.work
       - name: Run goreleaser
         uses: goreleaser/goreleaser-action@v7
         env:
