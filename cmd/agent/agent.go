@@ -5,7 +5,6 @@ package agent
 
 import (
 	"context"
-	"embed"
 	"fmt"
 	"io"
 	"log/slog"
@@ -13,24 +12,9 @@ import (
 	"strings"
 
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/modelcontextprotocol/go-sdk/mcp"
+	pkgagent "github.com/eat-pray-ai/yutu/pkg/agent"
 	"github.com/spf13/cobra"
-	"google.golang.org/adk/v2/agent"
-	"google.golang.org/adk/v2/agent/llmagent"
-	"google.golang.org/adk/v2/cmd/launcher"
 	"google.golang.org/adk/v2/cmd/launcher/full"
-	"google.golang.org/adk/v2/memory"
-	"google.golang.org/adk/v2/model"
-	"google.golang.org/adk/v2/model/anthropicmodel"
-	"google.golang.org/adk/v2/model/gemini"
-	"google.golang.org/adk/v2/model/openaimodel"
-	"google.golang.org/adk/v2/session"
-	"google.golang.org/adk/v2/tool"
-	"google.golang.org/adk/v2/tool/geminitool"
-	"google.golang.org/adk/v2/tool/mcptoolset"
-	"google.golang.org/adk/v2/tool/skilltoolset"
-	"google.golang.org/adk/v2/tool/skilltoolset/skill"
-	"google.golang.org/genai"
 )
 
 const (
@@ -51,15 +35,9 @@ const (
 	apiKeyUsage      = "API key for the model provider"
 	baseURLUsage     = "Base URL for the model provider's API endpoint"
 	instructionUsage = "Override the built-in Agent instruction"
-	agentDescription = "YouTube growth strategist and workflow assistant — retrieve, create, update, and delete YouTube content."
 
-	errUnsupportedProvider = "unsupported provider %q: supported providers are google, openai and anthropic"
-	errModelConfig         = "model configuration error"
-	errMCPConnect          = "failed to connect to MCP server"
-	errMCPToolSet          = "failed to create MCP tool set"
-	errSkillToolset        = "failed to create skill toolset"
-	errBuildAgent          = "failed to build Agent"
-	errLaunchAgent         = "failed to launch Agent"
+	errInitAgent   = "failed to initialize Agent"
+	errLaunchAgent = "failed to launch Agent"
 )
 
 var (
@@ -69,12 +47,6 @@ var (
 	apiKey       string
 	baseURL      string
 	inst         string
-
-	//go:embed INSTRUCTION.md
-	instruction string
-
-	//go:embed skills
-	skillsFS embed.FS
 )
 
 var agentCmd = &cobra.Command{
@@ -97,124 +69,35 @@ func init() {
 	cmd.RootCmd.AddCommand(agentCmd)
 	agentCmd.Flags().StringVarP(&launcherArgs, "args", "a", "console", argsUsage)
 	agentCmd.Flags().StringVarP(
-		&provider, "provider", "p", "google", providerUsage,
+		&provider, "provider", "p", pkgagent.DefaultProvider, providerUsage,
 	)
 	agentCmd.Flags().StringVarP(
-		&modelName, "model", "m", "gemini-4-hydrogen", modelUsage,
+		&modelName, "model", "m", pkgagent.DefaultModel, modelUsage,
 	)
 	agentCmd.Flags().StringVar(&apiKey, "api-key", "", apiKeyUsage)
 	agentCmd.Flags().StringVar(&baseURL, "base-url", "", baseURLUsage)
 	agentCmd.Flags().StringVarP(&inst, "instruction", "i", "", instructionUsage)
 }
 
-func newModel(ctx context.Context) (model.LLM, error) {
-	switch provider {
-	case "google":
-		cfg := &genai.ClientConfig{
-			APIKey:  apiKey,
-			Backend: genai.BackendGeminiAPI,
-		}
-		if baseURL != "" {
-			cfg.HTTPOptions.BaseURL = baseURL
-		}
-		return gemini.NewModel(ctx, modelName, cfg)
-	case "openai":
-		return openaimodel.NewModel(
-			ctx, modelName, &openaimodel.ClientConfig{
-				APIKey:  apiKey,
-				BaseURL: baseURL,
-			},
-		)
-	case "anthropic":
-		return anthropicmodel.NewModel(
-			ctx, modelName, anthropicmodel.ClientConfig{
-				APIKey:  apiKey,
-				BaseURL: baseURL,
-			},
-		)
-	default:
-		return nil, fmt.Errorf(errUnsupportedProvider, provider)
-	}
-}
-
-func newSkillToolset(ctx context.Context) (tool.Toolset, error) {
-	source := skill.NewFileSystemSource(skillsFS)
-	source, _, err := skill.WithCompletePreloadSource(ctx, source)
-	if err != nil {
-		return nil, fmt.Errorf("preload skills: %w", err)
-	}
-	return skilltoolset.New(ctx, skilltoolset.Config{Source: source})
-}
-
-func buildAgent(
-	m model.LLM, mcpToolSet, skillToolset tool.Toolset,
-) (agent.Agent, error) {
-	var tools []tool.Tool
-	if provider == "google" && baseURL == "" {
-		tools = append(tools, geminitool.GoogleSearch{})
-	}
-	return llmagent.New(
-		llmagent.Config{
-			Name:        "Miffy",
-			Model:       m,
-			Description: agentDescription,
-			Instruction: instruction,
-			Tools:       tools,
-			Toolsets:    []tool.Toolset{mcpToolSet, skillToolset},
-		},
-	)
-}
-
 func launch(ctx context.Context, writer io.Writer, args []string) {
-	if inst != "" {
-		instruction = inst
-	}
-
-	m, err := newModel(ctx)
-	if err != nil {
-		slog.ErrorContext(ctx, errModelConfig, "error", err)
-		os.Exit(1)
-	}
-
-	clientTransport, serverTransport := mcp.NewInMemoryTransports()
-	_, err = cmd.Server.Connect(ctx, serverTransport, nil)
-	if err != nil {
-		slog.ErrorContext(ctx, errMCPConnect, "error", err)
-		os.Exit(1)
-	}
-
-	mcpToolSet, err := mcptoolset.New(
-		mcptoolset.Config{
-			Transport: clientTransport,
+	instance, err := pkgagent.New(
+		ctx, pkgagent.Config{
+			Provider:    provider,
+			Model:       modelName,
+			APIKey:      apiKey,
+			BaseURL:     baseURL,
+			Instruction: inst,
+			MCPServer:   cmd.Server,
 		},
 	)
 	if err != nil {
-		slog.ErrorContext(ctx, errMCPToolSet, "error", err)
+		slog.ErrorContext(ctx, errInitAgent, "error", err)
 		os.Exit(1)
 	}
+	defer func() { _ = instance.Close() }()
 
-	skillToolset, err := newSkillToolset(ctx)
-	if err != nil {
-		slog.ErrorContext(ctx, errSkillToolset, "error", err)
-		os.Exit(1)
-	}
-
-	miffy, err := buildAgent(m, mcpToolSet, skillToolset)
-	if err != nil {
-		slog.ErrorContext(ctx, errBuildAgent, "error", err)
-		os.Exit(1)
-	}
-
-	sessionService := session.InMemoryService()
-	memoryService := memory.InMemoryService()
-
-	config := &launcher.Config{
-		AgentLoader:    agent.NewSingleLoader(miffy),
-		SessionService: sessionService,
-		MemoryService:  memoryService,
-	}
 	l := full.NewLauncher()
-	if err := l.Execute(ctx, config, args); err != nil {
+	if err := l.Execute(ctx, instance.LauncherConfig(), args); err != nil {
 		slog.ErrorContext(ctx, errLaunchAgent, "error", err)
 		_, _ = fmt.Fprintln(writer, l.CommandLineSyntax())
 		os.Exit(1)

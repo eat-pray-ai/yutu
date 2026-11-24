@@ -1,0 +1,40 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "agent",
+    srcs = ["agent.go"],
+    embedsrcs = [
+        "INSTRUCTION.md",
+        "skills/youtube-automation/SKILL.md",
+        "skills/youtube-automation/references/seo-guide.md",
+        "skills/youtube-automation/references/workflows.md",
+    ],
+    importpath = "github.com/eat-pray-ai/yutu/pkg/agent",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_modelcontextprotocol_go_sdk//mcp",
+        "@org_golang_google_adk_v2//agent",
+        "@org_golang_google_adk_v2//agent/llmagent",
+        "@org_golang_google_adk_v2//cmd/launcher",
+        "@org_golang_google_adk_v2//memory",
+        "@org_golang_google_adk_v2//model",
+        "@org_golang_google_adk_v2//model/anthropicmodel",
+        "@org_golang_google_adk_v2//model/gemini",
+        "@org_golang_google_adk_v2//model/openaimodel",
+        "@org_golang_google_adk_v2//runner",
+        "@org_golang_google_adk_v2//session",
+        "@org_golang_google_adk_v2//tool",
+        "@org_golang_google_adk_v2//tool/geminitool",
+        "@org_golang_google_adk_v2//tool/mcptoolset",
+        "@org_golang_google_adk_v2//tool/skilltoolset",
+        "@org_golang_google_adk_v2//tool/skilltoolset/skill",
+        "@org_golang_google_genai//:genai",
+    ],
+)
+
+go_test(
+    name = "agent_test",
+    srcs = ["agent_test.go"],
+    embed = [":agent"],
+    deps = ["@com_github_modelcontextprotocol_go_sdk//mcp"],
+)

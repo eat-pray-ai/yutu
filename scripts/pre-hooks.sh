@@ -85,7 +85,7 @@ hook_pre_commit() {
         info "Verifying resource registration..."
         for dir in pkg/*/; do
             pkg_name="$(basename "$dir")"
-            if [[ "$pkg_name" == "auth" || "$pkg_name" == "common" || "$pkg_name" == "utils" ]]; then
+            if [[ "$pkg_name" == "agent" || "$pkg_name" == "auth" || "$pkg_name" == "common" || "$pkg_name" == "utils" ]]; then
                 continue
             fi
 
@@ -107,7 +107,7 @@ hook_pre_commit() {
         go run ./internal/tools/skillgen
         go run ./internal/tools/cmdtestgen
 
-        if ! git diff --quiet skills/ cmd/agent/ scripts/command-test.sh; then
+        if ! git diff --quiet skills/ pkg/agent/ scripts/command-test.sh; then
             abort "Code generators produced unstaged changes. Please stage them before committing."
         fi
         success "Generated skills and smoke tests are up to date."
