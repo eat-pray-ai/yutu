@@ -225,7 +225,7 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 | `-m, --model`       | Model name                                      | `gemini-4-hydrogen`                        |
 | `--api-key`         | API key for the model provider                  |                                            |
 | `--base-url`        | Base URL for the model provider's API endpoint  |                                            |
-| `-i, --instruction` | Override the built-in Agent instruction         | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
+| `-i, --instruction` | Override the built-in Agent instruction         | [INSTRUCTION.md](pkg/agent/INSTRUCTION.md) |
 
 ## MCP Server
 

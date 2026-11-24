@@ -231,7 +231,7 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 | `-m, --model`       | 模型名称                                      | `gemini-4-hydrogen`                        |
 | `--api-key`         | 模型提供商的 API 密钥                         |                                            |
 | `--base-url`        | 模型提供商的 API 端点地址                     |                                            |
-| `-i, --instruction` | 覆盖内置的 Agent 指令                         | [INSTRUCTION.md](cmd/agent/INSTRUCTION.md) |
+| `-i, --instruction` | 覆盖内置的 Agent 指令                         | [INSTRUCTION.md](pkg/agent/INSTRUCTION.md) |
 
 ## MCP 服务器
 

@@ -19,6 +19,7 @@ Core domain logic and shared infrastructure.
 
 | Package | Description |
 |---------|-------------|
+| `agent/` | Miffy AI Agent service and embedded skills |
 | `auth/` | Authentication service |
 | `common/` | Shared types |
 | `utils/` | Generic helpers |
