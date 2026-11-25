@@ -282,6 +282,64 @@ func TestResetFlags(t *testing.T) {
 	}
 }
 
+func TestOptIfChanged(t *testing.T) {
+	type target struct {
+		desc *string
+		tags []string
+	}
+	type opt func(*target)
+
+	withDesc := func(v *string) opt {
+		return func(t *target) { t.desc = v }
+	}
+	withTags := func(v []string) opt {
+		return func(t *target) { t.tags = v }
+	}
+
+	flags := pflag.NewFlagSet("opt", pflag.ContinueOnError)
+	var desc string
+	var tags []string
+	flags.StringVar(&desc, "description", "default", "")
+	flags.StringSliceVar(&tags, "tags", nil, "")
+
+	if err := flags.Parse([]string{"--description", ""}); err != nil {
+		t.Fatal(err)
+	}
+
+	var got target
+	OptIfChanged(flags, "description", &desc, withDesc)(&got)
+	OptIfChanged(flags, "tags", tags, withTags)(&got)
+
+	if got.desc == nil || *got.desc != "" {
+		t.Errorf("changed flag should apply option: desc=%v", got.desc)
+	}
+	if got.tags != nil {
+		t.Errorf("unchanged flag should be a no-op: tags=%#v", got.tags)
+	}
+}
+
+func TestOptIfChanged_PanicsOnUnknownFlag(t *testing.T) {
+	type target struct{}
+	type opt func(*target)
+
+	flags := pflag.NewFlagSet("opt", pflag.ContinueOnError)
+
+	defer func() {
+		r := recover()
+		if r == nil {
+			t.Fatal("expected panic for unknown flag name, got nil")
+		}
+		msg, _ := r.(string)
+		if !strings.Contains(msg, `"nonexistent"`) || !strings.Contains(msg, `"opt"`) {
+			t.Errorf("panic message = %q, want flag name and command name", msg)
+		}
+	}()
+
+	OptIfChanged(flags, "nonexistent", "", func(string) opt {
+		return func(*target) {}
+	})
+}
+
 func TestExtractHl(t *testing.T) {
 	type args struct {
 		uri string

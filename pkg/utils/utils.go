@@ -98,6 +98,19 @@ func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {
 	}
 }
 
+func OptIfChanged[R any, T any, Opt ~func(*R)](
+	f *pflag.FlagSet, name string, val T, fn func(T) Opt,
+) Opt {
+	flag := f.Lookup(name)
+	if flag == nil {
+		panic(fmt.Sprintf("unknown flag %q on command %q", name, f.Name()))
+	}
+	if flag.Changed {
+		return fn(val)
+	}
+	return func(*R) {}
+}
+
 func ResolveCredential(c *cobra.Command, flag, env, value string) (string, error) {
 	if !c.Flags().Changed(flag) {
 		value = cmp.Or(os.Getenv(env), value)
