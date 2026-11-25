@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -106,89 +107,130 @@ func init() {
 			),
 		),
 	)
-	videoCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().BoolVarP(
-		autoLevels, "autoLevels", "A", true, alUsage,
-	)
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringSliceVarP(
-		&tags, "tags", "a", []string{"yutu🐰"}, tagsUsage,
-	)
-	insertCmd.Flags().StringVarP(language, "language", "l", "", insertLangUsage)
-	insertCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
-	insertCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", chidUsage)
-	insertCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
-	insertCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	insertCmd.Flags().BoolVarP(forKids, "forKids", "K", false, fkUsage)
-	insertCmd.Flags().BoolVarP(
-		embeddable, "embeddable", "E", true, embeddableUsage,
-	)
-	insertCmd.Flags().BoolVarP(
-		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
-	)
-	insertCmd.Flags().StringVarP(recordingDate, "recordingDate", "D", "", rdUsage)
-	insertCmd.Flags().StringVarP(publishAt, "publishAt", "U", "", paUsage)
-	insertCmd.Flags().BoolVarP(stabilize, "stabilize", "S", true, stabilizeUsage)
-	insertCmd.Flags().BoolVarP(
-		notifySubscribers, "notifySubscribers", "N", true, nsUsage,
-	)
-	insertCmd.Flags().BoolVarP(
-		publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		pkg.OBOCOCUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("file")
-	_ = insertCmd.MarkFlagRequired("categoryId")
-	_ = insertCmd.MarkFlagRequired("privacy")
+	videoCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := video.NewVideo(
-			video.WithAutoLevels(autoLevels),
-			video.WithFile(file),
-			video.WithTitle(title),
-			video.WithDescription(description),
-			video.WithTags(tags),
-			video.WithLanguage(language),
-			video.WithLicense(license),
-			video.WithThumbnail(thumbnail),
-			video.WithChannelId(channelId),
-			video.WithPlaylistId(playListId),
-			video.WithCategory(categoryId),
-			video.WithPrivacy(privacy),
-			video.WithForKids(forKids),
-			video.WithEmbeddable(embeddable),
-			video.WithContainsSyntheticMedia(containsSyntheticMedia),
-			video.WithRecordingDate(recordingDate),
-			video.WithPublishAt(publishAt),
-			video.WithStabilize(stabilize),
-			video.WithNotifySubscribers(notifySubscribers),
-			video.WithPublicStatsViewable(publicStatsViewable),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			video.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	autoLevels                    bool
+	file                          string
+	title                         string
+	description                   string
+	tags                          []string
+	language                      string
+	license                       string
+	thumbnail                     string
+	channelId                     string
+	playlistId                    string
+	categoryId                    string
+	privacy                       string
+	forKids                       bool
+	embeddable                    bool
+	containsSyntheticMedia        bool
+	recordingDate                 string
+	publishAt                     string
+	stabilize                     bool
+	notifySubscribers             bool
+	publicStatsViewable           bool
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	output                        string
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().BoolVarP(&o.autoLevels, "autoLevels", "A", true, alUsage)
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringSliceVarP(&o.tags, "tags", "a", []string{"yutu🐰"}, tagsUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", insertLangUsage)
+	c.Flags().StringVarP(&o.license, "license", "L", "", licenseUsage)
+	c.Flags().StringVarP(&o.thumbnail, "thumbnail", "u", "", thumbnailUsage)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", chidUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "y", "", pidUsage)
+	c.Flags().StringVarP(&o.categoryId, "categoryId", "g", "", caidUsage)
+	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
+	c.Flags().BoolVarP(&o.forKids, "forKids", "K", false, fkUsage)
+	c.Flags().BoolVarP(&o.embeddable, "embeddable", "E", true, embeddableUsage)
+	c.Flags().BoolVarP(
+		&o.containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
+	)
+	c.Flags().StringVarP(&o.recordingDate, "recordingDate", "D", "", rdUsage)
+	c.Flags().StringVarP(&o.publishAt, "publishAt", "U", "", paUsage)
+	c.Flags().BoolVarP(&o.stabilize, "stabilize", "S", true, stabilizeUsage)
+	c.Flags().BoolVarP(&o.notifySubscribers, "notifySubscribers", "N", true, nsUsage)
+	c.Flags().BoolVarP(
+		&o.publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", pkg.OBOCOCUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("file")
+	_ = c.MarkFlagRequired("categoryId")
+	_ = c.MarkFlagRequired("privacy")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *video.Video {
+	return video.NewVideo(
+		utils.OptIfChanged(f, "autoLevels", &o.autoLevels, video.WithAutoLevels),
+		video.WithFile(o.file),
+		video.WithTitle(o.title),
+		utils.OptIfChanged(f, "description", &o.description, video.WithDescription),
+		video.WithTags(o.tags),
+		utils.OptIfChanged(f, "language", &o.language, video.WithLanguage),
+		video.WithLicense(o.license),
+		video.WithThumbnail(o.thumbnail),
+		video.WithChannelId(o.channelId),
+		video.WithPlaylistId(o.playlistId),
+		video.WithCategory(o.categoryId),
+		video.WithPrivacy(o.privacy),
+		utils.OptIfChanged(f, "forKids", &o.forKids, video.WithForKids),
+		utils.OptIfChanged(f, "embeddable", &o.embeddable, video.WithEmbeddable),
+		utils.OptIfChanged(
+			f, "containsSyntheticMedia", &o.containsSyntheticMedia,
+			video.WithContainsSyntheticMedia,
+		),
+		utils.OptIfChanged(
+			f, "recordingDate", &o.recordingDate, video.WithRecordingDate,
+		),
+		utils.OptIfChanged(f, "publishAt", &o.publishAt, video.WithPublishAt),
+		utils.OptIfChanged(f, "stabilize", &o.stabilize, video.WithStabilize),
+		utils.OptIfChanged(
+			f, "notifySubscribers", &o.notifySubscribers,
+			video.WithNotifySubscribers,
+		),
+		utils.OptIfChanged(
+			f, "publicStatsViewable", &o.publicStatsViewable,
+			video.WithPublicStatsViewable,
+		),
+		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		video.WithOutput(o.output),
+	).(*video.Video)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, opts.file))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

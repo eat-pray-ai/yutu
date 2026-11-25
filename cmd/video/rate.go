@@ -71,30 +71,47 @@ func init() {
 			),
 		),
 	)
-	videoCmd.AddCommand(rateCmd)
-
-	rateCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, rateIdsUsage)
-	rateCmd.Flags().StringVarP(&rating, "rating", "r", "", rateRUsage)
-	rateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = rateCmd.MarkFlagRequired("ids")
-	_ = rateCmd.MarkFlagRequired("rating")
+	videoCmd.AddCommand(newRateCmd())
 }
 
-var rateCmd = &cobra.Command{
-	Use:     "rate",
-	Short:   rateShort,
-	Long:    rateLong,
-	Example: rateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(rateConfirm, strings.Join(ids, ", "), rating),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := video.NewVideo(
-			video.WithIds(ids),
-			video.WithRating(rating),
-		)
-		return input.Rate(c.OutOrStdout())
-	},
+type rateOpts struct {
+	ids    []string
+	rating string
+}
+
+func (o *rateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, rateIdsUsage)
+	c.Flags().StringVarP(&o.rating, "rating", "r", "", rateRUsage)
+	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+	_ = c.MarkFlagRequired("rating")
+}
+
+func (o *rateOpts) build() *video.Video {
+	return video.NewVideo(
+		video.WithIds(o.ids),
+		video.WithRating(o.rating),
+	).(*video.Video)
+}
+
+func newRateCmd() *cobra.Command {
+	var opts rateOpts
+
+	c := &cobra.Command{
+		Use:     "rate",
+		Short:   rateShort,
+		Long:    rateLong,
+		Example: rateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, fmt.Sprintf(rateConfirm, strings.Join(opts.ids, ", "), opts.rating),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Rate(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

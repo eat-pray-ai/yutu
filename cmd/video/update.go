@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -95,61 +96,93 @@ func init() {
 			),
 		),
 	)
-	videoCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", nil, tagsUsage)
-	updateCmd.Flags().StringVarP(language, "language", "l", "", updateLangUsage)
-	updateCmd.Flags().StringVarP(&license, "license", "L", "", licenseUsage)
-	updateCmd.Flags().StringVarP(&thumbnail, "thumbnail", "u", "", thumbnailUsage)
-	updateCmd.Flags().StringVarP(&playListId, "playlistId", "y", "", pidUsage)
-	updateCmd.Flags().StringVarP(&categoryId, "categoryId", "g", "", caidUsage)
-	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	updateCmd.Flags().StringVarP(publishAt, "publishAt", "U", "", paUsage)
-	updateCmd.Flags().BoolVarP(
-		embeddable, "embeddable", "E", true, embeddableUsage,
-	)
-	updateCmd.Flags().BoolVarP(
-		containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
-	)
-	updateCmd.Flags().StringVarP(recordingDate, "recordingDate", "D", "", rdUsage)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	videoCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := video.NewVideo(
-			video.WithIds(ids),
-			video.WithTitle(title),
-			video.WithDescription(description),
-			video.WithTags(tags),
-			video.WithLanguage(language),
-			video.WithLicense(license),
-			video.WithPlaylistId(playListId),
-			video.WithThumbnail(thumbnail),
-			video.WithCategory(categoryId),
-			video.WithPrivacy(privacy),
-			video.WithPublishAt(publishAt),
-			video.WithEmbeddable(embeddable),
-			video.WithContainsSyntheticMedia(containsSyntheticMedia),
-			video.WithRecordingDate(recordingDate),
-			video.WithMaxResults(1),
-			video.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids                    []string
+	title                  string
+	description            string
+	tags                   []string
+	language               string
+	license                string
+	thumbnail              string
+	playlistId             string
+	categoryId             string
+	privacy                string
+	publishAt              string
+	embeddable             bool
+	containsSyntheticMedia bool
+	recordingDate          string
+	output                 string
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringSliceVarP(&o.tags, "tags", "a", nil, tagsUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", updateLangUsage)
+	c.Flags().StringVarP(&o.license, "license", "L", "", licenseUsage)
+	c.Flags().StringVarP(&o.thumbnail, "thumbnail", "u", "", thumbnailUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "y", "", pidUsage)
+	c.Flags().StringVarP(&o.categoryId, "categoryId", "g", "", caidUsage)
+	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
+	c.Flags().StringVarP(&o.publishAt, "publishAt", "U", "", paUsage)
+	c.Flags().BoolVarP(&o.embeddable, "embeddable", "E", true, embeddableUsage)
+	c.Flags().BoolVarP(
+		&o.containsSyntheticMedia, "containsSyntheticMedia", "M", false, csmUsage,
+	)
+	c.Flags().StringVarP(&o.recordingDate, "recordingDate", "D", "", rdUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *video.Video {
+	return video.NewVideo(
+		video.WithIds(o.ids),
+		video.WithTitle(o.title),
+		utils.OptIfChanged(f, "description", &o.description, video.WithDescription),
+		utils.OptIfChanged(f, "tags", o.tags, video.WithTags),
+		utils.OptIfChanged(f, "language", &o.language, video.WithLanguage),
+		video.WithLicense(o.license),
+		video.WithPlaylistId(o.playlistId),
+		video.WithThumbnail(o.thumbnail),
+		video.WithCategory(o.categoryId),
+		video.WithPrivacy(o.privacy),
+		utils.OptIfChanged(f, "publishAt", &o.publishAt, video.WithPublishAt),
+		utils.OptIfChanged(f, "embeddable", &o.embeddable, video.WithEmbeddable),
+		utils.OptIfChanged(
+			f, "containsSyntheticMedia", &o.containsSyntheticMedia,
+			video.WithContainsSyntheticMedia,
+		),
+		utils.OptIfChanged(
+			f, "recordingDate", &o.recordingDate, video.WithRecordingDate,
+		),
+		video.WithMaxResults(1),
+		video.WithOutput(o.output),
+	).(*video.Video)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -71,44 +72,64 @@ func init() {
 			),
 		),
 	)
-	videoCmd.AddCommand(reportAbuseCmd)
-
-	reportAbuseCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, raIdsUsage)
-	reportAbuseCmd.Flags().StringVarP(&reasonId, "reasonId", "r", "", ridUsage)
-	reportAbuseCmd.Flags().StringVarP(
-		&secondaryReasonId, "secondaryReasonId", "s", "", sridUsage,
-	)
-	reportAbuseCmd.Flags().StringVarP(
-		&comments, "comments", "c", "", commentsUsage,
-	)
-	reportAbuseCmd.Flags().StringVarP(language, "language", "l", "", raLangUsage)
-	reportAbuseCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	reportAbuseCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = reportAbuseCmd.MarkFlagRequired("ids")
-	_ = reportAbuseCmd.MarkFlagRequired("reasonId")
+	videoCmd.AddCommand(newReportAbuseCmd())
 }
 
-var reportAbuseCmd = &cobra.Command{
-	Use:     "reportAbuse",
-	Short:   reportAbuseShort,
-	Long:    reportAbuseLong,
-	Example: reportAbuseExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(reportAbuseConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := video.NewVideo(
-			video.WithIds(ids),
-			video.WithReasonId(reasonId),
-			video.WithSecondaryReasonId(secondaryReasonId),
-			video.WithComments(comments),
-			video.WithLanguage(language),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		)
-		return input.ReportAbuse(c.OutOrStdout())
-	},
+type reportAbuseOpts struct {
+	ids                    []string
+	reasonId               string
+	secondaryReasonId      string
+	comments               string
+	language               string
+	onBehalfOfContentOwner string
+}
+
+func (o *reportAbuseOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, raIdsUsage)
+	c.Flags().StringVarP(&o.reasonId, "reasonId", "r", "", ridUsage)
+	c.Flags().StringVarP(
+		&o.secondaryReasonId, "secondaryReasonId", "s", "", sridUsage,
+	)
+	c.Flags().StringVarP(&o.comments, "comments", "c", "", commentsUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", raLangUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+	_ = c.MarkFlagRequired("reasonId")
+}
+
+func (o *reportAbuseOpts) build(f *pflag.FlagSet) *video.Video {
+	return video.NewVideo(
+		video.WithIds(o.ids),
+		video.WithReasonId(o.reasonId),
+		video.WithSecondaryReasonId(o.secondaryReasonId),
+		video.WithComments(o.comments),
+		utils.OptIfChanged(f, "language", &o.language, video.WithLanguage),
+		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+	).(*video.Video)
+}
+
+func newReportAbuseCmd() *cobra.Command {
+	var opts reportAbuseOpts
+
+	c := &cobra.Command{
+		Use:     "reportAbuse",
+		Short:   reportAbuseShort,
+		Long:    reportAbuseLong,
+		Example: reportAbuseExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, fmt.Sprintf(reportAbuseConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).ReportAbuse(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

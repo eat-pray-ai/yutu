@@ -62,25 +62,41 @@ func init() {
 			),
 		),
 	)
-	videoCmd.AddCommand(deleteCmd)
-
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, deleteIdsUsage)
-	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = deleteCmd.MarkFlagRequired("ids")
+	videoCmd.AddCommand(newDeleteCmd())
 }
 
-var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   deleteShort,
-	Long:    deleteLong,
-	Example: deleteExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := video.NewVideo(video.WithIds(ids))
-		return input.Delete(c.OutOrStdout())
-	},
+type deleteOpts struct {
+	ids []string
+}
+
+func (o *deleteOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, deleteIdsUsage)
+	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *deleteOpts) build() *video.Video {
+	return video.NewVideo(video.WithIds(o.ids)).(*video.Video)
+}
+
+func newDeleteCmd() *cobra.Command {
+	var opts deleteOpts
+
+	c := &cobra.Command{
+		Use:     "delete",
+		Short:   deleteShort,
+		Long:    deleteLong,
+		Example: deleteExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, fmt.Sprintf(deleteConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Delete(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

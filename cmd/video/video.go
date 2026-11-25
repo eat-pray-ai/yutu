@@ -5,7 +5,6 @@ package video
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -43,52 +42,10 @@ const (
 	psvUsage        = "Whether the extended video statistics can be viewed by everyone"
 )
 
-var (
-	ids               []string
-	autoLevels        = new(false)
-	file              string
-	title             string
-	description       = new("")
-	hl                string
-	tags              []string
-	language          = new("")
-	locale            string
-	license           string
-	thumbnail         string
-	rating            string
-	chart             string
-	channelId         string
-	comments          string
-	playListId        string
-	categoryId        string
-	privacy           string
-	forKids           = new(false)
-	embeddable        = new(false)
-	recordingDate     = new("")
-	publishAt         = new("")
-	regionCode        string
-	reasonId          string
-	secondaryReasonId string
-	stabilize         = new(false)
-	maxHeight         int64
-	maxWidth          int64
-	maxResults        int64
-	parts             []string
-
-	notifySubscribers             = new(false)
-	publicStatsViewable           = new(false)
-	containsSyntheticMedia        = new(false)
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var videoCmd = &cobra.Command{
 	Use:   "video",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		resetFlags(c)
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},
@@ -96,29 +53,4 @@ var videoCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(videoCmd)
-}
-
-func resetFlags(c *cobra.Command) {
-	boolMap := map[string]**bool{
-		"autoLevels":          &autoLevels,
-		"embeddable":          &embeddable,
-		"stabilize":           &stabilize,
-		"notifySubscribers":   &notifySubscribers,
-		"publicStatsViewable": &publicStatsViewable,
-	}
-	stringFlag := map[string]**string{
-		"description":   &description,
-		"language":      &language,
-		"publishAt":     &publishAt,
-		"recordingDate": &recordingDate,
-	}
-
-	flagSet := c.Flags()
-	if c.Name() == "update" {
-		boolMap["containsSyntheticMedia"] = &containsSyntheticMedia
-		utils.ResetFlags(map[string]*[]string{"tags": &tags}, flagSet)
-	}
-
-	utils.ResetFlags(boolMap, flagSet)
-	utils.ResetFlags(stringFlag, flagSet)
 }

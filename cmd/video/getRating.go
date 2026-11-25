@@ -59,29 +59,47 @@ func init() {
 			},
 		),
 	)
-	videoCmd.AddCommand(getRatingCmd)
-
-	getRatingCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, grIdsUsage)
-	getRatingCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	getRatingCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
-	_ = getRatingCmd.MarkFlagRequired("ids")
+	videoCmd.AddCommand(newGetRatingCmd())
 }
 
-var getRatingCmd = &cobra.Command{
-	Use:     "getRating",
-	Short:   getRatingShort,
-	Long:    getRatingLong,
-	Example: getRatingExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := video.NewVideo(
-			video.WithIds(ids),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithOutput(output),
-			video.WithService(nil),
-		)
-		return input.GetRating(c.OutOrStdout())
-	},
+type getRatingOpts struct {
+	ids                    []string
+	onBehalfOfContentOwner string
+	output                 string
+}
+
+func (o *getRatingOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, grIdsUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *getRatingOpts) build() *video.Video {
+	return video.NewVideo(
+		video.WithIds(o.ids),
+		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithOutput(o.output),
+		video.WithService(nil),
+	).(*video.Video)
+}
+
+func newGetRatingCmd() *cobra.Command {
+	var opts getRatingOpts
+
+	c := &cobra.Command{
+		Use:     "getRating",
+		Short:   getRatingShort,
+		Long:    getRatingLong,
+		Example: getRatingExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().GetRating(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

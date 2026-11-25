@@ -88,50 +88,78 @@ func init() {
 			},
 		),
 	)
-	videoCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().StringVarP(&chart, "chart", "c", "", chartUsage)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringVarP(&locale, "locale", "L", "", localeUsage)
-	listCmd.Flags().StringVarP(&categoryId, "videoCategoryId", "g", "", caidUsage)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
-	listCmd.Flags().Int64VarP(&maxHeight, "maxHeight", "H", 0, mhUsage)
-	listCmd.Flags().Int64VarP(&maxWidth, "maxWidth", "W", 0, mwUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringVarP(&rating, "myRating", "R", "", listMrUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status", "statistics"},
-		pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	videoCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := video.NewVideo(
-			video.WithIds(ids),
-			video.WithChart(chart),
-			video.WithHl(hl),
-			video.WithLocale(locale),
-			video.WithCategory(categoryId),
-			video.WithRegionCode(regionCode),
-			video.WithMaxHeight(maxHeight),
-			video.WithMaxWidth(maxWidth),
-			video.WithMaxResults(maxResults),
-			video.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			video.WithRating(rating),
-			video.WithParts(parts),
-			video.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                    []string
+	chart                  string
+	hl                     string
+	locale                 string
+	categoryId             string
+	regionCode             string
+	maxHeight              int64
+	maxWidth               int64
+	maxResults             int64
+	onBehalfOfContentOwner string
+	rating                 string
+	parts                  []string
+	output                 string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().StringVarP(&o.chart, "chart", "c", "", chartUsage)
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringVarP(&o.locale, "locale", "L", "", localeUsage)
+	c.Flags().StringVarP(&o.categoryId, "videoCategoryId", "g", "", caidUsage)
+	c.Flags().StringVarP(&o.regionCode, "regionCode", "r", "", rcUsage)
+	c.Flags().Int64VarP(&o.maxHeight, "maxHeight", "H", 0, mhUsage)
+	c.Flags().Int64VarP(&o.maxWidth, "maxWidth", "W", 0, mwUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(&o.rating, "myRating", "R", "", listMrUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "status", "statistics"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *video.Video {
+	return video.NewVideo(
+		video.WithIds(o.ids),
+		video.WithChart(o.chart),
+		video.WithHl(o.hl),
+		video.WithLocale(o.locale),
+		video.WithCategory(o.categoryId),
+		video.WithRegionCode(o.regionCode),
+		video.WithMaxHeight(o.maxHeight),
+		video.WithMaxWidth(o.maxWidth),
+		video.WithMaxResults(o.maxResults),
+		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithRating(o.rating),
+		video.WithParts(o.parts),
+		video.WithOutput(o.output),
+	).(*video.Video)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
