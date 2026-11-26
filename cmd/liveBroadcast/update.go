@@ -50,7 +50,7 @@ var updateInSchema = &jsonschema.Schema{
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"on_behalf_of_content_owner_channel": {
-			Type: "string", Description: obococUsage,
+			Type: "string", Description: pkg.OBOCOCUsage,
 		},
 		"output": {
 			Type: "string", Enum: []any{"json", "yaml", "silent"},
@@ -114,7 +114,7 @@ func (o *updateOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(
 		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
-		"", obococUsage,
+		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)

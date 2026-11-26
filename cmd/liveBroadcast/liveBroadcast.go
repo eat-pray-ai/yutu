@@ -9,21 +9,20 @@ import (
 )
 
 const (
-	short       = "Manage YouTube live broadcasts"
-	long        = "Manage YouTube live broadcasts. Use this tool to list, insert, update, delete, bind, transition, or insert cuepoints for live broadcasts."
-	titleUsage  = "Title of the live broadcast"
-	descUsage   = "Description of the live broadcast"
-	psUsage     = "Privacy status (public, unlisted, private)"
-	sstUsage    = "Scheduled start time in RFC 3339 format"
-	setUsage    = "Scheduled end time in RFC 3339 format"
-	bsUsage     = "Broadcast status filter (all, active, upcoming, completed)"
-	btUsage     = "Broadcast type filter (all, event, persistent)"
-	sidUsage    = "ID of the live stream to bind"
-	ctUsage     = "Cue type (cueTypeAd)"
-	cdsUsage    = "Cuepoint duration in seconds"
-	ciomUsage   = "Cuepoint insertion offset time in milliseconds"
-	cwmUsage    = "Cuepoint wall clock time in milliseconds"
-	obococUsage = "Channel ID for content owner operations"
+	short      = "Manage YouTube live broadcasts"
+	long       = "Manage YouTube live broadcasts. Use this tool to list, insert, update, delete, bind, transition, or insert cuepoints for live broadcasts."
+	titleUsage = "Title of the live broadcast"
+	descUsage  = "Description of the live broadcast"
+	psUsage    = "Privacy status (public, unlisted, private)"
+	sstUsage   = "Scheduled start time in RFC 3339 format"
+	setUsage   = "Scheduled end time in RFC 3339 format"
+	bsUsage    = "Broadcast status filter (all, active, upcoming, completed)"
+	btUsage    = "Broadcast type filter (all, event, persistent)"
+	sidUsage   = "ID of the live stream to bind"
+	ctUsage    = "Cue type (cueTypeAd)"
+	cdsUsage   = "Cuepoint duration in seconds"
+	ciomUsage  = "Cuepoint insertion offset time in milliseconds"
+	cwmUsage   = "Cuepoint wall clock time in milliseconds"
 )
 
 var liveBroadcastCmd = &cobra.Command{

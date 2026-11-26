@@ -40,7 +40,7 @@ var deleteInSchema = &jsonschema.Schema{
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"on_behalf_of_content_owner_channel": {
-			Type: "string", Description: obococUsage,
+			Type: "string", Description: pkg.OBOCOCUsage,
 		},
 	},
 }
@@ -84,7 +84,7 @@ func (o *deleteOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(
 		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
-		"", obococUsage,
+		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("ids")

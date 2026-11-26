@@ -9,14 +9,13 @@ import (
 )
 
 const (
-	short       = "Manage YouTube live streams"
-	long        = "Manage YouTube live streams. Use this tool to list, insert, update, or delete live streams."
-	titleUsage  = "Title of the live stream"
-	descUsage   = "Description of the live stream"
-	frUsage     = "Frame rate of the video stream (30fps, 60fps, variable)"
-	itUsage     = "Ingestion type (rtmp, dash, webrtc, hls)"
-	resUsage    = "Resolution of the video stream (240p, 360p, 480p, 720p, 1080p, 1440p, 2160p, variable)"
-	obococUsage = "Channel ID for content owner operations"
+	short      = "Manage YouTube live streams"
+	long       = "Manage YouTube live streams. Use this tool to list, insert, update, or delete live streams."
+	titleUsage = "Title of the live stream"
+	descUsage  = "Description of the live stream"
+	frUsage    = "Frame rate of the video stream (30fps, 60fps, variable)"
+	itUsage    = "Ingestion type (rtmp, dash, webrtc, hls)"
+	resUsage   = "Resolution of the video stream (240p, 360p, 480p, 720p, 1080p, 1440p, 2160p, variable)"
 )
 
 var liveStreamCmd = &cobra.Command{

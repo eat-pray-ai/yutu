@@ -45,7 +45,7 @@ var transitionInSchema = &jsonschema.Schema{
 		},
 		"on_behalf_of_content_owner": {Type: "string", Description: pkg.OBOCOUsage},
 		"on_behalf_of_content_owner_channel": {
-			Type: "string", Description: obococUsage,
+			Type: "string", Description: pkg.OBOCOCUsage,
 		},
 		"parts": {
 			Type: "array", Description: pkg.PartsUsage,
@@ -109,7 +109,7 @@ func (o *transitionOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(
 		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
-		"", obococUsage,
+		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().StringSliceVarP(
 		&o.parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
