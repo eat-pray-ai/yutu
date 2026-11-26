@@ -19,11 +19,7 @@ const (
 	langName = "i18nLanguages"
 )
 
-var (
-	hl           string
-	parts        []string
-	defaultParts = []string{"id", "snippet"}
-)
+var defaultParts = []string{"id", "snippet"}
 
 var i18nLanguageCmd = &cobra.Command{
 	Use:   "i18nLanguage",

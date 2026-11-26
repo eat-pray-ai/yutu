@@ -44,27 +44,45 @@ func init() {
 			},
 		}, langsHandler,
 	)
-	i18nLanguageCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	i18nLanguageCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := i18nLanguage.NewI18nLanguage(
-			i18nLanguage.WithHl(hl),
-			i18nLanguage.WithParts(parts),
-			i18nLanguage.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	hl     string
+	parts  []string
+	output string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", defaultParts, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *i18nLanguage.I18nLanguage {
+	return i18nLanguage.NewI18nLanguage(
+		i18nLanguage.WithHl(o.hl),
+		i18nLanguage.WithParts(o.parts),
+		i18nLanguage.WithOutput(o.output),
+	).(*i18nLanguage.I18nLanguage)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:   "list",
+		Short: listShort,
+		Long:  listLong,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
 
 var hlHandler = cobramcp.GenResourceHandler(

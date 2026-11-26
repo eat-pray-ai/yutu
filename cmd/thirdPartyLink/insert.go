@@ -68,41 +68,64 @@ func init() {
 			),
 		),
 	)
-	thirdPartyLinkCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
-	insertCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	insertCmd.Flags().StringVarP(&linkStatus, "linkStatus", "s", "", statusUsage)
-	insertCmd.Flags().StringVarP(
-		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("linkingToken")
-	_ = insertCmd.MarkFlagRequired("type")
+	thirdPartyLinkCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, linkingToken))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := thirdPartyLink.NewThirdPartyLink(
-			thirdPartyLink.WithLinkingToken(linkingToken),
-			thirdPartyLink.WithType(linkType),
-			thirdPartyLink.WithLinkStatus(linkStatus),
-			thirdPartyLink.WithExternalChannelId(externalChannelId),
-			thirdPartyLink.WithParts(parts),
-			thirdPartyLink.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	linkingToken      string
+	linkType          string
+	linkStatus        string
+	externalChannelId string
+	parts             []string
+	output            string
+	yes               bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.linkingToken, "linkingToken", "l", "", ltUsage)
+	c.Flags().StringVarP(&o.linkType, "type", "t", "", typeUsage)
+	c.Flags().StringVarP(&o.linkStatus, "linkStatus", "s", "", statusUsage)
+	c.Flags().StringVarP(
+		&o.externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("linkingToken")
+	_ = c.MarkFlagRequired("type")
+}
+
+func (o *insertOpts) build() *thirdPartyLink.ThirdPartyLink {
+	return thirdPartyLink.NewThirdPartyLink(
+		thirdPartyLink.WithLinkingToken(o.linkingToken),
+		thirdPartyLink.WithType(o.linkType),
+		thirdPartyLink.WithLinkStatus(o.linkStatus),
+		thirdPartyLink.WithExternalChannelId(o.externalChannelId),
+		thirdPartyLink.WithParts(o.parts),
+		thirdPartyLink.WithOutput(o.output),
+	).(*thirdPartyLink.ThirdPartyLink)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.linkingToken),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

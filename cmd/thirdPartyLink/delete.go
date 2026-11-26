@@ -60,32 +60,53 @@ func init() {
 			),
 		),
 	)
-	thirdPartyLinkCmd.AddCommand(deleteCmd)
-
-	deleteCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
-	deleteCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	deleteCmd.Flags().StringVarP(
-		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
-	)
-	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = deleteCmd.MarkFlagRequired("linkingToken")
-	_ = deleteCmd.MarkFlagRequired("type")
+	thirdPartyLinkCmd.AddCommand(newDeleteCmd())
 }
 
-var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   deleteShort,
-	Long:    deleteLong,
-	Example: deleteExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(deleteConfirm, linkingToken))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := thirdPartyLink.NewThirdPartyLink(
-			thirdPartyLink.WithLinkingToken(linkingToken),
-			thirdPartyLink.WithType(linkType),
-			thirdPartyLink.WithExternalChannelId(externalChannelId),
-		)
-		return input.Delete(c.OutOrStdout())
-	},
+type deleteOpts struct {
+	linkingToken      string
+	linkType          string
+	externalChannelId string
+	yes               bool
+}
+
+func (o *deleteOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.linkingToken, "linkingToken", "l", "", ltUsage)
+	c.Flags().StringVarP(&o.linkType, "type", "t", "", typeUsage)
+	c.Flags().StringVarP(
+		&o.externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("linkingToken")
+	_ = c.MarkFlagRequired("type")
+}
+
+func (o *deleteOpts) build() *thirdPartyLink.ThirdPartyLink {
+	return thirdPartyLink.NewThirdPartyLink(
+		thirdPartyLink.WithLinkingToken(o.linkingToken),
+		thirdPartyLink.WithType(o.linkType),
+		thirdPartyLink.WithExternalChannelId(o.externalChannelId),
+	).(*thirdPartyLink.ThirdPartyLink)
+}
+
+func newDeleteCmd() *cobra.Command {
+	var opts deleteOpts
+
+	c := &cobra.Command{
+		Use:     "delete",
+		Short:   deleteShort,
+		Long:    deleteLong,
+		Example: deleteExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(deleteConfirm, opts.linkingToken),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Delete(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

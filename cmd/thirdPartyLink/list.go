@@ -64,33 +64,52 @@ func init() {
 			},
 		),
 	)
-	thirdPartyLinkCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
-	listCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	listCmd.Flags().StringVarP(
-		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	thirdPartyLinkCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := thirdPartyLink.NewThirdPartyLink(
-			thirdPartyLink.WithLinkingToken(linkingToken),
-			thirdPartyLink.WithType(linkType),
-			thirdPartyLink.WithExternalChannelId(externalChannelId),
-			thirdPartyLink.WithParts(parts),
-			thirdPartyLink.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	linkingToken      string
+	linkType          string
+	externalChannelId string
+	parts             []string
+	output            string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.linkingToken, "linkingToken", "l", "", ltUsage)
+	c.Flags().StringVarP(&o.linkType, "type", "t", "", typeUsage)
+	c.Flags().StringVarP(
+		&o.externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *thirdPartyLink.ThirdPartyLink {
+	return thirdPartyLink.NewThirdPartyLink(
+		thirdPartyLink.WithLinkingToken(o.linkingToken),
+		thirdPartyLink.WithType(o.linkType),
+		thirdPartyLink.WithExternalChannelId(o.externalChannelId),
+		thirdPartyLink.WithParts(o.parts),
+		thirdPartyLink.WithOutput(o.output),
+	).(*thirdPartyLink.ThirdPartyLink)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

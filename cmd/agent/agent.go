@@ -40,53 +40,40 @@ const (
 	errLaunchAgent = "failed to launch Agent"
 )
 
-var (
+func init() {
+	cmd.RootCmd.AddCommand(newAgentCmd())
+}
+
+type agentOpts struct {
 	launcherArgs string
 	provider     string
 	modelName    string
 	apiKey       string
 	baseURL      string
 	inst         string
-)
-
-var agentCmd = &cobra.Command{
-	Use:     "agent",
-	Short:   short,
-	Long:    long,
-	Example: example,
-	Run: func(c *cobra.Command, _ []string) {
-		if launcherArgs == "" {
-			_, _ = fmt.Fprintln(
-				c.OutOrStdout(), full.NewLauncher().CommandLineSyntax(),
-			)
-			return
-		}
-		launch(c.Context(), c.OutOrStdout(), strings.Fields(launcherArgs))
-	},
 }
 
-func init() {
-	cmd.RootCmd.AddCommand(agentCmd)
-	agentCmd.Flags().StringVarP(&launcherArgs, "args", "a", "console", argsUsage)
-	agentCmd.Flags().StringVarP(
-		&provider, "provider", "p", pkgagent.DefaultProvider, providerUsage,
+func (o *agentOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.launcherArgs, "args", "a", "console", argsUsage)
+	c.Flags().StringVarP(
+		&o.provider, "provider", "p", pkgagent.DefaultProvider, providerUsage,
 	)
-	agentCmd.Flags().StringVarP(
-		&modelName, "model", "m", pkgagent.DefaultModel, modelUsage,
+	c.Flags().StringVarP(
+		&o.modelName, "model", "m", pkgagent.DefaultModel, modelUsage,
 	)
-	agentCmd.Flags().StringVar(&apiKey, "api-key", "", apiKeyUsage)
-	agentCmd.Flags().StringVar(&baseURL, "base-url", "", baseURLUsage)
-	agentCmd.Flags().StringVarP(&inst, "instruction", "i", "", instructionUsage)
+	c.Flags().StringVar(&o.apiKey, "api-key", "", apiKeyUsage)
+	c.Flags().StringVar(&o.baseURL, "base-url", "", baseURLUsage)
+	c.Flags().StringVarP(&o.inst, "instruction", "i", "", instructionUsage)
 }
 
-func launch(ctx context.Context, writer io.Writer, args []string) {
+func (o *agentOpts) launch(ctx context.Context, writer io.Writer, args []string) {
 	instance, err := pkgagent.New(
 		ctx, pkgagent.Config{
-			Provider:    provider,
-			Model:       modelName,
-			APIKey:      apiKey,
-			BaseURL:     baseURL,
-			Instruction: inst,
+			Provider:    o.provider,
+			Model:       o.modelName,
+			APIKey:      o.apiKey,
+			BaseURL:     o.baseURL,
+			Instruction: o.inst,
 			MCPServer:   cmd.Server,
 		},
 	)
@@ -102,4 +89,27 @@ func launch(ctx context.Context, writer io.Writer, args []string) {
 		_, _ = fmt.Fprintln(writer, l.CommandLineSyntax())
 		os.Exit(1)
 	}
+}
+
+func newAgentCmd() *cobra.Command {
+	var opts agentOpts
+
+	c := &cobra.Command{
+		Use:     "agent",
+		Short:   short,
+		Long:    long,
+		Example: example,
+		Run: func(c *cobra.Command, _ []string) {
+			if opts.launcherArgs == "" {
+				_, _ = fmt.Fprintln(
+					c.OutOrStdout(), full.NewLauncher().CommandLineSyntax(),
+				)
+				return
+			}
+			opts.launch(c.Context(), c.OutOrStdout(), strings.Fields(opts.launcherArgs))
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

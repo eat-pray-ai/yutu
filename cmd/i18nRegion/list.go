@@ -33,27 +33,45 @@ func init() {
 			},
 		}, regionsHandler,
 	)
-	i18nRegionCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", defaultParts, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	i18nRegionCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := i18nRegion.NewI18nRegion(
-			i18nRegion.WithHl(hl),
-			i18nRegion.WithParts(parts),
-			i18nRegion.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	hl     string
+	parts  []string
+	output string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", defaultParts, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *i18nRegion.I18nRegion {
+	return i18nRegion.NewI18nRegion(
+		i18nRegion.WithHl(o.hl),
+		i18nRegion.WithParts(o.parts),
+		i18nRegion.WithOutput(o.output),
+	).(*i18nRegion.I18nRegion)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:   "list",
+		Short: listShort,
+		Long:  listLong,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
 
 var regionsHandler = cobramcp.GenResourceHandler(

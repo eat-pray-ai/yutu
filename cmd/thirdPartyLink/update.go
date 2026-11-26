@@ -70,40 +70,63 @@ func init() {
 			),
 		),
 	)
-	thirdPartyLinkCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringVarP(&linkingToken, "linkingToken", "l", "", ltUsage)
-	updateCmd.Flags().StringVarP(&linkType, "type", "t", "", typeUsage)
-	updateCmd.Flags().StringVarP(&linkStatus, "linkStatus", "s", "", statusUsage)
-	updateCmd.Flags().StringVarP(
-		&externalChannelId, "externalChannelId", "e", "", extCidUsage,
-	)
-	updateCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
-	)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("linkingToken")
+	thirdPartyLinkCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, linkingToken))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := thirdPartyLink.NewThirdPartyLink(
-			thirdPartyLink.WithLinkingToken(linkingToken),
-			thirdPartyLink.WithType(linkType),
-			thirdPartyLink.WithLinkStatus(linkStatus),
-			thirdPartyLink.WithExternalChannelId(externalChannelId),
-			thirdPartyLink.WithParts(parts),
-			thirdPartyLink.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	linkingToken      string
+	linkType          string
+	linkStatus        string
+	externalChannelId string
+	parts             []string
+	output            string
+	yes               bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.linkingToken, "linkingToken", "l", "", ltUsage)
+	c.Flags().StringVarP(&o.linkType, "type", "t", "", typeUsage)
+	c.Flags().StringVarP(&o.linkStatus, "linkStatus", "s", "", statusUsage)
+	c.Flags().StringVarP(
+		&o.externalChannelId, "externalChannelId", "e", "", extCidUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("linkingToken")
+}
+
+func (o *updateOpts) build() *thirdPartyLink.ThirdPartyLink {
+	return thirdPartyLink.NewThirdPartyLink(
+		thirdPartyLink.WithLinkingToken(o.linkingToken),
+		thirdPartyLink.WithType(o.linkType),
+		thirdPartyLink.WithLinkStatus(o.linkStatus),
+		thirdPartyLink.WithExternalChannelId(o.externalChannelId),
+		thirdPartyLink.WithParts(o.parts),
+		thirdPartyLink.WithOutput(o.output),
+	).(*thirdPartyLink.ThirdPartyLink)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, opts.linkingToken),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

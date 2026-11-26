@@ -16,11 +16,7 @@ const (
 	regionName = "i18nRegions"
 )
 
-var (
-	hl           string
-	parts        []string
-	defaultParts = []string{"id", "snippet"}
-)
+var defaultParts = []string{"id", "snippet"}
 
 var i18nRegionCmd = &cobra.Command{
 	Use:   "i18nRegion",

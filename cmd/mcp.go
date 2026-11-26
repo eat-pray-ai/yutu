@@ -39,10 +39,7 @@ const (
 	cacheTokenUsage = "Path/Base64/JSON of cached OAuth token"
 )
 
-var (
-	agentNames = []string{"claude", "opencode", "pi", "codex", "agy"}
-	agents     []string
-)
+var agentNames = []string{"claude", "opencode", "pi", "codex", "agy"}
 
 var mcpConfig = &cobramcp.Config{
 	Name:         "yutu",
@@ -89,53 +86,29 @@ func init() {
 		return nil
 	}
 
-	mcpCmd.AddCommand(setupCmd)
-	setupCmd.Flags().StringSliceVarP(&agents, "agents", "a", nil, agentsUsage)
-	setupCmd.Flags().StringVarP(&credential, "credential", "c", "client_secret.json", credentialUsage)
-	setupCmd.Flags().StringVarP(&cacheToken, "cacheToken", "t", "youtube.token.json", cacheTokenUsage)
-	_ = setupCmd.MarkFlagRequired("agents")
+	mcpCmd.AddCommand(newSetupCmd())
 }
 
-var setupCmd = &cobra.Command{
-	Use:     "setup",
-	Short:   setupShort,
-	Long:    setupLong,
-	Example: setupExample,
-	PreRunE: func(c *cobra.Command, _ []string) (errs error) {
-		var err error
-		credential, err = utils.ResolveCredential(c, "credential", "YUTU_CREDENTIAL", credential)
-		errs = errors.Join(errs, err)
-		cacheToken, err = utils.ResolveCredential(c, "cacheToken", "YUTU_CACHE_TOKEN", cacheToken)
-		errs = errors.Join(errs, err)
-		return errs
-	},
-	RunE: func(c *cobra.Command, _ []string) (errs error) {
-		c.SilenceErrors = true
-		for agent, err := range parseAgents(agents) {
-			if err != nil {
-				_, _ = fmt.Fprintf(c.ErrOrStderr(), "Error: %v\n", err)
-				errs = errors.Join(errs, err)
-				continue
-			}
-			_, _ = fmt.Fprintf(c.OutOrStdout(), "Setup %s... ", agent)
-			if err := runAgentCommand(c.Context(), agent, buildAgentArgs(agent)); err != nil {
-				_, _ = fmt.Fprintf(c.OutOrStdout(), "Failed: %v\n", err)
-				errs = errors.Join(errs, fmt.Errorf("%s: %w", agent, err))
-				continue
-			}
-			_, _ = fmt.Fprintln(c.OutOrStdout(), "Done")
-		}
-		return errs
-	},
+type setupOpts struct {
+	agents     []string
+	credential string
+	cacheToken string
 }
 
-func buildAgentArgs(agent string) []string {
+func (o *setupOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.agents, "agents", "a", nil, agentsUsage)
+	c.Flags().StringVarP(&o.credential, "credential", "c", "client_secret.json", credentialUsage)
+	c.Flags().StringVarP(&o.cacheToken, "cacheToken", "t", "youtube.token.json", cacheTokenUsage)
+	_ = c.MarkFlagRequired("agents")
+}
+
+func (o *setupOpts) buildAgentArgs(agent string) []string {
 	var env []string
-	if credential != "" {
-		env = append(env, "--env", "YUTU_CREDENTIAL="+credential)
+	if o.credential != "" {
+		env = append(env, "--env", "YUTU_CREDENTIAL="+o.credential)
 	}
-	if cacheToken != "" {
-		env = append(env, "--env", "YUTU_CACHE_TOKEN="+cacheToken)
+	if o.cacheToken != "" {
+		env = append(env, "--env", "YUTU_CACHE_TOKEN="+o.cacheToken)
 	}
 
 	args := []string{"mcp", "add"}
@@ -155,6 +128,46 @@ func buildAgentArgs(agent string) []string {
 		args = append(args, "yutu")
 	}
 	return append(args, "--", "yutu", "mcp", "-m", "stdio")
+}
+
+func newSetupCmd() *cobra.Command {
+	var opts setupOpts
+
+	c := &cobra.Command{
+		Use:     "setup",
+		Short:   setupShort,
+		Long:    setupLong,
+		Example: setupExample,
+		PreRunE: func(c *cobra.Command, _ []string) (errs error) {
+			var err error
+			opts.credential, err = utils.ResolveCredential(c, "credential", "YUTU_CREDENTIAL", opts.credential)
+			errs = errors.Join(errs, err)
+			opts.cacheToken, err = utils.ResolveCredential(c, "cacheToken", "YUTU_CACHE_TOKEN", opts.cacheToken)
+			errs = errors.Join(errs, err)
+			return errs
+		},
+		RunE: func(c *cobra.Command, _ []string) (errs error) {
+			c.SilenceErrors = true
+			for agent, err := range parseAgents(opts.agents) {
+				if err != nil {
+					_, _ = fmt.Fprintf(c.ErrOrStderr(), "Error: %v\n", err)
+					errs = errors.Join(errs, err)
+					continue
+				}
+				_, _ = fmt.Fprintf(c.OutOrStdout(), "Setup %s... ", agent)
+				if err := runAgentCommand(c.Context(), agent, opts.buildAgentArgs(agent)); err != nil {
+					_, _ = fmt.Fprintf(c.OutOrStdout(), "Failed: %v\n", err)
+					errs = errors.Join(errs, fmt.Errorf("%s: %w", agent, err))
+					continue
+				}
+				_, _ = fmt.Fprintln(c.OutOrStdout(), "Done")
+			}
+			return errs
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
 
 func parseAgents(values []string) iter.Seq2[string, error] {

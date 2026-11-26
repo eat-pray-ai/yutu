@@ -17,14 +17,6 @@ const (
 	extCidUsage = "Channel ID to which changes should be applied, for delegation"
 )
 
-var (
-	linkingToken      string
-	linkType          string
-	linkStatus        string
-	externalChannelId string
-	parts             []string
-)
-
 var thirdPartyLinkCmd = &cobra.Command{
 	Use:   "thirdPartyLink",
 	Short: short,
