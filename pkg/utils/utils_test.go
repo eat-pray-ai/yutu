@@ -8,7 +8,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"reflect"
 	"slices"
 	"strings"
 	"testing"
@@ -244,44 +243,6 @@ func TestPrintYAML_WriteError(t *testing.T) {
 	}
 }
 
-func TestResetFlags(t *testing.T) {
-	flags := pflag.NewFlagSet("reset", pflag.ContinueOnError)
-	omittedBool, explicitBool, absentBool := new(true), new(true), new(true)
-	flags.BoolVar(omittedBool, "omitted-bool", true, "")
-	flags.BoolVar(explicitBool, "explicit-bool", true, "")
-	var omittedTags, explicitTags []string
-	absentTags := []string{"keep"}
-	flags.StringSliceVar(&omittedTags, "omitted-tags", []string{"default"}, "")
-	flags.StringSliceVar(&explicitTags, "explicit-tags", []string{"default"}, "")
-	if err := flags.Parse([]string{"--explicit-bool=false", "--explicit-tags="}); err != nil {
-		t.Fatal(err)
-	}
-
-	ResetFlags(map[string]**bool{
-		"omitted-bool":  &omittedBool,
-		"explicit-bool": &explicitBool,
-		"absent-bool":   &absentBool,
-	}, flags)
-	ResetFlags(map[string]*[]string{
-		"omitted-tags":  &omittedTags,
-		"explicit-tags": &explicitTags,
-		"absent-tags":   &absentTags,
-	}, flags)
-
-	if omittedBool != nil || omittedTags != nil {
-		t.Errorf("omitted flags must reset to nil: bool=%v tags=%v", omittedBool, omittedTags)
-	}
-	if explicitBool == nil || *explicitBool {
-		t.Errorf("explicit false must remain non-nil and false: %v", explicitBool)
-	}
-	if explicitTags == nil || len(explicitTags) != 0 {
-		t.Errorf("explicit empty tags must remain non-nil and empty: %#v", explicitTags)
-	}
-	if absentBool == nil || !*absentBool || !reflect.DeepEqual(absentTags, []string{"keep"}) {
-		t.Errorf("unregistered flags must remain unchanged: bool=%v tags=%v", absentBool, absentTags)
-	}
-}
-
 func TestOptIfChanged(t *testing.T) {
 	type target struct {
 		desc *string
@@ -472,16 +433,12 @@ func TestConfirmPreRun(t *testing.T) {
 				defer func() { IsInteractive = orig }()
 
 				cmd := &cobra.Command{Use: "test"}
-				cmd.Flags().Bool("yes", false, "")
-				if tt.yes {
-					_ = cmd.Flags().Set("yes", "true")
-				}
 
 				var errBuf bytes.Buffer
 				cmd.SetErr(&errBuf)
 				cmd.SetIn(strings.NewReader(tt.input))
 
-				err := ConfirmPreRun(cmd, "Would do something")
+				err := ConfirmPreRun(cmd, tt.yes, "Would do something")
 				if !errors.Is(err, tt.wantErr) {
 					t.Errorf("ConfirmPreRun() error = %v, want %v", err, tt.wantErr)
 				}

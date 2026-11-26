@@ -88,16 +88,6 @@ func IsJson(s string) bool {
 	return json.Unmarshal([]byte(s), &js) == nil
 }
 
-func ResetFlags[T any](values map[string]*T, flagSet *pflag.FlagSet) {
-	for name, value := range values {
-		flag := flagSet.Lookup(name)
-		if flag != nil && !flag.Changed {
-			var zero T
-			*value = zero
-		}
-	}
-}
-
 func OptIfChanged[R any, T any, Opt ~func(*R)](
 	f *pflag.FlagSet, name string, val T, fn func(T) Opt,
 ) Opt {
@@ -139,8 +129,8 @@ func ExtractHl(uri string) string {
 
 var ErrNotConfirmed = errors.New("operation not confirmed (pass confirm: true or rerun with --yes)")
 
-func ConfirmPreRun(c *cobra.Command, msg string) error {
-	if yes, _ := c.Flags().GetBool("yes"); yes {
+func ConfirmPreRun(c *cobra.Command, yes bool, msg string) error {
+	if yes {
 		return nil
 	}
 
