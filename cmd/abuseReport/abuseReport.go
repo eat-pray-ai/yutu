@@ -19,16 +19,6 @@ const (
 	relatedEntityUsage = "ID of a related entity"
 )
 
-var (
-	abuseTypes      []string
-	description     string
-	subjectId       string
-	subjectTypeId   string
-	subjectUrl      string
-	relatedEntityId string
-	parts           []string
-)
-
 var abuseReportCmd = &cobra.Command{
 	Use:   "abuseReport",
 	Short: short,

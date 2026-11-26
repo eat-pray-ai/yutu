@@ -14,11 +14,6 @@ const (
 	hlUsage = "Host language"
 )
 
-var (
-	hl    string
-	parts []string
-)
-
 var videoAbuseReportReasonCmd = &cobra.Command{
 	Use:   "videoAbuseReportReason",
 	Short: short,

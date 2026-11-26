@@ -82,6 +82,7 @@ type reportAbuseOpts struct {
 	comments               string
 	language               string
 	onBehalfOfContentOwner string
+	yes                    bool
 }
 
 func (o *reportAbuseOpts) bindFlags(c *cobra.Command) {
@@ -96,7 +97,7 @@ func (o *reportAbuseOpts) bindFlags(c *cobra.Command) {
 		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
-	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("ids")
 	_ = c.MarkFlagRequired("reasonId")
 }
@@ -122,7 +123,7 @@ func newReportAbuseCmd() *cobra.Command {
 		Example: reportAbuseExample,
 		PreRunE: func(c *cobra.Command, _ []string) error {
 			return utils.ConfirmPreRun(
-				c, fmt.Sprintf(reportAbuseConfirm, strings.Join(opts.ids, ", ")),
+				c, opts.yes, fmt.Sprintf(reportAbuseConfirm, strings.Join(opts.ids, ", ")),
 			)
 		},
 		RunE: func(c *cobra.Command, _ []string) error {

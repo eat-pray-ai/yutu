@@ -18,13 +18,7 @@ const (
 	vcName   = "video categories"
 )
 
-var (
-	ids          []string
-	hl           string
-	regionCode   string
-	parts        []string
-	defaultParts = []string{"id", "snippet"}
-)
+var defaultParts = []string{"id", "snippet"}
 
 var videoCategoryCmd = &cobra.Command{
 	Use:   "videoCategory",

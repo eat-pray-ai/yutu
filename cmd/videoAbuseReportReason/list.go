@@ -59,27 +59,44 @@ func init() {
 			},
 		),
 	)
-	videoAbuseReportReasonCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	videoAbuseReportReasonCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := videoAbuseReportReason.NewVideoAbuseReportReason(
-			videoAbuseReportReason.WithHL(hl),
-			videoAbuseReportReason.WithParts(parts),
-			videoAbuseReportReason.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	hl     string
+	parts  []string
+	output string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *videoAbuseReportReason.VideoAbuseReportReason {
+	return videoAbuseReportReason.NewVideoAbuseReportReason(
+		videoAbuseReportReason.WithHL(o.hl),
+		videoAbuseReportReason.WithParts(o.parts),
+		videoAbuseReportReason.WithOutput(o.output),
+	).(*videoAbuseReportReason.VideoAbuseReportReason)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

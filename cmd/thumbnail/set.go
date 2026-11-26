@@ -63,31 +63,51 @@ func init() {
 			),
 		),
 	)
-	thumbnailCmd.AddCommand(setCmd)
-
-	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	setCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	setCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	setCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = setCmd.MarkFlagRequired("file")
-	_ = setCmd.MarkFlagRequired("videoId")
+	thumbnailCmd.AddCommand(newSetCmd())
 }
 
-var setCmd = &cobra.Command{
-	Use:     "set",
-	Short:   setShort,
-	Long:    setLong,
-	Example: setExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, file, videoId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := thumbnail.NewThumbnail(
-			thumbnail.WithFile(file),
-			thumbnail.WithVideoId(videoId),
-			thumbnail.WithOutput(output),
-		)
-		return input.Set(c.OutOrStdout())
-	},
+type setOpts struct {
+	file    string
+	videoId string
+	output  string
+	yes     bool
+}
+
+func (o *setOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("file")
+	_ = c.MarkFlagRequired("videoId")
+}
+
+func (o *setOpts) build() *thumbnail.Thumbnail {
+	return thumbnail.NewThumbnail(
+		thumbnail.WithFile(o.file),
+		thumbnail.WithVideoId(o.videoId),
+		thumbnail.WithOutput(o.output),
+	).(*thumbnail.Thumbnail)
+}
+
+func newSetCmd() *cobra.Command {
+	var opts setOpts
+
+	c := &cobra.Command{
+		Use:     "set",
+		Short:   setShort,
+		Long:    setLong,
+		Example: setExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(setConfirm, opts.file, opts.videoId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Set(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

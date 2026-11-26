@@ -115,6 +115,7 @@ type updateOpts struct {
 	containsSyntheticMedia bool
 	recordingDate          string
 	output                 string
+	yes                    bool
 }
 
 func (o *updateOpts) bindFlags(c *cobra.Command) {
@@ -135,7 +136,7 @@ func (o *updateOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(&o.recordingDate, "recordingDate", "D", "", rdUsage)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
-	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("id")
 }
 
@@ -175,7 +176,7 @@ func newUpdateCmd() *cobra.Command {
 		Example: updateExample,
 		PreRunE: func(c *cobra.Command, _ []string) error {
 			return utils.ConfirmPreRun(
-				c, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
 			)
 		},
 		RunE: func(c *cobra.Command, _ []string) error {

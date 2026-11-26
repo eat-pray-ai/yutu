@@ -55,23 +55,42 @@ func init() {
 			),
 		),
 	)
-	watermarkCmd.AddCommand(unsetCmd)
-
-	unsetCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	unsetCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = unsetCmd.MarkFlagRequired("channelId")
+	watermarkCmd.AddCommand(newUnsetCmd())
 }
 
-var unsetCmd = &cobra.Command{
-	Use:     "unset",
-	Short:   unsetShort,
-	Long:    unsetLong,
-	Example: unsetExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(unsetConfirm, channelId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := watermark.NewWatermark(watermark.WithChannelId(channelId))
-		return input.Unset(c.OutOrStdout())
-	},
+type unsetOpts struct {
+	channelId string
+	yes       bool
+}
+
+func (o *unsetOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("channelId")
+}
+
+func (o *unsetOpts) build() *watermark.Watermark {
+	return watermark.NewWatermark(
+		watermark.WithChannelId(o.channelId),
+	).(*watermark.Watermark)
+}
+
+func newUnsetCmd() *cobra.Command {
+	var opts unsetOpts
+
+	c := &cobra.Command{
+		Use:     "unset",
+		Short:   unsetShort,
+		Long:    unsetLong,
+		Example: unsetExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(unsetConfirm, opts.channelId))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Unset(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

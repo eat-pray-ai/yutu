@@ -74,56 +74,79 @@ func init() {
 			),
 		),
 	)
-	abuseReportCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringSliceVarP(
-		&abuseTypes, "abuseTypes", "a", nil, abuseTypesUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&description, "description", "d", "", descriptionUsage,
-	)
-	insertCmd.Flags().StringVarP(&subjectId, "subjectId", "s", "", subjectIdUsage)
-	insertCmd.Flags().StringVarP(
-		&subjectTypeId, "subjectTypeId", "t", "", subjectTypeUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&subjectUrl, "subjectUrl", "u", "", subjectUrlUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&relatedEntityId, "relatedEntityId", "r", "", relatedEntityUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, "Parts to include",
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("abuseTypes")
-	_ = insertCmd.MarkFlagRequired("subjectId")
-	_ = insertCmd.MarkFlagRequired("subjectTypeId")
+	abuseReportCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(insertConfirm, subjectTypeId, subjectId),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := abuseReport.NewAbuseReport(
-			abuseReport.WithAbuseTypes(abuseTypes),
-			abuseReport.WithDescription(description),
-			abuseReport.WithSubjectId(subjectId),
-			abuseReport.WithSubjectTypeId(subjectTypeId),
-			abuseReport.WithSubjectUrl(subjectUrl),
-			abuseReport.WithRelatedEntityId(relatedEntityId),
-			abuseReport.WithParts(parts),
-			abuseReport.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	abuseTypes      []string
+	description     string
+	subjectId       string
+	subjectTypeId   string
+	subjectUrl      string
+	relatedEntityId string
+	parts           []string
+	output          string
+	yes             bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(
+		&o.abuseTypes, "abuseTypes", "a", nil, abuseTypesUsage,
+	)
+	c.Flags().StringVarP(
+		&o.description, "description", "d", "", descriptionUsage,
+	)
+	c.Flags().StringVarP(&o.subjectId, "subjectId", "s", "", subjectIdUsage)
+	c.Flags().StringVarP(
+		&o.subjectTypeId, "subjectTypeId", "t", "", subjectTypeUsage,
+	)
+	c.Flags().StringVarP(
+		&o.subjectUrl, "subjectUrl", "u", "", subjectUrlUsage,
+	)
+	c.Flags().StringVarP(
+		&o.relatedEntityId, "relatedEntityId", "r", "", relatedEntityUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet"}, "Parts to include",
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("abuseTypes")
+	_ = c.MarkFlagRequired("subjectId")
+	_ = c.MarkFlagRequired("subjectTypeId")
+}
+
+func (o *insertOpts) build() *abuseReport.AbuseReport {
+	return abuseReport.NewAbuseReport(
+		abuseReport.WithAbuseTypes(o.abuseTypes),
+		abuseReport.WithDescription(o.description),
+		abuseReport.WithSubjectId(o.subjectId),
+		abuseReport.WithSubjectTypeId(o.subjectTypeId),
+		abuseReport.WithSubjectUrl(o.subjectUrl),
+		abuseReport.WithRelatedEntityId(o.relatedEntityId),
+		abuseReport.WithParts(o.parts),
+		abuseReport.WithOutput(o.output),
+	).(*abuseReport.AbuseReport)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.subjectTypeId, opts.subjectId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

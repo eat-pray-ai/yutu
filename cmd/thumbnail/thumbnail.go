@@ -15,11 +15,6 @@ const (
 	vidUsage  = "ID of the video"
 )
 
-var (
-	file    string
-	videoId string
-)
-
 var thumbnailCmd = &cobra.Command{
 	Use:   "thumbnail",
 	Short: short,

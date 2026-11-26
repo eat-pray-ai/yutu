@@ -77,12 +77,13 @@ func init() {
 type rateOpts struct {
 	ids    []string
 	rating string
+	yes    bool
 }
 
 func (o *rateOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, rateIdsUsage)
 	c.Flags().StringVarP(&o.rating, "rating", "r", "", rateRUsage)
-	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("ids")
 	_ = c.MarkFlagRequired("rating")
 }
@@ -104,7 +105,7 @@ func newRateCmd() *cobra.Command {
 		Example: rateExample,
 		PreRunE: func(c *cobra.Command, _ []string) error {
 			return utils.ConfirmPreRun(
-				c, fmt.Sprintf(rateConfirm, strings.Join(opts.ids, ", "), opts.rating),
+				c, opts.yes, fmt.Sprintf(rateConfirm, strings.Join(opts.ids, ", "), opts.rating),
 			)
 		},
 		RunE: func(c *cobra.Command, _ []string) error {

@@ -29,14 +29,7 @@ func init() {
 			},
 		}, categoriesHandler,
 	)
-	videoCategoryCmd.AddCommand(listCmd)
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "US", rcUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	videoCategoryCmd.AddCommand(newListCmd())
 }
 
 const (
@@ -44,21 +37,48 @@ const (
 	listLong  = `List video categories. Use this tool to list available video categories.`
 )
 
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: listShort,
-	Long:  listLong,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := videoCategory.NewVideoCategory(
-			videoCategory.WithIds(ids),
-			videoCategory.WithHl(hl),
-			videoCategory.WithRegionCode(regionCode),
-			videoCategory.WithParts(parts),
-			videoCategory.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids        []string
+	hl         string
+	regionCode string
+	parts      []string
+	output     string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringVarP(&o.regionCode, "regionCode", "r", "US", rcUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *videoCategory.VideoCategory {
+	return videoCategory.NewVideoCategory(
+		videoCategory.WithIds(o.ids),
+		videoCategory.WithHl(o.hl),
+		videoCategory.WithRegionCode(o.regionCode),
+		videoCategory.WithParts(o.parts),
+		videoCategory.WithOutput(o.output),
+	).(*videoCategory.VideoCategory)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:   "list",
+		Short: listShort,
+		Long:  listLong,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
 
 var categoriesHandler = cobramcp.GenResourceHandler(

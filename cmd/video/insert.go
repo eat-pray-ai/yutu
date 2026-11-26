@@ -134,6 +134,7 @@ type insertOpts struct {
 	onBehalfOfContentOwner        string
 	onBehalfOfContentOwnerChannel string
 	output                        string
+	yes                           bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -170,7 +171,7 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
-	c.Flags().Bool("yes", false, pkg.ConfirmedUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("file")
 	_ = c.MarkFlagRequired("categoryId")
 	_ = c.MarkFlagRequired("privacy")
@@ -224,7 +225,7 @@ func newInsertCmd() *cobra.Command {
 		Long:    insertLong,
 		Example: insertExample,
 		PreRunE: func(c *cobra.Command, _ []string) error {
-			return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, opts.file))
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.file))
 		},
 		RunE: func(c *cobra.Command, _ []string) error {
 			return opts.build(c.Flags()).Insert(c.OutOrStdout())

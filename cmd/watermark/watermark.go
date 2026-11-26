@@ -19,16 +19,6 @@ const (
 	otUsage   = "offsetFromStart|offsetFromEnd"
 )
 
-var (
-	channelId              string
-	file                   string
-	inVideoPosition        string
-	durationMs             uint64
-	offsetMs               uint64
-	offsetType             string
-	onBehalfOfContentOwner string
-)
-
 var watermarkCmd = &cobra.Command{
 	Use:   "watermark",
 	Short: short,

@@ -40,10 +40,6 @@ var listInSchema = &jsonschema.Schema{
 	},
 }
 
-var (
-	videoId string
-)
-
 func init() {
 	mcp.AddTool(
 		cmd.Server, &mcp.Tool{
@@ -60,24 +56,40 @@ func init() {
 			},
 		),
 	)
-	videoTrainabilityCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(&videoId, "videoId", "i", "", "ID of the video")
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
-	_ = listCmd.MarkFlagRequired("videoId")
+	videoTrainabilityCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		vt := videoTrainability.NewVideoTrainability(
-			videoTrainability.WithVideoId(videoId),
-			videoTrainability.WithOutput(output),
-		)
-		return vt.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	videoId string
+	output  string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.videoId, "videoId", "i", "", "ID of the video")
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+	_ = c.MarkFlagRequired("videoId")
+}
+
+func (o *listOpts) build() *videoTrainability.VideoTrainability {
+	return videoTrainability.NewVideoTrainability(
+		videoTrainability.WithVideoId(o.videoId),
+		videoTrainability.WithOutput(o.output),
+	).(*videoTrainability.VideoTrainability)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

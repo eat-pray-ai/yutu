@@ -71,42 +71,67 @@ func init() {
 			),
 		),
 	)
-	watermarkCmd.AddCommand(setCmd)
-
-	setCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	setCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	setCmd.Flags().StringVarP(
-		&inVideoPosition, "inVideoPosition", "p", "", ivpUsage,
-	)
-	setCmd.Flags().Uint64VarP(&durationMs, "durationMs", "d", 0, dmUsage)
-	setCmd.Flags().Uint64VarP(&offsetMs, "offsetMs", "m", 0, omUsage)
-	setCmd.Flags().StringVarP(&offsetType, "offsetType", "t", "", otUsage)
-	setCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	setCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = setCmd.MarkFlagRequired("channelId")
-	_ = setCmd.MarkFlagRequired("file")
+	watermarkCmd.AddCommand(newSetCmd())
 }
 
-var setCmd = &cobra.Command{
-	Use:     "set",
-	Short:   setShort,
-	Long:    setLong,
-	Example: setExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(setConfirm, file, channelId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := watermark.NewWatermark(
-			watermark.WithChannelId(channelId),
-			watermark.WithFile(file),
-			watermark.WithInVideoPosition(inVideoPosition),
-			watermark.WithDurationMs(durationMs),
-			watermark.WithOffsetMs(offsetMs),
-			watermark.WithOffsetType(offsetType),
-			watermark.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		)
-		return input.Set(c.OutOrStdout())
-	},
+type setOpts struct {
+	channelId              string
+	file                   string
+	inVideoPosition        string
+	durationMs             uint64
+	offsetMs               uint64
+	offsetType             string
+	onBehalfOfContentOwner string
+	yes                    bool
+}
+
+func (o *setOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(
+		&o.inVideoPosition, "inVideoPosition", "p", "", ivpUsage,
+	)
+	c.Flags().Uint64VarP(&o.durationMs, "durationMs", "d", 0, dmUsage)
+	c.Flags().Uint64VarP(&o.offsetMs, "offsetMs", "m", 0, omUsage)
+	c.Flags().StringVarP(&o.offsetType, "offsetType", "t", "", otUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("channelId")
+	_ = c.MarkFlagRequired("file")
+}
+
+func (o *setOpts) build() *watermark.Watermark {
+	return watermark.NewWatermark(
+		watermark.WithChannelId(o.channelId),
+		watermark.WithFile(o.file),
+		watermark.WithInVideoPosition(o.inVideoPosition),
+		watermark.WithDurationMs(o.durationMs),
+		watermark.WithOffsetMs(o.offsetMs),
+		watermark.WithOffsetType(o.offsetType),
+		watermark.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+	).(*watermark.Watermark)
+}
+
+func newSetCmd() *cobra.Command {
+	var opts setOpts
+
+	c := &cobra.Command{
+		Use:     "set",
+		Short:   setShort,
+		Long:    setLong,
+		Example: setExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(setConfirm, opts.file, opts.channelId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Set(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
