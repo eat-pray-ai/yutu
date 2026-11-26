@@ -66,37 +66,57 @@ func init() {
 			),
 		),
 	)
-	subscriptionCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(
-		&subscriberChannelId, "subscriberChannelId", "s", "", scidUsage,
-	)
-	insertCmd.Flags().StringVarP(&description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("subscriberChannelId")
-	_ = insertCmd.MarkFlagRequired("channelId")
+	subscriptionCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, channelId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := subscription.NewSubscription(
-			subscription.WithSubscriberChannelId(subscriberChannelId),
-			subscription.WithDescription(description),
-			subscription.WithChannelId(channelId),
-			subscription.WithTitle(title),
-			subscription.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	subscriberChannelId string
+	description         string
+	channelId           string
+	title               string
+	output              string
+	yes                 bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(
+		&o.subscriberChannelId, "subscriberChannelId", "s", "", scidUsage,
+	)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", insertCidUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("subscriberChannelId")
+	_ = c.MarkFlagRequired("channelId")
+}
+
+func (o *insertOpts) build() *subscription.Subscription {
+	return subscription.NewSubscription(
+		subscription.WithSubscriberChannelId(o.subscriberChannelId),
+		subscription.WithDescription(o.description),
+		subscription.WithChannelId(o.channelId),
+		subscription.WithTitle(o.title),
+		subscription.WithOutput(o.output),
+	).(*subscription.Subscription)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.channelId))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

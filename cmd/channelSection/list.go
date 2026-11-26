@@ -11,9 +11,11 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/channelSection"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -70,37 +72,58 @@ func init() {
 			},
 		),
 	)
-	channelSectionCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().BoolVarP(mine, "mine", "M", false, mineUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	channelSectionCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := channelSection.NewChannelSection(
-			channelSection.WithIds(ids),
-			channelSection.WithChannelId(channelId),
-			channelSection.WithHl(hl),
-			channelSection.WithMine(mine),
-			channelSection.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelSection.WithParts(parts),
-			channelSection.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                    []string
+	channelId              string
+	hl                     string
+	mine                   bool
+	onBehalfOfContentOwner string
+	parts                  []string
+	output                 string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().BoolVarP(&o.mine, "mine", "M", false, mineUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build(f *pflag.FlagSet) *channelSection.ChannelSection {
+	return channelSection.NewChannelSection(
+		channelSection.WithIds(o.ids),
+		channelSection.WithChannelId(o.channelId),
+		channelSection.WithHl(o.hl),
+		utils.OptIfChanged(f, "mine", &o.mine, channelSection.WithMine),
+		channelSection.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channelSection.WithParts(o.parts),
+		channelSection.WithOutput(o.output),
+	).(*channelSection.ChannelSection)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

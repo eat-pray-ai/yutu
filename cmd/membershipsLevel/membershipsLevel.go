@@ -13,10 +13,6 @@ const (
 	long  = "Manage YouTube membership levels. Use this tool to list membership levels."
 )
 
-var (
-	parts []string
-)
-
 var membershipsLevelCmd = &cobra.Command{
 	Use:   "membershipsLevel",
 	Short: short,

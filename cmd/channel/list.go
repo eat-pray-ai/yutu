@@ -82,51 +82,67 @@ func init() {
 			},
 		),
 	)
-	channelCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(
-		&categoryId, "categoryId", "g", "", cidUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&forHandle, "forHandle", "d", "", fhUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&forUsername, "forUsername", "u", "", fuUsage,
-	)
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().StringVarP(&channelFor, "for", "F", "", forUsage)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, pkg.MRUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	channelCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := channel.NewChannel(
-			channel.WithCategoryId(categoryId),
-			channel.WithForHandle(forHandle),
-			channel.WithForUsername(forUsername),
-			channel.WithHl(hl),
-			channel.WithIds(ids),
-			channel.WithFor(channelFor),
-			channel.WithMaxResults(maxResults),
-			channel.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channel.WithParts(parts),
-			channel.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	categoryId             string
+	forHandle              string
+	forUsername            string
+	hl                     string
+	ids                    []string
+	channelFor             string
+	maxResults             int64
+	onBehalfOfContentOwner string
+	parts                  []string
+	output                 string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.categoryId, "categoryId", "g", "", cidUsage)
+	c.Flags().StringVarP(&o.forHandle, "forHandle", "d", "", fhUsage)
+	c.Flags().StringVarP(&o.forUsername, "forUsername", "u", "", fuUsage)
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().StringVarP(&o.channelFor, "for", "F", "", forUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *channel.Channel {
+	return channel.NewChannel(
+		channel.WithCategoryId(o.categoryId),
+		channel.WithForHandle(o.forHandle),
+		channel.WithForUsername(o.forUsername),
+		channel.WithHl(o.hl),
+		channel.WithIds(o.ids),
+		channel.WithFor(o.channelFor),
+		channel.WithMaxResults(o.maxResults),
+		channel.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channel.WithParts(o.parts),
+		channel.WithOutput(o.output),
+	).(*channel.Channel)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

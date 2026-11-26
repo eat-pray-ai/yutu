@@ -70,37 +70,57 @@ func init() {
 			},
 		),
 	)
-	memberCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(
-		&memberChannelId, "memberChannelId", "c", "", mcidUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&hasAccessToLevel, "hasAccessToLevel", "a", "", hatlUsage,
-	)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(&mode, "mode", "m", "all_current", mmUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	memberCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := member.NewMember(
-			member.WithMemberChannelId(memberChannelId),
-			member.WithHasAccessToLevel(hasAccessToLevel),
-			member.WithMaxResults(maxResults),
-			member.WithMode(mode),
-			member.WithParts(parts),
-			member.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	memberChannelId  string
+	hasAccessToLevel string
+	maxResults       int64
+	mode             string
+	parts            []string
+	output           string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(
+		&o.memberChannelId, "memberChannelId", "c", "", mcidUsage,
+	)
+	c.Flags().StringVarP(
+		&o.hasAccessToLevel, "hasAccessToLevel", "a", "", hatlUsage,
+	)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(&o.mode, "mode", "m", "all_current", mmUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *member.Member {
+	return member.NewMember(
+		member.WithMemberChannelId(o.memberChannelId),
+		member.WithHasAccessToLevel(o.hasAccessToLevel),
+		member.WithMaxResults(o.maxResults),
+		member.WithMode(o.mode),
+		member.WithParts(o.parts),
+		member.WithOutput(o.output),
+	).(*member.Member)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

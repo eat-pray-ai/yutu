@@ -19,21 +19,6 @@ const (
 	titleUsage = "Title of the subscription"
 )
 
-var (
-	ids                           []string
-	subscriberChannelId           string
-	description                   string
-	channelId                     string
-	forChannelId                  string
-	maxResults                    int64
-	subscriptionFor               string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	order                         string
-	title                         string
-	parts                         []string
-)
-
 var subscriptionCmd = &cobra.Command{
 	Use:   "subscription",
 	Short: short,

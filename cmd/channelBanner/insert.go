@@ -72,40 +72,62 @@ func init() {
 			),
 		),
 	)
-	channelBannerCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		pkg.OBOCOCUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("channelId")
-	_ = insertCmd.MarkFlagRequired("file")
+	channelBannerCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file, channelId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := channelBanner.NewChannelBanner(
-			channelBanner.WithChannelId(channelId),
-			channelBanner.WithFile(file),
-			channelBanner.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			channelBanner.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			channelBanner.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	channelId                     string
+	file                          string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	output                        string
+	yes                           bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
+		pkg.OBOCOCUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("channelId")
+	_ = c.MarkFlagRequired("file")
+}
+
+func (o *insertOpts) build() *channelBanner.ChannelBanner {
+	return channelBanner.NewChannelBanner(
+		channelBanner.WithChannelId(o.channelId),
+		channelBanner.WithFile(o.file),
+		channelBanner.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channelBanner.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		channelBanner.WithOutput(o.output),
+	).(*channelBanner.ChannelBanner)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.file, opts.channelId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

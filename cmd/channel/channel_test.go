@@ -6,31 +6,37 @@ package channel
 import (
 	"slices"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 // Omitted optional flags must reach Update as nil, or an unrelated update
 // (say, only --description) overwrites the channel's keywords.
-func TestPersistentPreRun_ResetsOmittedKeywords(t *testing.T) {
-	keywords = []string{"stale"}
-	updateCmd.Flags().Lookup("keywords").Changed = false
-	if err := updateCmd.ParseFlags([]string{"--id", "channel-id", "--description", "d"}); err != nil {
+func TestUpdate_OmitsUnchangedKeywords(t *testing.T) {
+	var opts updateOpts
+	c := &cobra.Command{}
+	opts.bindFlags(c)
+	if err := c.ParseFlags([]string{"--id", "channel-id", "--description", "d"}); err != nil {
 		t.Fatalf("parse flags: %v", err)
 	}
-	channelCmd.PersistentPreRun(updateCmd, nil)
-	if keywords != nil {
-		t.Errorf("keywords = %q, want nil when --keywords is omitted", keywords)
+	got := opts.build(c.Flags())
+	if got.Keywords != nil {
+		t.Errorf("Keywords = %q, want nil when --keywords is omitted", got.Keywords)
 	}
-	if description == nil || *description != "d" {
-		t.Errorf("description must keep the passed value")
+	if got.Description == nil || *got.Description != "d" {
+		t.Errorf("Description must keep the passed value")
 	}
 }
 
 func TestUpdate_KeywordsAreCommaSeparated(t *testing.T) {
-	if err := updateCmd.ParseFlags([]string{"--id", "channel-id", "--keywords", "AI agents,MCP"}); err != nil {
+	var opts updateOpts
+	c := &cobra.Command{}
+	opts.bindFlags(c)
+	if err := c.ParseFlags([]string{"--id", "channel-id", "--keywords", "AI agents,MCP"}); err != nil {
 		t.Fatalf("parse flags: %v", err)
 	}
-	channelCmd.PersistentPreRun(updateCmd, nil)
-	if want := []string{"AI agents", "MCP"}; !slices.Equal(keywords, want) {
-		t.Errorf("keywords = %q, want %q", keywords, want)
+	got := opts.build(c.Flags())
+	if want := []string{"AI agents", "MCP"}; !slices.Equal(got.Keywords, want) {
+		t.Errorf("Keywords = %q, want %q", got.Keywords, want)
 	}
 }

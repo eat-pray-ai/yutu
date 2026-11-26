@@ -16,14 +16,6 @@ const (
 	mmUsage   = "listMembersModeUnknown, updates, or all_current"
 )
 
-var (
-	memberChannelId  string
-	hasAccessToLevel string
-	maxResults       int64
-	mode             string
-	parts            []string
-)
-
 var memberCmd = &cobra.Command{
 	Use:   "member",
 	Short: short,

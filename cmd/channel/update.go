@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -80,43 +81,67 @@ func init() {
 			),
 		),
 	)
-	channelCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().StringVarP(country, "country", "c", "", countryUsage)
-	updateCmd.Flags().StringVarP(
-		defaultLanguage, "defaultLanguage", "l", "", dlUsage,
-	)
-	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringSliceVarP(&keywords, "keywords", "k", nil, keywordsUsage)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	channelCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := channel.NewChannel(
-			channel.WithIds(ids),
-			channel.WithCountry(country),
-			channel.WithDefaultLanguage(defaultLanguage),
-			channel.WithDescription(description),
-			channel.WithKeywords(keywords),
-			channel.WithTitle(title),
-			channel.WithMaxResults(1),
-			channel.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids             []string
+	country         string
+	defaultLanguage string
+	description     string
+	keywords        []string
+	title           string
+	output          string
+	yes             bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().StringVarP(&o.country, "country", "c", "", countryUsage)
+	c.Flags().StringVarP(
+		&o.defaultLanguage, "defaultLanguage", "l", "", dlUsage,
+	)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringSliceVarP(&o.keywords, "keywords", "k", nil, keywordsUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *channel.Channel {
+	return channel.NewChannel(
+		channel.WithIds(o.ids),
+		utils.OptIfChanged(f, "country", &o.country, channel.WithCountry),
+		utils.OptIfChanged(
+			f, "defaultLanguage", &o.defaultLanguage, channel.WithDefaultLanguage,
+		),
+		utils.OptIfChanged(f, "description", &o.description, channel.WithDescription),
+		utils.OptIfChanged(f, "keywords", o.keywords, channel.WithKeywords),
+		channel.WithTitle(o.title),
+		channel.WithMaxResults(1),
+		channel.WithOutput(o.output),
+	).(*channel.Channel)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

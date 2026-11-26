@@ -5,7 +5,6 @@ package channelSection
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -17,22 +16,10 @@ const (
 	mineUsage = "Return the ChannelSections owned by the authenticated user"
 )
 
-var (
-	ids                    []string
-	channelId              string
-	hl                     string
-	mine                   = new(false)
-	onBehalfOfContentOwner string
-	parts                  []string
-)
-
 var channelSectionCmd = &cobra.Command{
 	Use:   "channelSection",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		utils.ResetFlags(map[string]**bool{"mine": &mine}, c.Flags())
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},

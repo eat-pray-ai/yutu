@@ -15,14 +15,6 @@ const (
 	fileUsage = "Path to the banner image"
 )
 
-var (
-	channelId string
-	file      string
-
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var channelBannerCmd = &cobra.Command{
 	Use:   "channelBanner",
 	Short: short,
