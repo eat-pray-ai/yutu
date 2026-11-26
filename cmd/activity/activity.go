@@ -18,16 +18,6 @@ const (
 	rcUsage  = "Display the content as seen by viewers in this country"
 )
 
-var (
-	channelId       string
-	activityFor     string
-	maxResults      int64
-	publishedAfter  string
-	publishedBefore string
-	regionCode      string
-	parts           []string
-)
-
 var activityCmd = &cobra.Command{
 	Use:   "activity",
 	Short: short,

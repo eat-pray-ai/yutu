@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -70,47 +71,63 @@ func init() {
 			),
 		),
 	)
-	commentCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(
-		&authorChannelId, "authorChannelId", "a", "", acidUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&channelId, "channelId", "c", "", cidUsage,
-	)
-	insertCmd.Flags().BoolVarP(canRate, "canRate", "R", false, crUsage)
-	insertCmd.Flags().StringVarP(
-		&parentId, "parentId", "P", "", insertPidUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&textOriginal, "textOriginal", "t", "", toUsage,
-	)
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("parentId")
-	_ = insertCmd.MarkFlagRequired("textOriginal")
+	commentCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, parentId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := comment.NewComment(
-			comment.WithAuthorChannelId(authorChannelId),
-			comment.WithChannelId(channelId),
-			comment.WithCanRate(canRate),
-			comment.WithParentId(parentId),
-			comment.WithTextOriginal(textOriginal),
-			comment.WithVideoId(videoId),
-			comment.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	authorChannelId string
+	channelId       string
+	canRate         bool
+	parentId        string
+	textOriginal    string
+	videoId         string
+	output          string
+	yes             bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(
+		&o.authorChannelId, "authorChannelId", "a", "", acidUsage,
+	)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().BoolVarP(&o.canRate, "canRate", "R", false, crUsage)
+	c.Flags().StringVarP(&o.parentId, "parentId", "P", "", insertPidUsage)
+	c.Flags().StringVarP(&o.textOriginal, "textOriginal", "t", "", toUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("parentId")
+	_ = c.MarkFlagRequired("textOriginal")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *comment.Comment {
+	return comment.NewComment(
+		comment.WithAuthorChannelId(o.authorChannelId),
+		comment.WithChannelId(o.channelId),
+		utils.OptIfChanged(f, "canRate", &o.canRate, comment.WithCanRate),
+		comment.WithParentId(o.parentId),
+		comment.WithTextOriginal(o.textOriginal),
+		comment.WithVideoId(o.videoId),
+		comment.WithOutput(o.output),
+	).(*comment.Comment)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.parentId))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

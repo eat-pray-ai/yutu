@@ -5,7 +5,6 @@ package comment
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -24,30 +23,10 @@ const (
 	vrUsage   = "none|like|dislike"
 )
 
-var (
-	ids              []string
-	authorChannelId  string
-	canRate          = new(false)
-	channelId        string
-	maxResults       int64
-	parentId         string
-	textFormat       string
-	textOriginal     string
-	moderationStatus string
-	banAuthor        = new(false)
-	videoId          string
-	viewerRating     string
-	parts            []string
-)
-
 var commentCmd = &cobra.Command{
 	Use:   "comment",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		boolMap := map[string]**bool{"canRate": &canRate, "banAuthor": &banAuthor}
-		utils.ResetFlags(boolMap, c.Flags())
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},

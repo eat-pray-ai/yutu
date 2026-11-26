@@ -72,41 +72,64 @@ func init() {
 			},
 		),
 	)
-	activityCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", ciUsage)
-	listCmd.Flags().StringVarP(&activityFor, "for", "F", "", forUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(
-		&publishedAfter, "publishedAfter", "a", "", paUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&publishedBefore, "publishedBefore", "b", "", pbUsage,
-	)
-	listCmd.Flags().StringVarP(&regionCode, "regionCode", "r", "", rcUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "contentDetails"},
-		pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	activityCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := activity.NewActivity(
-			activity.WithChannelId(channelId),
-			activity.WithFor(activityFor),
-			activity.WithMaxResults(maxResults),
-			activity.WithPublishedAfter(publishedAfter),
-			activity.WithPublishedBefore(publishedBefore),
-			activity.WithRegionCode(regionCode),
-			activity.WithParts(parts),
-			activity.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	channelId       string
+	activityFor     string
+	maxResults      int64
+	publishedAfter  string
+	publishedBefore string
+	regionCode      string
+	parts           []string
+	output          string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", ciUsage)
+	c.Flags().StringVarP(&o.activityFor, "for", "F", "", forUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.publishedAfter, "publishedAfter", "a", "", paUsage,
+	)
+	c.Flags().StringVarP(
+		&o.publishedBefore, "publishedBefore", "b", "", pbUsage,
+	)
+	c.Flags().StringVarP(&o.regionCode, "regionCode", "r", "", rcUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "contentDetails"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *activity.Activity {
+	return activity.NewActivity(
+		activity.WithChannelId(o.channelId),
+		activity.WithFor(o.activityFor),
+		activity.WithMaxResults(o.maxResults),
+		activity.WithPublishedAfter(o.publishedAfter),
+		activity.WithPublishedBefore(o.publishedBefore),
+		activity.WithRegionCode(o.regionCode),
+		activity.WithParts(o.parts),
+		activity.WithOutput(o.output),
+	).(*activity.Activity)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

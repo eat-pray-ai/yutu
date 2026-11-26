@@ -14,12 +14,6 @@ const (
 	hlUsage = "Return rendered funding amounts in specified language"
 )
 
-var (
-	hl         string
-	maxResults int64
-	parts      []string
-)
-
 var superChatEventCmd = &cobra.Command{
 	Use:   "superChatEvent",
 	Short: short,

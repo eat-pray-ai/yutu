@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -76,41 +77,58 @@ func init() {
 			),
 		),
 	)
-	commentCmd.AddCommand(setModerationStatusCmd)
-
-	setModerationStatusCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", nil, idsUsage,
-	)
-	setModerationStatusCmd.Flags().StringVarP(
-		&moderationStatus, "moderationStatus", "s", "", msUsage,
-	)
-	setModerationStatusCmd.Flags().BoolVarP(
-		banAuthor, "banAuthor", "A", false, baUsage,
-	)
-	setModerationStatusCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	setModerationStatusCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = setModerationStatusCmd.MarkFlagRequired("ids")
-	_ = setModerationStatusCmd.MarkFlagRequired("moderationStatus")
+	commentCmd.AddCommand(newSetModerationStatusCmd())
 }
 
-var setModerationStatusCmd = &cobra.Command{
-	Use:     "setModerationStatus",
-	Short:   smsShort,
-	Long:    smsLong,
-	Example: smsExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(smsConfirm, strings.Join(ids, ", "), moderationStatus),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := comment.NewComment(
-			comment.WithIds(ids),
-			comment.WithModerationStatus(moderationStatus),
-			comment.WithBanAuthor(banAuthor),
-			comment.WithOutput(output),
-		)
-		return input.SetModerationStatus(c.OutOrStdout())
-	},
+type setModerationStatusOpts struct {
+	ids              []string
+	moderationStatus string
+	banAuthor        bool
+	output           string
+	yes              bool
+}
+
+func (o *setModerationStatusOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().StringVarP(
+		&o.moderationStatus, "moderationStatus", "s", "", msUsage,
+	)
+	c.Flags().BoolVarP(&o.banAuthor, "banAuthor", "A", false, baUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+	_ = c.MarkFlagRequired("moderationStatus")
+}
+
+func (o *setModerationStatusOpts) build(f *pflag.FlagSet) *comment.Comment {
+	return comment.NewComment(
+		comment.WithIds(o.ids),
+		comment.WithModerationStatus(o.moderationStatus),
+		utils.OptIfChanged(f, "banAuthor", &o.banAuthor, comment.WithBanAuthor),
+		comment.WithOutput(o.output),
+	).(*comment.Comment)
+}
+
+func newSetModerationStatusCmd() *cobra.Command {
+	var opts setModerationStatusOpts
+
+	c := &cobra.Command{
+		Use:     "setModerationStatus",
+		Short:   smsShort,
+		Long:    smsLong,
+		Example: smsExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(
+					smsConfirm, strings.Join(opts.ids, ", "), opts.moderationStatus,
+				),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).SetModerationStatus(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

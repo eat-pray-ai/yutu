@@ -153,85 +153,128 @@ func init() {
 			},
 		),
 	)
-	searchCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVar(&channelId, "channelId", "", cidUsage)
-	listCmd.Flags().StringVar(
-		&channelType, "channelType", "channelTypeUnspecified", ctUsage,
-	)
-	listCmd.Flags().StringVar(&eventType, "eventType", "none", etUsage)
-	listCmd.Flags().StringVar(&searchFor, "for", "", forUsage)
-	listCmd.Flags().StringVar(&location, "location", "", locationUsage)
-	listCmd.Flags().StringVar(&locationRadius, "locationRadius", "", lrUsage)
-	listCmd.Flags().Int64Var(&maxResults, "maxResults", 5, pkg.MRUsage)
-	listCmd.Flags().StringVar(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringVar(&order, "order", "relevance", orderUsage)
-	listCmd.Flags().StringVar(&publishedAfter, "publishedAfter", "", paUsage)
-	listCmd.Flags().StringVar(&publishedBefore, "publishedBefore", "", pbUsage)
-	listCmd.Flags().StringVar(&q, "q", "", qUsage)
-	listCmd.Flags().StringVar(&regionCode, "regionCode", "", rcUsage)
-	listCmd.Flags().StringVar(&relevanceLanguage, "relevanceLanguage", "", rlUsage)
-	listCmd.Flags().StringVar(&safeSearch, "safeSearch", "moderate", ssUsage)
-	listCmd.Flags().StringVar(&topicId, "topicId", "", tidUsage)
-	listCmd.Flags().StringSliceVar(&types, "types", nil, typesUsage)
-	listCmd.Flags().StringVar(&videoCaption, "videoCaption", "any", vcUsage)
-	listCmd.Flags().StringVar(&videoCategoryId, "videoCategoryId", "", vcidUsage)
-	listCmd.Flags().StringVar(&videoDefinition, "videoDefinition", "", vdeUsage)
-	listCmd.Flags().StringVar(&videoDimension, "videoDimension", "any", vdiUsage)
-	listCmd.Flags().StringVar(&videoDuration, "videoDuration", "any", vduUsage)
-	listCmd.Flags().StringVar(&videoEmbeddable, "videoEmbeddable", "", veUsage)
-	listCmd.Flags().StringVar(&videoLicense, "videoLicense", "", vlUsage)
-	listCmd.Flags().StringVar(
-		&videoPaidProductPlacement, "videoPaidProductPlacement", "", vpppUsage,
-	)
-	listCmd.Flags().StringVar(&videoSyndicated, "videoSyndicated", "", vsUsage)
-	listCmd.Flags().StringVar(&videoType, "videoType", "", vtUsage)
-	listCmd.Flags().StringSliceVar(
-		&parts, "parts", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().String("output", "table", pkg.TableUsage)
+	searchCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := search.NewSearch(
-			search.WithChannelId(channelId),
-			search.WithChannelType(channelType),
-			search.WithEventType(eventType),
-			search.WithFor(searchFor),
-			search.WithLocation(location),
-			search.WithLocationRadius(locationRadius),
-			search.WithMaxResults(maxResults),
-			search.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			search.WithOrder(order),
-			search.WithPublishedAfter(publishedAfter),
-			search.WithPublishedBefore(publishedBefore),
-			search.WithQ(q),
-			search.WithRegionCode(regionCode),
-			search.WithRelevanceLanguage(relevanceLanguage),
-			search.WithSafeSearch(safeSearch),
-			search.WithTopicId(topicId),
-			search.WithTypes(types),
-			search.WithVideoCaption(videoCaption),
-			search.WithVideoCategoryId(videoCategoryId),
-			search.WithVideoDefinition(videoDefinition),
-			search.WithVideoDimension(videoDimension),
-			search.WithVideoDuration(videoDuration),
-			search.WithVideoEmbeddable(videoEmbeddable),
-			search.WithVideoLicense(videoLicense),
-			search.WithVideoPaidProductPlacement(videoPaidProductPlacement),
-			search.WithVideoSyndicated(videoSyndicated),
-			search.WithVideoType(videoType),
-			search.WithParts(parts),
-			search.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	channelId                 string
+	channelType               string
+	eventType                 string
+	searchFor                 string
+	location                  string
+	locationRadius            string
+	maxResults                int64
+	onBehalfOfContentOwner    string
+	order                     string
+	publishedAfter            string
+	publishedBefore           string
+	q                         string
+	regionCode                string
+	relevanceLanguage         string
+	safeSearch                string
+	topicId                   string
+	types                     []string
+	videoCaption              string
+	videoCategoryId           string
+	videoDefinition           string
+	videoDimension            string
+	videoDuration             string
+	videoEmbeddable           string
+	videoLicense              string
+	videoPaidProductPlacement string
+	videoSyndicated           string
+	videoType                 string
+	parts                     []string
+	output                    string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVar(&o.channelId, "channelId", "", cidUsage)
+	c.Flags().StringVar(
+		&o.channelType, "channelType", "channelTypeUnspecified", ctUsage,
+	)
+	c.Flags().StringVar(&o.eventType, "eventType", "none", etUsage)
+	c.Flags().StringVar(&o.searchFor, "for", "", forUsage)
+	c.Flags().StringVar(&o.location, "location", "", locationUsage)
+	c.Flags().StringVar(&o.locationRadius, "locationRadius", "", lrUsage)
+	c.Flags().Int64Var(&o.maxResults, "maxResults", 5, pkg.MRUsage)
+	c.Flags().StringVar(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringVar(&o.order, "order", "relevance", orderUsage)
+	c.Flags().StringVar(&o.publishedAfter, "publishedAfter", "", paUsage)
+	c.Flags().StringVar(&o.publishedBefore, "publishedBefore", "", pbUsage)
+	c.Flags().StringVar(&o.q, "q", "", qUsage)
+	c.Flags().StringVar(&o.regionCode, "regionCode", "", rcUsage)
+	c.Flags().StringVar(&o.relevanceLanguage, "relevanceLanguage", "", rlUsage)
+	c.Flags().StringVar(&o.safeSearch, "safeSearch", "moderate", ssUsage)
+	c.Flags().StringVar(&o.topicId, "topicId", "", tidUsage)
+	c.Flags().StringSliceVar(&o.types, "types", nil, typesUsage)
+	c.Flags().StringVar(&o.videoCaption, "videoCaption", "any", vcUsage)
+	c.Flags().StringVar(&o.videoCategoryId, "videoCategoryId", "", vcidUsage)
+	c.Flags().StringVar(&o.videoDefinition, "videoDefinition", "", vdeUsage)
+	c.Flags().StringVar(&o.videoDimension, "videoDimension", "any", vdiUsage)
+	c.Flags().StringVar(&o.videoDuration, "videoDuration", "any", vduUsage)
+	c.Flags().StringVar(&o.videoEmbeddable, "videoEmbeddable", "", veUsage)
+	c.Flags().StringVar(&o.videoLicense, "videoLicense", "", vlUsage)
+	c.Flags().StringVar(
+		&o.videoPaidProductPlacement, "videoPaidProductPlacement", "", vpppUsage,
+	)
+	c.Flags().StringVar(&o.videoSyndicated, "videoSyndicated", "", vsUsage)
+	c.Flags().StringVar(&o.videoType, "videoType", "", vtUsage)
+	c.Flags().StringSliceVar(
+		&o.parts, "parts", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVar(&o.output, "output", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *search.Search {
+	return search.NewSearch(
+		search.WithChannelId(o.channelId),
+		search.WithChannelType(o.channelType),
+		search.WithEventType(o.eventType),
+		search.WithFor(o.searchFor),
+		search.WithLocation(o.location),
+		search.WithLocationRadius(o.locationRadius),
+		search.WithMaxResults(o.maxResults),
+		search.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		search.WithOrder(o.order),
+		search.WithPublishedAfter(o.publishedAfter),
+		search.WithPublishedBefore(o.publishedBefore),
+		search.WithQ(o.q),
+		search.WithRegionCode(o.regionCode),
+		search.WithRelevanceLanguage(o.relevanceLanguage),
+		search.WithSafeSearch(o.safeSearch),
+		search.WithTopicId(o.topicId),
+		search.WithTypes(o.types),
+		search.WithVideoCaption(o.videoCaption),
+		search.WithVideoCategoryId(o.videoCategoryId),
+		search.WithVideoDefinition(o.videoDefinition),
+		search.WithVideoDimension(o.videoDimension),
+		search.WithVideoDuration(o.videoDuration),
+		search.WithVideoEmbeddable(o.videoEmbeddable),
+		search.WithVideoLicense(o.videoLicense),
+		search.WithVideoPaidProductPlacement(o.videoPaidProductPlacement),
+		search.WithVideoSyndicated(o.videoSyndicated),
+		search.WithVideoType(o.videoType),
+		search.WithParts(o.parts),
+		search.WithOutput(o.output),
+	).(*search.Search)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

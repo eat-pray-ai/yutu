@@ -75,37 +75,53 @@ func init() {
 			},
 		),
 	)
-	commentCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
-	listCmd.Flags().Int64VarP(
-		&maxResults, "maxResults", "n", 5, pkg.MRUsage,
-	)
-	listCmd.Flags().StringVarP(&parentId, "parentId", "P", "", listPidUsage)
-	listCmd.Flags().StringVarP(
-		&textFormat, "textFormat", "t", "html", tfUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	commentCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := comment.NewComment(
-			comment.WithIds(ids),
-			comment.WithMaxResults(maxResults),
-			comment.WithParentId(parentId),
-			comment.WithTextFormat(textFormat),
-			comment.WithParts(parts),
-			comment.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids        []string
+	maxResults int64
+	parentId   string
+	textFormat string
+	parts      []string
+	output     string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(&o.parentId, "parentId", "P", "", listPidUsage)
+	c.Flags().StringVarP(&o.textFormat, "textFormat", "t", "html", tfUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *comment.Comment {
+	return comment.NewComment(
+		comment.WithIds(o.ids),
+		comment.WithMaxResults(o.maxResults),
+		comment.WithParentId(o.parentId),
+		comment.WithTextFormat(o.textFormat),
+		comment.WithParts(o.parts),
+		comment.WithOutput(o.output),
+	).(*comment.Comment)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

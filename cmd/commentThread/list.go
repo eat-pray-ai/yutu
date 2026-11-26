@@ -90,48 +90,73 @@ func init() {
 			},
 		),
 	)
-	commentThreadCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
-	listCmd.Flags().StringVarP(
-		&allThreadsRelatedToChannelId, "allThreadsRelatedToChannelId", "a", "",
-		atrtcidUsage,
-	)
-	listCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(
-		&moderationStatus, "moderationStatus", "m", "published", msUsage,
-	)
-	listCmd.Flags().StringVarP(&order, "order", "O", "time", orderUsage)
-	listCmd.Flags().StringVarP(&searchTerms, "searchTerms", "s", "", stUsage)
-	listCmd.Flags().StringVarP(&textFormat, "textFormat", "t", "html", tfUsage)
-	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", listVidUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	commentThreadCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := commentThread.NewCommentThread(
-			commentThread.WithIds(ids),
-			commentThread.WithAllThreadsRelatedToChannelId(allThreadsRelatedToChannelId),
-			commentThread.WithChannelId(channelId),
-			commentThread.WithMaxResults(maxResults),
-			commentThread.WithModerationStatus(moderationStatus),
-			commentThread.WithOrder(order),
-			commentThread.WithSearchTerms(searchTerms),
-			commentThread.WithTextFormat(textFormat),
-			commentThread.WithVideoId(videoId),
-			commentThread.WithParts(parts),
-			commentThread.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                          []string
+	allThreadsRelatedToChannelId string
+	channelId                    string
+	maxResults                   int64
+	moderationStatus             string
+	order                        string
+	searchTerms                  string
+	textFormat                   string
+	videoId                      string
+	parts                        []string
+	output                       string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().StringVarP(
+		&o.allThreadsRelatedToChannelId, "allThreadsRelatedToChannelId", "a", "",
+		atrtcidUsage,
+	)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.moderationStatus, "moderationStatus", "m", "published", msUsage,
+	)
+	c.Flags().StringVarP(&o.order, "order", "O", "time", orderUsage)
+	c.Flags().StringVarP(&o.searchTerms, "searchTerms", "s", "", stUsage)
+	c.Flags().StringVarP(&o.textFormat, "textFormat", "t", "html", tfUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", listVidUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *commentThread.CommentThread {
+	return commentThread.NewCommentThread(
+		commentThread.WithIds(o.ids),
+		commentThread.WithAllThreadsRelatedToChannelId(o.allThreadsRelatedToChannelId),
+		commentThread.WithChannelId(o.channelId),
+		commentThread.WithMaxResults(o.maxResults),
+		commentThread.WithModerationStatus(o.moderationStatus),
+		commentThread.WithOrder(o.order),
+		commentThread.WithSearchTerms(o.searchTerms),
+		commentThread.WithTextFormat(o.textFormat),
+		commentThread.WithVideoId(o.videoId),
+		commentThread.WithParts(o.parts),
+		commentThread.WithOutput(o.output),
+	).(*commentThread.CommentThread)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

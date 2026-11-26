@@ -38,37 +38,6 @@ const (
 	vtUsage       = "videoTypeUnspecified|any|movie|episode"
 )
 
-var (
-	channelId                 string
-	channelType               string
-	eventType                 string
-	searchFor                 string
-	location                  string
-	locationRadius            string
-	maxResults                int64
-	onBehalfOfContentOwner    string
-	order                     string
-	publishedAfter            string
-	publishedBefore           string
-	q                         string
-	regionCode                string
-	relevanceLanguage         string
-	safeSearch                string
-	topicId                   string
-	types                     []string
-	videoCaption              string
-	videoCategoryId           string
-	videoDefinition           string
-	videoDimension            string
-	videoDuration             string
-	videoEmbeddable           string
-	videoLicense              string
-	videoPaidProductPlacement string
-	videoSyndicated           string
-	videoType                 string
-	parts                     []string
-)
-
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: short,

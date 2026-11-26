@@ -22,21 +22,6 @@ const (
 	toUsage      = "Text of the comment"
 )
 
-var (
-	ids                          []string
-	allThreadsRelatedToChannelId string
-	authorChannelId              string
-	channelId                    string
-	maxResults                   int64
-	moderationStatus             string
-	order                        string
-	searchTerms                  string
-	textFormat                   string
-	textOriginal                 string
-	videoId                      string
-	parts                        []string
-)
-
 var commentThreadCmd = &cobra.Command{
 	Use:   "commentThread",
 	Short: short,

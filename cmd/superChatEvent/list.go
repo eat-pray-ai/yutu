@@ -63,29 +63,47 @@ func init() {
 			},
 		),
 	)
-	superChatEventCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringVarP(&hl, "hl", "l", "", hlUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	superChatEventCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := superChatEvent.NewSuperChatEvent(
-			superChatEvent.WithHl(hl),
-			superChatEvent.WithMaxResults(maxResults),
-			superChatEvent.WithParts(parts),
-			superChatEvent.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	hl         string
+	maxResults int64
+	parts      []string
+	output     string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *superChatEvent.SuperChatEvent {
+	return superChatEvent.NewSuperChatEvent(
+		superChatEvent.WithHl(o.hl),
+		superChatEvent.WithMaxResults(o.maxResults),
+		superChatEvent.WithParts(o.parts),
+		superChatEvent.WithOutput(o.output),
+	).(*superChatEvent.SuperChatEvent)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

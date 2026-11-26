@@ -68,37 +68,60 @@ func init() {
 			),
 		),
 	)
-	commentThreadCmd.AddCommand(insertCmd)
-	insertCmd.Flags().StringVarP(
-		&authorChannelId, "authorChannelId", "a", "", acidUsage,
-	)
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	insertCmd.Flags().StringVarP(&textOriginal, "textOriginal", "t", "", toUsage)
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", insertVidUsage)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("channelId")
-	_ = insertCmd.MarkFlagRequired("textOriginal")
-	_ = insertCmd.MarkFlagRequired("videoId")
+	commentThreadCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := commentThread.NewCommentThread(
-			commentThread.WithAuthorChannelId(authorChannelId),
-			commentThread.WithChannelId(channelId),
-			commentThread.WithTextOriginal(textOriginal),
-			commentThread.WithVideoId(videoId),
-			commentThread.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	authorChannelId string
+	channelId       string
+	textOriginal    string
+	videoId         string
+	output          string
+	yes             bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(
+		&o.authorChannelId, "authorChannelId", "a", "", acidUsage,
+	)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().StringVarP(&o.textOriginal, "textOriginal", "t", "", toUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", insertVidUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("channelId")
+	_ = c.MarkFlagRequired("textOriginal")
+	_ = c.MarkFlagRequired("videoId")
+}
+
+func (o *insertOpts) build() *commentThread.CommentThread {
+	return commentThread.NewCommentThread(
+		commentThread.WithAuthorChannelId(o.authorChannelId),
+		commentThread.WithChannelId(o.channelId),
+		commentThread.WithTextOriginal(o.textOriginal),
+		commentThread.WithVideoId(o.videoId),
+		commentThread.WithOutput(o.output),
+	).(*commentThread.CommentThread)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.videoId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

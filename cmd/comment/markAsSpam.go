@@ -66,30 +66,47 @@ func init() {
 			),
 		),
 	)
-	commentCmd.AddCommand(markAsSpamCmd)
-
-	markAsSpamCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
-	markAsSpamCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	markAsSpamCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = markAsSpamCmd.MarkFlagRequired("ids")
+	commentCmd.AddCommand(newMarkAsSpamCmd())
 }
 
-var markAsSpamCmd = &cobra.Command{
-	Use:     "markAsSpam",
-	Short:   masShort,
-	Long:    masLong,
-	Example: masExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(masConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := comment.NewComment(
-			comment.WithIds(ids),
-			comment.WithOutput(output),
-		)
-		return input.MarkAsSpam(c.OutOrStdout())
-	},
+type markAsSpamOpts struct {
+	ids    []string
+	output string
+	yes    bool
+}
+
+func (o *markAsSpamOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *markAsSpamOpts) build() *comment.Comment {
+	return comment.NewComment(
+		comment.WithIds(o.ids),
+		comment.WithOutput(o.output),
+	).(*comment.Comment)
+}
+
+func newMarkAsSpamCmd() *cobra.Command {
+	var opts markAsSpamOpts
+
+	c := &cobra.Command{
+		Use:     "markAsSpam",
+		Short:   masShort,
+		Long:    masLong,
+		Example: masExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(masConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().MarkAsSpam(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

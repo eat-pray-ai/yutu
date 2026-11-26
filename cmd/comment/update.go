@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -76,41 +77,57 @@ func init() {
 			),
 		),
 	)
-	commentCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().BoolVarP(canRate, "canRate", "R", false, crUsage)
-	updateCmd.Flags().StringVarP(
-		&textOriginal, "textOriginal", "t", "", toUsage,
-	)
-	updateCmd.Flags().StringVarP(
-		&viewerRating, "viewerRating", "r", "", vrUsage,
-	)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	commentCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := comment.NewComment(
-			comment.WithIds(ids),
-			comment.WithCanRate(canRate),
-			comment.WithTextOriginal(textOriginal),
-			comment.WithViewerRating(viewerRating),
-			comment.WithMaxResults(1),
-			comment.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids          []string
+	canRate      bool
+	textOriginal string
+	viewerRating string
+	output       string
+	yes          bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().BoolVarP(&o.canRate, "canRate", "R", false, crUsage)
+	c.Flags().StringVarP(&o.textOriginal, "textOriginal", "t", "", toUsage)
+	c.Flags().StringVarP(&o.viewerRating, "viewerRating", "r", "", vrUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *comment.Comment {
+	return comment.NewComment(
+		comment.WithIds(o.ids),
+		utils.OptIfChanged(f, "canRate", &o.canRate, comment.WithCanRate),
+		comment.WithTextOriginal(o.textOriginal),
+		comment.WithViewerRating(o.viewerRating),
+		comment.WithMaxResults(1),
+		comment.WithOutput(o.output),
+	).(*comment.Comment)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
