@@ -63,15 +63,15 @@ func init() {
 }
 
 type getRatingOpts struct {
-	ids                    []string
-	onBehalfOfContentOwner string
-	output                 string
+	ids    []string
+	oboco  string
+	output string
 }
 
 func (o *getRatingOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, grIdsUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
@@ -81,7 +81,7 @@ func (o *getRatingOpts) bindFlags(c *cobra.Command) {
 func (o *getRatingOpts) build() *video.Video {
 	return video.NewVideo(
 		video.WithIds(o.ids),
-		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithOBOCO(o.oboco),
 		video.WithOutput(o.output),
 		video.WithService(nil),
 	).(*video.Video)

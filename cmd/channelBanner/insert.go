@@ -76,22 +76,22 @@ func init() {
 }
 
 type insertOpts struct {
-	channelId                     string
-	file                          string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	output                        string
-	yes                           bool
+	channelId string
+	file      string
+	oboco     string
+	obococ    string
+	output    string
+	yes       bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
 	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B", "",
 		pkg.OBOCOCUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
@@ -104,8 +104,8 @@ func (o *insertOpts) build() *channelBanner.ChannelBanner {
 	return channelBanner.NewChannelBanner(
 		channelBanner.WithChannelId(o.channelId),
 		channelBanner.WithFile(o.file),
-		channelBanner.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		channelBanner.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		channelBanner.WithOBOCO(o.oboco),
+		channelBanner.WithOBOCOC(o.obococ),
 		channelBanner.WithOutput(o.output),
 	).(*channelBanner.ChannelBanner)
 }

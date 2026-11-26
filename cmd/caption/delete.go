@@ -68,17 +68,17 @@ func init() {
 }
 
 type deleteOpts struct {
-	ids                    []string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
-	yes                    bool
+	ids   []string
+	obo   string
+	oboco string
+	yes   bool
 }
 
 func (o *deleteOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, deleteIdsUsage)
-	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(&o.obo, "onBehalfOf", "B", "", pkg.OBOUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("ids")
@@ -87,8 +87,8 @@ func (o *deleteOpts) bindFlags(c *cobra.Command) {
 func (o *deleteOpts) build() *caption.Caption {
 	return caption.NewCaption(
 		caption.WithIds(o.ids),
-		caption.WithOnBehalfOf(o.onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOBO(o.obo),
+		caption.WithOBOCO(o.oboco),
 	).(*caption.Caption)
 }
 

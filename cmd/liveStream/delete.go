@@ -70,20 +70,20 @@ func init() {
 }
 
 type deleteOpts struct {
-	ids                           []string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	yes                           bool
+	ids    []string
+	oboco  string
+	obococ string
+	yes    bool
 }
 
 func (o *deleteOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, deleteIdsUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
@@ -93,8 +93,8 @@ func (o *deleteOpts) bindFlags(c *cobra.Command) {
 func (o *deleteOpts) build() *liveStream.LiveStream {
 	return liveStream.NewLiveStream(
 		liveStream.WithIds(o.ids),
-		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithOBOCO(o.oboco),
+		liveStream.WithOBOCOC(o.obococ),
 	).(*liveStream.LiveStream)
 }
 

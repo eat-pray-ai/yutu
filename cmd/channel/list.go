@@ -86,16 +86,16 @@ func init() {
 }
 
 type listOpts struct {
-	categoryId             string
-	forHandle              string
-	forUsername            string
-	hl                     string
-	ids                    []string
-	channelFor             string
-	maxResults             int64
-	onBehalfOfContentOwner string
-	parts                  []string
-	output                 string
+	categoryId  string
+	forHandle   string
+	forUsername string
+	hl          string
+	ids         []string
+	channelFor  string
+	maxResults  int64
+	oboco       string
+	parts       []string
+	output      string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -107,7 +107,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.channelFor, "for", "F", "", forUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringSliceVarP(
 		&o.parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
@@ -124,7 +124,7 @@ func (o *listOpts) build() *channel.Channel {
 		channel.WithIds(o.ids),
 		channel.WithFor(o.channelFor),
 		channel.WithMaxResults(o.maxResults),
-		channel.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channel.WithOBOCO(o.oboco),
 		channel.WithParts(o.parts),
 		channel.WithOutput(o.output),
 	).(*channel.Channel)

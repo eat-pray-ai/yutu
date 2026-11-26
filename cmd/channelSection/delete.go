@@ -67,15 +67,15 @@ func init() {
 }
 
 type deleteOpts struct {
-	ids                    []string
-	onBehalfOfContentOwner string
-	yes                    bool
+	ids   []string
+	oboco string
+	yes   bool
 }
 
 func (o *deleteOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, deleteIdsUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("ids")
@@ -84,7 +84,7 @@ func (o *deleteOpts) bindFlags(c *cobra.Command) {
 func (o *deleteOpts) build() *channelSection.ChannelSection {
 	return channelSection.NewChannelSection(
 		channelSection.WithIds(o.ids),
-		channelSection.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channelSection.WithOBOCO(o.oboco),
 	).(*channelSection.ChannelSection)
 }
 

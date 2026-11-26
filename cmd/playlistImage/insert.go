@@ -86,15 +86,15 @@ func init() {
 }
 
 type insertOpts struct {
-	file                          string
-	playlistId                    string
-	type_                         string
-	height                        int64
-	width                         int64
-	output                        string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	yes                           bool
+	file       string
+	playlistId string
+	type_      string
+	height     int64
+	width      int64
+	output     string
+	oboco      string
+	obococ     string
+	yes        bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -105,11 +105,11 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Int64VarP(&o.width, "width", "W", 0, widthUsage)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
@@ -125,8 +125,8 @@ func (o *insertOpts) build() *playlistImage.PlaylistImage {
 		playlistImage.WithHeight(o.height),
 		playlistImage.WithWidth(o.width),
 		playlistImage.WithOutput(o.output),
-		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		playlistImage.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		playlistImage.WithOBOCO(o.oboco),
+		playlistImage.WithOBOCOC(o.obococ),
 	).(*playlistImage.PlaylistImage)
 }
 

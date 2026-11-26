@@ -20,7 +20,7 @@ type ChannelBanner struct {
 	common.Fields
 	File string `yaml:"file" json:"file,omitempty"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IChannelBanner interface {
@@ -49,11 +49,11 @@ func (cb *ChannelBanner) Insert(writer io.Writer) error {
 	cbr := &youtube.ChannelBannerResource{}
 
 	call := cb.Service.ChannelBanners.Insert(cbr).ChannelId(cb.ChannelId).Media(file)
-	if cb.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cb.OnBehalfOfContentOwner)
+	if cb.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(cb.OBOCO)
 	}
-	if cb.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(cb.OnBehalfOfContentOwnerChannel)
+	if cb.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(cb.OBOCOC)
 	}
 
 	res, err := call.Do()
@@ -72,9 +72,9 @@ func WithFile(file string) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
+func WithOBOCOC(obococ string) Option {
 	return func(cb *ChannelBanner) {
-		cb.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		cb.OBOCOC = obococ
 	}
 }
 
@@ -83,5 +83,5 @@ var (
 	WithOutput    = common.WithOutput[*ChannelBanner]
 	WithService   = common.WithService[*ChannelBanner]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*ChannelBanner]
+	WithOBOCO = common.WithOBOCO[*ChannelBanner]
 )

@@ -111,30 +111,30 @@ func init() {
 }
 
 type insertOpts struct {
-	autoLevels                    bool
-	file                          string
-	title                         string
-	description                   string
-	tags                          []string
-	language                      string
-	license                       string
-	thumbnail                     string
-	channelId                     string
-	playlistId                    string
-	categoryId                    string
-	privacy                       string
-	forKids                       bool
-	embeddable                    bool
-	containsSyntheticMedia        bool
-	recordingDate                 string
-	publishAt                     string
-	stabilize                     bool
-	notifySubscribers             bool
-	publicStatsViewable           bool
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	output                        string
-	yes                           bool
+	autoLevels             bool
+	file                   string
+	title                  string
+	description            string
+	tags                   []string
+	language               string
+	license                string
+	thumbnail              string
+	channelId              string
+	playlistId             string
+	categoryId             string
+	privacy                string
+	forKids                bool
+	embeddable             bool
+	containsSyntheticMedia bool
+	recordingDate          string
+	publishAt              string
+	stabilize              bool
+	notifySubscribers      bool
+	publicStatsViewable    bool
+	oboco                  string
+	obococ                 string
+	output                 string
+	yes                    bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -163,11 +163,11 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 		&o.publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
@@ -210,8 +210,8 @@ func (o *insertOpts) build(f *pflag.FlagSet) *video.Video {
 			f, "publicStatsViewable", &o.publicStatsViewable,
 			video.WithPublicStatsViewable,
 		),
-		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		video.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		video.WithOBOCO(o.oboco),
+		video.WithOBOCOC(o.obococ),
 		video.WithOutput(o.output),
 	).(*video.Video)
 }

@@ -35,7 +35,7 @@ type Caption struct {
 	Language       string `yaml:"language" json:"language,omitempty"`
 	Name           string `yaml:"name" json:"name,omitempty"`
 	TrackKind      string `yaml:"track_kind" json:"track_kind,omitempty"`
-	OnBehalfOf     string `yaml:"on_behalf_of" json:"on_behalf_of,omitempty"`
+	OBO            string `yaml:"on_behalf_of" json:"on_behalf_of,omitempty"`
 	VideoId        string `yaml:"video_id" json:"video_id,omitempty"`
 	Tfmt           string `yaml:"tfmt" json:"tfmt,omitempty"`
 	Tlang          string `yaml:"tlang" json:"tlang,omitempty"`
@@ -68,11 +68,11 @@ func (c *Caption) Get() ([]*youtube.Caption, error) {
 	if len(c.Ids) > 0 {
 		call = call.Id(c.Ids...)
 	}
-	if c.OnBehalfOf != "" {
-		call = call.OnBehalfOf(c.OnBehalfOf)
+	if c.OBO != "" {
+		call = call.OnBehalfOf(c.OBO)
 	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+	if c.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(c.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -123,11 +123,11 @@ func (c *Caption) Insert(writer io.Writer) error {
 	}
 
 	call := c.Service.Captions.Insert([]string{"snippet"}, caption).Media(file)
-	if c.OnBehalfOf != "" {
-		call = call.OnBehalfOf(c.OnBehalfOf)
+	if c.OBO != "" {
+		call = call.OnBehalfOf(c.OBO)
 	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+	if c.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(c.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -206,11 +206,11 @@ func (c *Caption) Update(writer io.Writer) error {
 		defer func() { _ = file.Close() }()
 		call = call.Media(file)
 	}
-	if c.OnBehalfOf != "" {
-		call = call.OnBehalfOf(c.OnBehalfOf)
+	if c.OBO != "" {
+		call = call.OnBehalfOf(c.OBO)
 	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+	if c.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(c.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -229,11 +229,11 @@ func (c *Caption) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range c.Ids {
 		call := c.Service.Captions.Delete(id)
-		if c.OnBehalfOf != "" {
-			call = call.OnBehalfOf(c.OnBehalfOf)
+		if c.OBO != "" {
+			call = call.OnBehalfOf(c.OBO)
 		}
-		if c.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+		if c.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(c.OBOCO)
 		}
 
 		err := call.Do()
@@ -259,11 +259,11 @@ func (c *Caption) Download(writer io.Writer) error {
 	if c.Tlang != "" {
 		call = call.Tlang(c.Tlang)
 	}
-	if c.OnBehalfOf != "" {
-		call = call.OnBehalfOf(c.OnBehalfOf)
+	if c.OBO != "" {
+		call = call.OnBehalfOf(c.OBO)
 	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+	if c.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(c.OBOCO)
 	}
 
 	res, err := call.Download()
@@ -364,9 +364,9 @@ func WithTrackKind(trackKind string) Option {
 	}
 }
 
-func WithOnBehalfOf(onBehalfOf string) Option {
+func WithOBO(obo string) Option {
 	return func(c *Caption) {
-		c.OnBehalfOf = onBehalfOf
+		c.OBO = obo
 	}
 }
 
@@ -394,5 +394,5 @@ var (
 	WithOutput  = common.WithOutput[*Caption]
 	WithService = common.WithService[*Caption]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Caption]
+	WithOBOCO = common.WithOBOCO[*Caption]
 )

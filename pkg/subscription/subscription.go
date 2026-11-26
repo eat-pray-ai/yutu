@@ -28,7 +28,7 @@ type Subscription struct {
 	Order               string `yaml:"order" json:"order,omitempty"`
 	Title               string `yaml:"title" json:"title,omitempty"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type ISubscription[T any] interface {
@@ -70,11 +70,11 @@ func (s *Subscription) Get() ([]*youtube.Subscription, error) {
 	case "mySubscribers":
 		call = call.MySubscribers(true)
 	}
-	if s.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+	if s.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(s.OBOCO)
 	}
-	if s.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
+	if s.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(s.OBOCOC)
 	}
 	if s.Order != "" {
 		call = call.Order(s.Order)
@@ -183,9 +183,9 @@ func WithFor(f string) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
+func WithOBOCOC(obococ string) Option {
 	return func(s *Subscription) {
-		s.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		s.OBOCOC = obococ
 	}
 }
 
@@ -209,5 +209,5 @@ var (
 	WithMaxResults = common.WithMaxResults[*Subscription]
 	WithChannelId  = common.WithChannelId[*Subscription]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Subscription]
+	WithOBOCO = common.WithOBOCO[*Subscription]
 )

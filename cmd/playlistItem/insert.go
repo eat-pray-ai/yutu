@@ -83,18 +83,18 @@ func init() {
 }
 
 type insertOpts struct {
-	title                  string
-	description            string
-	kind                   string
-	kVideoId               string
-	kChannelId             string
-	kPlaylistId            string
-	playlistId             string
-	channelId              string
-	privacy                string
-	onBehalfOfContentOwner string
-	output                 string
-	yes                    bool
+	title       string
+	description string
+	kind        string
+	kVideoId    string
+	kChannelId  string
+	kPlaylistId string
+	playlistId  string
+	channelId   string
+	privacy     string
+	oboco       string
+	output      string
+	yes         bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -110,7 +110,7 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
 	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
@@ -133,7 +133,7 @@ func (o *insertOpts) build(f *pflag.FlagSet) *playlistItem.PlaylistItem {
 		playlistItem.WithPlaylistId(o.playlistId),
 		playlistItem.WithPrivacy(o.privacy),
 		playlistItem.WithChannelId(o.channelId),
-		playlistItem.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistItem.WithOBOCO(o.oboco),
 		playlistItem.WithOutput(o.output),
 	).(*playlistItem.PlaylistItem)
 }

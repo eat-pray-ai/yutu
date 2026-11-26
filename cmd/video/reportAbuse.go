@@ -76,13 +76,13 @@ func init() {
 }
 
 type reportAbuseOpts struct {
-	ids                    []string
-	reasonId               string
-	secondaryReasonId      string
-	comments               string
-	language               string
-	onBehalfOfContentOwner string
-	yes                    bool
+	ids               []string
+	reasonId          string
+	secondaryReasonId string
+	comments          string
+	language          string
+	oboco             string
+	yes               bool
 }
 
 func (o *reportAbuseOpts) bindFlags(c *cobra.Command) {
@@ -94,7 +94,7 @@ func (o *reportAbuseOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.comments, "comments", "c", "", commentsUsage)
 	c.Flags().StringVarP(&o.language, "language", "l", "", raLangUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
@@ -109,7 +109,7 @@ func (o *reportAbuseOpts) build(f *pflag.FlagSet) *video.Video {
 		video.WithSecondaryReasonId(o.secondaryReasonId),
 		video.WithComments(o.comments),
 		utils.OptIfChanged(f, "language", &o.language, video.WithLanguage),
-		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithOBOCO(o.oboco),
 	).(*video.Video)
 }
 

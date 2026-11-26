@@ -71,8 +71,8 @@ func (w *Watermark) Set(writer io.Writer) error {
 	}
 
 	call := w.Service.Watermarks.Set(w.ChannelId, inVideoBranding).Media(file)
-	if w.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
+	if w.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(w.OBOCO)
 	}
 
 	err = call.Do()
@@ -89,8 +89,8 @@ func (w *Watermark) Unset(writer io.Writer) error {
 		return err
 	}
 	call := w.Service.Watermarks.Unset(w.ChannelId)
-	if w.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(w.OnBehalfOfContentOwner)
+	if w.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(w.OBOCO)
 	}
 
 	err := call.Do()
@@ -136,5 +136,5 @@ var (
 	WithChannelId = common.WithChannelId[*Watermark]
 	WithService   = common.WithService[*Watermark]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Watermark]
+	WithOBOCO = common.WithOBOCO[*Watermark]
 )

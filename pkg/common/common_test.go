@@ -559,10 +559,10 @@ func TestWithChannelId(t *testing.T) {
 	}
 }
 
-func TestWithOnBehalfOfContentOwner(t *testing.T) {
+func TestWithOBOCO(t *testing.T) {
 	r := &testResource{}
-	WithOnBehalfOfContentOwner[*testResource]("owner-456")(r)
-	if r.OnBehalfOfContentOwner != "owner-456" {
-		t.Errorf("WithOnBehalfOfContentOwner() = %q, want %q", r.OnBehalfOfContentOwner, "owner-456")
+	WithOBOCO[*testResource]("owner-456")(r)
+	if r.OBOCO != "owner-456" {
+		t.Errorf("WithOBOCO() = %q, want %q", r.OBOCO, "owner-456")
 	}
 }

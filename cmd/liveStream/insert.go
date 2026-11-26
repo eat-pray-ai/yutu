@@ -89,16 +89,16 @@ func init() {
 }
 
 type insertOpts struct {
-	title                         string
-	description                   string
-	frameRate                     string
-	ingestionType                 string
-	resolution                    string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	parts                         []string
-	output                        string
-	yes                           bool
+	title         string
+	description   string
+	frameRate     string
+	ingestionType string
+	resolution    string
+	oboco         string
+	obococ        string
+	parts         []string
+	output        string
+	yes           bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -108,11 +108,11 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.ingestionType, "ingestionType", "I", "", itUsage)
 	c.Flags().StringVarP(&o.resolution, "resolution", "r", "", resUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -134,8 +134,8 @@ func (o *insertOpts) build(f *pflag.FlagSet) *liveStream.LiveStream {
 		liveStream.WithFrameRate(o.frameRate),
 		liveStream.WithIngestionType(o.ingestionType),
 		liveStream.WithResolution(o.resolution),
-		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithOBOCO(o.oboco),
+		liveStream.WithOBOCOC(o.obococ),
 		liveStream.WithParts(o.parts),
 		liveStream.WithOutput(o.output),
 	).(*liveStream.LiveStream)

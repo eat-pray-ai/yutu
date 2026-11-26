@@ -98,16 +98,16 @@ func init() {
 }
 
 type listOpts struct {
-	ids                           []string
-	channelId                     string
-	forChannelId                  string
-	maxResults                    int64
-	subscriptionFor               string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	order                         string
-	parts                         []string
-	output                        string
+	ids             []string
+	channelId       string
+	forChannelId    string
+	maxResults      int64
+	subscriptionFor string
+	oboco           string
+	obococ          string
+	order           string
+	parts           []string
+	output          string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -117,10 +117,10 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(&o.subscriptionFor, "for", "F", "", forUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B", "",
 		pkg.OBOCOCUsage,
 	)
 	c.Flags().StringVarP(&o.order, "order", "O", "relevance", orderUsage)
@@ -137,8 +137,8 @@ func (o *listOpts) build() *subscription.Subscription {
 		subscription.WithForChannelId(o.forChannelId),
 		subscription.WithMaxResults(o.maxResults),
 		subscription.WithFor(o.subscriptionFor),
-		subscription.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		subscription.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		subscription.WithOBOCO(o.oboco),
+		subscription.WithOBOCOC(o.obococ),
 		subscription.WithOrder(o.order),
 		subscription.WithParts(o.parts),
 		subscription.WithOutput(o.output),

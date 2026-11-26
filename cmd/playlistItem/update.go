@@ -82,13 +82,13 @@ func init() {
 }
 
 type updateOpts struct {
-	ids                    []string
-	title                  string
-	description            string
-	privacy                string
-	onBehalfOfContentOwner string
-	output                 string
-	yes                    bool
+	ids         []string
+	title       string
+	description string
+	privacy     string
+	oboco       string
+	output      string
+	yes         bool
 }
 
 func (o *updateOpts) bindFlags(c *cobra.Command) {
@@ -97,7 +97,7 @@ func (o *updateOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
 	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
@@ -113,7 +113,7 @@ func (o *updateOpts) build(f *pflag.FlagSet) *playlistItem.PlaylistItem {
 			f, "description", &o.description, playlistItem.WithDescription,
 		),
 		playlistItem.WithPrivacy(o.privacy),
-		playlistItem.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistItem.WithOBOCO(o.oboco),
 		playlistItem.WithMaxResults(1),
 		playlistItem.WithOutput(o.output),
 	).(*playlistItem.PlaylistItem)

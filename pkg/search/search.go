@@ -87,8 +87,8 @@ func (s *Search) Get() ([]*youtube.SearchResult, error) {
 	if s.LocationRadius != "" {
 		call = call.LocationRadius(s.LocationRadius)
 	}
-	if s.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+	if s.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(s.OBOCO)
 	}
 	if s.Order != "" {
 		call = call.Order(s.Order)
@@ -333,5 +333,5 @@ var (
 	WithMaxResults = common.WithMaxResults[*Search]
 	WithChannelId  = common.WithChannelId[*Search]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Search]
+	WithOBOCO = common.WithOBOCO[*Search]
 )

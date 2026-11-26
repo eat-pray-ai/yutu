@@ -155,7 +155,7 @@ func TestVideo_Get(t *testing.T) {
 				WithRegionCode("US"),
 				WithMaxHeight(1080),
 				WithMaxWidth(1920),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -433,8 +433,8 @@ func TestVideo_Insert(t *testing.T) {
 				WithAutoLevels(&autoLevelsTrue),
 				WithNotifySubscribers(&notifySubscribersTrue),
 				WithStabilize(&stabilizeTrue),
-				WithOnBehalfOfContentOwner("owner-id"),
-				WithOnBehalfOfContentOwnerChannel("channel-id"),
+				WithOBOCO("owner-id"),
+				WithOBOCOC("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method != "POST" {
@@ -855,7 +855,7 @@ func TestVideo_Update(t *testing.T) {
 				WithIds([]string{"video-id"}),
 				WithTitle("Updated Title"),
 				WithMaxResults(1),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			getResponse: `{"items": [{"id": "video-id", "snippet": {"title": "Old Title"}}]}`,
 			verify: func(r *http.Request) {
@@ -1308,7 +1308,7 @@ func TestVideo_GetRating(t *testing.T) {
 			name: "get rating with onBehalfOfContentOwner",
 			opts: []Option{
 				WithIds([]string{"video-id"}),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 				WithOutput("table"),
 			},
 			verify: func(r *http.Request) {
@@ -1381,7 +1381,7 @@ func TestVideo_Delete(t *testing.T) {
 			name: "delete video with onBehalfOfContentOwner",
 			opts: []Option{
 				WithIds([]string{"video-id"}),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method != "DELETE" {
@@ -1458,7 +1458,7 @@ func TestVideo_ReportAbuse(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"video-id"}),
 				WithReasonId("reason-id"),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method != "POST" {

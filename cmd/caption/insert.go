@@ -79,19 +79,19 @@ func init() {
 }
 
 type insertOpts struct {
-	file                   string
-	isAutoSynced           bool
-	isCC                   bool
-	isDraft                bool
-	isEasyReader           bool
-	isLarge                bool
-	language               string
-	name                   string
-	videoId                string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
-	output                 string
-	yes                    bool
+	file         string
+	isAutoSynced bool
+	isCC         bool
+	isDraft      bool
+	isEasyReader bool
+	isLarge      bool
+	language     string
+	name         string
+	videoId      string
+	obo          string
+	oboco        string
+	output       string
+	yes          bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -104,9 +104,9 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.language, "language", "l", "", languageUsage)
 	c.Flags().StringVarP(&o.name, "name", "n", "", nameUsage)
 	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
-	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(&o.obo, "onBehalfOf", "B", "", pkg.OBOUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
@@ -125,8 +125,8 @@ func (o *insertOpts) build(f *pflag.FlagSet) *caption.Caption {
 		caption.WithLanguage(o.language),
 		caption.WithName(o.name),
 		caption.WithVideoId(o.videoId),
-		caption.WithOnBehalfOf(o.onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOBO(o.obo),
+		caption.WithOBOCO(o.oboco),
 		caption.WithOutput(o.output),
 	).(*caption.Caption)
 }

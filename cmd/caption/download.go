@@ -67,12 +67,12 @@ func init() {
 }
 
 type downloadOpts struct {
-	ids                    []string
-	file                   string
-	tfmt                   string
-	tlang                  string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
+	ids   []string
+	file  string
+	tfmt  string
+	tlang string
+	obo   string
+	oboco string
 }
 
 func (o *downloadOpts) bindFlags(c *cobra.Command) {
@@ -80,9 +80,9 @@ func (o *downloadOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
 	c.Flags().StringVarP(&o.tfmt, "tfmt", "t", "", tfmtUsage)
 	c.Flags().StringVarP(&o.tlang, "tlang", "l", "", tlangUsage)
-	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(&o.obo, "onBehalfOf", "B", "", pkg.OBOUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	_ = c.MarkFlagRequired("id")
 	_ = c.MarkFlagRequired("file")
@@ -94,8 +94,8 @@ func (o *downloadOpts) build() *caption.Caption {
 		caption.WithFile(o.file),
 		caption.WithTfmt(o.tfmt),
 		caption.WithTlang(o.tlang),
-		caption.WithOnBehalfOf(o.onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOBO(o.obo),
+		caption.WithOBOCO(o.oboco),
 	).(*caption.Caption)
 }
 

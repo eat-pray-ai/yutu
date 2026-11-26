@@ -30,7 +30,7 @@ type PlaylistImage struct {
 	File       string `yaml:"file" json:"file,omitempty"`
 	Parent     string `yaml:"parent" json:"parent,omitempty"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IPlaylistImage[T any] interface {
@@ -60,11 +60,11 @@ func (pi *PlaylistImage) Get() ([]*youtube.PlaylistImage, error) {
 	if pi.Parent != "" {
 		call = call.Parent(pi.Parent)
 	}
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
-	if pi.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
+	if pi.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(pi.OBOCOC)
 	}
 
 	return common.Paginate(
@@ -114,11 +114,11 @@ func (pi *PlaylistImage) Insert(writer io.Writer) error {
 	}
 
 	call := pi.Service.PlaylistImages.Insert(playlistImage)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
-	if pi.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(pi.OnBehalfOfContentOwnerChannel)
+	if pi.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(pi.OBOCOC)
 	}
 	call = call.Media(file)
 	call = call.Part("kind", "snippet")
@@ -160,8 +160,8 @@ func (pi *PlaylistImage) Update(writer io.Writer) error {
 	}
 
 	call := pi.Service.PlaylistImages.Update(playlistImage)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
 	if pi.File != "" {
 		file, err := pkg.OpenFile(pi.File)
@@ -190,8 +190,8 @@ func (pi *PlaylistImage) Delete(writer io.Writer) (errs error) {
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistImages.Delete()
 		call = call.Id(id)
-		if pi.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+		if pi.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(pi.OBOCO)
 		}
 
 		err := call.Do()
@@ -241,9 +241,9 @@ func WithParent(parent string) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
+func WithOBOCOC(obococ string) Option {
 	return func(pi *PlaylistImage) {
-		pi.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		pi.OBOCOC = obococ
 	}
 }
 
@@ -254,5 +254,5 @@ var (
 	WithIds        = common.WithIds[*PlaylistImage]
 	WithMaxResults = common.WithMaxResults[*PlaylistImage]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*PlaylistImage]
+	WithOBOCO = common.WithOBOCO[*PlaylistImage]
 )

@@ -76,12 +76,12 @@ func init() {
 }
 
 type listOpts struct {
-	parent                        string
-	maxResults                    int64
-	parts                         []string
-	output                        string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
+	parent     string
+	maxResults int64
+	parts      []string
+	output     string
+	oboco      string
+	obococ     string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -92,11 +92,11 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", pkg.OBOCOCUsage,
 	)
 }
@@ -107,8 +107,8 @@ func (o *listOpts) build() *playlistImage.PlaylistImage {
 		playlistImage.WithMaxResults(o.maxResults),
 		playlistImage.WithParts(o.parts),
 		playlistImage.WithOutput(o.output),
-		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		playlistImage.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		playlistImage.WithOBOCO(o.oboco),
+		playlistImage.WithOBOCOC(o.obococ),
 		playlistImage.WithService(nil),
 	).(*playlistImage.PlaylistImage)
 }

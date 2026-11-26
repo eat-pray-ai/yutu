@@ -80,13 +80,13 @@ func init() {
 }
 
 type listOpts struct {
-	ids                           []string
-	mine                          bool
-	maxResults                    int64
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	parts                         []string
-	output                        string
+	ids        []string
+	mine       bool
+	maxResults int64
+	oboco      string
+	obococ     string
+	parts      []string
+	output     string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -96,11 +96,11 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -115,8 +115,8 @@ func (o *listOpts) build(f *pflag.FlagSet) *liveStream.LiveStream {
 		liveStream.WithIds(o.ids),
 		utils.OptIfChanged(f, "mine", &o.mine, liveStream.WithMine),
 		liveStream.WithMaxResults(o.maxResults),
-		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithOBOCO(o.oboco),
+		liveStream.WithOBOCOC(o.obococ),
 		liveStream.WithParts(o.parts),
 		liveStream.WithOutput(o.output),
 	).(*liveStream.LiveStream)

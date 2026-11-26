@@ -40,7 +40,7 @@ type LiveBroadcast struct {
 	CueInsertionOffsetMs int64  `yaml:"cue_insertion_offset_ms" json:"cue_insertion_offset_ms,omitzero"`
 	CueWalltimeMs        uint64 `yaml:"cue_walltime_ms" json:"cue_walltime_ms,omitzero"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type ILiveBroadcast[T any] interface {
@@ -81,11 +81,11 @@ func (b *LiveBroadcast) Get() ([]*youtube.LiveBroadcast, error) {
 	if b.BroadcastType != "" {
 		call = call.BroadcastType(b.BroadcastType)
 	}
-	if b.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+	if b.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(b.OBOCO)
 	}
-	if b.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+	if b.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 	}
 
 	return common.Paginate(
@@ -143,11 +143,11 @@ func (b *LiveBroadcast) Insert(writer io.Writer) error {
 	}
 
 	call := b.Service.LiveBroadcasts.Insert(b.Parts, broadcast)
-	if b.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+	if b.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(b.OBOCO)
 	}
-	if b.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+	if b.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 	}
 
 	res, err := call.Do()
@@ -207,11 +207,11 @@ func (b *LiveBroadcast) Update(writer io.Writer) error {
 	call := b.Service.LiveBroadcasts.Update(
 		[]string{"snippet", "status"}, broadcast,
 	)
-	if b.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+	if b.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(b.OBOCO)
 	}
-	if b.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+	if b.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 	}
 
 	res, err := call.Do()
@@ -230,11 +230,11 @@ func (b *LiveBroadcast) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range b.Ids {
 		call := b.Service.LiveBroadcasts.Delete(id)
-		if b.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+		if b.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(b.OBOCO)
 		}
-		if b.OnBehalfOfContentOwnerChannel != "" {
-			call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+		if b.OBOCOC != "" {
+			call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 		}
 
 		err := call.Do()
@@ -258,11 +258,11 @@ func (b *LiveBroadcast) Bind(writer io.Writer) (errs error) {
 		if b.StreamId != "" {
 			call = call.StreamId(b.StreamId)
 		}
-		if b.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+		if b.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(b.OBOCO)
 		}
-		if b.OnBehalfOfContentOwnerChannel != "" {
-			call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+		if b.OBOCOC != "" {
+			call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 		}
 
 		res, err := call.Do()
@@ -287,11 +287,11 @@ func (b *LiveBroadcast) Transition(writer io.Writer) (errs error) {
 	}
 	for _, id := range b.Ids {
 		call := b.Service.LiveBroadcasts.Transition(b.BroadcastStatus, id, b.Parts)
-		if b.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+		if b.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(b.OBOCO)
 		}
-		if b.OnBehalfOfContentOwnerChannel != "" {
-			call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+		if b.OBOCOC != "" {
+			call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 		}
 
 		res, err := call.Do()
@@ -323,11 +323,11 @@ func (b *LiveBroadcast) InsertCuepoint(writer io.Writer) (errs error) {
 
 	for _, id := range b.Ids {
 		call := b.Service.LiveBroadcasts.InsertCuepoint(cuepoint).Id(id)
-		if b.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(b.OnBehalfOfContentOwner)
+		if b.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(b.OBOCO)
 		}
-		if b.OnBehalfOfContentOwnerChannel != "" {
-			call = call.OnBehalfOfContentOwnerChannel(b.OnBehalfOfContentOwnerChannel)
+		if b.OBOCOC != "" {
+			call = call.OnBehalfOfContentOwnerChannel(b.OBOCOC)
 		}
 
 		res, err := call.Do()
@@ -426,9 +426,9 @@ func WithCueWalltimeMs(walltimeMs uint64) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(channel string) Option {
+func WithOBOCOC(channel string) Option {
 	return func(b *LiveBroadcast) {
-		b.OnBehalfOfContentOwnerChannel = channel
+		b.OBOCOC = channel
 	}
 }
 
@@ -439,5 +439,5 @@ var (
 	WithService    = common.WithService[*LiveBroadcast]
 	WithIds        = common.WithIds[*LiveBroadcast]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*LiveBroadcast]
+	WithOBOCO = common.WithOBOCO[*LiveBroadcast]
 )

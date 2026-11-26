@@ -75,14 +75,14 @@ func init() {
 }
 
 type setOpts struct {
-	channelId              string
-	file                   string
-	inVideoPosition        string
-	durationMs             uint64
-	offsetMs               uint64
-	offsetType             string
-	onBehalfOfContentOwner string
-	yes                    bool
+	channelId       string
+	file            string
+	inVideoPosition string
+	durationMs      uint64
+	offsetMs        uint64
+	offsetType      string
+	oboco           string
+	yes             bool
 }
 
 func (o *setOpts) bindFlags(c *cobra.Command) {
@@ -95,7 +95,7 @@ func (o *setOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Uint64VarP(&o.offsetMs, "offsetMs", "m", 0, omUsage)
 	c.Flags().StringVarP(&o.offsetType, "offsetType", "t", "", otUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
 	_ = c.MarkFlagRequired("channelId")
@@ -110,7 +110,7 @@ func (o *setOpts) build() *watermark.Watermark {
 		watermark.WithDurationMs(o.durationMs),
 		watermark.WithOffsetMs(o.offsetMs),
 		watermark.WithOffsetType(o.offsetType),
-		watermark.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		watermark.WithOBOCO(o.oboco),
 	).(*watermark.Watermark)
 }
 

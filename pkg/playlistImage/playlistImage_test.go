@@ -40,27 +40,27 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithFile("/path/to/image.jpg"),
 					WithParent("parent123"),
 					WithMaxResults(50),
-					WithOnBehalfOfContentOwner("owner123"),
-					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
+					WithOBOCO("owner123"),
+					WithOBOCOC("ownerChannel123"),
 					WithParts([]string{"id", "snippet"}),
 					WithOutput("json"),
 					WithService(svc),
 				},
 			},
 			want: &PlaylistImage{
-				Service:                       svc,
-				Parts:                         []string{"id", "snippet"},
-				Output:                        "json",
-				Ids:                           []string{"image1", "image2"},
-				MaxResults:                    50,
-				OnBehalfOfContentOwner:        "owner123",
-				Height:                        1080,
-				PlaylistId:                    "playlist123",
-				Type:                          "hero",
-				Width:                         1920,
-				File:                          "/path/to/image.jpg",
-				Parent:                        "parent123",
-				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Service:    svc,
+				Parts:      []string{"id", "snippet"},
+				Output:     "json",
+				Ids:        []string{"image1", "image2"},
+				MaxResults: 50,
+				OBOCO:      "owner123",
+				Height:     1080,
+				PlaylistId: "playlist123",
+				Type:       "hero",
+				Width:      1920,
+				File:       "/path/to/image.jpg",
+				Parent:     "parent123",
+				OBOCOC:     "ownerChannel123",
 			},
 		},
 		{
@@ -100,17 +100,17 @@ func TestNewPlaylistImage(t *testing.T) {
 					WithType(""),
 					WithFile(""),
 					WithParent(""),
-					WithOnBehalfOfContentOwner(""),
-					WithOnBehalfOfContentOwnerChannel(""),
+					WithOBOCO(""),
+					WithOBOCOC(""),
 				},
 			},
 			want: &PlaylistImage{
-				OnBehalfOfContentOwner:        "",
-				PlaylistId:                    "",
-				Type:                          "",
-				File:                          "",
-				Parent:                        "",
-				OnBehalfOfContentOwnerChannel: "",
+				OBOCO:      "",
+				PlaylistId: "",
+				Type:       "",
+				File:       "",
+				Parent:     "",
+				OBOCOC:     "",
 			},
 		},
 		{
@@ -172,7 +172,7 @@ func TestPlaylistImage_Get(t *testing.T) {
 		{
 			name: "get playlist images with onBehalfOfContentOwner",
 			opts: []Option{
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -189,7 +189,7 @@ func TestPlaylistImage_Get(t *testing.T) {
 		{
 			name: "get playlist images with onBehalfOfContentOwnerChannel",
 			opts: []Option{
-				WithOnBehalfOfContentOwnerChannel("channel-id"),
+				WithOBOCOC("channel-id"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {
@@ -303,8 +303,8 @@ func TestPlaylistImage_Insert(t *testing.T) {
 				WithPlaylistId("playlist-id"),
 				WithType("default"),
 				WithFile("test_image.jpg"),
-				WithOnBehalfOfContentOwner("owner-id"),
-				WithOnBehalfOfContentOwnerChannel("channel-id"),
+				WithOBOCO("owner-id"),
+				WithOBOCOC("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method != "POST" {
@@ -440,7 +440,7 @@ func TestPlaylistImage_Update(t *testing.T) {
 			opts: []Option{
 				WithParent("parent-id"),
 				WithMaxResults(1),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
@@ -536,7 +536,7 @@ func TestPlaylistImage_Delete(t *testing.T) {
 			name: "delete playlist image with content owner",
 			opts: []Option{
 				WithIds([]string{"image-id"}),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method != "DELETE" {

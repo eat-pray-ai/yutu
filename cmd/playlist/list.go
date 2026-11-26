@@ -90,15 +90,15 @@ func init() {
 }
 
 type listOpts struct {
-	ids                           []string
-	channelId                     string
-	hl                            string
-	maxResults                    int64
-	mine                          bool
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	parts                         []string
-	output                        string
+	ids        []string
+	channelId  string
+	hl         string
+	maxResults int64
+	mine       bool
+	oboco      string
+	obococ     string
+	parts      []string
+	output     string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -108,11 +108,11 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().BoolVarP(&o.mine, "mine", "M", true, mineUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", pkg.OBOCOCUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -128,8 +128,8 @@ func (o *listOpts) build(f *pflag.FlagSet) *playlist.Playlist {
 		playlist.WithHl(o.hl),
 		playlist.WithMaxResults(o.maxResults),
 		utils.OptIfChanged(f, "mine", &o.mine, playlist.WithMine),
-		playlist.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		playlist.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		playlist.WithOBOCO(o.oboco),
+		playlist.WithOBOCOC(o.obococ),
 		playlist.WithParts(o.parts),
 		playlist.WithOutput(o.output),
 	).(*playlist.Playlist)

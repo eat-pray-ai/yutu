@@ -76,8 +76,8 @@ func (c *Channel) Get() ([]*youtube.Channel, error) {
 	case "mySubscribers":
 		call = call.MySubscribers(true)
 	}
-	if c.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(c.OnBehalfOfContentOwner)
+	if c.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(c.OBOCO)
 	}
 
 	return common.Paginate(
@@ -219,5 +219,5 @@ var (
 	WithMaxResults = common.WithMaxResults[*Channel]
 	WithHl         = common.WithHl[*Channel]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Channel]
+	WithOBOCO = common.WithOBOCO[*Channel]
 )

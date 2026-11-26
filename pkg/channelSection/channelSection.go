@@ -60,8 +60,8 @@ func (cs *ChannelSection) Get() (
 	if cs.Mine != nil {
 		call = call.Mine(*cs.Mine)
 	}
-	if cs.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
+	if cs.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(cs.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -91,8 +91,8 @@ func (cs *ChannelSection) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range cs.Ids {
 		call := cs.Service.ChannelSections.Delete(id)
-		if cs.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(cs.OnBehalfOfContentOwner)
+		if cs.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(cs.OBOCO)
 		}
 
 		err := call.Do()
@@ -123,5 +123,5 @@ var (
 	WithHl        = common.WithHl[*ChannelSection]
 	WithChannelId = common.WithChannelId[*ChannelSection]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*ChannelSection]
+	WithOBOCO = common.WithOBOCO[*ChannelSection]
 )

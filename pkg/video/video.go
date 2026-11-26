@@ -65,7 +65,7 @@ type Video struct {
 	NotifySubscribers      *bool   `yaml:"notify_subscribers" json:"notify_subscribers,omitzero"`
 	PublicStatsViewable    *bool   `yaml:"public_stats_viewable" json:"public_stats_viewable,omitzero"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IVideo[T any] interface {
@@ -121,8 +121,8 @@ func (v *Video) Get() ([]*youtube.Video, error) {
 	if v.MaxWidth != 0 {
 		call = call.MaxWidth(v.MaxWidth)
 	}
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+	if v.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(v.OBOCO)
 	}
 
 	return common.Paginate(
@@ -237,11 +237,11 @@ func (v *Video) Insert(writer io.Writer) (errs error) {
 	if v.NotifySubscribers != nil {
 		call = call.NotifySubscribers(*v.NotifySubscribers)
 	}
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+	if v.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(v.OBOCO)
 	}
-	if v.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(v.OnBehalfOfContentOwnerChannel)
+	if v.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(v.OBOCOC)
 	}
 	if v.Stabilize != nil {
 		call = call.Stabilize(*v.Stabilize)
@@ -380,8 +380,8 @@ func (v *Video) Update(writer io.Writer) (errs error) {
 	}
 
 	call := v.Service.Videos.Update([]string{updateParts}, video)
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+	if v.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(v.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -447,8 +447,8 @@ func (v *Video) GetRating(writer io.Writer) error {
 		return err
 	}
 	call := v.Service.Videos.GetRating(v.Ids)
-	if v.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+	if v.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(v.OBOCO)
 	}
 	res, err := call.Do()
 	if err != nil {
@@ -469,8 +469,8 @@ func (v *Video) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range v.Ids {
 		call := v.Service.Videos.Delete(id)
-		if v.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+		if v.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(v.OBOCO)
 		}
 
 		err := call.Do()
@@ -500,8 +500,8 @@ func (v *Video) ReportAbuse(writer io.Writer) (errs error) {
 		}
 
 		call := v.Service.Videos.ReportAbuse(videoAbuseReport)
-		if v.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(v.OnBehalfOfContentOwner)
+		if v.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(v.OBOCO)
 		}
 
 		err := call.Do()
@@ -680,9 +680,9 @@ func WithNotifySubscribers(notifySubscribers *bool) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel string) Option {
+func WithOBOCOC(obococ string) Option {
 	return func(v *Video) {
-		v.OnBehalfOfContentOwnerChannel = onBehalfOfContentOwnerChannel
+		v.OBOCOC = obococ
 	}
 }
 
@@ -713,5 +713,5 @@ var (
 	WithHl         = common.WithHl[*Video]
 	WithChannelId  = common.WithChannelId[*Video]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Video]
+	WithOBOCO = common.WithOBOCO[*Video]
 )

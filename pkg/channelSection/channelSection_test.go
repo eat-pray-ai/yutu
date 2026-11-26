@@ -36,17 +36,17 @@ func TestNewChannelSection(t *testing.T) {
 					WithChannelId("channel123"),
 					WithHl("en"),
 					WithMine(&mineTrue),
-					WithOnBehalfOfContentOwner("owner123"),
+					WithOBOCO("owner123"),
 					WithService(svc),
 				},
 			},
 			want: &ChannelSection{
-				Service:                svc,
-				Ids:                    []string{"section1", "section2"},
-				ChannelId:              "channel123",
-				Hl:                     "en",
-				OnBehalfOfContentOwner: "owner123",
-				Mine:                   &mineTrue,
+				Service:   svc,
+				Ids:       []string{"section1", "section2"},
+				ChannelId: "channel123",
+				Hl:        "en",
+				OBOCO:     "owner123",
+				Mine:      &mineTrue,
 			},
 		},
 		{
@@ -83,13 +83,13 @@ func TestNewChannelSection(t *testing.T) {
 				opts: []Option{
 					WithChannelId(""),
 					WithHl(""),
-					WithOnBehalfOfContentOwner(""),
+					WithOBOCO(""),
 				},
 			},
 			want: &ChannelSection{
-				ChannelId:              "",
-				Hl:                     "",
-				OnBehalfOfContentOwner: "",
+				ChannelId: "",
+				Hl:        "",
+				OBOCO:     "",
 			},
 		},
 		{
@@ -198,7 +198,7 @@ func TestChannelSection_Get(t *testing.T) {
 		{
 			name: "get channel sections with onBehalfOfContentOwner",
 			opts: []Option{
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
@@ -296,7 +296,7 @@ func TestChannelSection_Delete(t *testing.T) {
 			name: "delete channel section with onBehalfOfContentOwner",
 			opts: []Option{
 				WithIds([]string{"section-id"}),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {

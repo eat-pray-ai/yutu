@@ -87,13 +87,13 @@ func init() {
 }
 
 type transitionOpts struct {
-	ids                           []string
-	broadcastStatus               string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	parts                         []string
-	output                        string
-	yes                           bool
+	ids             []string
+	broadcastStatus string
+	oboco           string
+	obococ          string
+	parts           []string
+	output          string
+	yes             bool
 }
 
 func (o *transitionOpts) bindFlags(c *cobra.Command) {
@@ -104,11 +104,11 @@ func (o *transitionOpts) bindFlags(c *cobra.Command) {
 		&o.broadcastStatus, "broadcastStatus", "s", "", transitionBsUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -124,8 +124,8 @@ func (o *transitionOpts) build() *liveBroadcast.LiveBroadcast {
 	return liveBroadcast.NewLiveBroadcast(
 		liveBroadcast.WithIds(o.ids),
 		liveBroadcast.WithBroadcastStatus(o.broadcastStatus),
-		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithOBOCO(o.oboco),
+		liveBroadcast.WithOBOCOC(o.obococ),
 		liveBroadcast.WithParts(o.parts),
 		liveBroadcast.WithOutput(o.output),
 	).(*liveBroadcast.LiveBroadcast)

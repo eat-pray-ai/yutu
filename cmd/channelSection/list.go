@@ -76,13 +76,13 @@ func init() {
 }
 
 type listOpts struct {
-	ids                    []string
-	channelId              string
-	hl                     string
-	mine                   bool
-	onBehalfOfContentOwner string
-	parts                  []string
-	output                 string
+	ids       []string
+	channelId string
+	hl        string
+	mine      bool
+	oboco     string
+	parts     []string
+	output    string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -91,7 +91,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
 	c.Flags().BoolVarP(&o.mine, "mine", "M", false, mineUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringSliceVarP(
 		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
@@ -105,7 +105,7 @@ func (o *listOpts) build(f *pflag.FlagSet) *channelSection.ChannelSection {
 		channelSection.WithChannelId(o.channelId),
 		channelSection.WithHl(o.hl),
 		utils.OptIfChanged(f, "mine", &o.mine, channelSection.WithMine),
-		channelSection.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		channelSection.WithOBOCO(o.oboco),
 		channelSection.WithParts(o.parts),
 		channelSection.WithOutput(o.output),
 	).(*channelSection.ChannelSection)

@@ -29,7 +29,7 @@ type Playlist struct {
 	Language    *string  `yaml:"language" json:"language,omitzero"`
 	Privacy     string   `yaml:"privacy" json:"privacy,omitempty"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type IPlaylist[T any] interface {
@@ -68,11 +68,11 @@ func (p *Playlist) Get() ([]*youtube.Playlist, error) {
 	if p.Mine != nil {
 		call = call.Mine(*p.Mine)
 	}
-	if p.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+	if p.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(p.OBOCO)
 	}
-	if p.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
+	if p.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(p.OBOCOC)
 	}
 
 	return common.Paginate(
@@ -128,11 +128,11 @@ func (p *Playlist) Insert(writer io.Writer) error {
 	}
 
 	call := p.Service.Playlists.Insert([]string{"snippet", "status"}, upload)
-	if p.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+	if p.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(p.OBOCO)
 	}
-	if p.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(p.OnBehalfOfContentOwnerChannel)
+	if p.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(p.OBOCOC)
 	}
 	res, err := call.Do()
 	if err != nil {
@@ -174,8 +174,8 @@ func (p *Playlist) Update(writer io.Writer) error {
 	}
 
 	call := p.Service.Playlists.Update([]string{"snippet", "status"}, playlist)
-	if p.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+	if p.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(p.OBOCO)
 	}
 	res, err := call.Do()
 	if err != nil {
@@ -193,8 +193,8 @@ func (p *Playlist) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range p.Ids {
 		call := p.Service.Playlists.Delete(id)
-		if p.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(p.OnBehalfOfContentOwner)
+		if p.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(p.OBOCO)
 		}
 
 		err := call.Do()
@@ -246,9 +246,9 @@ func WithMine(mine *bool) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(channel string) Option {
+func WithOBOCOC(channel string) Option {
 	return func(p *Playlist) {
-		p.OnBehalfOfContentOwnerChannel = channel
+		p.OBOCOC = channel
 	}
 }
 
@@ -261,5 +261,5 @@ var (
 	WithHl         = common.WithHl[*Playlist]
 	WithChannelId  = common.WithChannelId[*Playlist]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*Playlist]
+	WithOBOCO = common.WithOBOCO[*Playlist]
 )

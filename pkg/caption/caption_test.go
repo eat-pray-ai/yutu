@@ -63,8 +63,8 @@ func TestNewCaption(t *testing.T) {
 					WithLanguage("en"),
 					WithName("English Captions"),
 					WithTrackKind("standard"),
-					WithOnBehalfOf("channel123"),
-					WithOnBehalfOfContentOwner("owner123"),
+					WithOBO("channel123"),
+					WithOBOCO("owner123"),
 					WithVideoId("video123"),
 					WithTfmt("srt"),
 					WithTlang("es"),
@@ -72,23 +72,23 @@ func TestNewCaption(t *testing.T) {
 				},
 			},
 			want: &Caption{
-				Service:                svc,
-				Ids:                    []string{"caption1", "caption2"},
-				OnBehalfOfContentOwner: "owner123",
-				File:                   "/path/to/file.srt",
-				AudioTrackType:         "primary",
-				IsAutoSynced:           &isAutoSyncedTrue,
-				IsCC:                   &isCCTrue,
-				IsDraft:                &isDraftTrue,
-				IsEasyReader:           &isEasyReaderTrue,
-				IsLarge:                &isLargeTrue,
-				Language:               "en",
-				Name:                   "English Captions",
-				TrackKind:              "standard",
-				OnBehalfOf:             "channel123",
-				VideoId:                "video123",
-				Tfmt:                   "srt",
-				Tlang:                  "es",
+				Service:        svc,
+				Ids:            []string{"caption1", "caption2"},
+				OBOCO:          "owner123",
+				File:           "/path/to/file.srt",
+				AudioTrackType: "primary",
+				IsAutoSynced:   &isAutoSyncedTrue,
+				IsCC:           &isCCTrue,
+				IsDraft:        &isDraftTrue,
+				IsEasyReader:   &isEasyReaderTrue,
+				IsLarge:        &isLargeTrue,
+				Language:       "en",
+				Name:           "English Captions",
+				TrackKind:      "standard",
+				OBO:            "channel123",
+				VideoId:        "video123",
+				Tfmt:           "srt",
+				Tlang:          "es",
 			},
 		},
 		{
@@ -140,24 +140,24 @@ func TestNewCaption(t *testing.T) {
 					WithLanguage(""),
 					WithName(""),
 					WithTrackKind(""),
-					WithOnBehalfOf(""),
-					WithOnBehalfOfContentOwner(""),
+					WithOBO(""),
+					WithOBOCO(""),
 					WithVideoId(""),
 					WithTfmt(""),
 					WithTlang(""),
 				},
 			},
 			want: &Caption{
-				OnBehalfOfContentOwner: "",
-				File:                   "",
-				AudioTrackType:         "",
-				Language:               "",
-				Name:                   "",
-				TrackKind:              "",
-				OnBehalfOf:             "",
-				VideoId:                "",
-				Tfmt:                   "",
-				Tlang:                  "",
+				OBOCO:          "",
+				File:           "",
+				AudioTrackType: "",
+				Language:       "",
+				Name:           "",
+				TrackKind:      "",
+				OBO:            "",
+				VideoId:        "",
+				Tfmt:           "",
+				Tlang:          "",
 			},
 		},
 		{
@@ -232,7 +232,7 @@ func TestCaption_Get(t *testing.T) {
 			name: "get captions with onBehalfOf",
 			opts: []Option{
 				WithVideoId("video-id"),
-				WithOnBehalfOf("channel-id"),
+				WithOBO("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
@@ -249,7 +249,7 @@ func TestCaption_Get(t *testing.T) {
 			name: "get captions with onBehalfOfContentOwner",
 			opts: []Option{
 				WithVideoId("video-id"),
-				WithOnBehalfOfContentOwner("content-owner"),
+				WithOBOCO("content-owner"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
@@ -345,7 +345,7 @@ func TestCaption_Insert(t *testing.T) {
 			opts: []Option{
 				WithVideoId("video-id"),
 				WithFile("test_caption.srt"),
-				WithOnBehalfOf("channel-id"),
+				WithOBO("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
@@ -362,7 +362,7 @@ func TestCaption_Insert(t *testing.T) {
 			opts: []Option{
 				WithVideoId("video-id"),
 				WithFile("test_caption.srt"),
-				WithOnBehalfOfContentOwner("content-owner"),
+				WithOBOCO("content-owner"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
@@ -447,7 +447,7 @@ func TestCaption_Update(t *testing.T) {
 			opts: []Option{
 				WithVideoId("video-id"),
 				WithIds([]string{"caption-id"}),
-				WithOnBehalfOf("channel-id"),
+				WithOBO("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
@@ -466,7 +466,7 @@ func TestCaption_Update(t *testing.T) {
 			opts: []Option{
 				WithVideoId("video-id"),
 				WithIds([]string{"caption-id"}),
-				WithOnBehalfOfContentOwner("content-owner"),
+				WithOBOCO("content-owner"),
 			},
 			verify: func(r *http.Request) {
 				if r.Method == "PUT" {
@@ -541,7 +541,7 @@ func TestCaption_Delete(t *testing.T) {
 			name: "delete caption with onBehalfOf",
 			opts: []Option{
 				WithIds([]string{"caption-id"}),
-				WithOnBehalfOf("channel-id"),
+				WithOBO("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
@@ -557,7 +557,7 @@ func TestCaption_Delete(t *testing.T) {
 			name: "delete caption with onBehalfOfContentOwner",
 			opts: []Option{
 				WithIds([]string{"caption-id"}),
-				WithOnBehalfOfContentOwner("content-owner"),
+				WithOBOCO("content-owner"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {
@@ -649,7 +649,7 @@ func TestCaption_Download(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"caption-id"}),
 				WithFile("downloaded.srt"),
-				WithOnBehalfOf("channel-id"),
+				WithOBO("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOf") != "channel-id" {
@@ -666,7 +666,7 @@ func TestCaption_Download(t *testing.T) {
 			opts: []Option{
 				WithIds([]string{"caption-id"}),
 				WithFile("downloaded.srt"),
-				WithOnBehalfOfContentOwner("content-owner"),
+				WithOBOCO("content-owner"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "content-owner" {

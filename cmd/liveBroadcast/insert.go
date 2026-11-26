@@ -83,16 +83,16 @@ func init() {
 }
 
 type insertOpts struct {
-	title                         string
-	description                   string
-	scheduledStartTime            string
-	scheduledEndTime              string
-	privacyStatus                 string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	parts                         []string
-	output                        string
-	yes                           bool
+	title              string
+	description        string
+	scheduledStartTime string
+	scheduledEndTime   string
+	privacyStatus      string
+	oboco              string
+	obococ             string
+	parts              []string
+	output             string
+	yes                bool
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
@@ -106,11 +106,11 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().StringVarP(&o.privacyStatus, "privacyStatus", "P", "", psUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -132,8 +132,8 @@ func (o *insertOpts) build(f *pflag.FlagSet) *liveBroadcast.LiveBroadcast {
 		liveBroadcast.WithScheduledStartTime(o.scheduledStartTime),
 		liveBroadcast.WithScheduledEndTime(o.scheduledEndTime),
 		liveBroadcast.WithPrivacyStatus(o.privacyStatus),
-		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithOBOCO(o.oboco),
+		liveBroadcast.WithOBOCOC(o.obococ),
 		liveBroadcast.WithParts(o.parts),
 		liveBroadcast.WithOutput(o.output),
 	).(*liveBroadcast.LiveBroadcast)

@@ -36,19 +36,19 @@ func TestNewWatermark(t *testing.T) {
 					WithDurationMs(5000),
 					WithOffsetMs(1000),
 					WithOffsetType("offsetFromStart"),
-					WithOnBehalfOfContentOwner("owner123"),
+					WithOBOCO("owner123"),
 					WithService(svc),
 				},
 			},
 			want: &Watermark{
-				Service:                svc,
-				ChannelId:              "channel123",
-				OnBehalfOfContentOwner: "owner123",
-				File:                   "/path/to/watermark.png",
-				InVideoPosition:        "topRight",
-				DurationMs:             5000,
-				OffsetMs:               1000,
-				OffsetType:             "offsetFromStart",
+				Service:         svc,
+				ChannelId:       "channel123",
+				OBOCO:           "owner123",
+				File:            "/path/to/watermark.png",
+				InVideoPosition: "topRight",
+				DurationMs:      5000,
+				OffsetMs:        1000,
+				OffsetType:      "offsetFromStart",
 			},
 		},
 		{
@@ -80,15 +80,15 @@ func TestNewWatermark(t *testing.T) {
 					WithFile(""),
 					WithInVideoPosition(""),
 					WithOffsetType(""),
-					WithOnBehalfOfContentOwner(""),
+					WithOBOCO(""),
 				},
 			},
 			want: &Watermark{
-				ChannelId:              "",
-				OnBehalfOfContentOwner: "",
-				File:                   "",
-				InVideoPosition:        "",
-				OffsetType:             "",
+				ChannelId:       "",
+				OBOCO:           "",
+				File:            "",
+				InVideoPosition: "",
+				OffsetType:      "",
 			},
 		},
 		{
@@ -158,7 +158,7 @@ func TestWatermark_Set(t *testing.T) {
 			opts: []Option{
 				WithChannelId("channel-id"),
 				WithFile("test_watermark.jpg"),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
@@ -232,7 +232,7 @@ func TestWatermark_Unset(t *testing.T) {
 			name: "unset watermark with onBehalfOfContentOwner",
 			opts: []Option{
 				WithChannelId("channel-id"),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {

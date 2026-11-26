@@ -72,20 +72,20 @@ func init() {
 }
 
 type listOpts struct {
-	ids                    []string
-	videoId                string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
-	parts                  []string
-	output                 string
+	ids     []string
+	videoId string
+	obo     string
+	oboco   string
+	parts   []string
+	output  string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
 	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
-	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(&o.obo, "onBehalfOf", "B", "", pkg.OBOUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringSliceVarP(
 		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
@@ -97,8 +97,8 @@ func (o *listOpts) build() *caption.Caption {
 	return caption.NewCaption(
 		caption.WithIds(o.ids),
 		caption.WithVideoId(o.videoId),
-		caption.WithOnBehalfOf(o.onBehalfOf),
-		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOBO(o.obo),
+		caption.WithOBOCO(o.oboco),
 		caption.WithParts(o.parts),
 		caption.WithOutput(o.output),
 	).(*caption.Caption)

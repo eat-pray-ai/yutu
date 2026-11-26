@@ -92,19 +92,19 @@ func init() {
 }
 
 type listOpts struct {
-	ids                    []string
-	chart                  string
-	hl                     string
-	locale                 string
-	categoryId             string
-	regionCode             string
-	maxHeight              int64
-	maxWidth               int64
-	maxResults             int64
-	onBehalfOfContentOwner string
-	rating                 string
-	parts                  []string
-	output                 string
+	ids        []string
+	chart      string
+	hl         string
+	locale     string
+	categoryId string
+	regionCode string
+	maxHeight  int64
+	maxWidth   int64
+	maxResults int64
+	oboco      string
+	rating     string
+	parts      []string
+	output     string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -118,7 +118,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Int64VarP(&o.maxWidth, "maxWidth", "W", 0, mwUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(&o.rating, "myRating", "R", "", listMrUsage)
@@ -140,7 +140,7 @@ func (o *listOpts) build() *video.Video {
 		video.WithMaxHeight(o.maxHeight),
 		video.WithMaxWidth(o.maxWidth),
 		video.WithMaxResults(o.maxResults),
-		video.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		video.WithOBOCO(o.oboco),
 		video.WithRating(o.rating),
 		video.WithParts(o.parts),
 		video.WithOutput(o.output),

@@ -164,7 +164,7 @@ type listOpts struct {
 	location                  string
 	locationRadius            string
 	maxResults                int64
-	onBehalfOfContentOwner    string
+	oboco                     string
 	order                     string
 	publishedAfter            string
 	publishedBefore           string
@@ -199,7 +199,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVar(&o.locationRadius, "locationRadius", "", lrUsage)
 	c.Flags().Int64Var(&o.maxResults, "maxResults", 5, pkg.MRUsage)
 	c.Flags().StringVar(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "", pkg.OBOCOUsage,
+		&o.oboco, "onBehalfOfContentOwner", "", pkg.OBOCOUsage,
 	)
 	c.Flags().StringVar(&o.order, "order", "relevance", orderUsage)
 	c.Flags().StringVar(&o.publishedAfter, "publishedAfter", "", paUsage)
@@ -237,7 +237,7 @@ func (o *listOpts) build() *search.Search {
 		search.WithLocation(o.location),
 		search.WithLocationRadius(o.locationRadius),
 		search.WithMaxResults(o.maxResults),
-		search.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		search.WithOBOCO(o.oboco),
 		search.WithOrder(o.order),
 		search.WithPublishedAfter(o.publishedAfter),
 		search.WithPublishedBefore(o.publishedBefore),

@@ -39,7 +39,7 @@ func TestNewSearch(t *testing.T) {
 					WithLocation("37.42307,-122.08427"),
 					WithLocationRadius("50km"),
 					WithMaxResults(50),
-					WithOnBehalfOfContentOwner("owner123"),
+					WithOBOCO("owner123"),
 					WithOrder("relevance"),
 					WithPublishedAfter("2024-01-01T00:00:00Z"),
 					WithPublishedBefore("2024-12-31T23:59:59Z"),
@@ -70,7 +70,7 @@ func TestNewSearch(t *testing.T) {
 				Output:                    "json",
 				MaxResults:                50,
 				ChannelId:                 "channel123",
-				OnBehalfOfContentOwner:    "owner123",
+				OBOCO:                     "owner123",
 				ChannelType:               "any",
 				EventType:                 "live",
 				For:                       "mine",
@@ -156,7 +156,7 @@ func TestNewSearch(t *testing.T) {
 					WithEventType(""),
 					WithLocation(""),
 					WithLocationRadius(""),
-					WithOnBehalfOfContentOwner(""),
+					WithOBOCO(""),
 					WithOrder(""),
 					WithPublishedAfter(""),
 					WithPublishedBefore(""),
@@ -179,7 +179,7 @@ func TestNewSearch(t *testing.T) {
 			},
 			want: &Search{
 				ChannelId:                 "",
-				OnBehalfOfContentOwner:    "",
+				OBOCO:                     "",
 				ChannelType:               "",
 				EventType:                 "",
 				Location:                  "",
@@ -298,7 +298,7 @@ func TestSearch_Get(t *testing.T) {
 		{
 			name: "get search with onBehalfOfContentOwner",
 			opts: []Option{
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 				WithMaxResults(1),
 			},
 			verify: func(r *http.Request) {

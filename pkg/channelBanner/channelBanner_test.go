@@ -142,19 +142,19 @@ func TestNewChannelBanner(t *testing.T) {
 				opts: []Option{
 					WithChannelId("channel123"),
 					WithFile("/path/to/banner.jpg"),
-					WithOnBehalfOfContentOwner("owner123"),
-					WithOnBehalfOfContentOwnerChannel("ownerChannel123"),
+					WithOBOCO("owner123"),
+					WithOBOCOC("ownerChannel123"),
 					WithOutput("json"),
 					WithService(svc),
 				},
 			},
 			want: &ChannelBanner{
-				Output:                        "json",
-				Service:                       svc,
-				ChannelId:                     "channel123",
-				OnBehalfOfContentOwner:        "owner123",
-				File:                          "/path/to/banner.jpg",
-				OnBehalfOfContentOwnerChannel: "ownerChannel123",
+				Output:    "json",
+				Service:   svc,
+				ChannelId: "channel123",
+				OBOCO:     "owner123",
+				File:      "/path/to/banner.jpg",
+				OBOCOC:    "ownerChannel123",
 			},
 		},
 		{
@@ -170,17 +170,17 @@ func TestNewChannelBanner(t *testing.T) {
 				opts: []Option{
 					WithChannelId(""),
 					WithFile(""),
-					WithOnBehalfOfContentOwner(""),
-					WithOnBehalfOfContentOwnerChannel(""),
+					WithOBOCO(""),
+					WithOBOCOC(""),
 					WithOutput(""),
 				},
 			},
 			want: &ChannelBanner{
-				Output:                        "",
-				ChannelId:                     "",
-				OnBehalfOfContentOwner:        "",
-				File:                          "",
-				OnBehalfOfContentOwnerChannel: "",
+				Output:    "",
+				ChannelId: "",
+				OBOCO:     "",
+				File:      "",
+				OBOCOC:    "",
 			},
 		},
 		{
@@ -244,7 +244,7 @@ func TestChannelBanner_Insert(t *testing.T) {
 			opts: []Option{
 				WithChannelId("channel-id"),
 				WithFile("test_banner.jpg"),
-				WithOnBehalfOfContentOwner("owner-id"),
+				WithOBOCO("owner-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwner") != "owner-id" {
@@ -261,7 +261,7 @@ func TestChannelBanner_Insert(t *testing.T) {
 			opts: []Option{
 				WithChannelId("channel-id"),
 				WithFile("test_banner.jpg"),
-				WithOnBehalfOfContentOwnerChannel("channel-id"),
+				WithOBOCOC("channel-id"),
 			},
 			verify: func(r *http.Request) {
 				if r.URL.Query().Get("onBehalfOfContentOwnerChannel") != "channel-id" {

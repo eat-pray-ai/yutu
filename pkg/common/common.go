@@ -45,7 +45,7 @@ type Fields struct {
 	Parts      []string         `yaml:"parts" json:"parts,omitempty"`
 	Output     string           `yaml:"output" json:"output,omitempty"`
 
-	OnBehalfOfContentOwner string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
+	OBOCO string `yaml:"on_behalf_of_content_owner" json:"on_behalf_of_content_owner,omitempty"`
 }
 
 func (d *Fields) GetFields() *Fields {
@@ -163,9 +163,9 @@ func WithChannelId[T HasFields](channelId string) func(T) {
 	}
 }
 
-func WithOnBehalfOfContentOwner[T HasFields](owner string) func(T) {
+func WithOBOCO[T HasFields](owner string) func(T) {
 	return func(t T) {
-		t.GetFields().OnBehalfOfContentOwner = owner
+		t.GetFields().OBOCO = owner
 	}
 }
 

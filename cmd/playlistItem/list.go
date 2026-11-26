@@ -78,13 +78,13 @@ func init() {
 }
 
 type listOpts struct {
-	ids                    []string
-	playlistId             string
-	maxResults             int64
-	videoId                string
-	onBehalfOfContentOwner string
-	parts                  []string
-	output                 string
+	ids        []string
+	playlistId string
+	maxResults int64
+	videoId    string
+	oboco      string
+	parts      []string
+	output     string
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
@@ -93,7 +93,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringSliceVarP(
@@ -108,7 +108,7 @@ func (o *listOpts) build() *playlistItem.PlaylistItem {
 		playlistItem.WithPlaylistId(o.playlistId),
 		playlistItem.WithMaxResults(o.maxResults),
 		playlistItem.WithVideoId(o.videoId),
-		playlistItem.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistItem.WithOBOCO(o.oboco),
 		playlistItem.WithParts(o.parts),
 		playlistItem.WithOutput(o.output),
 	).(*playlistItem.PlaylistItem)

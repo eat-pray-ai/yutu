@@ -29,7 +29,7 @@ type LiveStream struct {
 	IngestionType string  `yaml:"ingestion_type" json:"ingestion_type,omitempty"`
 	Resolution    string  `yaml:"resolution" json:"resolution,omitempty"`
 
-	OnBehalfOfContentOwnerChannel string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
+	OBOCOC string `yaml:"on_behalf_of_content_owner_channel" json:"on_behalf_of_content_owner_channel,omitempty"`
 }
 
 type ILiveStream[T any] interface {
@@ -61,11 +61,11 @@ func (s *LiveStream) Get() ([]*youtube.LiveStream, error) {
 	if s.Mine != nil && *s.Mine {
 		call = call.Mine(true)
 	}
-	if s.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+	if s.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(s.OBOCO)
 	}
-	if s.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
+	if s.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(s.OBOCOC)
 	}
 
 	return common.Paginate(
@@ -121,11 +121,11 @@ func (s *LiveStream) Insert(writer io.Writer) error {
 	}
 
 	call := s.Service.LiveStreams.Insert(s.Parts, stream)
-	if s.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+	if s.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(s.OBOCO)
 	}
-	if s.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
+	if s.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(s.OBOCOC)
 	}
 
 	res, err := call.Do()
@@ -183,11 +183,11 @@ func (s *LiveStream) Update(writer io.Writer) error {
 	}
 
 	call := s.Service.LiveStreams.Update([]string{"snippet", "cdn"}, stream)
-	if s.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+	if s.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(s.OBOCO)
 	}
-	if s.OnBehalfOfContentOwnerChannel != "" {
-		call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
+	if s.OBOCOC != "" {
+		call = call.OnBehalfOfContentOwnerChannel(s.OBOCOC)
 	}
 
 	res, err := call.Do()
@@ -206,11 +206,11 @@ func (s *LiveStream) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range s.Ids {
 		call := s.Service.LiveStreams.Delete(id)
-		if s.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(s.OnBehalfOfContentOwner)
+		if s.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(s.OBOCO)
 		}
-		if s.OnBehalfOfContentOwnerChannel != "" {
-			call = call.OnBehalfOfContentOwnerChannel(s.OnBehalfOfContentOwnerChannel)
+		if s.OBOCOC != "" {
+			call = call.OnBehalfOfContentOwnerChannel(s.OBOCOC)
 		}
 
 		err := call.Do()
@@ -263,9 +263,9 @@ func WithResolution(resolution string) Option {
 	}
 }
 
-func WithOnBehalfOfContentOwnerChannel(channel string) Option {
+func WithOBOCOC(channel string) Option {
 	return func(s *LiveStream) {
-		s.OnBehalfOfContentOwnerChannel = channel
+		s.OBOCOC = channel
 	}
 }
 
@@ -276,5 +276,5 @@ var (
 	WithService    = common.WithService[*LiveStream]
 	WithIds        = common.WithIds[*LiveStream]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*LiveStream]
+	WithOBOCO = common.WithOBOCO[*LiveStream]
 )

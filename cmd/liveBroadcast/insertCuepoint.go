@@ -89,15 +89,15 @@ func init() {
 }
 
 type insertCuepointOpts struct {
-	ids                           []string
-	cueType                       string
-	cueDurationSecs               int64
-	cueInsertionOffsetMs          int64
-	cueWalltimeMs                 uint64
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-	output                        string
-	yes                           bool
+	ids                  []string
+	cueType              string
+	cueDurationSecs      int64
+	cueInsertionOffsetMs int64
+	cueWalltimeMs        uint64
+	oboco                string
+	obococ               string
+	output               string
+	yes                  bool
 }
 
 func (o *insertCuepointOpts) bindFlags(c *cobra.Command) {
@@ -111,11 +111,11 @@ func (o *insertCuepointOpts) bindFlags(c *cobra.Command) {
 	)
 	c.Flags().Uint64VarP(&o.cueWalltimeMs, "cueWalltimeMs", "W", 0, cwmUsage)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,
 	)
 	c.Flags().StringVarP(
-		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		&o.obococ, "onBehalfOfContentOwnerChannel", "B",
 		"", obococUsage,
 	)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
@@ -130,8 +130,8 @@ func (o *insertCuepointOpts) build() *liveBroadcast.LiveBroadcast {
 		liveBroadcast.WithCueDurationSecs(o.cueDurationSecs),
 		liveBroadcast.WithCueInsertionOffsetMs(o.cueInsertionOffsetMs),
 		liveBroadcast.WithCueWalltimeMs(o.cueWalltimeMs),
-		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
-		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithOBOCO(o.oboco),
+		liveBroadcast.WithOBOCOC(o.obococ),
 		liveBroadcast.WithOutput(o.output),
 	).(*liveBroadcast.LiveBroadcast)
 }

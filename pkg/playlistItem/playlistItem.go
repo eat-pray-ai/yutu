@@ -62,8 +62,8 @@ func (pi *PlaylistItem) Get() ([]*youtube.PlaylistItem, error) {
 	if pi.PlaylistId != "" {
 		call = call.PlaylistId(pi.PlaylistId)
 	}
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
 	if pi.VideoId != "" {
 		call = call.VideoId(pi.VideoId)
@@ -153,8 +153,8 @@ func (pi *PlaylistItem) Insert(writer io.Writer) error {
 	call := pi.Service.PlaylistItems.Insert(
 		[]string{"snippet", "status"}, playlistItem,
 	)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -195,8 +195,8 @@ func (pi *PlaylistItem) Update(writer io.Writer) error {
 	call := pi.Service.PlaylistItems.Update(
 		[]string{"snippet", "status"}, playlistItem,
 	)
-	if pi.OnBehalfOfContentOwner != "" {
-		call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+	if pi.OBOCO != "" {
+		call = call.OnBehalfOfContentOwner(pi.OBOCO)
 	}
 
 	res, err := call.Do()
@@ -215,8 +215,8 @@ func (pi *PlaylistItem) Delete(writer io.Writer) (errs error) {
 	}
 	for _, id := range pi.Ids {
 		call := pi.Service.PlaylistItems.Delete(id)
-		if pi.OnBehalfOfContentOwner != "" {
-			call = call.OnBehalfOfContentOwner(pi.OnBehalfOfContentOwner)
+		if pi.OBOCO != "" {
+			call = call.OnBehalfOfContentOwner(pi.OBOCO)
 		}
 
 		err := call.Do()
@@ -293,5 +293,5 @@ var (
 	WithMaxResults = common.WithMaxResults[*PlaylistItem]
 	WithChannelId  = common.WithChannelId[*PlaylistItem]
 
-	WithOnBehalfOfContentOwner = common.WithOnBehalfOfContentOwner[*PlaylistItem]
+	WithOBOCO = common.WithOBOCO[*PlaylistItem]
 )
