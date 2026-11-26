@@ -82,47 +82,72 @@ func init() {
 			),
 		),
 	)
-	playlistImageCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	insertCmd.Flags().StringVarP(&playlistId, "playlistId", "p", "", pidUsage)
-	insertCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
-	insertCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
-	insertCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		pkg.OBOCOCUsage,
-	)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("file")
-	_ = insertCmd.MarkFlagRequired("playlistId")
+	playlistImageCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, file, playlistId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		pi := playlistImage.NewPlaylistImage(
-			playlistImage.WithFile(file),
-			playlistImage.WithPlaylistId(playlistId),
-			playlistImage.WithType(type_),
-			playlistImage.WithHeight(height),
-			playlistImage.WithWidth(width),
-			playlistImage.WithOutput(output),
-			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		)
-		err := pi.Insert(c.OutOrStdout())
-		return err
-	},
+type insertOpts struct {
+	file                          string
+	playlistId                    string
+	type_                         string
+	height                        int64
+	width                         int64
+	output                        string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	yes                           bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "p", "", pidUsage)
+	c.Flags().StringVarP(&o.type_, "type", "t", "", typeUsage)
+	c.Flags().Int64VarP(&o.height, "height", "H", 0, heightUsage)
+	c.Flags().Int64VarP(&o.width, "width", "W", 0, widthUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", pkg.OBOCOCUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("file")
+	_ = c.MarkFlagRequired("playlistId")
+}
+
+func (o *insertOpts) build() *playlistImage.PlaylistImage {
+	return playlistImage.NewPlaylistImage(
+		playlistImage.WithFile(o.file),
+		playlistImage.WithPlaylistId(o.playlistId),
+		playlistImage.WithType(o.type_),
+		playlistImage.WithHeight(o.height),
+		playlistImage.WithWidth(o.width),
+		playlistImage.WithOutput(o.output),
+		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistImage.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+	).(*playlistImage.PlaylistImage)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.file, opts.playlistId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

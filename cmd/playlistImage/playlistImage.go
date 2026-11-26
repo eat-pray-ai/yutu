@@ -20,21 +20,6 @@ const (
 	parentUsage = "Return PlaylistImages for this playlist id"
 )
 
-var (
-	ids        []string
-	height     int64
-	playlistId string
-	type_      string
-	width      int64
-	file       string
-	parent     string
-	maxResults int64
-	parts      []string
-
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var playlistImageCmd = &cobra.Command{
 	Use:   "playlistImage",
 	Short: short,

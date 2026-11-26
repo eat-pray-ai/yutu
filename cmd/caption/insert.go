@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -74,55 +75,80 @@ func init() {
 			),
 		),
 	)
-	captionCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	insertCmd.Flags().BoolVarP(
-		isAutoSynced, "isAutoSynced", "A", true, iasUsage,
-	)
-	insertCmd.Flags().BoolVarP(isCC, "isCC", "C", false, iscUsage)
-	insertCmd.Flags().BoolVarP(isDraft, "isDraft", "D", false, isdUsage)
-	insertCmd.Flags().BoolVarP(
-		isEasyReader, "isEasyReader", "E", false, iserUsage,
-	)
-	insertCmd.Flags().BoolVarP(isLarge, "isLarge", "L", false, islUsage)
-	insertCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
-	insertCmd.Flags().StringVarP(&name, "name", "n", "", nameUsage)
-	insertCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	insertCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("file")
-	_ = insertCmd.MarkFlagRequired("videoId")
+	captionCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, videoId, file))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := caption.NewCaption(
-			caption.WithFile(file),
-			caption.WithIsAutoSynced(isAutoSynced),
-			caption.WithIsCC(isCC),
-			caption.WithIsDraft(isDraft),
-			caption.WithIsEasyReader(isEasyReader),
-			caption.WithIsLarge(isLarge),
-			caption.WithLanguage(language),
-			caption.WithName(name),
-			caption.WithVideoId(videoId),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	file                   string
+	isAutoSynced           bool
+	isCC                   bool
+	isDraft                bool
+	isEasyReader           bool
+	isLarge                bool
+	language               string
+	name                   string
+	videoId                string
+	onBehalfOf             string
+	onBehalfOfContentOwner string
+	output                 string
+	yes                    bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().BoolVarP(&o.isAutoSynced, "isAutoSynced", "A", true, iasUsage)
+	c.Flags().BoolVarP(&o.isCC, "isCC", "C", false, iscUsage)
+	c.Flags().BoolVarP(&o.isDraft, "isDraft", "D", false, isdUsage)
+	c.Flags().BoolVarP(&o.isEasyReader, "isEasyReader", "E", false, iserUsage)
+	c.Flags().BoolVarP(&o.isLarge, "isLarge", "L", false, islUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", languageUsage)
+	c.Flags().StringVarP(&o.name, "name", "n", "", nameUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
+	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("file")
+	_ = c.MarkFlagRequired("videoId")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *caption.Caption {
+	return caption.NewCaption(
+		caption.WithFile(o.file),
+		utils.OptIfChanged(f, "isAutoSynced", &o.isAutoSynced, caption.WithIsAutoSynced),
+		utils.OptIfChanged(f, "isCC", &o.isCC, caption.WithIsCC),
+		utils.OptIfChanged(f, "isDraft", &o.isDraft, caption.WithIsDraft),
+		utils.OptIfChanged(f, "isEasyReader", &o.isEasyReader, caption.WithIsEasyReader),
+		utils.OptIfChanged(f, "isLarge", &o.isLarge, caption.WithIsLarge),
+		caption.WithLanguage(o.language),
+		caption.WithName(o.name),
+		caption.WithVideoId(o.videoId),
+		caption.WithOnBehalfOf(o.onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOutput(o.output),
+	).(*caption.Caption)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.videoId, opts.file),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

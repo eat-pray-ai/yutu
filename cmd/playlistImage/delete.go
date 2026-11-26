@@ -62,31 +62,50 @@ func init() {
 			),
 		),
 	)
-	playlistImageCmd.AddCommand(deleteCmd)
-
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, idsUsage)
-	deleteCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = deleteCmd.MarkFlagRequired("ids")
+	playlistImageCmd.AddCommand(newDeleteCmd())
 }
 
-var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   deleteShort,
-	Long:    deleteLong,
-	Example: deleteExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := playlistImage.NewPlaylistImage(
-			playlistImage.WithIds(ids),
-			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		)
-		return input.Delete(c.OutOrStdout())
-	},
+type deleteOpts struct {
+	ids                    []string
+	onBehalfOfContentOwner string
+	yes                    bool
+}
+
+func (o *deleteOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *deleteOpts) build() *playlistImage.PlaylistImage {
+	return playlistImage.NewPlaylistImage(
+		playlistImage.WithIds(o.ids),
+		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+	).(*playlistImage.PlaylistImage)
+}
+
+func newDeleteCmd() *cobra.Command {
+	var opts deleteOpts
+
+	c := &cobra.Command{
+		Use:     "delete",
+		Short:   deleteShort,
+		Long:    deleteLong,
+		Example: deleteExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(deleteConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Delete(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

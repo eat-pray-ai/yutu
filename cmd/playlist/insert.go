@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -76,40 +77,62 @@ func init() {
 			),
 		),
 	)
-	playlistCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringSliceVarP(&tags, "tags", "a", nil, tagsUsage)
-	insertCmd.Flags().StringVarP(language, "language", "l", "", languageUsage)
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", insertCidUsage)
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("title")
-	_ = insertCmd.MarkFlagRequired("channelId")
-	_ = insertCmd.MarkFlagRequired("privacy")
+	playlistCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, title))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := playlist.NewPlaylist(
-			playlist.WithTitle(title),
-			playlist.WithDescription(description),
-			playlist.WithTags(tags),
-			playlist.WithLanguage(language),
-			playlist.WithChannelId(channelId),
-			playlist.WithPrivacy(privacy),
-			playlist.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	title       string
+	description string
+	tags        []string
+	language    string
+	channelId   string
+	privacy     string
+	output      string
+	yes         bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringSliceVarP(&o.tags, "tags", "a", nil, tagsUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", languageUsage)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", insertCidUsage)
+	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("title")
+	_ = c.MarkFlagRequired("channelId")
+	_ = c.MarkFlagRequired("privacy")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *playlist.Playlist {
+	return playlist.NewPlaylist(
+		playlist.WithTitle(o.title),
+		utils.OptIfChanged(f, "description", &o.description, playlist.WithDescription),
+		utils.OptIfChanged(f, "tags", o.tags, playlist.WithTags),
+		utils.OptIfChanged(f, "language", &o.language, playlist.WithLanguage),
+		playlist.WithChannelId(o.channelId),
+		playlist.WithPrivacy(o.privacy),
+		playlist.WithOutput(o.output),
+	).(*playlist.Playlist)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.title))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

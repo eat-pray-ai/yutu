@@ -63,36 +63,55 @@ func init() {
 			},
 		),
 	)
-	captionCmd.AddCommand(downloadCmd)
-
-	downloadCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, downloadIdUsage)
-	downloadCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	downloadCmd.Flags().StringVarP(&tfmt, "tfmt", "t", "", tfmtUsage)
-	downloadCmd.Flags().StringVarP(&tlang, "tlang", "l", "", tlangUsage)
-	downloadCmd.Flags().StringVarP(
-		&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage,
-	)
-	downloadCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
-	)
-	_ = downloadCmd.MarkFlagRequired("id")
-	_ = downloadCmd.MarkFlagRequired("file")
+	captionCmd.AddCommand(newDownloadCmd())
 }
 
-var downloadCmd = &cobra.Command{
-	Use:     "download",
-	Short:   downloadShort,
-	Long:    downloadLong,
-	Example: downloadExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := caption.NewCaption(
-			caption.WithIds(ids),
-			caption.WithFile(file),
-			caption.WithTfmt(tfmt),
-			caption.WithTlang(tlang),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		)
-		return input.Download(c.OutOrStdout())
-	},
+type downloadOpts struct {
+	ids                    []string
+	file                   string
+	tfmt                   string
+	tlang                  string
+	onBehalfOf             string
+	onBehalfOfContentOwner string
+}
+
+func (o *downloadOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, downloadIdUsage)
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(&o.tfmt, "tfmt", "t", "", tfmtUsage)
+	c.Flags().StringVarP(&o.tlang, "tlang", "l", "", tlangUsage)
+	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+	)
+	_ = c.MarkFlagRequired("id")
+	_ = c.MarkFlagRequired("file")
+}
+
+func (o *downloadOpts) build() *caption.Caption {
+	return caption.NewCaption(
+		caption.WithIds(o.ids),
+		caption.WithFile(o.file),
+		caption.WithTfmt(o.tfmt),
+		caption.WithTlang(o.tlang),
+		caption.WithOnBehalfOf(o.onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+	).(*caption.Caption)
+}
+
+func newDownloadCmd() *cobra.Command {
+	var opts downloadOpts
+
+	c := &cobra.Command{
+		Use:     "download",
+		Short:   downloadShort,
+		Long:    downloadLong,
+		Example: downloadExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Download(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

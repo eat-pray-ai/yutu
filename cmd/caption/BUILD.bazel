@@ -21,6 +21,7 @@ go_library(
         "@com_github_google_jsonschema_go//jsonschema",
         "@com_github_modelcontextprotocol_go_sdk//mcp",
         "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_pflag//:pflag",
     ],
 )
 
@@ -28,4 +29,5 @@ go_test(
     name = "caption_test",
     srcs = ["insert_test.go"],
     embed = [":caption"],
+    deps = ["@com_github_spf13_cobra//:cobra"],
 )

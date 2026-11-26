@@ -3,13 +3,18 @@
 
 package caption
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/spf13/cobra"
+)
 
 // YouTube rejects captions.insert (invalidMetadata) for every value of
 // snippet.audioTrackType and snippet.trackKind, so insert must not offer them.
 func TestInsert_DoesNotOfferTrackFields(t *testing.T) {
+	c := newInsertCmd()
 	for _, f := range []string{"audioTrackType", "trackKind"} {
-		if insertCmd.Flags().Lookup(f) != nil {
+		if c.Flags().Lookup(f) != nil {
 			t.Errorf("caption insert still has --%s", f)
 		}
 	}
@@ -23,23 +28,24 @@ func TestInsert_DoesNotOfferTrackFields(t *testing.T) {
 // On update, omitted track flags must stay empty so they don't overwrite the
 // caption's current values; passed values must be kept.
 func TestUpdate_TrackFieldsResetOnlyWhenOmitted(t *testing.T) {
+	c := newUpdateCmd()
 	for _, f := range []string{"audioTrackType", "trackKind"} {
-		if d := updateCmd.Flags().Lookup(f).DefValue; d != "" {
+		if d := c.Flags().Lookup(f).DefValue; d != "" {
 			t.Errorf("update --%s default = %q, want empty", f, d)
 		}
 	}
 
-	audioTrackType, trackKind = "primary", "forced"
-	updateCmd.Flags().Lookup("audioTrackType").Changed = false
-	updateCmd.Flags().Lookup("trackKind").Changed = false
-	if err := updateCmd.ParseFlags([]string{"--videoId", "v", "--trackKind", "ASR"}); err != nil {
+	var opts updateOpts
+	c2 := &cobra.Command{}
+	opts.bindFlags(c2)
+	if err := c2.ParseFlags([]string{"--videoId", "v", "--trackKind", "ASR"}); err != nil {
 		t.Fatalf("parse flags: %v", err)
 	}
-	captionCmd.PersistentPreRun(updateCmd, nil)
-	if audioTrackType != "" {
-		t.Errorf("audioTrackType = %q, want empty when --audioTrackType is omitted", audioTrackType)
+	got := opts.build(c2.Flags())
+	if got.AudioTrackType != "" {
+		t.Errorf("AudioTrackType = %q, want empty when --audioTrackType is omitted", got.AudioTrackType)
 	}
-	if trackKind != "ASR" {
-		t.Errorf("trackKind = %q, want the passed value ASR", trackKind)
+	if got.TrackKind != "ASR" {
+		t.Errorf("TrackKind = %q, want the passed value ASR", got.TrackKind)
 	}
 }

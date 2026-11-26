@@ -68,35 +68,55 @@ func init() {
 			},
 		),
 	)
-	captionCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	listCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	captionCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := caption.NewCaption(
-			caption.WithIds(ids),
-			caption.WithVideoId(videoId),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithParts(parts),
-			caption.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                    []string
+	videoId                string
+	onBehalfOf             string
+	onBehalfOfContentOwner string
+	parts                  []string
+	output                 string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
+	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build() *caption.Caption {
+	return caption.NewCaption(
+		caption.WithIds(o.ids),
+		caption.WithVideoId(o.videoId),
+		caption.WithOnBehalfOf(o.onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithParts(o.parts),
+		caption.WithOutput(o.output),
+	).(*caption.Caption)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

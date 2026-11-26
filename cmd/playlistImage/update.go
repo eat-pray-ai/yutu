@@ -78,44 +78,69 @@ func init() {
 			),
 		),
 	)
-	playlistImageCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringVarP(&playlistId, "playlistId", "p", "", pidUsage)
-	updateCmd.Flags().StringVarP(&type_, "type", "t", "", typeUsage)
-	updateCmd.Flags().Int64VarP(&height, "height", "H", 0, heightUsage)
-	updateCmd.Flags().Int64VarP(&width, "width", "W", 0, widthUsage)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		pkg.OBOCOCUsage,
-	)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("playlistId")
+	playlistImageCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, playlistId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := playlistImage.NewPlaylistImage(
-			playlistImage.WithPlaylistId(playlistId),
-			playlistImage.WithType(type_),
-			playlistImage.WithHeight(height),
-			playlistImage.WithWidth(width),
-			playlistImage.WithMaxResults(1),
-			playlistImage.WithOutput(output),
-			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	playlistId                    string
+	type_                         string
+	height                        int64
+	width                         int64
+	output                        string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	yes                           bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "p", "", pidUsage)
+	c.Flags().StringVarP(&o.type_, "type", "t", "", typeUsage)
+	c.Flags().Int64VarP(&o.height, "height", "H", 0, heightUsage)
+	c.Flags().Int64VarP(&o.width, "width", "W", 0, widthUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", pkg.OBOCOCUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("playlistId")
+}
+
+func (o *updateOpts) build() *playlistImage.PlaylistImage {
+	return playlistImage.NewPlaylistImage(
+		playlistImage.WithPlaylistId(o.playlistId),
+		playlistImage.WithType(o.type_),
+		playlistImage.WithHeight(o.height),
+		playlistImage.WithWidth(o.width),
+		playlistImage.WithMaxResults(1),
+		playlistImage.WithOutput(o.output),
+		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistImage.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+	).(*playlistImage.PlaylistImage)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, opts.playlistId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

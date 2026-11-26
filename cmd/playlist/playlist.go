@@ -5,7 +5,6 @@ package playlist
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -22,37 +21,10 @@ const (
 	privacyUsage  = "public|private|unlisted"
 )
 
-var (
-	ids         []string
-	title       string
-	description = new("")
-	hl          string
-	maxResults  int64
-	mine        = new(false)
-	tags        []string
-	language    = new("")
-	channelId   string
-	privacy     string
-	parts       []string
-
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var playlistCmd = &cobra.Command{
 	Use:   "playlist",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		utils.ResetFlags(map[string]**bool{"mine": &mine}, c.Flags())
-		utils.ResetFlags(map[string]*[]string{"tags": &tags}, c.Flags())
-
-		stringFlags := map[string]**string{
-			"description": &description,
-			"language":    &language,
-		}
-		utils.ResetFlags(stringFlags, c.Flags())
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},

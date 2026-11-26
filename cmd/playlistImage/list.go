@@ -72,38 +72,60 @@ func init() {
 			},
 		),
 	)
-	playlistImageCmd.AddCommand(listCmd)
-	listCmd.Flags().StringVarP(&parent, "parent", "P", "", parentUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "kind", "snippet"}, pkg.PartsUsage,
+	playlistImageCmd.AddCommand(newListCmd())
+}
+
+type listOpts struct {
+	parent                        string
+	maxResults                    int64
+	parts                         []string
+	output                        string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.parent, "parent", "P", "", parentUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "kind", "snippet"}, pkg.PartsUsage,
 	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
 	)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		pkg.OBOCOCUsage,
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", pkg.OBOCOCUsage,
 	)
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := playlistImage.NewPlaylistImage(
-			playlistImage.WithParent(parent),
-			playlistImage.WithMaxResults(maxResults),
-			playlistImage.WithParts(parts),
-			playlistImage.WithOutput(output),
-			playlistImage.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistImage.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			playlistImage.WithService(nil),
-		)
-		return input.List(c.OutOrStdout())
-	},
+func (o *listOpts) build() *playlistImage.PlaylistImage {
+	return playlistImage.NewPlaylistImage(
+		playlistImage.WithParent(o.parent),
+		playlistImage.WithMaxResults(o.maxResults),
+		playlistImage.WithParts(o.parts),
+		playlistImage.WithOutput(o.output),
+		playlistImage.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistImage.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		playlistImage.WithService(nil),
+	).(*playlistImage.PlaylistImage)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

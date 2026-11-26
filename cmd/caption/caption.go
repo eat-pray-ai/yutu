@@ -5,7 +5,6 @@ package caption
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -27,33 +26,10 @@ const (
 	tlangUsage    = "Translate the captions into this language"
 )
 
-var (
-	ids                    []string
-	file                   string
-	audioTrackType         string
-	isAutoSynced           = new(false)
-	isCC                   = new(false)
-	isDraft                = new(false)
-	isEasyReader           = new(false)
-	isLarge                = new(false)
-	language               string
-	name                   string
-	trackKind              string
-	onBehalfOf             string
-	onBehalfOfContentOwner string
-	videoId                string
-	parts                  []string
-	tfmt                   string
-	tlang                  string
-)
-
 var captionCmd = &cobra.Command{
 	Use:   "caption",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		resetFlags(c)
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},
@@ -61,24 +37,4 @@ var captionCmd = &cobra.Command{
 
 func init() {
 	cmd.RootCmd.AddCommand(captionCmd)
-}
-
-func resetFlags(c *cobra.Command) {
-	flagSet := c.Flags()
-	boolFlags := map[string]**bool{
-		"isAutoSynced": &isAutoSynced,
-		"isCC":         &isCC,
-		"isDraft":      &isDraft,
-		"isEasyReader": &isEasyReader,
-		"isLarge":      &isLarge,
-	}
-	utils.ResetFlags(boolFlags, flagSet)
-
-	if c.Name() == "update" {
-		stringFlags := map[string]*string{
-			"audioTrackType": &audioTrackType,
-			"trackKind":      &trackKind,
-		}
-		utils.ResetFlags(stringFlags, flagSet)
-	}
 }

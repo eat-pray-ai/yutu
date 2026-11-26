@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -83,41 +84,63 @@ func init() {
 			),
 		),
 	)
-	playlistCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringSliceVarP(&tags, "tags", "a", nil, tagsUsage)
-	updateCmd.Flags().StringVarP(language, "language", "l", "", languageUsage)
-	updateCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	playlistCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		p := playlist.NewPlaylist(
-			playlist.WithIds(ids),
-			playlist.WithTitle(title),
-			playlist.WithDescription(description),
-			playlist.WithTags(tags),
-			playlist.WithLanguage(language),
-			playlist.WithPrivacy(privacy),
-			playlist.WithMaxResults(1),
-			playlist.WithOutput(output),
-		)
-		return p.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids         []string
+	title       string
+	description string
+	tags        []string
+	language    string
+	privacy     string
+	output      string
+	yes         bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringSliceVarP(&o.tags, "tags", "a", nil, tagsUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", languageUsage)
+	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *playlist.Playlist {
+	return playlist.NewPlaylist(
+		playlist.WithIds(o.ids),
+		playlist.WithTitle(o.title),
+		utils.OptIfChanged(f, "description", &o.description, playlist.WithDescription),
+		utils.OptIfChanged(f, "tags", o.tags, playlist.WithTags),
+		utils.OptIfChanged(f, "language", &o.language, playlist.WithLanguage),
+		playlist.WithPrivacy(o.privacy),
+		playlist.WithMaxResults(1),
+		playlist.WithOutput(o.output),
+	).(*playlist.Playlist)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

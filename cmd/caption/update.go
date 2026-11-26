@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -86,66 +87,89 @@ func init() {
 			),
 		),
 	)
-	captionCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringVarP(&file, "file", "f", "", fileUsage)
-	updateCmd.Flags().StringVarP(
-		&audioTrackType, "audioTrackType", "a", "", attUsage,
-	)
-	updateCmd.Flags().BoolVarP(
-		isAutoSynced, "isAutoSynced", "A", true, iasUsage,
-	)
-	updateCmd.Flags().BoolVarP(isCC, "isCC", "C", false, iscUsage)
-	updateCmd.Flags().BoolVarP(isDraft, "isDraft", "D", false, isdUsage)
-	updateCmd.Flags().BoolVarP(
-		isEasyReader, "isEasyReader", "E", false, iserUsage,
-	)
-	updateCmd.Flags().BoolVarP(isLarge, "isLarge", "L", false, islUsage)
-	updateCmd.Flags().StringVarP(&language, "language", "l", "", languageUsage)
-	updateCmd.Flags().StringVarP(&name, "name", "n", "", nameUsage)
-	updateCmd.Flags().StringVarP(
-		&trackKind, "trackKind", "t", "", tkUsage,
-	)
-	updateCmd.Flags().StringVarP(&videoId, "videoId", "v", "", vidUsage)
-	updateCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
-	)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("videoId")
+	captionCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		target := videoId
-		if file != "" {
-			target += " with file: " + file
-		}
-		return utils.ConfirmPreRun(c, fmt.Sprintf(updateConfirm, target))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := caption.NewCaption(
-			caption.WithFile(file),
-			caption.WithAudioTrackType(audioTrackType),
-			caption.WithIsAutoSynced(isAutoSynced),
-			caption.WithIsCC(isCC),
-			caption.WithIsDraft(isDraft),
-			caption.WithIsEasyReader(isEasyReader),
-			caption.WithIsLarge(isLarge),
-			caption.WithLanguage(language),
-			caption.WithName(name),
-			caption.WithTrackKind(trackKind),
-			caption.WithVideoId(videoId),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			caption.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	file                   string
+	audioTrackType         string
+	isAutoSynced           bool
+	isCC                   bool
+	isDraft                bool
+	isEasyReader           bool
+	isLarge                bool
+	language               string
+	name                   string
+	trackKind              string
+	videoId                string
+	onBehalfOf             string
+	onBehalfOfContentOwner string
+	output                 string
+	yes                    bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
+	c.Flags().StringVarP(&o.audioTrackType, "audioTrackType", "a", "", attUsage)
+	c.Flags().BoolVarP(&o.isAutoSynced, "isAutoSynced", "A", true, iasUsage)
+	c.Flags().BoolVarP(&o.isCC, "isCC", "C", false, iscUsage)
+	c.Flags().BoolVarP(&o.isDraft, "isDraft", "D", false, isdUsage)
+	c.Flags().BoolVarP(&o.isEasyReader, "isEasyReader", "E", false, iserUsage)
+	c.Flags().BoolVarP(&o.isLarge, "isLarge", "L", false, islUsage)
+	c.Flags().StringVarP(&o.language, "language", "l", "", languageUsage)
+	c.Flags().StringVarP(&o.name, "name", "n", "", nameUsage)
+	c.Flags().StringVarP(&o.trackKind, "trackKind", "t", "", tkUsage)
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
+	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("videoId")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *caption.Caption {
+	return caption.NewCaption(
+		caption.WithFile(o.file),
+		utils.OptIfChanged(
+			f, "audioTrackType", o.audioTrackType, caption.WithAudioTrackType,
+		),
+		utils.OptIfChanged(f, "isAutoSynced", &o.isAutoSynced, caption.WithIsAutoSynced),
+		utils.OptIfChanged(f, "isCC", &o.isCC, caption.WithIsCC),
+		utils.OptIfChanged(f, "isDraft", &o.isDraft, caption.WithIsDraft),
+		utils.OptIfChanged(f, "isEasyReader", &o.isEasyReader, caption.WithIsEasyReader),
+		utils.OptIfChanged(f, "isLarge", &o.isLarge, caption.WithIsLarge),
+		caption.WithLanguage(o.language),
+		caption.WithName(o.name),
+		utils.OptIfChanged(f, "trackKind", o.trackKind, caption.WithTrackKind),
+		caption.WithVideoId(o.videoId),
+		caption.WithOnBehalfOf(o.onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		caption.WithOutput(o.output),
+	).(*caption.Caption)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			target := opts.videoId
+			if opts.file != "" {
+				target += " with file: " + opts.file
+			}
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(updateConfirm, target))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

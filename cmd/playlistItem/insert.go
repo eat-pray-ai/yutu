@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -78,52 +79,81 @@ func init() {
 			),
 		),
 	)
-	playlistItemCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringVarP(&kind, "kind", "k", "", kindUsage)
-	insertCmd.Flags().StringVarP(&kVideoId, "kVideoId", "V", "", kvidUsage)
-	insertCmd.Flags().StringVarP(&kChannelId, "kChannelId", "C", "", kcidUsage)
-	insertCmd.Flags().StringVarP(&kPlaylistId, "kPlaylistId", "Y", "", kpidUsage)
-	insertCmd.Flags().StringVarP(
-		&playlistId, "playlistId", "y", "", insertPidUsage,
-	)
-	insertCmd.Flags().StringVarP(&channelId, "channelId", "c", "", cidUsage)
-	insertCmd.Flags().StringVarP(&privacy, "privacy", "p", "", privacyUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("kind")
-	_ = insertCmd.MarkFlagRequired("playlistId")
-	_ = insertCmd.MarkFlagRequired("channelId")
+	playlistItemCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, playlistId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := playlistItem.NewPlaylistItem(
-			playlistItem.WithTitle(title),
-			playlistItem.WithDescription(description),
-			playlistItem.WithKind(kind),
-			playlistItem.WithKVideoId(kVideoId),
-			playlistItem.WithKChannelId(kChannelId),
-			playlistItem.WithKPlaylistId(kPlaylistId),
-			playlistItem.WithPlaylistId(playlistId),
-			playlistItem.WithPrivacy(privacy),
-			playlistItem.WithChannelId(channelId),
-			playlistItem.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			playlistItem.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	title                  string
+	description            string
+	kind                   string
+	kVideoId               string
+	kChannelId             string
+	kPlaylistId            string
+	playlistId             string
+	channelId              string
+	privacy                string
+	onBehalfOfContentOwner string
+	output                 string
+	yes                    bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(&o.kind, "kind", "k", "", kindUsage)
+	c.Flags().StringVarP(&o.kVideoId, "kVideoId", "V", "", kvidUsage)
+	c.Flags().StringVarP(&o.kChannelId, "kChannelId", "C", "", kcidUsage)
+	c.Flags().StringVarP(&o.kPlaylistId, "kPlaylistId", "Y", "", kpidUsage)
+	c.Flags().StringVarP(
+		&o.playlistId, "playlistId", "y", "", insertPidUsage,
+	)
+	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
+	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("kind")
+	_ = c.MarkFlagRequired("playlistId")
+	_ = c.MarkFlagRequired("channelId")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *playlistItem.PlaylistItem {
+	return playlistItem.NewPlaylistItem(
+		playlistItem.WithTitle(o.title),
+		utils.OptIfChanged(
+			f, "description", &o.description, playlistItem.WithDescription,
+		),
+		playlistItem.WithKind(o.kind),
+		playlistItem.WithKVideoId(o.kVideoId),
+		playlistItem.WithKChannelId(o.kChannelId),
+		playlistItem.WithKPlaylistId(o.kPlaylistId),
+		playlistItem.WithPlaylistId(o.playlistId),
+		playlistItem.WithPrivacy(o.privacy),
+		playlistItem.WithChannelId(o.channelId),
+		playlistItem.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		playlistItem.WithOutput(o.output),
+	).(*playlistItem.PlaylistItem)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.playlistId))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

@@ -64,33 +64,52 @@ func init() {
 			),
 		),
 	)
-	captionCmd.AddCommand(deleteCmd)
-
-	deleteCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, deleteIdsUsage)
-	deleteCmd.Flags().StringVarP(&onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
-	deleteCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
-	)
-	deleteCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = deleteCmd.MarkFlagRequired("ids")
+	captionCmd.AddCommand(newDeleteCmd())
 }
 
-var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   deleteShort,
-	Long:    deleteLong,
-	Example: deleteExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(deleteConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		input := caption.NewCaption(
-			caption.WithIds(ids),
-			caption.WithOnBehalfOf(onBehalfOf),
-			caption.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-		)
-		return input.Delete(c.OutOrStdout())
-	},
+type deleteOpts struct {
+	ids                    []string
+	onBehalfOf             string
+	onBehalfOfContentOwner string
+	yes                    bool
+}
+
+func (o *deleteOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, deleteIdsUsage)
+	c.Flags().StringVarP(&o.onBehalfOf, "onBehalfOf", "b", "", pkg.OBOUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "B", "", pkg.OBOCOUsage,
+	)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *deleteOpts) build() *caption.Caption {
+	return caption.NewCaption(
+		caption.WithIds(o.ids),
+		caption.WithOnBehalfOf(o.onBehalfOf),
+		caption.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+	).(*caption.Caption)
+}
+
+func newDeleteCmd() *cobra.Command {
+	var opts deleteOpts
+
+	c := &cobra.Command{
+		Use:     "delete",
+		Short:   deleteShort,
+		Long:    deleteLong,
+		Example: deleteExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(deleteConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Delete(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }
