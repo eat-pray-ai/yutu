@@ -6,13 +6,14 @@ CLI command definitions and MCP tool bindings.
 
 - `main.go` → `cmd.Execute()` → `root.go`
 - Each `<resource>/` dir registers a subcommand + MCP tool
-- `Run` function: binds flags → calls `pkg/<resource>` method
+- Each subcommand defines `<subcommand>Opts` with `bindFlags(c *cobra.Command)` and `build(...)`, constructed by `new<Sub>Cmd()`
 
 ## Conventions
 
-- `utils.ResetFlags` in `PersistentPreRun`: resets omitted optional pointer flags (`!flag.Changed`) to `nil`.
+- No shared package-level flag variables; bind all flags (including `--yes` and `--output`) to per-command `<subcommand>Opts` structs.
+- Use `utils.OptIfChanged` inside `build(f *pflag.FlagSet)` for optional pointer/slice flags so omitted flags stay `nil` (and typos fail fast).
+- Use `utils.ConfirmPreRun(c, opts.yes, msg)` in `PreRunE` for mutating/destructive commands.
 - MCP tools registered via `mcp.AddTool`.
-- Flags bound to package-level variables.
 - `BUILD.bazel` files are auto-generated — do NOT create or edit them manually.
 
 ## Subcommands
