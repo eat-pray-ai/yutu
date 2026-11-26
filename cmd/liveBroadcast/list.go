@@ -11,9 +11,11 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/liveBroadcast"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -76,49 +78,73 @@ func init() {
 			},
 		),
 	)
-	liveBroadcastCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().BoolVarP(
-		mine, "mine", "m", false, "List broadcasts owned by the authenticated user",
-	)
-	listCmd.Flags().StringVarP(
-		&broadcastStatus, "broadcastStatus", "s", "", bsUsage,
-	)
-	listCmd.Flags().StringVarP(&broadcastType, "broadcastType", "T", "", btUsage)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"},
-		pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	liveBroadcastCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithIds(ids),
-			liveBroadcast.WithMine(mine),
-			liveBroadcast.WithBroadcastStatus(broadcastStatus),
-			liveBroadcast.WithBroadcastType(broadcastType),
-			liveBroadcast.WithMaxResults(maxResults),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithParts(parts),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                           []string
+	mine                          bool
+	broadcastStatus               string
+	broadcastType                 string
+	maxResults                    int64
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().BoolVarP(
+		&o.mine, "mine", "m", false, "List broadcasts owned by the authenticated user",
+	)
+	c.Flags().StringVarP(
+		&o.broadcastStatus, "broadcastStatus", "s", "", bsUsage,
+	)
+	c.Flags().StringVarP(&o.broadcastType, "broadcastType", "T", "", btUsage)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "status"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build(f *pflag.FlagSet) *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithIds(o.ids),
+		utils.OptIfChanged(f, "mine", &o.mine, liveBroadcast.WithMine),
+		liveBroadcast.WithBroadcastStatus(o.broadcastStatus),
+		liveBroadcast.WithBroadcastType(o.broadcastType),
+		liveBroadcast.WithMaxResults(o.maxResults),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithParts(o.parts),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

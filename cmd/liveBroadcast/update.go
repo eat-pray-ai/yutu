@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -80,54 +81,81 @@ func init() {
 			),
 		),
 	)
-	liveBroadcastCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringVarP(
-		&scheduledStartTime, "scheduledStartTime", "S", "", sstUsage,
-	)
-	updateCmd.Flags().StringVarP(
-		&scheduledEndTime, "scheduledEndTime", "E", "", setUsage,
-	)
-	updateCmd.Flags().StringVarP(&privacyStatus, "privacyStatus", "P", "", psUsage)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	liveBroadcastCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithIds(ids),
-			liveBroadcast.WithTitle(title),
-			liveBroadcast.WithDescription(description),
-			liveBroadcast.WithScheduledStartTime(scheduledStartTime),
-			liveBroadcast.WithScheduledEndTime(scheduledEndTime),
-			liveBroadcast.WithPrivacyStatus(privacyStatus),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithMaxResults(1),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids                           []string
+	title                         string
+	description                   string
+	scheduledStartTime            string
+	scheduledEndTime              string
+	privacyStatus                 string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	output                        string
+	yes                           bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(
+		&o.scheduledStartTime, "scheduledStartTime", "S", "", sstUsage,
+	)
+	c.Flags().StringVarP(
+		&o.scheduledEndTime, "scheduledEndTime", "E", "", setUsage,
+	)
+	c.Flags().StringVarP(&o.privacyStatus, "privacyStatus", "P", "", psUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithIds(o.ids),
+		liveBroadcast.WithTitle(o.title),
+		utils.OptIfChanged(
+			f, "description", &o.description, liveBroadcast.WithDescription,
+		),
+		liveBroadcast.WithScheduledStartTime(o.scheduledStartTime),
+		liveBroadcast.WithScheduledEndTime(o.scheduledEndTime),
+		liveBroadcast.WithPrivacyStatus(o.privacyStatus),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithMaxResults(1),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

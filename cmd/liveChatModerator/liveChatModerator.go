@@ -15,14 +15,6 @@ const (
 	mcidUsage = "Channel ID of the moderator"
 )
 
-var (
-	ids                []string
-	liveChatId         string
-	moderatorChannelId string
-	maxResults         int64
-	parts              []string
-)
-
 var liveChatModeratorCmd = &cobra.Command{
 	Use:   "liveChatModerator",
 	Short: short,

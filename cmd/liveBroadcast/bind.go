@@ -78,48 +78,70 @@ func init() {
 			),
 		),
 	)
-	liveBroadcastCmd.AddCommand(bindCmd)
-
-	bindCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", nil, "IDs of the broadcasts to bind",
-	)
-	bindCmd.Flags().StringVarP(&streamId, "streamId", "s", "", sidUsage)
-	bindCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	bindCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	bindCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "contentDetails", "status"},
-		pkg.PartsUsage,
-	)
-	bindCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	bindCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = bindCmd.MarkFlagRequired("ids")
+	liveBroadcastCmd.AddCommand(newBindCmd())
 }
 
-var bindCmd = &cobra.Command{
-	Use:     "bind",
-	Short:   bindShort,
-	Long:    bindLong,
-	Example: bindExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(bindConfirm, strings.Join(ids, ", "), streamId),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithIds(ids),
-			liveBroadcast.WithStreamId(streamId),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithParts(parts),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.Bind(c.OutOrStdout())
-	},
+type bindOpts struct {
+	ids                           []string
+	streamId                      string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+	yes                           bool
+}
+
+func (o *bindOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(
+		&o.ids, "ids", "i", nil, "IDs of the broadcasts to bind",
+	)
+	c.Flags().StringVarP(&o.streamId, "streamId", "s", "", sidUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "contentDetails", "status"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *bindOpts) build() *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithIds(o.ids),
+		liveBroadcast.WithStreamId(o.streamId),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithParts(o.parts),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newBindCmd() *cobra.Command {
+	var opts bindOpts
+
+	c := &cobra.Command{
+		Use:     "bind",
+		Short:   bindShort,
+		Long:    bindLong,
+		Example: bindExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(bindConfirm, strings.Join(opts.ids, ", "), opts.streamId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Bind(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

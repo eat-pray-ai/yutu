@@ -83,51 +83,76 @@ func init() {
 			),
 		),
 	)
-	liveBroadcastCmd.AddCommand(transitionCmd)
-
-	transitionCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", nil, "IDs of the broadcasts to transition",
-	)
-	transitionCmd.Flags().StringVarP(
-		&broadcastStatus, "broadcastStatus", "s", "", transitionBsUsage,
-	)
-	transitionCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	transitionCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	transitionCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
-	)
-	transitionCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	transitionCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = transitionCmd.MarkFlagRequired("ids")
-	_ = transitionCmd.MarkFlagRequired("broadcastStatus")
+	liveBroadcastCmd.AddCommand(newTransitionCmd())
 }
 
-var transitionCmd = &cobra.Command{
-	Use:     "transition",
-	Short:   transitionShort,
-	Long:    transitionLong,
-	Example: transitionExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c,
-			fmt.Sprintf(transitionConfirm, strings.Join(ids, ", "), broadcastStatus),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithIds(ids),
-			liveBroadcast.WithBroadcastStatus(broadcastStatus),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithParts(parts),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.Transition(c.OutOrStdout())
-	},
+type transitionOpts struct {
+	ids                           []string
+	broadcastStatus               string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+	yes                           bool
+}
+
+func (o *transitionOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(
+		&o.ids, "ids", "i", nil, "IDs of the broadcasts to transition",
+	)
+	c.Flags().StringVarP(
+		&o.broadcastStatus, "broadcastStatus", "s", "", transitionBsUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+	_ = c.MarkFlagRequired("broadcastStatus")
+}
+
+func (o *transitionOpts) build() *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithIds(o.ids),
+		liveBroadcast.WithBroadcastStatus(o.broadcastStatus),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithParts(o.parts),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newTransitionCmd() *cobra.Command {
+	var opts transitionOpts
+
+	c := &cobra.Command{
+		Use:     "transition",
+		Short:   transitionShort,
+		Long:    transitionLong,
+		Example: transitionExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes,
+				fmt.Sprintf(
+					transitionConfirm, strings.Join(opts.ids, ", "),
+					opts.broadcastStatus,
+				),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Transition(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -78,55 +79,82 @@ func init() {
 			),
 		),
 	)
-	liveBroadcastCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringVarP(
-		&scheduledStartTime, "scheduledStartTime", "S", "", sstUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&scheduledEndTime, "scheduledEndTime", "E", "", setUsage,
-	)
-	insertCmd.Flags().StringVarP(&privacyStatus, "privacyStatus", "P", "", psUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet", "status", "contentDetails"},
-		pkg.PartsUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("title")
-	_ = insertCmd.MarkFlagRequired("scheduledStartTime")
+	liveBroadcastCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, title))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithTitle(title),
-			liveBroadcast.WithDescription(description),
-			liveBroadcast.WithScheduledStartTime(scheduledStartTime),
-			liveBroadcast.WithScheduledEndTime(scheduledEndTime),
-			liveBroadcast.WithPrivacyStatus(privacyStatus),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithParts(parts),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	title                         string
+	description                   string
+	scheduledStartTime            string
+	scheduledEndTime              string
+	privacyStatus                 string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+	yes                           bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(
+		&o.scheduledStartTime, "scheduledStartTime", "S", "", sstUsage,
+	)
+	c.Flags().StringVarP(
+		&o.scheduledEndTime, "scheduledEndTime", "E", "", setUsage,
+	)
+	c.Flags().StringVarP(&o.privacyStatus, "privacyStatus", "P", "", psUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet", "status", "contentDetails"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("title")
+	_ = c.MarkFlagRequired("scheduledStartTime")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithTitle(o.title),
+		utils.OptIfChanged(
+			f, "description", &o.description, liveBroadcast.WithDescription,
+		),
+		liveBroadcast.WithScheduledStartTime(o.scheduledStartTime),
+		liveBroadcast.WithScheduledEndTime(o.scheduledEndTime),
+		liveBroadcast.WithPrivacyStatus(o.privacyStatus),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithParts(o.parts),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.title))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

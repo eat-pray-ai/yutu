@@ -67,39 +67,58 @@ func init() {
 			),
 		),
 	)
-	liveChatModeratorCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&liveChatId, "liveChatId", "l", "", lcidUsage)
-	insertCmd.Flags().StringVarP(
-		&moderatorChannelId, "moderatorChannelId", "m", "", mcidUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, "Parts to include",
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("liveChatId")
-	_ = insertCmd.MarkFlagRequired("moderatorChannelId")
+	liveChatModeratorCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(insertConfirm, moderatorChannelId, liveChatId),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveChatModerator.NewLiveChatModerator(
-			liveChatModerator.WithLiveChatId(liveChatId),
-			liveChatModerator.WithModeratorChannelId(moderatorChannelId),
-			liveChatModerator.WithParts(parts),
-			liveChatModerator.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	liveChatId         string
+	moderatorChannelId string
+	parts              []string
+	output             string
+	yes                bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "l", "", lcidUsage)
+	c.Flags().StringVarP(
+		&o.moderatorChannelId, "moderatorChannelId", "m", "", mcidUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet"}, "Parts to include",
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("liveChatId")
+	_ = c.MarkFlagRequired("moderatorChannelId")
+}
+
+func (o *insertOpts) build() *liveChatModerator.LiveChatModerator {
+	return liveChatModerator.NewLiveChatModerator(
+		liveChatModerator.WithLiveChatId(o.liveChatId),
+		liveChatModerator.WithModeratorChannelId(o.moderatorChannelId),
+		liveChatModerator.WithParts(o.parts),
+		liveChatModerator.WithOutput(o.output),
+	).(*liveChatModerator.LiveChatModerator)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.moderatorChannelId, opts.liveChatId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

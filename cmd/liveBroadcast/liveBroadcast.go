@@ -5,7 +5,6 @@ package liveBroadcast
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -27,37 +26,10 @@ const (
 	obococUsage = "Channel ID for content owner operations"
 )
 
-var (
-	ids                           []string
-	title                         string
-	description                   = new("")
-	mine                          = new(false)
-	broadcastStatus               string
-	broadcastType                 string
-	privacyStatus                 string
-	scheduledStartTime            string
-	scheduledEndTime              string
-	streamId                      string
-	cueType                       string
-	cueDurationSecs               int64
-	cueInsertionOffsetMs          int64
-	cueWalltimeMs                 uint64
-	maxResults                    int64
-	parts                         []string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var liveBroadcastCmd = &cobra.Command{
 	Use:   "liveBroadcast",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		utils.ResetFlags(map[string]**bool{"mine": &mine}, c.Flags())
-		utils.ResetFlags(
-			map[string]**string{"description": &description}, c.Flags(),
-		)
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},

@@ -16,6 +16,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -84,51 +85,78 @@ func init() {
 			),
 		),
 	)
-	liveStreamCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	insertCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	insertCmd.Flags().StringVarP(&frameRate, "frameRate", "f", "", frUsage)
-	insertCmd.Flags().StringVarP(&ingestionType, "ingestionType", "I", "", itUsage)
-	insertCmd.Flags().StringVarP(&resolution, "resolution", "r", "", resUsage)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet", "cdn", "status"}, pkg.PartsUsage,
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("title")
-	_ = insertCmd.MarkFlagRequired("ingestionType")
-	_ = insertCmd.MarkFlagRequired("resolution")
+	liveStreamCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, title))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveStream.NewLiveStream(
-			liveStream.WithTitle(title),
-			liveStream.WithDescription(description),
-			liveStream.WithFrameRate(frameRate),
-			liveStream.WithIngestionType(ingestionType),
-			liveStream.WithResolution(resolution),
-			liveStream.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveStream.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveStream.WithParts(parts),
-			liveStream.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	title                         string
+	description                   string
+	frameRate                     string
+	ingestionType                 string
+	resolution                    string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+	yes                           bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(&o.frameRate, "frameRate", "f", "", frUsage)
+	c.Flags().StringVarP(&o.ingestionType, "ingestionType", "I", "", itUsage)
+	c.Flags().StringVarP(&o.resolution, "resolution", "r", "", resUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet", "cdn", "status"}, pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("title")
+	_ = c.MarkFlagRequired("ingestionType")
+	_ = c.MarkFlagRequired("resolution")
+}
+
+func (o *insertOpts) build(f *pflag.FlagSet) *liveStream.LiveStream {
+	return liveStream.NewLiveStream(
+		liveStream.WithTitle(o.title),
+		utils.OptIfChanged(
+			f, "description", &o.description, liveStream.WithDescription,
+		),
+		liveStream.WithFrameRate(o.frameRate),
+		liveStream.WithIngestionType(o.ingestionType),
+		liveStream.WithResolution(o.resolution),
+		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithParts(o.parts),
+		liveStream.WithOutput(o.output),
+	).(*liveStream.LiveStream)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.title))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

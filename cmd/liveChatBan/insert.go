@@ -76,46 +76,67 @@ func init() {
 			),
 		),
 	)
-	liveChatBanCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&liveChatId, "liveChatId", "l", "", lcidUsage)
-	insertCmd.Flags().StringVarP(
-		&bannedUserChannelId, "bannedUserChannelId", "b", "", bucidUsage,
-	)
-	insertCmd.Flags().StringVarP(&banType, "banType", "t", "", banTypeUsage)
-	insertCmd.Flags().Uint64VarP(
-		&banDurationSeconds, "banDurationSeconds", "d", 0, banDurationUsage,
-	)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, "Parts to include",
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("liveChatId")
-	_ = insertCmd.MarkFlagRequired("bannedUserChannelId")
-	_ = insertCmd.MarkFlagRequired("banType")
+	liveChatBanCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(insertConfirm, bannedUserChannelId, liveChatId),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveChatBan.NewLiveChatBan(
-			liveChatBan.WithLiveChatId(liveChatId),
-			liveChatBan.WithBannedUserChannelId(bannedUserChannelId),
-			liveChatBan.WithBanType(banType),
-			liveChatBan.WithBanDurationSeconds(banDurationSeconds),
-			liveChatBan.WithParts(parts),
-			liveChatBan.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	liveChatId          string
+	bannedUserChannelId string
+	banType             string
+	banDurationSeconds  uint64
+	parts               []string
+	output              string
+	yes                 bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "l", "", lcidUsage)
+	c.Flags().StringVarP(
+		&o.bannedUserChannelId, "bannedUserChannelId", "b", "", bucidUsage,
+	)
+	c.Flags().StringVarP(&o.banType, "banType", "t", "", banTypeUsage)
+	c.Flags().Uint64VarP(
+		&o.banDurationSeconds, "banDurationSeconds", "d", 0, banDurationUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet"}, "Parts to include",
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("liveChatId")
+	_ = c.MarkFlagRequired("bannedUserChannelId")
+	_ = c.MarkFlagRequired("banType")
+}
+
+func (o *insertOpts) build() *liveChatBan.LiveChatBan {
+	return liveChatBan.NewLiveChatBan(
+		liveChatBan.WithLiveChatId(o.liveChatId),
+		liveChatBan.WithBannedUserChannelId(o.bannedUserChannelId),
+		liveChatBan.WithBanType(o.banType),
+		liveChatBan.WithBanDurationSeconds(o.banDurationSeconds),
+		liveChatBan.WithParts(o.parts),
+		liveChatBan.WithOutput(o.output),
+	).(*liveChatBan.LiveChatBan)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertConfirm, opts.bannedUserChannelId, opts.liveChatId),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

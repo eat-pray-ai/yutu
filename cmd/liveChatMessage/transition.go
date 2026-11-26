@@ -70,35 +70,54 @@ func init() {
 			),
 		),
 	)
-	liveChatMessageCmd.AddCommand(transitionCmd)
-
-	transitionCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", nil, "IDs of the messages to transition",
-	)
-	transitionCmd.Flags().StringVarP(&status, "status", "s", "", statusUsage)
-	transitionCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	transitionCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = transitionCmd.MarkFlagRequired("ids")
-	_ = transitionCmd.MarkFlagRequired("status")
+	liveChatMessageCmd.AddCommand(newTransitionCmd())
 }
 
-var transitionCmd = &cobra.Command{
-	Use:     "transition",
-	Short:   transitionShort,
-	Long:    transitionLong,
-	Example: transitionExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(transitionConfirm, strings.Join(ids, ", "), status),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveChatMessage.NewLiveChatMessage(
-			liveChatMessage.WithIds(ids),
-			liveChatMessage.WithStatus(status),
-			liveChatMessage.WithOutput(output),
-		)
-		return input.Transition(c.OutOrStdout())
-	},
+type transitionOpts struct {
+	ids    []string
+	status string
+	output string
+	yes    bool
+}
+
+func (o *transitionOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(
+		&o.ids, "ids", "i", nil, "IDs of the messages to transition",
+	)
+	c.Flags().StringVarP(&o.status, "status", "s", "", statusUsage)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+	_ = c.MarkFlagRequired("status")
+}
+
+func (o *transitionOpts) build() *liveChatMessage.LiveChatMessage {
+	return liveChatMessage.NewLiveChatMessage(
+		liveChatMessage.WithIds(o.ids),
+		liveChatMessage.WithStatus(o.status),
+		liveChatMessage.WithOutput(o.output),
+	).(*liveChatMessage.LiveChatMessage)
+}
+
+func newTransitionCmd() *cobra.Command {
+	var opts transitionOpts
+
+	c := &cobra.Command{
+		Use:     "transition",
+		Short:   transitionShort,
+		Long:    transitionLong,
+		Example: transitionExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes,
+				fmt.Sprintf(transitionConfirm, strings.Join(opts.ids, ", "), opts.status),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Transition(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

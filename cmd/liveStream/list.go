@@ -11,9 +11,11 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/eat-pray-ai/yutu/pkg"
 	"github.com/eat-pray-ai/yutu/pkg/liveStream"
+	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -74,43 +76,65 @@ func init() {
 			},
 		),
 	)
-	liveStreamCmd.AddCommand(listCmd)
-
-	listCmd.Flags().StringSliceVarP(&ids, "ids", "i", nil, listIdsUsage)
-	listCmd.Flags().BoolVarP(
-		mine, "mine", "m", false, "List streams owned by the authenticated user",
-	)
-	listCmd.Flags().Int64VarP(&maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	listCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	listCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"id", "snippet", "cdn", "status"},
-		pkg.PartsUsage,
-	)
-	listCmd.Flags().StringP("output", "o", "table", pkg.TableUsage)
+	liveStreamCmd.AddCommand(newListCmd())
 }
 
-var listCmd = &cobra.Command{
-	Use:     "list",
-	Short:   listShort,
-	Long:    listLong,
-	Example: listExample,
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveStream.NewLiveStream(
-			liveStream.WithIds(ids),
-			liveStream.WithMine(mine),
-			liveStream.WithMaxResults(maxResults),
-			liveStream.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveStream.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveStream.WithParts(parts),
-			liveStream.WithOutput(output),
-		)
-		return input.List(c.OutOrStdout())
-	},
+type listOpts struct {
+	ids                           []string
+	mine                          bool
+	maxResults                    int64
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	parts                         []string
+	output                        string
+}
+
+func (o *listOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
+	c.Flags().BoolVarP(
+		&o.mine, "mine", "m", false, "List streams owned by the authenticated user",
+	)
+	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"id", "snippet", "cdn", "status"},
+		pkg.PartsUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
+}
+
+func (o *listOpts) build(f *pflag.FlagSet) *liveStream.LiveStream {
+	return liveStream.NewLiveStream(
+		liveStream.WithIds(o.ids),
+		utils.OptIfChanged(f, "mine", &o.mine, liveStream.WithMine),
+		liveStream.WithMaxResults(o.maxResults),
+		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithParts(o.parts),
+		liveStream.WithOutput(o.output),
+	).(*liveStream.LiveStream)
+}
+
+func newListCmd() *cobra.Command {
+	var opts listOpts
+
+	c := &cobra.Command{
+		Use:     "list",
+		Short:   listShort,
+		Long:    listLong,
+		Example: listExample,
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).List(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

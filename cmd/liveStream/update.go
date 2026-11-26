@@ -17,6 +17,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -86,50 +87,77 @@ func init() {
 			),
 		),
 	)
-	liveStreamCmd.AddCommand(updateCmd)
-
-	updateCmd.Flags().StringSliceVarP(&ids, "id", "i", nil, updateIdUsage)
-	updateCmd.Flags().StringVarP(&title, "title", "t", "", titleUsage)
-	updateCmd.Flags().StringVarP(description, "description", "d", "", descUsage)
-	updateCmd.Flags().StringVarP(&frameRate, "frameRate", "f", "", frUsage)
-	updateCmd.Flags().StringVarP(&ingestionType, "ingestionType", "I", "", itUsage)
-	updateCmd.Flags().StringVarP(&resolution, "resolution", "r", "", resUsage)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	updateCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	updateCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	updateCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = updateCmd.MarkFlagRequired("id")
+	liveStreamCmd.AddCommand(newUpdateCmd())
 }
 
-var updateCmd = &cobra.Command{
-	Use:     "update",
-	Short:   updateShort,
-	Long:    updateLong,
-	Example: updateExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(updateConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveStream.NewLiveStream(
-			liveStream.WithIds(ids),
-			liveStream.WithTitle(title),
-			liveStream.WithDescription(description),
-			liveStream.WithFrameRate(frameRate),
-			liveStream.WithIngestionType(ingestionType),
-			liveStream.WithResolution(resolution),
-			liveStream.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveStream.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveStream.WithMaxResults(1),
-			liveStream.WithOutput(output),
-		)
-		return input.Update(c.OutOrStdout())
-	},
+type updateOpts struct {
+	ids                           []string
+	title                         string
+	description                   string
+	frameRate                     string
+	ingestionType                 string
+	resolution                    string
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	output                        string
+	yes                           bool
+}
+
+func (o *updateOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "id", "i", nil, updateIdUsage)
+	c.Flags().StringVarP(&o.title, "title", "t", "", titleUsage)
+	c.Flags().StringVarP(&o.description, "description", "d", "", descUsage)
+	c.Flags().StringVarP(&o.frameRate, "frameRate", "f", "", frUsage)
+	c.Flags().StringVarP(&o.ingestionType, "ingestionType", "I", "", itUsage)
+	c.Flags().StringVarP(&o.resolution, "resolution", "r", "", resUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("id")
+}
+
+func (o *updateOpts) build(f *pflag.FlagSet) *liveStream.LiveStream {
+	return liveStream.NewLiveStream(
+		liveStream.WithIds(o.ids),
+		liveStream.WithTitle(o.title),
+		utils.OptIfChanged(
+			f, "description", &o.description, liveStream.WithDescription,
+		),
+		liveStream.WithFrameRate(o.frameRate),
+		liveStream.WithIngestionType(o.ingestionType),
+		liveStream.WithResolution(o.resolution),
+		liveStream.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveStream.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveStream.WithMaxResults(1),
+		liveStream.WithOutput(o.output),
+	).(*liveStream.LiveStream)
+}
+
+func newUpdateCmd() *cobra.Command {
+	var opts updateOpts
+
+	c := &cobra.Command{
+		Use:     "update",
+		Short:   updateShort,
+		Long:    updateLong,
+		Example: updateExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(updateConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build(c.Flags()).Update(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

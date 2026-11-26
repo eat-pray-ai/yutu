@@ -5,7 +5,6 @@ package liveStream
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	"github.com/eat-pray-ai/yutu/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -20,30 +19,10 @@ const (
 	obococUsage = "Channel ID for content owner operations"
 )
 
-var (
-	ids                           []string
-	title                         string
-	description                   = new("")
-	mine                          = new(false)
-	frameRate                     string
-	ingestionType                 string
-	resolution                    string
-	maxResults                    int64
-	parts                         []string
-	onBehalfOfContentOwner        string
-	onBehalfOfContentOwnerChannel string
-)
-
 var liveStreamCmd = &cobra.Command{
 	Use:   "liveStream",
 	Short: short,
 	Long:  long,
-	PersistentPreRun: func(c *cobra.Command, _ []string) {
-		utils.ResetFlags(map[string]**bool{"mine": &mine}, c.Flags())
-		utils.ResetFlags(
-			map[string]**string{"description": &description}, c.Flags(),
-		)
-	},
 	Run: func(c *cobra.Command, _ []string) {
 		_ = c.Help()
 	},

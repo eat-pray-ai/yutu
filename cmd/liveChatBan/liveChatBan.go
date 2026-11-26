@@ -17,15 +17,6 @@ const (
 	banDurationUsage = "Duration of the ban in seconds (only for temporary bans)"
 )
 
-var (
-	ids                 []string
-	liveChatId          string
-	bannedUserChannelId string
-	banType             string
-	banDurationSeconds  uint64
-	parts               []string
-)
-
 var liveChatBanCmd = &cobra.Command{
 	Use:   "liveChatBan",
 	Short: short,

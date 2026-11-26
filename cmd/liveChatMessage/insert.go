@@ -65,35 +65,54 @@ func init() {
 			),
 		),
 	)
-	liveChatMessageCmd.AddCommand(insertCmd)
-
-	insertCmd.Flags().StringVarP(&liveChatId, "liveChatId", "l", "", lcidUsage)
-	insertCmd.Flags().StringVarP(&messageText, "messageText", "m", "", msgUsage)
-	insertCmd.Flags().StringSliceVarP(
-		&parts, "parts", "p", []string{"snippet"}, "Parts to include",
-	)
-	insertCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCmd.MarkFlagRequired("liveChatId")
-	_ = insertCmd.MarkFlagRequired("messageText")
+	liveChatMessageCmd.AddCommand(newInsertCmd())
 }
 
-var insertCmd = &cobra.Command{
-	Use:     "insert",
-	Short:   insertShort,
-	Long:    insertLong,
-	Example: insertExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(c, fmt.Sprintf(insertConfirm, liveChatId))
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveChatMessage.NewLiveChatMessage(
-			liveChatMessage.WithLiveChatId(liveChatId),
-			liveChatMessage.WithMessageText(messageText),
-			liveChatMessage.WithParts(parts),
-			liveChatMessage.WithOutput(output),
-		)
-		return input.Insert(c.OutOrStdout())
-	},
+type insertOpts struct {
+	liveChatId  string
+	messageText string
+	parts       []string
+	output      string
+	yes         bool
+}
+
+func (o *insertOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "l", "", lcidUsage)
+	c.Flags().StringVarP(&o.messageText, "messageText", "m", "", msgUsage)
+	c.Flags().StringSliceVarP(
+		&o.parts, "parts", "p", []string{"snippet"}, "Parts to include",
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("liveChatId")
+	_ = c.MarkFlagRequired("messageText")
+}
+
+func (o *insertOpts) build() *liveChatMessage.LiveChatMessage {
+	return liveChatMessage.NewLiveChatMessage(
+		liveChatMessage.WithLiveChatId(o.liveChatId),
+		liveChatMessage.WithMessageText(o.messageText),
+		liveChatMessage.WithParts(o.parts),
+		liveChatMessage.WithOutput(o.output),
+	).(*liveChatMessage.LiveChatMessage)
+}
+
+func newInsertCmd() *cobra.Command {
+	var opts insertOpts
+
+	c := &cobra.Command{
+		Use:     "insert",
+		Short:   insertShort,
+		Long:    insertLong,
+		Example: insertExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(c, opts.yes, fmt.Sprintf(insertConfirm, opts.liveChatId))
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().Insert(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

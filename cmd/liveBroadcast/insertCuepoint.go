@@ -85,57 +85,75 @@ func init() {
 			),
 		),
 	)
-	liveBroadcastCmd.AddCommand(insertCuepointCmd)
-
-	insertCuepointCmd.Flags().StringSliceVarP(
-		&ids, "ids", "i", nil, "IDs of the broadcasts",
-	)
-	insertCuepointCmd.Flags().StringVarP(
-		&cueType, "cueType", "c", "cueTypeAd", ctUsage,
-	)
-	insertCuepointCmd.Flags().Int64VarP(
-		&cueDurationSecs, "cueDurationSecs", "D", 0, cdsUsage,
-	)
-	insertCuepointCmd.Flags().Int64VarP(
-		&cueInsertionOffsetMs, "cueInsertionOffsetMs", "O", 0, ciomUsage,
-	)
-	insertCuepointCmd.Flags().Uint64VarP(
-		&cueWalltimeMs, "cueWalltimeMs", "W", 0, cwmUsage,
-	)
-	insertCuepointCmd.Flags().StringVarP(
-		&onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
-	)
-	insertCuepointCmd.Flags().StringVarP(
-		&onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B", "",
-		obococUsage,
-	)
-	insertCuepointCmd.Flags().StringP("output", "o", "", pkg.SilentUsage)
-	insertCuepointCmd.Flags().Bool("yes", false, pkg.ConfirmedUsage)
-	_ = insertCuepointCmd.MarkFlagRequired("ids")
+	liveBroadcastCmd.AddCommand(newInsertCuepointCmd())
 }
 
-var insertCuepointCmd = &cobra.Command{
-	Use:     "insertCuepoint",
-	Short:   insertCuepointShort,
-	Long:    insertCuepointLong,
-	Example: insertCuepointExample,
-	PreRunE: func(c *cobra.Command, _ []string) error {
-		return utils.ConfirmPreRun(
-			c, fmt.Sprintf(insertCuepointConfirm, strings.Join(ids, ", ")),
-		)
-	},
-	RunE: func(c *cobra.Command, _ []string) error {
-		output, _ := c.Flags().GetString("output")
-		input := liveBroadcast.NewLiveBroadcast(
-			liveBroadcast.WithIds(ids),
-			liveBroadcast.WithCueType(cueType),
-			liveBroadcast.WithCueDurationSecs(cueDurationSecs),
-			liveBroadcast.WithCueInsertionOffsetMs(cueInsertionOffsetMs),
-			liveBroadcast.WithCueWalltimeMs(cueWalltimeMs),
-			liveBroadcast.WithOnBehalfOfContentOwner(onBehalfOfContentOwner),
-			liveBroadcast.WithOnBehalfOfContentOwnerChannel(onBehalfOfContentOwnerChannel),
-			liveBroadcast.WithOutput(output),
-		)
-		return input.InsertCuepoint(c.OutOrStdout())
-	},
+type insertCuepointOpts struct {
+	ids                           []string
+	cueType                       string
+	cueDurationSecs               int64
+	cueInsertionOffsetMs          int64
+	cueWalltimeMs                 uint64
+	onBehalfOfContentOwner        string
+	onBehalfOfContentOwnerChannel string
+	output                        string
+	yes                           bool
+}
+
+func (o *insertCuepointOpts) bindFlags(c *cobra.Command) {
+	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, "IDs of the broadcasts")
+	c.Flags().StringVarP(&o.cueType, "cueType", "c", "cueTypeAd", ctUsage)
+	c.Flags().Int64VarP(
+		&o.cueDurationSecs, "cueDurationSecs", "D", 0, cdsUsage,
+	)
+	c.Flags().Int64VarP(
+		&o.cueInsertionOffsetMs, "cueInsertionOffsetMs", "O", 0, ciomUsage,
+	)
+	c.Flags().Uint64VarP(&o.cueWalltimeMs, "cueWalltimeMs", "W", 0, cwmUsage)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwner, "onBehalfOfContentOwner", "b", "",
+		pkg.OBOCOUsage,
+	)
+	c.Flags().StringVarP(
+		&o.onBehalfOfContentOwnerChannel, "onBehalfOfContentOwnerChannel", "B",
+		"", obococUsage,
+	)
+	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)
+	c.Flags().BoolVar(&o.yes, "yes", false, pkg.ConfirmedUsage)
+	_ = c.MarkFlagRequired("ids")
+}
+
+func (o *insertCuepointOpts) build() *liveBroadcast.LiveBroadcast {
+	return liveBroadcast.NewLiveBroadcast(
+		liveBroadcast.WithIds(o.ids),
+		liveBroadcast.WithCueType(o.cueType),
+		liveBroadcast.WithCueDurationSecs(o.cueDurationSecs),
+		liveBroadcast.WithCueInsertionOffsetMs(o.cueInsertionOffsetMs),
+		liveBroadcast.WithCueWalltimeMs(o.cueWalltimeMs),
+		liveBroadcast.WithOnBehalfOfContentOwner(o.onBehalfOfContentOwner),
+		liveBroadcast.WithOnBehalfOfContentOwnerChannel(o.onBehalfOfContentOwnerChannel),
+		liveBroadcast.WithOutput(o.output),
+	).(*liveBroadcast.LiveBroadcast)
+}
+
+func newInsertCuepointCmd() *cobra.Command {
+	var opts insertCuepointOpts
+
+	c := &cobra.Command{
+		Use:     "insertCuepoint",
+		Short:   insertCuepointShort,
+		Long:    insertCuepointLong,
+		Example: insertCuepointExample,
+		PreRunE: func(c *cobra.Command, _ []string) error {
+			return utils.ConfirmPreRun(
+				c, opts.yes, fmt.Sprintf(insertCuepointConfirm, strings.Join(opts.ids, ", ")),
+			)
+		},
+		RunE: func(c *cobra.Command, _ []string) error {
+			return opts.build().InsertCuepoint(c.OutOrStdout())
+		},
+	}
+
+	opts.bindFlags(c)
+	return c
 }

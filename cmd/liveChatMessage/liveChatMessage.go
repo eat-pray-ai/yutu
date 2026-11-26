@@ -16,16 +16,6 @@ const (
 	statusUsage = "Status to transition to (closed)"
 )
 
-var (
-	ids         []string
-	liveChatId  string
-	messageText string
-	status      string
-	maxResults  int64
-	parts       []string
-	hl          string
-)
-
 var liveChatMessageCmd = &cobra.Command{
 	Use:   "liveChatMessage",
 	Short: short,
