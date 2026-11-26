@@ -99,7 +99,7 @@ type insertOpts struct {
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.file, "file", "f", "", fileUsage)
-	c.Flags().StringVarP(&o.playlistId, "playlistId", "p", "", pidUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "P", "", pidUsage)
 	c.Flags().StringVarP(&o.type_, "type", "t", "", typeUsage)
 	c.Flags().Int64VarP(&o.height, "height", "H", 0, heightUsage)
 	c.Flags().Int64VarP(&o.width, "width", "W", 0, widthUsage)

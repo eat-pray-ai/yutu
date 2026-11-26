@@ -202,16 +202,16 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 ```shell
 # Gemini(compatible) (default)
-❯ yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
-❯ yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+❯ yutu agent --provider google --model gemini-4-hydrogen --apiKey "YOUR_KEY"
+❯ yutu agent --provider google --model gemini-4-carbon --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"
 # OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
-❯ yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
-❯ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
+❯ yutu agent --provider openai --model gpt-6-astra --apiKey "YOUR_KEY"
+❯ yutu agent --provider openai --model deepseek-flash --apiKey "YOUR_KEY" --baseUrl "https://api.deepseek.com"
 # Anthropic(compatible)
-❯ yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
-❯ yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+❯ yutu agent --provider anthropic --model claude-fable-5-2 --apiKey "YOUR_KEY"
+❯ yutu agent --provider anthropic --model claude-opus-5-5 --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"
 # web mode with sub-launchers
-❯ yutu agent --args "web api a2a webui" --api-key "YOUR_KEY"
+❯ yutu agent --args "web api a2a webui" --apiKey "YOUR_KEY"
 # show available launcher args
 ❯ yutu agent --args ""
 ```
@@ -223,8 +223,8 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 | `-a, --args`        | Launcher arguments as a single string           | `console`                                  |
 | `-p, --provider`    | LLM provider: `google`, `openai` or `anthropic` | `google`                                   |
 | `-m, --model`       | Model name                                      | `gemini-4-hydrogen`                        |
-| `--api-key`         | API key for the model provider                  |                                            |
-| `--base-url`        | Base URL for the model provider's API endpoint  |                                            |
+| `--apiKey`         | API key for the model provider                  |                                            |
+| `--baseUrl`        | Base URL for the model provider's API endpoint  |                                            |
 | `-i, --instruction` | Override the built-in Agent instruction         | [INSTRUCTION.md](pkg/agent/INSTRUCTION.md) |
 
 ## MCP Server

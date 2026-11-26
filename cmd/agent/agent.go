@@ -21,14 +21,14 @@ const (
 	short   = "Start an Agent to automate YouTube workflows"
 	long    = "Start an Agent to automate YouTube workflows."
 	example = `  # Gemini(compatible) (default)
-  yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
-  yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+  yutu agent --provider google --model gemini-4-hydrogen --apiKey "YOUR_KEY"
+  yutu agent --provider google --model gemini-4-carbon --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"
   # OpenAI(compatible) (OpenAI, DeepSeek, Ollama, vLLM, etc.)
-  yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
-  yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
+  yutu agent --provider openai --model gpt-6-astra --apiKey "YOUR_KEY"
+  yutu agent --provider openai --model deepseek-flash --apiKey "YOUR_KEY" --baseUrl "https://api.deepseek.com"
   # Anthropic(compatible)
-  yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
-  yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"`
+  yutu agent --provider anthropic --model claude-fable-5-2 --apiKey "YOUR_KEY"
+  yutu agent --provider anthropic --model claude-opus-5-5 --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"`
 	argsUsage        = "Launcher arguments as a single string"
 	providerUsage    = "LLM provider: google, openai or anthropic"
 	modelUsage       = "Model name"
@@ -61,8 +61,8 @@ func (o *agentOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(
 		&o.modelName, "model", "m", pkgagent.DefaultModel, modelUsage,
 	)
-	c.Flags().StringVar(&o.apiKey, "api-key", "", apiKeyUsage)
-	c.Flags().StringVar(&o.baseURL, "base-url", "", baseURLUsage)
+	c.Flags().StringVarP(&o.apiKey, "apiKey", "k", "", apiKeyUsage)
+	c.Flags().StringVarP(&o.baseURL, "baseUrl", "u", "", baseURLUsage)
 	c.Flags().StringVarP(&o.inst, "instruction", "i", "", instructionUsage)
 }
 

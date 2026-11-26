@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "resources",
@@ -36,5 +36,17 @@ go_library(
         "//cmd/videoCategory",
         "//cmd/videoTrainability",
         "//cmd/watermark",
+    ],
+)
+
+go_test(
+    name = "resources_test",
+    srcs = ["flags_consistency_test.go"],
+    deps = [
+        ":resources",
+        "//cmd",
+        "//cmd/agent",
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_spf13_pflag//:pflag",
     ],
 )

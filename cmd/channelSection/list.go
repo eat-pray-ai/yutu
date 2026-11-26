@@ -89,7 +89,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
 	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
-	c.Flags().BoolVarP(&o.mine, "mine", "M", false, mineUsage)
+	c.Flags().BoolVarP(&o.mine, "mine", "m", false, mineUsage)
 	c.Flags().StringVarP(
 		&o.oboco, "onBehalfOfContentOwner", "b", "", pkg.OBOCOUsage,
 	)

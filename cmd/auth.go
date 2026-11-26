@@ -38,7 +38,7 @@ func (o *authOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(
 		&o.cacheToken, "cacheToken", "t", "youtube.token.json", cacheUsage,
 	)
-	c.Flags().BoolVar(&o.noBrowser, "no-browser", false, noBrowserUsage)
+	c.Flags().BoolVarP(&o.noBrowser, "noBrowser", "B", false, noBrowserUsage)
 }
 
 func newAuthCmd() *cobra.Command {

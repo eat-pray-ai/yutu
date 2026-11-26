@@ -91,7 +91,7 @@ type setModerationStatusOpts struct {
 func (o *setModerationStatusOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, idsUsage)
 	c.Flags().StringVarP(
-		&o.moderationStatus, "moderationStatus", "s", "", msUsage,
+		&o.moderationStatus, "moderationStatus", "m", "", msUsage,
 	)
 	c.Flags().BoolVarP(&o.banAuthor, "banAuthor", "A", false, baUsage)
 	c.Flags().StringVarP(&o.output, "output", "o", "", pkg.SilentUsage)

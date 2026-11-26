@@ -106,7 +106,7 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", listCidUsage)
 	c.Flags().StringVarP(&o.hl, "hl", "l", "", hlUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
-	c.Flags().BoolVarP(&o.mine, "mine", "M", true, mineUsage)
+	c.Flags().BoolVarP(&o.mine, "mine", "m", true, mineUsage)
 	c.Flags().StringVarP(
 		&o.oboco, "onBehalfOfContentOwner", "b", "",
 		pkg.OBOCOUsage,

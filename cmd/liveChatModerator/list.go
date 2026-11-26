@@ -76,7 +76,7 @@ type listOpts struct {
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
-	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "l", "", lcidUsage)
+	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "L", "", lcidUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringSliceVarP(
 		&o.parts, "parts", "p", []string{"snippet"}, pkg.PartsUsage,

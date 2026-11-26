@@ -126,7 +126,7 @@ func (o *updateOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.language, "language", "l", "", updateLangUsage)
 	c.Flags().StringVarP(&o.license, "license", "L", "", licenseUsage)
 	c.Flags().StringVarP(&o.thumbnail, "thumbnail", "u", "", thumbnailUsage)
-	c.Flags().StringVarP(&o.playlistId, "playlistId", "y", "", pidUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "P", "", pidUsage)
 	c.Flags().StringVarP(&o.categoryId, "categoryId", "g", "", caidUsage)
 	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
 	c.Flags().StringVarP(&o.publishAt, "publishAt", "U", "", paUsage)

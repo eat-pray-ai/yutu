@@ -91,10 +91,10 @@ func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.activityFor, "for", "F", "", forUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(
-		&o.publishedAfter, "publishedAfter", "a", "", paUsage,
+		&o.publishedAfter, "publishedAfter", "A", "", paUsage,
 	)
 	c.Flags().StringVarP(
-		&o.publishedBefore, "publishedBefore", "b", "", pbUsage,
+		&o.publishedBefore, "publishedBefore", "B", "", pbUsage,
 	)
 	c.Flags().StringVarP(&o.regionCode, "regionCode", "r", "", rcUsage)
 	c.Flags().StringSliceVarP(

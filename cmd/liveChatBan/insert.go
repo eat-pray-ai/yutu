@@ -90,7 +90,7 @@ type insertOpts struct {
 }
 
 func (o *insertOpts) bindFlags(c *cobra.Command) {
-	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "l", "", lcidUsage)
+	c.Flags().StringVarP(&o.liveChatId, "liveChatId", "L", "", lcidUsage)
 	c.Flags().StringVarP(
 		&o.bannedUserChannelId, "bannedUserChannelId", "b", "", bucidUsage,
 	)

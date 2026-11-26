@@ -65,7 +65,7 @@ type listOpts struct {
 }
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
-	c.Flags().StringVarP(&o.videoId, "videoId", "i", "", "ID of the video")
+	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", "ID of the video")
 	c.Flags().StringVarP(&o.output, "output", "o", "table", pkg.TableUsage)
 	_ = c.MarkFlagRequired("videoId")
 }

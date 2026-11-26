@@ -105,7 +105,7 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.kChannelId, "kChannelId", "C", "", kcidUsage)
 	c.Flags().StringVarP(&o.kPlaylistId, "kPlaylistId", "Y", "", kpidUsage)
 	c.Flags().StringVarP(
-		&o.playlistId, "playlistId", "y", "", insertPidUsage,
+		&o.playlistId, "playlistId", "P", "", insertPidUsage,
 	)
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", cidUsage)
 	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)

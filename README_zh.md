@@ -208,16 +208,16 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ```shell
 # Gemini（兼容）（默认）
-❯ yutu agent --provider google --model gemini-4-hydrogen --api-key "YOUR_KEY"
-❯ yutu agent --provider google --model gemini-4-carbon --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+❯ yutu agent --provider google --model gemini-4-hydrogen --apiKey "YOUR_KEY"
+❯ yutu agent --provider google --model gemini-4-carbon --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"
 # OpenAI（兼容）（OpenAI、DeepSeek、Ollama、vLLM 等）
-❯ yutu agent --provider openai --model gpt-6-astra --api-key "YOUR_KEY"
-❯ yutu agent --provider openai --model deepseek-flash --api-key "YOUR_KEY" --base-url "https://api.deepseek.com"
+❯ yutu agent --provider openai --model gpt-6-astra --apiKey "YOUR_KEY"
+❯ yutu agent --provider openai --model deepseek-flash --apiKey "YOUR_KEY" --baseUrl "https://api.deepseek.com"
 # Anthropic（兼容）
-❯ yutu agent --provider anthropic --model claude-fable-5-2 --api-key "YOUR_KEY"
-❯ yutu agent --provider anthropic --model claude-opus-5-5 --api-key "YOUR_KEY" --base-url "https://custom.endpoint.com"
+❯ yutu agent --provider anthropic --model claude-fable-5-2 --apiKey "YOUR_KEY"
+❯ yutu agent --provider anthropic --model claude-opus-5-5 --apiKey "YOUR_KEY" --baseUrl "https://custom.endpoint.com"
 # Web 模式
-❯ yutu agent --args "web api a2a webui" --api-key "YOUR_KEY"
+❯ yutu agent --args "web api a2a webui" --apiKey "YOUR_KEY"
 # 查看可用的启动参数
 ❯ yutu agent --args ""
 ```
@@ -229,8 +229,8 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 | `-a, --args`        | 启动参数（单个字符串）                        | `console`                                  |
 | `-p, --provider`    | LLM 提供商：`google`、`openai` 或 `anthropic` | `google`                                   |
 | `-m, --model`       | 模型名称                                      | `gemini-4-hydrogen`                        |
-| `--api-key`         | 模型提供商的 API 密钥                         |                                            |
-| `--base-url`        | 模型提供商的 API 端点地址                     |                                            |
+| `--apiKey`         | 模型提供商的 API 密钥                         |                                            |
+| `--baseUrl`        | 模型提供商的 API 端点地址                     |                                            |
 | `-i, --instruction` | 覆盖内置的 Agent 指令                         | [INSTRUCTION.md](pkg/agent/INSTRUCTION.md) |
 
 ## MCP 服务器

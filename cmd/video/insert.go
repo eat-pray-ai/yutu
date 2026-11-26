@@ -147,7 +147,7 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringVarP(&o.license, "license", "L", "", licenseUsage)
 	c.Flags().StringVarP(&o.thumbnail, "thumbnail", "u", "", thumbnailUsage)
 	c.Flags().StringVarP(&o.channelId, "channelId", "c", "", chidUsage)
-	c.Flags().StringVarP(&o.playlistId, "playlistId", "y", "", pidUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "P", "", pidUsage)
 	c.Flags().StringVarP(&o.categoryId, "categoryId", "g", "", caidUsage)
 	c.Flags().StringVarP(&o.privacy, "privacy", "p", "", privacyUsage)
 	c.Flags().BoolVarP(&o.forKids, "forKids", "K", false, fkUsage)
@@ -160,7 +160,7 @@ func (o *insertOpts) bindFlags(c *cobra.Command) {
 	c.Flags().BoolVarP(&o.stabilize, "stabilize", "S", true, stabilizeUsage)
 	c.Flags().BoolVarP(&o.notifySubscribers, "notifySubscribers", "N", true, nsUsage)
 	c.Flags().BoolVarP(
-		&o.publicStatsViewable, "publicStatsViewable", "P", false, psvUsage,
+		&o.publicStatsViewable, "publicStatsViewable", "V", false, psvUsage,
 	)
 	c.Flags().StringVarP(
 		&o.oboco, "onBehalfOfContentOwner", "b", "",

@@ -89,7 +89,7 @@ type listOpts struct {
 
 func (o *listOpts) bindFlags(c *cobra.Command) {
 	c.Flags().StringSliceVarP(&o.ids, "ids", "i", nil, listIdsUsage)
-	c.Flags().StringVarP(&o.playlistId, "playlistId", "y", "", listPidUsage)
+	c.Flags().StringVarP(&o.playlistId, "playlistId", "P", "", listPidUsage)
 	c.Flags().Int64VarP(&o.maxResults, "maxResults", "n", 5, pkg.MRUsage)
 	c.Flags().StringVarP(&o.videoId, "videoId", "v", "", vidUsage)
 	c.Flags().StringVarP(
