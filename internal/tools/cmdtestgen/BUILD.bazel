@@ -7,7 +7,6 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//cmd",
-        "//cmd/agent",
         "//cmd/resources",
         "@com_github_spf13_cobra//:cobra",
     ],

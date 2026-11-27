@@ -45,9 +45,6 @@ fi
 "$YUTU_PATH" version
 
 # yutu
-echo "======= agent ======="
-"$YUTU_PATH" agent --help
-
 echo "======= auth ======="
 "$YUTU_PATH" auth --help
 

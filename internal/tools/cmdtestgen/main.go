@@ -15,7 +15,6 @@ import (
 	"github.com/eat-pray-ai/yutu/cmd"
 	"github.com/spf13/cobra"
 
-	_ "github.com/eat-pray-ai/yutu/cmd/agent"
 	_ "github.com/eat-pray-ai/yutu/cmd/resources"
 )
 
