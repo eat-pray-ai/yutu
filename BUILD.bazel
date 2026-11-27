@@ -17,7 +17,6 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//cmd",
-        "//cmd/agent",
         "//cmd/resources",
     ],
 )

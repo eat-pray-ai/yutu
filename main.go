@@ -5,7 +5,6 @@ package main
 
 import (
 	"github.com/eat-pray-ai/yutu/cmd"
-	_ "github.com/eat-pray-ai/yutu/cmd/agent"
 	_ "github.com/eat-pray-ai/yutu/cmd/resources"
 )
 
