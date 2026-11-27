@@ -141,6 +141,9 @@ There are two actions available for yutu, one is for general purpose and the oth
 
 ```shell
 ❯ go install github.com/eat-pray-ai/yutu@latest
+
+# with Agent enabled
+❯ go install -tags agent github.com/eat-pray-ai/yutu@latest
 ```
 
 </details>
@@ -200,6 +203,11 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 
 `yutu` provides an Agent mode (Miffy) to automate YouTube workflows. The Agent can retrieve, create, update, and delete YouTube content, with built-in YouTube growth strategy and SEO expertise.
 
+> [!NOTE]
+> Agent mode is gated behind the `agent` build tag. Prebuilt and default builds only include CLI + MCP; to include Agent support, install or build with `-tags agent`:
+>
+> `go install -tags agent github.com/eat-pray-ai/yutu@latest` or `go build -tags agent`
+
 ```shell
 # Gemini(compatible) (default)
 ❯ yutu agent --provider google --model gemini-4-hydrogen --apiKey "YOUR_KEY"
@@ -223,8 +231,8 @@ Verify the integrity and provenance of `yutu` using its associated cryptographic
 | `-a, --args`        | Launcher arguments as a single string           | `console`                                  |
 | `-p, --provider`    | LLM provider: `google`, `openai` or `anthropic` | `google`                                   |
 | `-m, --model`       | Model name                                      | `gemini-4-hydrogen`                        |
-| `--apiKey`         | API key for the model provider                  |                                            |
-| `--baseUrl`        | Base URL for the model provider's API endpoint  |                                            |
+| `--apiKey`          | API key for the model provider                  |                                            |
+| `--baseUrl`         | Base URL for the model provider's API endpoint  |                                            |
 | `-i, --instruction` | Override the built-in Agent instruction         | [INSTRUCTION.md](pkg/agent/INSTRUCTION.md) |
 
 ## MCP Server

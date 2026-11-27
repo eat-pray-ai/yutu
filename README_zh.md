@@ -147,6 +147,9 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 
 ```shell
 ❯ go install github.com/eat-pray-ai/yutu@latest
+
+# 启用 Agent
+❯ go install -tags agent github.com/eat-pray-ai/yutu@latest
 ```
 
 </details>
@@ -205,6 +208,11 @@ yutu 有两个可用的 GitHub Action，一个是通用 action，另一个专用
 ## Agent
 
 `yutu` 提供了 Agent 模式（Miffy）来自动化 YouTube 工作流程。该 Agent 可以检索、创建、更新和删除 YouTube 内容，内置 YouTube 增长策略和 SEO 专业知识。
+
+> [!NOTE]
+> Agent 模式默认通过 `agent` 构建标签（build tag）隔离，预编译及默认构建仅包含 CLI 和 MCP。如需启用 Agent 支持，请使用 `-tags agent` 安装或构建：
+>
+> `go install -tags agent github.com/eat-pray-ai/yutu@latest` 或 `go build -tags agent`
 
 ```shell
 # Gemini（兼容）（默认）
